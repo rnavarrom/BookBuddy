@@ -1,16 +1,16 @@
 package com.example.bookbuddy.models
 
 data class UserItem(
-    val bannedUsers: List<Any>,
-    val comments: List<Any>,
-    val creationDate: Any,
-    val followUserfolloweds: List<Any>,
-    val followUsers: List<Any>,
-    val isadmin: Boolean,
-    val name: String,
-    val password: String,
-    val profiles: List<Any>,
-    val reports: List<Any>,
-    val userId: Int,
-    val email: String
+    val bannedUsers: List<Any> = emptyList(),
+    val comments: List<Any> = emptyList(),
+    val creationDate: Any = "",
+    val followUserfolloweds: List<Any> = emptyList(),
+    val followUsers: List<Any> = emptyList(),
+    val isadmin: Boolean = false,
+    val name: String = "",
+    val password: String = "",
+    val profiles: List<Any> = emptyList(),
+    val reports: List<Any> = emptyList(),
+    val userId: Int = 0,
+    val email: String = ""
 )
