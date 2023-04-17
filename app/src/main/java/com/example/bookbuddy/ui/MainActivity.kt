@@ -1,11 +1,13 @@
 package com.example.bookbuddy.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.api.logging
 import com.example.bookbuddy.databinding.ActivityMainBinding
+import com.example.bookbuddy.ui.navdrawer.NavDrawerActivity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import okhttp3.logging.HttpLoggingInterceptor
@@ -26,6 +28,9 @@ class MainActivity : AppCompatActivity() {
             val response = getUsers(userName, userPassword)
 
             Toast.makeText(this, response.toString(),Toast.LENGTH_LONG).show()
+
+            val intent = Intent(this, NavDrawerActivity::class.java)
+            startActivity(intent)
         }
     }
 
