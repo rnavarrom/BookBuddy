@@ -4,13 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.MainActivity"
-    android:background="@drawable/gradient_background"
-    >
+    tools:context=".ui.CreateAccountActivity"
+    android:background="@drawable/gradient_background">
     <ImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:id="@+id/MA_Image"
+        android:id="@+id/CA_Image"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,12 +20,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="Create acount"
         android:textColor="#4CAF50"
-        android:id="@+id/MA_Text1"
-        app:layout_constraintBottom_toTopOf="@+id/MA_Edit_User"
+        android:id="@+id/CA_Text1"
+        app:layout_constraintBottom_toTopOf="@+id/CA_Edit_User"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/MA_Image"
+        app:layout_constraintTop_toBottomOf="@+id/CA_Image"
         android:textSize="20sp"
         android:layout_marginBottom="20dp"
         android:layout_marginStart="20dp"
@@ -34,28 +33,49 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/MA_Text2"
-        app:layout_constraintTop_toBottomOf="@+id/MA_Text1"
-        app:layout_constraintStart_toStartOf="@+id/MA_Text1"
-        app:layout_constraintBottom_toTopOf="@+id/MA_Edit_User"
-        android:text="Test"
+        android:id="@+id/CA_Text2"
+        app:layout_constraintTop_toBottomOf="@+id/CA_Text1"
+        app:layout_constraintStart_toStartOf="@+id/CA_Text1"
+        app:layout_constraintBottom_toTopOf="@+id/CA_Edit_User"
+        android:text="Join"
         android:textSize="16sp"
         android:textColor="#4CAF50"
         android:layout_marginBottom="20dp"
-         />
+        />
     <EditText
+        android:hint="User Name"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:id="@+id/MA_Edit_User"
-        app:layout_constraintBottom_toTopOf="@+id/MA_Edit_Password"
+        android:id="@+id/CA_Edit_User"
+        app:layout_constraintBottom_toTopOf="@+id/CA_Edit_Email"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
     <EditText
+        android:hint="Email"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:id="@+id/MA_Edit_Password"
-        app:layout_constraintBottom_toTopOf="@+id/MA_Button_Login"
+        android:id="@+id/CA_Edit_Email"
+        app:layout_constraintBottom_toTopOf="@+id/CA_Edit_Password"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <EditText
+        android:hint="Password"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/CA_Edit_Password"
+        app:layout_constraintBottom_toTopOf="@+id/CA_Edit_Password2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+    <EditText
+        android:hint="Repeat Password"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/CA_Edit_Password2"
+        app:layout_constraintBottom_toTopOf="@+id/CA_Button_Register"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="30dp"
@@ -63,25 +83,13 @@
     <Button
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:id="@+id/MA_Button_Login"
+        android:id="@+id/CA_Button_Register"
         android:textColor="@color/white"
+        android:text="Register"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="Log In"
-        android:layout_marginBottom="150dp"
-        android:background="@drawable/rounded_corners"
-        />
-    <Button
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/MA_Button_SignIn"
-        android:textColor="@color/white"
-        android:text="Sign In"
-        app:layout_constraintTop_toBottomOf="@+id/MA_Button_Login"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"
+        android:layout_marginBottom="30dp"
         android:background="@drawable/rounded_corners"
         />
 
