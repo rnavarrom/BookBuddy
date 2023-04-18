@@ -15,6 +15,11 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".ui.navdrawer.NavDrawerActivity"
+            android:exported="false"
+            android:label="@string/title_activity_nav_drawer"
+            android:theme="@style/Theme.BookBuddy.NoActionBar" />
+        <activity
             android:name=".ui.CreateAccountActivity"
             android:exported="false" />
         <activity
