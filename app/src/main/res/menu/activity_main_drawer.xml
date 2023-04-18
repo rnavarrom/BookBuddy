@@ -2,38 +2,34 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:showIn="navigation_view">
+    tools:showIn="navigation_view"
+    >
 
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_menu_home"
             android:title="@string/menu_home"
-            app:itemBackground="@drawable/nav_view_item_background"/>
+            />
         <item
             android:id="@+id/nav_search"
             android:icon="@drawable/ic_menu_search"
-            android:title="Search"
-            app:itemBackground="@drawable/nav_view_item_background"/>
+            android:title="Search" />
         <item
             android:id="@+id/nav_scan"
             android:icon="@drawable/ic_menu_scan"
-            android:title="Scan"
-            app:itemBackground="@drawable/nav_view_item_background"/>
+            android:title="Scan" />
         <item
             android:id="@+id/nav_recommendations"
             android:icon="@drawable/ic_menu_recommendations"
-            android:title="Recommendations"
-            app:itemBackground="@drawable/nav_view_item_background"/>
+            android:title="Recommendations"/>
         <item
             android:id="@+id/nav_contacts"
             android:icon="@drawable/ic_menu_contacts"
-            android:title="Contacts"
-            app:itemBackground="@drawable/nav_view_item_background"/>
+            android:title="Contacts"/>
         <item
             android:id="@+id/nav_profile"
             android:icon="@drawable/ic_menu_profile"
-            android:title="Profile"
-            app:itemBackground="@drawable/nav_view_item_background"/>
+            android:title="Profile"/>
     </group>
 </menu>

@@ -25,9 +25,9 @@ class MainActivity : AppCompatActivity() {
             var userName = binding.MAEditUser.text.toString()
             var userPassword = binding.MAEditPassword.text.toString()
 
-            val response = getUsers(userName, userPassword)
+            //val response = getUsers(userName, userPassword)
 
-            Toast.makeText(this, response.toString(),Toast.LENGTH_LONG).show()
+            //Toast.makeText(this, response.toString(),Toast.LENGTH_LONG).show()
 
             val intent = Intent(this, NavDrawerActivity::class.java)
             startActivity(intent)

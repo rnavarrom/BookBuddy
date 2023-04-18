@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.BookBuddy" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/primary_green</item>
         <item name="colorPrimaryVariant">#4CAF50</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -12,6 +12,21 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/quicksand_medium</item>
+        <item name="fontFamily">@font/quicksand_medium</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:fontFamily">@font/quicksand_medium</item>
+        <item name="fontFamily">@font/quicksand_medium</item>
+    </style>
+
+    <style name="QuicksandTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">@font/quicksand_medium</item>
+    </style>
+
+    <style name="QuicksandButtonStyle" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">@font/quicksand_medium</item>
     </style>
 
     <style name="Theme.BookBuddy.NoActionBar">
