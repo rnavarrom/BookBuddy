@@ -52,6 +52,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:hint="User Name"
+        android:drawableStart="@drawable/ic_register_user"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/primary_green"
         />
     <EditText
         android:password="true"
@@ -63,6 +66,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="30dp"
         android:hint="Password"
+        android:drawableStart="@drawable/ic_register_password"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/primary_green"
         />
     <Button
         android:layout_width="300dp"

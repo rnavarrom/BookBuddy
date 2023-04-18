@@ -11,6 +11,7 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.api.logging
 import com.example.bookbuddy.databinding.ActivityMainBinding
 import com.example.bookbuddy.models.UserItem
+import com.example.bookbuddy.ui.navdrawer.NavDrawerActivity
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import kotlinx.coroutines.*
@@ -36,15 +37,15 @@ class MainActivity : AppCompatActivity() {
             var userPassword = binding.MAEditPassword.text.toString()
 
             if(!userName.isBlank() && !userPassword.isBlank()){
-                val response = getUsers(userName, Sha.calculateSHA(userPassword))
+                //val response = getUsers(userName, Sha.calculateSHA(userPassword))
 
-                if(response){
+                //if(response){
                     Toast.makeText(this, "loging in",Toast.LENGTH_LONG).show()
-                    var intent = Intent(this, CreateAccountActivity::class.java)
+                    var intent = Intent(this, NavDrawerActivity::class.java)
                     startActivity(intent)
-                }else{
-                    Toast.makeText(this, "Incorrect user or password",Toast.LENGTH_LONG).show()
-                }
+                //}else{
+                  //  Toast.makeText(this, "Incorrect user or password",Toast.LENGTH_LONG).show()
+                //}
             }else{
                 Toast.makeText(this, "Incorrect user or password",Toast.LENGTH_LONG).show()
             }

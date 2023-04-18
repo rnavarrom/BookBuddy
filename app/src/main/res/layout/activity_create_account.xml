@@ -51,6 +51,9 @@
         app:layout_constraintBottom_toTopOf="@+id/CA_Edit_Email"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:drawableStart="@drawable/ic_register_user"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/primary_green"
         />
     <EditText
         android:hint="Email"
@@ -60,6 +63,9 @@
         app:layout_constraintBottom_toTopOf="@+id/CA_Edit_Password"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:drawableStart="@drawable/ic_register_email"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/primary_green"
         />
 
     <EditText
@@ -70,6 +76,9 @@
         app:layout_constraintBottom_toTopOf="@+id/CA_Edit_Password2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:drawableStart="@drawable/ic_register_password"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/primary_green"
         />
     <EditText
         android:hint="Repeat Password"
@@ -80,6 +89,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="30dp"
+        android:drawableStart="@drawable/ic_register_password"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/primary_green"
         />
     <Button
         android:layout_width="300dp"
