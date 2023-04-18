@@ -49,6 +49,14 @@ class CrudApi(): CoroutineScope {
         val response = getRetrofit().create(BookAPI::class.java).getUserLogin(userName, password).body()
         return response!!
     }
+    suspend fun getUserExists(userName: String): Boolean {
+        val response = getRetrofit().create(BookAPI::class.java).getUserExists(userName).body()
+        return response!!
+    }
+    suspend fun getEmailExists(email: String): Boolean {
+        val response = getRetrofit().create(BookAPI::class.java).getEmailExists(email).body()
+        return response!!
+    }
     suspend fun insert(user : UserItem) {
 
         // Create Retrofit
@@ -93,7 +101,9 @@ class CrudApi(): CoroutineScope {
 
                 }
             }
+
         }
+
     }
 
 

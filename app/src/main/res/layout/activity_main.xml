@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity"
-    android:background="@drawable/gradient_background"
+    android:background="@drawable/gradient2"
     >
     <ImageView
         android:layout_width="200dp"
@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="350dp"
+        android:layout_marginBottom="450dp"
         android:src="@drawable/logonobg"
         />
     <TextView
@@ -24,24 +24,25 @@
         android:text="Hello World!"
         android:textColor="#4CAF50"
         android:id="@+id/MA_Text1"
+        app:layout_constraintTop_toBottomOf="@+id/MA_Image"
         app:layout_constraintBottom_toTopOf="@+id/MA_Edit_User"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/MA_Image"
+        app:layout_constraintEnd_toEndOf="parent"
         android:textSize="20sp"
         android:layout_marginBottom="20dp"
-        android:layout_marginStart="20dp"
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/MA_Text2"
         app:layout_constraintTop_toBottomOf="@+id/MA_Text1"
-        app:layout_constraintStart_toStartOf="@+id/MA_Text1"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/MA_Edit_User"
+        app:layout_constraintEnd_toEndOf="parent"
         android:text="Test"
         android:textSize="16sp"
         android:textColor="#4CAF50"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="40dp"
          />
     <EditText
         android:layout_width="300dp"
@@ -50,8 +51,10 @@
         app:layout_constraintBottom_toTopOf="@+id/MA_Edit_Password"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:hint="User Name"
         />
     <EditText
+        android:password="true"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:id="@+id/MA_Edit_Password"
@@ -59,6 +62,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="30dp"
+        android:hint="Password"
         />
     <Button
         android:layout_width="300dp"

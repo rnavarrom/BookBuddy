@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.CreateAccountActivity"
-    android:background="@drawable/gradient_background">
+    android:background="@drawable/gradient2">
     <ImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="350dp"
+        android:layout_marginBottom="450dp"
         android:src="@drawable/logonobg"
         />
     <TextView
@@ -26,17 +26,18 @@
         app:layout_constraintBottom_toTopOf="@+id/CA_Edit_User"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/CA_Image"
+        app:layout_constraintEnd_toEndOf="parent"
         android:textSize="20sp"
         android:layout_marginBottom="20dp"
-        android:layout_marginStart="20dp"
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/CA_Text2"
         app:layout_constraintTop_toBottomOf="@+id/CA_Text1"
-        app:layout_constraintStart_toStartOf="@+id/CA_Text1"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/CA_Edit_User"
+        app:layout_constraintEnd_toEndOf="parent"
         android:text="Join"
         android:textSize="16sp"
         android:textColor="#4CAF50"

@@ -10,11 +10,15 @@ interface BookAPI {
     @GET("/users/")
     suspend fun getUsers(): Response<UserList>
 
+    @GET("/api/user/name/{userName}")
+    suspend fun getUserExists(@Path("userName") userName: String): Response<Boolean>
+    @GET("/api/user/email/{email}")
+    suspend fun getEmailExists(@Path("email") email: String): Response<Boolean>
     @GET("/api/user/{userName}/{password}")
     suspend fun getUserLogin(@Path("userName") userName: String, @Path("password") password: String): Response<Boolean>
 
     @POST("/api/user/{user}")
-    suspend fun insertUser(@Body user: RequestBody): Response<UserItem>
+    suspend fun insertUser(@Body user: RequestBody): Response<Boolean>
     /*
     @GET("/productes/?llistat")
     suspend fun getProductes():Response<Productes>
