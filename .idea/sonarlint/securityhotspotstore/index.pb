@@ -1,3 +1,23 @@
 
 j
 :app/src/main/java/com/example/bookbuddy/models/UserItem.kt,0/4/04b49daef7e8998af92781cbd1947ed619d809ec
+S
+#.idea/sonarlint/issuestore/index.pb,9/f/9fe84ebb15faf917b7def6236dba604453cc61e0
+]
+-.idea/sonarlint/securityhotspotstore/index.pb,8/8/88a9255124c95bdc913197c120a8d560edc59c8e
+f
+6app/src/main/java/com/example/bookbuddy/api/CrudApi.kt,6/b/6b8fb58c481b1a18708df3124bec82713be3b305
+f
+6app/src/main/java/com/example/bookbuddy/api/BookAPI.kt,b/0/b036036ff06ef05c374e1d0961f811ed6e7ea08b
+{
+Kapp/src/main/java/com/example/bookbuddy/ui/navdrawer/BookDisplayFragment.kt,d/2/d27873ab0170ef296ef7abcb4e3d8006d0508a0e
+j
+:app/src/main/java/com/example/bookbuddy/ui/MainActivity.kt,5/6/5691b07a5643f04f6b0384a49c8806394eb7c41b
+y
+Iapp/src/main/java/com/example/bookbuddy/ui/navdrawer/NavDrawerActivity.kt,9/0/900d7d247ffe72f9d7c55f553214b53c8de8fd6c
+u
+Eapp/src/main/java/com/example/bookbuddy/adapters/SimpleBookAdapter.kt,6/5/65ba0c9b5433c9201c1d9fde7835b0769fb7123f
+w
+Gapp/src/main/java/com/example/bookbuddy/adapters/SearchResultAdapter.kt,f/b/fbdb31f4463ee43502347ce84e8f33a23f879c59
+v
+Fapp/src/main/java/com/example/bookbuddy/ui/navdrawer/SearchFragment.kt,f/f/ff2784b5a2e1905dff840f008efa25f084335d22

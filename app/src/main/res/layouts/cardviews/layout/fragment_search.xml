@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.navdrawer.SearchFragment">
 
-    <EditText
+    <AutoCompleteTextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:id="@+id/Search_view"
@@ -22,6 +22,7 @@
         android:drawableStart="@drawable/ic_search_icon"
         android:drawableTint="@color/primary_green"
         android:drawablePadding="10dp"
+        android:clickable="true"
         />
     <ImageButton
         android:layout_width="50dp"
@@ -38,10 +39,24 @@
         android:layout_height="wrap_content"
         android:id="@+id/Text_Result"
         android:text="Result"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/primary_green"
         android:drawableStart="@drawable/ic_search_book"
         app:layout_constraintTop_toBottomOf="@+id/Image_Button"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/Search_view"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/primary_green"
+        android:layout_marginTop="20dp"
         />
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Search_Recicler_View"
+        app:layout_constraintTop_toBottomOf="@+id/Text_Result"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
