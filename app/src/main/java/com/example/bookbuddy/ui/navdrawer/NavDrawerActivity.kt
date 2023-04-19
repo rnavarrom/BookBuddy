@@ -1,5 +1,6 @@
 package com.example.bookbuddy.ui.navdrawer
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import com.google.android.material.snackbar.Snackbar
@@ -13,6 +14,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.example.bookbuddy.R
 import com.example.bookbuddy.databinding.ActivityNavDrawerBinding
+import com.example.bookbuddy.utils.navController
+import com.example.bookbuddy.utils.navView
 
 class NavDrawerActivity : AppCompatActivity() {
 
@@ -27,17 +30,16 @@ class NavDrawerActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarNavDrawer.toolbar)
 
+
+
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        navView = binding.navView
+        navController = findNavController(R.id.nav_host_fragment_content_nav_drawer)
+
         binding.navSettings.setOnClickListener {
             // TODO: goto to settings fragment
+            navController.navigate(R.id.nav_book_display)
         }
-
-        binding.appBarNavDrawer.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-        val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
-        val navController = findNavController(R.id.nav_host_fragment_content_nav_drawer)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(

@@ -1,6 +1,7 @@
 package com.example.bookbuddy.api
 
 import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.models.Book
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,6 +44,11 @@ class CrudApi(): CoroutineScope {
 
     suspend fun getUserLogin(userName: String, password: String): Boolean {
         val response = getRetrofit().create(BookAPI::class.java).getUserLogin(userName, password).body()
+        return response!!
+    }
+
+    suspend fun getBook(isbn: String): Book {
+        val response = getRetrofit().create(BookAPI::class.java).getBookInfo(isbn).body()
         return response!!
     }
 
