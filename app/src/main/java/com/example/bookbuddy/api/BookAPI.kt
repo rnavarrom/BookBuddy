@@ -12,7 +12,7 @@ interface BookAPI {
     @GET("/api/user/{userName}/{password}")
     suspend fun getUserLogin(@Path("userName") userName: String, @Path("password") password: String): Response<Boolean>
 
-    @GET("/api/user/book/isbn/{isbn}")
+    @GET("/api/book/isbn/{isbn}")
     suspend fun getBookInfo(@Path("isbn") isbn: String): Response<Book>
 
     /*
