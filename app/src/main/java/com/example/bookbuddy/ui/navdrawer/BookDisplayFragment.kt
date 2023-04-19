@@ -51,6 +51,9 @@ class BookDisplayFragment : Fragment(), CoroutineScope {
             }
         }
 
+        binding.cl2.visibility = View.GONE
+        binding.cl.visibility = View.VISIBLE
+
         binding.dBookDescription.movementMethod = ScrollingMovementMethod();
 
         binding.bookMark.setOnClickListener {
