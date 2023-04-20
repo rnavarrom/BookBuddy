@@ -1,5 +1,6 @@
 package com.example.bookbuddy.api
 
+import com.example.bookbuddy.models.SimpleBook
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.models.UserList
 import okhttp3.RequestBody
@@ -15,10 +16,12 @@ interface BookAPI {
     @GET("/api/user/email/{email}")
     suspend fun getEmailExists(@Path("email") email: String): Response<Boolean>
     @GET("/api/user/{userName}/{password}")
-    suspend fun getUserLogin(@Path("userName") userName: String, @Path("password") password: String): Response<Boolean>
+    suspend fun getUserLogin(@Path("userName") userName: String, @Path("password") password: String): Response<UserItem>
+    @GET("/api/search/{book}")
+    suspend fun getSimpleSearch(@Path("book") book: String): Response<ArrayList<SimpleBook>>
 
     @POST("/api/user/{user}")
-    suspend fun insertUser(@Body user: RequestBody): Response<Boolean>
+    suspend fun insertUser(@Body user: UserItem): Response<Boolean>
     /*
     @GET("/productes/?llistat")
     suspend fun getProductes():Response<Productes>

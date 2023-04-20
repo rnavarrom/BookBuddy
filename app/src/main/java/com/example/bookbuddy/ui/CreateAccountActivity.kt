@@ -40,7 +40,7 @@ class CreateAccountActivity : AppCompatActivity() {
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
-                crudApi.insert(user) //addUser(user)
+                crudApi.addUserToAPI(user) //insert(user) //addUser(user)
             }
             corrutina.join()
         }

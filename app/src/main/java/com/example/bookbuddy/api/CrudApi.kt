@@ -2,12 +2,14 @@ package com.example.bookbuddy.api
 
 import android.util.Log
 import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.models.SimpleBook
 import com.example.bookbuddy.models.UserItem
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import retrofit2.Retrofit
@@ -45,7 +47,7 @@ class CrudApi(): CoroutineScope {
             .addInterceptor(logging)
             .build()
 
-    suspend fun getUserLogin(userName: String, password: String): Boolean {
+    suspend fun getUserLogin(userName: String, password: String): UserItem {
         val response = getRetrofit().create(BookAPI::class.java).getUserLogin(userName, password).body()
         return response!!
     }
@@ -57,6 +59,16 @@ class CrudApi(): CoroutineScope {
         val response = getRetrofit().create(BookAPI::class.java).getEmailExists(email).body()
         return response!!
     }
+
+    suspend fun getSimpleSearch(book: String): ArrayList<SimpleBook>{
+        val response = getRetrofit().create(BookAPI::class.java).getSimpleSearch(book).body()
+        return response!!
+    }
+    suspend fun addUserToAPI(user: UserItem): Boolean {
+        val call = getRetrofit().create(BookAPI::class.java).insertUser(user)
+        return call.isSuccessful
+    }
+/*
     suspend fun insert(user : UserItem) {
 
         // Create Retrofit
@@ -106,7 +118,7 @@ class CrudApi(): CoroutineScope {
 
     }
 
-
+*/
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job

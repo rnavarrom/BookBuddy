@@ -22,7 +22,8 @@
         android:drawableStart="@drawable/ic_search_icon"
         android:drawableTint="@color/primary_green"
         android:drawablePadding="10dp"
-        android:clickable="true"
+        android:singleLine="true"
+        android:maxLines="1"
         />
     <ImageButton
         android:layout_width="50dp"

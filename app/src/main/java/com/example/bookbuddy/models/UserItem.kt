@@ -11,6 +11,6 @@ data class UserItem(
     val password: String = "",
     val profiles: List<Any> = emptyList(),
     val reports: List<Any> = emptyList(),
-    val userId: Int = 0,
+    val userId: Int = -1,
     val email: String = ""
 )

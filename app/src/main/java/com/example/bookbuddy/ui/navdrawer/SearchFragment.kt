@@ -1,5 +1,7 @@
 package com.example.bookbuddy.ui.navdrawer
 
+import android.app.appsearch.SearchResult
+import android.content.Context
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -9,13 +11,19 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.bookbuddy.adapters.SearchResultAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentSearchBinding
-
+import com.example.bookbuddy.models.SimpleBook
+import com.example.bookbuddy.models.UserItem
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class SearchFragment : Fragment() {
     lateinit var binding: FragmentSearchBinding
-
+    lateinit var searchResultList: ArrayList<SimpleBook>
+    private lateinit var adapter: SearchResultAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -24,20 +32,54 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding =  FragmentSearchBinding.inflate(layoutInflater, container, false)
 
-        binding.SearchView.imeOptions = EditorInfo.IME_ACTION_SEARCH
-        binding.SearchView.setOnKeyListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                Toast.makeText(context, "Searching....", Toast.LENGTH_LONG).show()
+        //val searchTextView = findViewById<AutoCompleteTextView>(R.id.search_text_view)
+
+        binding.SearchView.setOnKeyListener { view, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+                // Realizar búsqueda
+                Toast.makeText(context, "", Toast.LENGTH_LONG).show()
+                var searchValue = binding.SearchView.text.toString()
+                searchResultList =  performSearch(searchValue, requireContext())
+
+                if(!searchResultList.isEmpty()){
+                    binding.SearchReciclerView.setLayoutManager(GridLayoutManager(context, 3))
+                    adapter = SearchResultAdapter(searchResultList)
+                    binding.SearchReciclerView.adapter = adapter
+                }
+
                 true
             } else {
-                false // Indica que el evento no ha sido manejado
+                false
             }
         }
 
-        binding.SearchReciclerView.setLayoutManager(GridLayoutManager(context, 3))
+
+        //
 
         return binding.root
     }
+
+
+    }
+
+
+private fun performSearch(searchValue: String, context : Context) : ArrayList<SimpleBook> {
+    // Aquí se realiza la búsqueda con el texto ingresado en el AutoCompleteTextView
+   Toast.makeText(context, "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
+
+    var searchResultList = arrayListOf<SimpleBook>()
+
+    runBlocking {
+        val crudApi = CrudApi()
+        val corrutina = launch {
+            searchResultList = crudApi.getSimpleSearch(searchValue)
+        }
+        corrutina.join()
+    }
+    return searchResultList
 }
+
+

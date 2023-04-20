@@ -8,8 +8,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-/*
-class SearchResultAdapter(val llista: ArrayList<SearchResultList>) : RecyclerView.Adapter<SearchResultAdapter.ViewHolder>(){
+import com.example.bookbuddy.models.SimpleBook
+
+class SearchResultAdapter(val llista: ArrayList<SimpleBook>) : RecyclerView.Adapter<SearchResultAdapter.ViewHolder>(){
     class ViewHolder(val vista: View): RecyclerView.ViewHolder(vista){
         val imatge = vista.findViewById<ImageView>(R.id.book_cover)
         val text = vista.findViewById<TextView>(R.id.book_rating)
@@ -23,8 +24,8 @@ class SearchResultAdapter(val llista: ArrayList<SearchResultList>) : RecyclerVie
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.text.setText(llista[position].rating)
-        Glide.with(holder.vista.context).load(llista[position].img).into(holder.imatge)
+        holder.text.setText(llista[position].rating.toString())
+        Glide.with(holder.vista.context).load(llista[position].coverUrl).into(holder.imatge)
 
         holder.vista.setOnClickListener{
 
@@ -32,4 +33,3 @@ class SearchResultAdapter(val llista: ArrayList<SearchResultList>) : RecyclerVie
     }
     override fun getItemCount(): Int = llista.size
 }
-*/
