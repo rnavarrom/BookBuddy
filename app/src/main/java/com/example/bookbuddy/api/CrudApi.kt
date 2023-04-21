@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.models.SimpleBook
 import com.example.bookbuddy.models.UserItem
+import com.example.bookbuddy.utils.currentUser
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import kotlinx.coroutines.*
@@ -64,13 +65,15 @@ class CrudApi(): CoroutineScope {
         val response = getRetrofit().create(BookAPI::class.java).getSimpleSearch(book).body()
         return response!!
     }
+
     suspend fun addUserToAPI(user: UserItem): Boolean {
-        val call = getRetrofit().create(BookAPI::class.java).insertUser(user)
+        val call = getRetrofit().create(BookAPI::class.java).insertUser(user.name, user.password, user.email)
         return call.isSuccessful
     }
-/*
-    suspend fun insert(user : UserItem) {
 
+/*
+    suspend fun insert(user : UserItem) : Boolean{
+        var succesful = false
         // Create Retrofit
         val retrofit = getRetrofit()
 
@@ -95,7 +98,7 @@ class CrudApi(): CoroutineScope {
 
             withContext(Dispatchers.Main) {
                 if (response.isSuccessful) {
-
+                    succesful = true
                     // Convert raw JSON to pretty JSON using GSON library
                     val gson = GsonBuilder().setPrettyPrinting().create()
                     val prettyJson = gson.toJson(
@@ -112,12 +115,14 @@ class CrudApi(): CoroutineScope {
                     Log.e("RETROFIT_ERROR", response.code().toString())
 
                 }
+
+
             }
 
+
         }
-
+        return succesful
     }
-
 */
 
     override val coroutineContext: CoroutineContext

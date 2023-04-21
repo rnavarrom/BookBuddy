@@ -57,7 +57,7 @@
         android:drawableTint="@color/primary_green"
         />
     <EditText
-        android:password="true"
+        android:inputType="textPassword"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:id="@+id/MA_Edit_Password"
@@ -69,6 +69,16 @@
         android:drawableStart="@drawable/ic_register_password"
         android:drawablePadding="10dp"
         android:drawableTint="@color/primary_green"
+        android:maxLength="22"
+        />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/password_toggle"
+        android:src="@drawable/ic_password_toggle"
+        app:layout_constraintTop_toTopOf="@+id/MA_Edit_Password"
+        app:layout_constraintEnd_toEndOf="@+id/MA_Edit_Password"
+        android:layout_marginTop="10dp"
         />
     <Button
         android:layout_width="300dp"

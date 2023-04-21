@@ -1,5 +1,8 @@
 package com.example.bookbuddy.utils
 
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
+import android.widget.EditText
 import com.example.bookbuddy.api.CrudApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -43,6 +46,16 @@ class Tools {
                 corrutina.join()
             }
             return response
+        }
+
+        fun tooglePasswordVisible(editText: EditText){
+            if (editText.transformationMethod == PasswordTransformationMethod.getInstance()) {
+                //eyeToggle.setImageResource(R.drawable.ic_eye_visible)
+                editText.transformationMethod = HideReturnsTransformationMethod.getInstance()
+            } else {
+                //eyeToggle.setImageResource(R.drawable.ic_eye_hidden)
+                editText.transformationMethod = PasswordTransformationMethod.getInstance()
+            }
         }
     }
 }

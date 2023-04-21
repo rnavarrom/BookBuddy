@@ -19,9 +19,8 @@ interface BookAPI {
     suspend fun getUserLogin(@Path("userName") userName: String, @Path("password") password: String): Response<UserItem>
     @GET("/api/search/{book}")
     suspend fun getSimpleSearch(@Path("book") book: String): Response<ArrayList<SimpleBook>>
-
-    @POST("/api/user/{user}")
-    suspend fun insertUser(@Body user: UserItem): Response<Boolean>
+    @POST("/api/user/{name}/{password}/{email}")
+    suspend fun insertUser(@Path("name") name: String, @Path("password") password: String, @Path("email") email: String): Response<Boolean>
     /*
     @GET("/productes/?llistat")
     suspend fun getProductes():Response<Productes>

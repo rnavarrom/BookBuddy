@@ -9,13 +9,14 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.ActivityCreateAccountBinding
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class CreateAccountActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCreateAccountBinding
     var checkValues: Boolean = false
-    lateinit var user : UserItem
+    lateinit var user: UserItem
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityCreateAccountBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
@@ -24,76 +25,75 @@ class CreateAccountActivity : AppCompatActivity() {
 
             checkValues = CheckFields()
             if(checkValues){
-                user = getValues()
-                postUser(user)
+            currentUser = UserItem()
+            getValues()
+
+            var success = postUser(currentUser)
+            if (success) {
                 Toast.makeText(this, "Acount created!", Toast.LENGTH_LONG).show()
                 var intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("userName", user.name)
+                intent.putExtra("userName", currentUser.name)
                 startActivity(intent)
+            } else {
+                Toast.makeText(this, "Acount not created!", Toast.LENGTH_LONG).show()
             }
+
+            }
+        }
+
+        binding.passwordToggle1.setOnClickListener {
+            Tools.tooglePasswordVisible(binding.CAEditPassword)
+        }
+        binding.passwordToggle2.setOnClickListener {
+            Tools.tooglePasswordVisible(binding.CAEditPassword2)
         }
         setContentView(binding.root)
     }
 
-    fun postUser(user: UserItem) {
+    fun postUser(user: UserItem): Boolean {
         var response = false
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
-                crudApi.addUserToAPI(user) //insert(user) //addUser(user)
+                response = crudApi.addUserToAPI(user)
             }
             corrutina.join()
         }
+        return response
     }
 
-    fun getValues(): UserItem {
-        var user = UserItem(
-            emptyList(),
-            emptyList(),
-            "",
-            emptyList(),
-            emptyList(),
-            false,
-            binding.CAEditUser.text.toString(),
-            Sha.calculateSHA(binding.CAEditPassword.text.toString()),
-            emptyList(),
-            emptyList(),
-            0,
-            binding.CAEditEmail.text.toString()
-        )
-        return user
+    fun getValues() {
+        currentUser.name = binding.CAEditUser.text.toString()
+        currentUser.password = Sha.calculateSHA(binding.CAEditPassword.text.toString())
+        currentUser.email = binding.CAEditEmail.text.toString()
     }
 
     fun CheckFields(): Boolean {
-        if (!binding.CAEditUser.text.isBlank() &&
-            !binding.CAEditPassword.text.isBlank() &&
-            !binding.CAEditPassword2.text.isBlank() &&
-            !binding.CAEditEmail.text.isBlank()
+        if (binding.CAEditUser.text.isBlank() ||
+            binding.CAEditPassword.text.isBlank() ||
+            binding.CAEditPassword2.text.isBlank() ||
+            binding.CAEditEmail.text.isBlank()
         ) {
-            if (binding.CAEditPassword.text.toString().equals(binding.CAEditPassword2.text.toString())) {
-                if (Tools.isEmailValid(binding.CAEditEmail.text.toString())) {
-                    if(!Tools.isEmailAviable(binding.CAEditEmail.text.toString())){
-                        if(!Tools.isNameAviable(binding.CAEditUser.text.toString())){
-                            return true
-                        }else{
-                            Toast.makeText(this, "User name already in use!", Toast.LENGTH_LONG).show()
-                            return false
-                        }
-                    }else{
-                        Toast.makeText(this, "Email is already in use!", Toast.LENGTH_LONG).show()
-                        return false
-                    }
-                } else {
-                    Toast.makeText(this, "Incorrect email!", Toast.LENGTH_LONG).show()
-                    return false
-                }
-            } else {
-                Toast.makeText(this, "Passwords are not equal!", Toast.LENGTH_LONG).show()
-                return false
-            }
-        } else {
-            Toast.makeText(this, "There are empty fields!", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Can't be blank fields!", Toast.LENGTH_LONG).show()
             return false
         }
+        if (binding.CAEditPassword.text.toString() != binding.CAEditPassword2.text.toString()
+        ) {
+            Toast.makeText(this, "Passwords need to be the same!", Toast.LENGTH_LONG).show()
+            return false
+        }
+        if (!Tools.isEmailValid(binding.CAEditEmail.text.toString())) {
+            Toast.makeText(this, "Invalid email!", Toast.LENGTH_LONG).show()
+            return false
+        }
+        if (Tools.isNameAviable(binding.CAEditUser.text.toString())) {
+            Toast.makeText(this, "User name already in use!", Toast.LENGTH_LONG).show()
+            return false
+        }
+        if (Tools.isEmailAviable(binding.CAEditEmail.text.toString())) {
+            Toast.makeText(this, "Email already used!", Toast.LENGTH_LONG).show()
+            return false
+        }
+        return true
     }
 }

@@ -9,4 +9,4 @@ import com.google.android.material.navigation.NavigationView
 
 lateinit var navView: NavigationView
 lateinit var navController : NavController
-lateinit var user : UserItem
+lateinit var currentUser : UserItem

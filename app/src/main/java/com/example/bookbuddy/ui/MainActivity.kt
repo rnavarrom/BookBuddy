@@ -3,6 +3,8 @@ package com.example.bookbuddy.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.widget.Toast
 import com.example.bookbuddy.Utils.Sha
@@ -12,7 +14,8 @@ import com.example.bookbuddy.api.logging
 import com.example.bookbuddy.databinding.ActivityMainBinding
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.NavDrawerActivity
-import com.example.bookbuddy.utils.user
+import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.currentUser
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import kotlinx.coroutines.*
@@ -38,9 +41,9 @@ class MainActivity : AppCompatActivity() {
             var userPassword = binding.MAEditPassword.text.toString()
 
             if (!userName.isBlank() && !userPassword.isBlank()) {
-                //val response = getUsers(userName, Sha.calculateSHA(userPassword))
-
-                if (user.userId != -1) {
+                getUsers(userName, Sha.calculateSHA(userPassword))
+                print("---------------" + currentUser.userId)
+                if (currentUser.userId != -1) {
                     Toast.makeText(this, "loging in", Toast.LENGTH_LONG).show()
                     var intent = Intent(this, NavDrawerActivity::class.java)
                     startActivity(intent)
@@ -51,22 +54,23 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Incorrect user or password", Toast.LENGTH_LONG).show()
                 }
             }
-            binding.MAButtonSignIn.setOnClickListener {
-                var intent = Intent(this, CreateAccountActivity::class.java)
-                startActivity(intent)
-            }
         }
-
-        fun getUsers(userName: String, password: String): Int {
-
-            runBlocking {
-                val crudApi = CrudApi()
-                val corrutina = launch {
-                    user = crudApi.getUserLogin(userName, password)
-                }
-                corrutina.join()
+        binding.MAButtonSignIn.setOnClickListener {
+            var intent = Intent(this, CreateAccountActivity::class.java)
+            startActivity(intent)
+        }
+        binding.passwordToggle.setOnClickListener {
+            val editText = binding.MAEditPassword
+            Tools.tooglePasswordVisible(editText)
+        }
+    }
+    fun getUsers(userName: String, password: String){
+        runBlocking {
+            val crudApi = CrudApi()
+            val corrutina = launch {
+                currentUser = crudApi.getUserLogin(userName, password)
             }
-            return user.userId
+            corrutina.join()
         }
     }
 }

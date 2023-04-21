@@ -56,6 +56,7 @@
         android:drawableTint="@color/primary_green"
         />
     <EditText
+        android:inputType="textEmailAddress"
         android:hint="Email"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -69,6 +70,7 @@
         />
 
     <EditText
+        android:inputType="textPassword"
         android:hint="Password"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -79,8 +81,10 @@
         android:drawableStart="@drawable/ic_register_password"
         android:drawablePadding="10dp"
         android:drawableTint="@color/primary_green"
+        android:maxLength="22"
         />
     <EditText
+        android:inputType="textPassword"
         android:hint="Repeat Password"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -92,6 +96,25 @@
         android:drawableStart="@drawable/ic_register_password"
         android:drawablePadding="10dp"
         android:drawableTint="@color/primary_green"
+        android:maxLength="22"
+        />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/password_toggle1"
+        android:src="@drawable/ic_password_toggle"
+        app:layout_constraintTop_toTopOf="@+id/CA_Edit_Password"
+        app:layout_constraintEnd_toEndOf="@+id/CA_Edit_Password"
+        android:layout_marginTop="10dp"
+        />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/password_toggle2"
+        android:src="@drawable/ic_password_toggle"
+        app:layout_constraintTop_toTopOf="@+id/CA_Edit_Password2"
+        app:layout_constraintEnd_toEndOf="@+id/CA_Edit_Password2"
+        android:layout_marginTop="10dp"
         />
     <Button
         android:layout_width="300dp"
