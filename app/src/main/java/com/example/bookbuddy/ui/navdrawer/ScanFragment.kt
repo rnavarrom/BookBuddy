@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -31,21 +32,9 @@ class ScanFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding =  FragmentScanBinding.inflate(layoutInflater, container, false)
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         return binding.root
     }
-
-    /*
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        /*
-        if (allPermissionsGranted()) {
-            startCamera()
-        } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
-        }
-        */
-    }
-    */
 
     fun startCamera(){
         val scannerView = binding.scannerView
@@ -53,8 +42,10 @@ class ScanFragment : Fragment() {
         codeScanner = CodeScanner(activity, scannerView)
         codeScanner.decodeCallback = DecodeCallback {
             activity.runOnUiThread {
-                Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
-                navController.navigate(R.id.nav_book_display)
+                //Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
+                val bundle = Bundle()
+                bundle.putString("isbn", it.text)
+                navController.navigate(R.id.nav_book_display, bundle)
             }
         }
         scannerView.setOnClickListener {
