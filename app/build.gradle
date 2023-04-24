@@ -92,4 +92,7 @@ dependencies {
 
     //scanner
     implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
+
+    //reload
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 }

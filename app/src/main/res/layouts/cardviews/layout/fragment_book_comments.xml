@@ -6,18 +6,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.navdrawer.BookCommentsFragment">
 
+    <!--Swipe Refresh Layout -->
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main_content"
+        android:id="@+id/main_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_comments"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/main_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintBottom_toTopOf="@id/loading_comment"
+            >
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_comments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <ProgressBar
+            android:id="@+id/loading_comment"
+            android:visibility="gone"
+            android:indeterminate="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_comment"
@@ -28,15 +46,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/loading_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="20dp"
-        android:visibility="visible">
+        android:visibility="gone">
         <ProgressBar
             android:id="@+id/loading_bar"
             android:indeterminate="true"

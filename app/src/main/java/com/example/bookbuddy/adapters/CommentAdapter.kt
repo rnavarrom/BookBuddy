@@ -14,7 +14,7 @@ import com.example.bookbuddy.models.SimpleBook
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.utils.navController
 
-class CommentAdapter(val list: java.util.ArrayList<Comment>) :
+class CommentAdapter(var list: java.util.ArrayList<Comment>) :
     RecyclerView.Adapter<CommentAdapter.viewholder>() {
 
     class viewholder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -36,6 +36,11 @@ class CommentAdapter(val list: java.util.ArrayList<Comment>) :
         holder.username.text = list[position].user!!.name
         holder.date.text = list[position].fecha.toString()
         holder.comment.text = list[position].comentText
+    }
+
+    fun updateList(newList: ArrayList<Comment>){
+        list = newList
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {

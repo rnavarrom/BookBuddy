@@ -36,7 +36,7 @@ class BookDisplayFragment : Fragment(), CoroutineScope {
     ): View? {
         binding =  FragmentBookDisplayBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-
+        println("ON CREATE VIEW EXECUTED")
         binding.bookMark.tag = "Add"
 
         val isbn = arguments?.getString("isbn")
