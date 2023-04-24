@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_book_display"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,26 +11,43 @@
         android:id="@+id/cl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="20dp">
+        android:layout_margin="20dp"
+        android:visibility="gone">
 
-        <ImageView
-            android:id="@+id/d_book_cover"
-            android:layout_width="145dp"
-            android:layout_height="200dp"
-            android:background="@color/black"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl2"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_width="120dp"
+            android:layout_height="180dp">
+            <ImageView
+                android:id="@+id/d_book_cover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/purple_200"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/book_mark"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/primary_green"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:src="@drawable/ic_markbook_read"
+                android:layout_width="30dp"
+                android:layout_height="30dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
             android:id="@+id/d_book_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:text="TITLE VERY LONG"
-            android:textSize="20sp"
+            android:text="TITLE VERY LONG VERY LONG"
+            android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/d_book_cover"
-            app:layout_constraintTop_toTopOf="@id/d_book_cover" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/cl2"
+            app:layout_constraintTop_toTopOf="@id/cl2" />
 
         <TextView
             android:id="@+id/d_book_author"
@@ -70,9 +88,9 @@
             android:theme="@style/RatingBar"
             android:layout_marginTop="10dp"
             style = "?android:attr/ratingBarStyleSmall"
-            app:layout_constraintEnd_toEndOf="@id/d_book_cover"
-            app:layout_constraintStart_toStartOf="@id/d_book_cover"
-            app:layout_constraintTop_toBottomOf="@id/d_book_cover" />
+            app:layout_constraintEnd_toEndOf="@id/cl2"
+            app:layout_constraintStart_toStartOf="@id/cl2"
+            app:layout_constraintTop_toBottomOf="@id/cl2" />
 
         <TextView
             android:id="@+id/d_book_genres_t"
@@ -83,7 +101,7 @@
             android:textColor="@color/primary_green"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@id/d_book_cover"
+            app:layout_constraintStart_toStartOf="@id/cl2"
             app:layout_constraintTop_toBottomOf="@id/book_rating_display" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -110,10 +128,11 @@
             android:id="@+id/d_book_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
             android:maxLines="12"
             android:lines="12"
-            android:text="Long DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong Description"
+            android:text="Long DescriptionLong DescriptionLong DescriptionLong DLong DescriptionLong DescriptionLong DescriptionLong DesescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong Description"
+            android:justificationMode="inter_word"
+            android:scrollbars="vertical"
             app:layout_constraintStart_toStartOf="@id/d_book_description_t"
             app:layout_constraintTop_toBottomOf="@id/d_book_description_t" />
 
@@ -121,22 +140,20 @@
             android:id="@+id/icon_add_comments"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:layout_marginTop="10dp"
             android:src="@drawable/icon_add_comment"
             app:tint="@color/primary_green"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/d_book_description"/>
+            app:layout_constraintTop_toTopOf="@id/icon_comments"/>
 
         <ImageView
             android:id="@+id/icon_comments"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
             android:src="@drawable/ic_book_comments"
             app:tint="@color/primary_green"
             app:layout_constraintEnd_toStartOf="@id/icon_add_comments"
-            app:layout_constraintTop_toBottomOf="@id/d_book_description"/>
+            app:layout_constraintBottom_toTopOf="@id/number_comments"/>
 
         <TextView
             android:id="@+id/number_comments"
@@ -145,9 +162,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="@id/icon_comments"
-            app:layout_constraintTop_toBottomOf="@id/icon_comments"/>
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loading_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:visibility="visible">
+        <ProgressBar
+            android:id="@+id/loading_bar"
+            android:indeterminate="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

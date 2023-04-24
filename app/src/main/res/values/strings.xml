@@ -12,5 +12,6 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
 
-
+    <string name="toggle_flash">Toggle Flash</string>
+    <string name="scanned_data">Scanned Data</string>
 </resources>

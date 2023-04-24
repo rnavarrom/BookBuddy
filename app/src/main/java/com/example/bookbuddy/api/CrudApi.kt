@@ -2,19 +2,17 @@ package com.example.bookbuddy.api
 
 import android.util.Log
 import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.models.SimpleBook
-import com.example.bookbuddy.models.UserItem
-import com.example.bookbuddy.utils.currentUser
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
-import kotlinx.coroutines.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Path
 import java.security.SecureRandom
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
@@ -124,6 +122,61 @@ class CrudApi(): CoroutineScope {
         return succesful
     }
 */
+
+    suspend fun getBook(isbn: String): Book {
+        val response = getRetrofit().create(BookAPI::class.java).getBookInfo(isbn).body()
+        return response!!
+    }
+
+    // Readed
+    suspend fun getReadedsFromUser(user_id: Int, position: Int): List<Readed?> {
+        val response = getRetrofit().create(ReadedAPI::class.java).getReadedsFromUser(user_id, position).body()
+        return response!!
+    }
+
+    suspend fun getReadedsFromBook(user_id: Int, book_id: Int): Readed? {
+        val response = getRetrofit().create(ReadedAPI::class.java).getReadedsFromBook(user_id, book_id)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
+    }
+
+    suspend fun addReadedToAPI(readed: Readed): Boolean {
+        val call = getRetrofit().create(ReadedAPI::class.java).insertReaded(readed)
+        return call.isSuccessful
+    }
+
+    suspend fun deleteReadedToAPI(readed_id: Int): Boolean {
+        val call = getRetrofit().create(ReadedAPI::class.java).deleteReaded(readed_id)
+        return call.isSuccessful
+    }
+
+    suspend fun getCommentsFromBook(book_id: Int, position: Int): List<Comment>? {
+        val response = getRetrofit().create(CommentAPI::class.java).getCommentsBook(book_id, position)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
+    }
+
+    suspend fun getCommentsCounter(book_id: Int): Int? {
+        val response = getRetrofit().create(CommentAPI::class.java).getCommentsCounter(book_id)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
+    }
+
+    suspend fun addCommentToAPI(commenttext: String, userid: Int, bookid: Int): Boolean {
+        val call = getRetrofit().create(CommentAPI::class.java).insertComment(commenttext, userid, bookid)
+        return call.isSuccessful
+    }
+
+    suspend fun addImageToAPI(image: String): Boolean {
+        val call = getRetrofit().create(ImageAPI::class.java).insertImage(image)
+        return call.isSuccessful
+    }
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job

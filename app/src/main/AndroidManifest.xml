@@ -4,6 +4,15 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!--Permission for camera-->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- For profile picture -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -18,7 +27,8 @@
             android:name=".ui.navdrawer.NavDrawerActivity"
             android:exported="false"
             android:label="@string/title_activity_nav_drawer"
-            android:theme="@style/Theme.BookBuddy.NoActionBar" />
+            android:theme="@style/Theme.BookBuddy.NoActionBar"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".ui.CreateAccountActivity"
             android:exported="false" />

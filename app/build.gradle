@@ -89,4 +89,10 @@ dependencies {
     //notificacions
     implementation "androidx.media:media:1.6.0"
     implementation 'com.google.android.material:material:<version>'
+
+    //scanner
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
+
+    //reload
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 }

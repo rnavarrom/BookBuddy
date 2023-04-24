@@ -3,24 +3,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.navdrawer.ProfileFragment">
 
-    <EditText
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/Text"
-        android:layout_marginBottom="20dp"
-        android:hint="Enter Any Sentence"
-        android:gravity="center"
-        android:textSize="16dp"/>
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp">
+        <Button
+            android:id="@+id/b_select_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="@color/primary_green"
+            android:text="SELECT IMAGE"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-    <!--when you press this button it will
-        convert text into speech-->
-    <Button
-        android:layout_width="wrap_content"
-        android:id="@+id/btnText"
-        android:layout_height="wrap_content"
-        android:text="Click Here"
-        android:layout_gravity="center"/>
+        <!--ImageView to preview the selected image-->
+        <ImageView
+            android:id="@+id/iv_preview_image"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            app:layout_constraintTop_toBottomOf="@id/b_select_image"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp" />
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
