@@ -9,6 +9,7 @@ import android.view.WindowManager
 import com.example.bookbuddy.R
 import com.example.bookbuddy.databinding.FragmentHomeBinding
 import com.example.bookbuddy.databinding.FragmentRecommendationsBinding
+import com.example.bookbuddy.utils.navController
 
 class RecommendationsFragment : Fragment() {
     lateinit var binding: FragmentRecommendationsBinding
@@ -23,6 +24,11 @@ class RecommendationsFragment : Fragment() {
     ): View? {
         binding =  FragmentRecommendationsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+
+        val bundle = Bundle()
+        bundle.putInt("book_id", 1)
+        navController.navigate(R.id.nav_read_comment, bundle)
+
         return binding.root
     }
 }

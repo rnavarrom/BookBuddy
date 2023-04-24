@@ -50,18 +50,16 @@ class BookCommentsFragment : Fragment(), CoroutineScope {
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         launch {
-            getCommentsBook(bookId)
+            getCommentsBook(bookId, true)
             loadingEnded()
         }
 
-        binding.rvComments.layoutManager = LinearLayoutManager(context)
-        adapter = CommentAdapter(comments as ArrayList<Comment>)
-        binding.rvComments.adapter = adapter
+
 
         return binding.root
     }
 
-    fun getCommentsBook(bookId: Int){
+    fun getCommentsBook(bookId: Int, addAdapter: Boolean){
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
@@ -74,7 +72,13 @@ class BookCommentsFragment : Fragment(), CoroutineScope {
             }
             corrutina.join()
         }
-        adapter.updateList(comments as ArrayList<Comment>)
+        if (addAdapter){
+            binding.rvComments.layoutManager = LinearLayoutManager(context)
+            adapter = CommentAdapter(comments as ArrayList<Comment>)
+            binding.rvComments.adapter = adapter
+        } else {
+            adapter.updateList(comments as ArrayList<Comment>)
+        }
     }
 
     fun loadingEnded(){
@@ -90,7 +94,7 @@ class BookCommentsFragment : Fragment(), CoroutineScope {
         binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
             position = 0
             currentPage = 0
-            getCommentsBook(bookId)
+            getCommentsBook(bookId, false)
             binding.mainContent.isRefreshing = false;
         });
 
@@ -102,10 +106,9 @@ class BookCommentsFragment : Fragment(), CoroutineScope {
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-                if (!isLoading && lastVisibleItem == totalItemCount - 1 && dy > 0) {
+                if (!isLoading && lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     position = totalItemCount
                     println("LOADING MORE")
-                    binding.loadingComment.visibility = View.VISIBLE
                     loadMoreItems()
                     isLoading = true
                 }
@@ -115,9 +118,12 @@ class BookCommentsFragment : Fragment(), CoroutineScope {
 
     private fun loadMoreItems() {
         currentPage++
-        getCommentsBook(bookId)
-        isLoading = false
+        binding.loadingComment.visibility = View.VISIBLE
+        getCommentsBook(bookId, false)
+        Thread.sleep(3000)
+
         binding.loadingComment.visibility = View.GONE
+        isLoading = false
     }
 
     override fun onDestroyView() {
