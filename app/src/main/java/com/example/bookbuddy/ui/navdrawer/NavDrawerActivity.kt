@@ -38,6 +38,8 @@ class NavDrawerActivity : AppCompatActivity() {
 
         binding.navSettings.setOnClickListener {
             // TODO: goto to settings fragment
+            val drawerLayout = navView.parent as DrawerLayout
+            drawerLayout.closeDrawers()
             navController.navigate(R.id.nav_book_display)
         }
         // Passing each menu ID as a set of Ids because each

@@ -17,12 +17,12 @@
             android:id="@+id/cl2"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_width="145dp"
-            android:layout_height="200dp">
+            android:layout_width="120dp"
+            android:layout_height="180dp">
             <ImageView
                 android:id="@+id/d_book_cover"
-                android:layout_width="145dp"
-                android:layout_height="200dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:background="@color/purple_200"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="TITLE VERY LONG VERY LONG"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/cl2"
@@ -127,10 +127,10 @@
             android:id="@+id/d_book_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
             android:maxLines="12"
             android:lines="12"
             android:text="Long DescriptionLong DescriptionLong DescriptionLong DLong DescriptionLong DescriptionLong DescriptionLong DesescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong Description"
+            android:justificationMode="inter_word"
             android:scrollbars="vertical"
             app:layout_constraintStart_toStartOf="@id/d_book_description_t"
             app:layout_constraintTop_toBottomOf="@id/d_book_description_t" />
@@ -168,7 +168,8 @@
         android:id="@+id/loading_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="20dp">
+        android:layout_margin="20dp"
+        android:visibility="visible">
         <ProgressBar
             android:id="@+id/loading_bar"
             android:indeterminate="true"

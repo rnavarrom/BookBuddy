@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import com.example.bookbuddy.R
 import com.example.bookbuddy.databinding.FragmentContactsBinding
 import com.example.bookbuddy.databinding.FragmentHomeBinding
@@ -21,6 +22,7 @@ class ContactsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding =  FragmentContactsBinding.inflate(layoutInflater, container, false)
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         return binding.root
     }
 }
