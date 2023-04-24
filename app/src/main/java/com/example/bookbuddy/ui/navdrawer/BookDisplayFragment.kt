@@ -15,10 +15,9 @@ import com.example.bookbuddy.R
 import com.example.bookbuddy.adapters.GenreAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentBookDisplayBinding
-import com.example.bookbuddy.models.Book
-import com.example.bookbuddy.models.Genre
-import com.example.bookbuddy.models.Readed
+import com.example.bookbuddy.models.*
 import com.example.bookbuddy.utils.navController
+import com.example.bookbuddy.utils.navView
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -141,9 +140,15 @@ class BookDisplayFragment : Fragment(), CoroutineScope {
     }
 
     fun setBook(book: Book?){
-        Glide.with(this)
-            .load(book?.cover)
-            .into(binding.dBookCover)
+        try {
+            Glide.with(requireActivity().applicationContext)
+                .load(book?.cover)
+                .error(R.drawable.ic_error)
+                .into(binding.dBookCover)
+        } catch (e: Exception){
+            println(e)
+        }
+
         binding.dBookTitle.text = book!!.title
         binding.dBookAuthor.text = book!!.authors.size.toString()
         binding.dBookPublishdate.text = book!!.publicationDate
