@@ -24,8 +24,9 @@ class SearchResultAdapter(val llista: ArrayList<SimpleBook>) : RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         holder.text.setText(llista[position].rating.toString())
-        Glide.with(holder.vista.context).load(llista[position].coverUrl).into(holder.imatge)
+        Glide.with(holder.vista.context).load(llista[position].cover).into(holder.imatge)
 
         holder.vista.setOnClickListener{
 

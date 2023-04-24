@@ -16,5 +16,6 @@ data class UserItem(
     var userId: Int = -1,
     var email: String = "",
     var pending: List<Any> = emptyList(),
-    var readed: List<Any> = emptyList()
+    var readed: List<Any> = emptyList(),
+    var reading: Book? = null
 )
