@@ -33,6 +33,11 @@ class ScanFragment : Fragment() {
     ): View? {
         binding =  FragmentScanBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        if (true){
+            val bundle = Bundle()
+            bundle.putString("isbn", "9788408004097")
+            navController.navigate(R.id.nav_book_display, bundle)
+        }
         return binding.root
     }
 

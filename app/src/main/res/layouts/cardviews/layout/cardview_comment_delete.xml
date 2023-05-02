@@ -61,6 +61,15 @@
             app:layout_constraintBottom_toBottomOf="@id/profile_imageView"
             app:layout_constraintStart_toStartOf="@id/tv_name" />
 
+        <ImageButton
+            android:id="@+id/drop_menu"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/ic_drop_down_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
         <TextView
             android:id="@+id/tv_comment"
             android:text="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"

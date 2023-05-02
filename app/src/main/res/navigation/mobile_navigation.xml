@@ -62,4 +62,16 @@
         android:id="@+id/nav_read_comment"
         android:name="com.example.bookbuddy.ui.navdrawer.BookCommentsFragment"
         tools:layout="@layout/fragment_book_comments" />
+
+    <fragment
+        android:id="@+id/nav_libraries_list"
+        android:name="com.example.bookbuddy.ui.navdrawer.LibrariesListFragment"
+        tools:layout="@layout/fragment_libraries_list" />
+
+    <fragment
+        android:id="@+id/nav_library_map"
+        android:name="com.example.bookbuddy.ui.navdrawer.LibraryMapFragment"
+        tools:layout="@layout/fragment_library_map" />
+
+
 </navigation>

@@ -1,15 +1,16 @@
 package com.example.bookbuddy.api
 
 import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.models.Book
-import com.example.bookbuddy.models.Readed
+import com.example.bookbuddy.models.*
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.models.User.Comment2
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Path
@@ -21,6 +22,9 @@ import javax.net.ssl.X509TrustManager
 import kotlin.coroutines.CoroutineContext
 
 class CrudApi(): CoroutineScope {
+    val urlapi = "https://api.openrouteservice.org/"
+    val apikey = "5b3ce3597851110001cf6248a7e5128d424e4a4dbc75aaece5822482"
+
     private var job: Job = Job()
 
     //private var okHttpClient: OkHttpClient = UnsafeOkHttpClient.unsafeOkHttpClient
@@ -40,6 +44,12 @@ class CrudApi(): CoroutineScope {
         return Retrofit.Builder().baseUrl(Constants.BASE_URL).client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson)).build()
     }
+
+    private fun getRetrofitRoute(): Retrofit {
+        return Retrofit.Builder().baseUrl(urlapi)
+            .addConverterFactory(GsonConverterFactory.create()).build()
+    }
+
     private fun getClient(): OkHttpClient =
         OkHttpClient.Builder()
             .addInterceptor(HeaderInterceptor())
@@ -80,6 +90,8 @@ class CrudApi(): CoroutineScope {
         return call.isSuccessful
     }
 
+    // Comments
+
     suspend fun getCommentsFromBook(book_id: Int, position: Int): List<Comment>? {
         val response = getRetrofit().create(CommentAPI::class.java).getCommentsBook(book_id, position)
         if (response.isSuccessful){
@@ -96,14 +108,135 @@ class CrudApi(): CoroutineScope {
         return null
     }
 
-    suspend fun addCommentToAPI(commenttext: String, userid: Int, bookid: Int): Boolean {
-        val call = getRetrofit().create(CommentAPI::class.java).insertComment(commenttext, userid, bookid)
+    suspend fun getCommentsFromUser(user_id: Int, book_id: Int): Comment? {
+        val response = getRetrofit().create(CommentAPI::class.java).getUserComment(user_id, book_id)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
+    }
+
+
+    suspend fun addCommentToAPI(commenttext: String, rating: Int, userid: Int, bookid: Int): Boolean {
+        val call = getRetrofit().create(CommentAPI::class.java).insertComment(commenttext, rating, userid, bookid)
         return call.isSuccessful
     }
+
+    suspend fun updateCommentToAPI(commentid: Int, commenttext: String, rating: Int, userid: Int, bookid: Int): Boolean {
+        val call = getRetrofit().create(CommentAPI::class.java).updateComment(commentid, commenttext, rating, userid, bookid)
+        return call.isSuccessful
+    }
+
+    suspend fun deleteCommentToAPI(id: Int): Boolean{
+        val call = getRetrofit().create(CommentAPI::class.java).deleteComment(id)
+        return call.isSuccessful
+    }
+
+    // Images
 
     suspend fun addImageToAPI(image: String): Boolean {
         val call = getRetrofit().create(ImageAPI::class.java).insertImage(image)
         return call.isSuccessful
+    }
+
+    // Libraries
+
+    suspend fun getBookLibraries(isbn: String): List<Library> {
+        val response = getRetrofit().create(LibraryAPI::class.java).getLibrariesBook(isbn).body()
+        return response!!
+    }
+
+    suspend fun getBookLibrariesExtended(isbn: String, latitude: Double, longitude: Double): List<LibraryExtended> {
+        val response = getRetrofit().create(LibraryAPI::class.java).getLibrariesExtendedBook(isbn, latitude, longitude).body()
+        return response!!
+    }
+
+    suspend fun getBookLibrariesCount(isbn: String): Int {
+        val response = getRetrofit().create(LibraryAPI::class.java).getLibraryCount(isbn).body()
+        return response!!
+    }
+
+    // Follows
+
+    suspend fun getIsFollowing(userId: Int, userFollowedId: Int): Boolean? {
+        val response = getRetrofit().create(FollowsAPI::class.java).getFollowing(userId, userFollowedId)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
+    }
+
+    suspend fun getFollowerCount(userId: Int): Int? {
+        println("BB")
+        val response = getRetrofit().create(FollowsAPI::class.java).getFollowersUser(userId)
+        println("AA")
+        if (response.isSuccessful){
+            println("AAA" + response.body().toString())
+            return response.body()
+        }
+        return null
+    }
+
+    suspend fun addFollowToAPI(userId: Int, userFollowedId: Int): Boolean {
+        val call = getRetrofit().create(FollowsAPI::class.java).insertFollow(userId, userFollowedId)
+        return call.isSuccessful
+    }
+
+    suspend fun deleteFollowAPI(userId: Int, userFollowedId: Int): Boolean{
+        val call = getRetrofit().create(FollowsAPI::class.java).deleteFollow(userId, userFollowedId)
+        return call.isSuccessful
+    }
+
+
+    // Trace routes
+    suspend fun getWalkingRoute(start: String, end: String): CleanResponse? {
+        var response: Response<com.example.bookbuddy.models.Response>? = null
+
+        val corrutina = launch {
+            response =
+                getRetrofitRoute().create(RouteAPI::class.java)
+                    .getWalkingRoute(apikey, start, end)
+        }
+        corrutina.join()
+
+        if (response!!.isSuccessful) {
+            val resposta = CleanResponse(
+                response!!.body()!!.features[0].geometry.coordinates,
+                response!!.body()!!.features[0].properties.summary.distance,
+                response!!.body()!!.features[0].properties.summary.duration
+            )
+
+            return resposta
+        } else{
+            return null
+        }
+    }
+
+    suspend fun getCarRoute(start: String, end: String): CleanResponse? {
+        var response: Response<com.example.bookbuddy.models.Response>? = null
+
+        val corrutina = launch {
+            response =
+                getRetrofitRoute().create(RouteAPI::class.java)
+                    .getCarRoute(apikey, start, end)
+        }
+        corrutina.join()
+
+        if (response!!.isSuccessful) {
+            if (response!!.isSuccessful) {
+                val resposta = CleanResponse(
+                    response!!.body()!!.features[0].geometry.coordinates,
+                    response!!.body()!!.features[0].properties.summary.distance,
+                    response!!.body()!!.features[0].properties.summary.duration
+                )
+
+                return resposta
+            } else{
+                return null
+            }
+        } else{
+            return null
+        }
     }
 
     override val coroutineContext: CoroutineContext

@@ -16,10 +16,21 @@ interface CommentAPI {
 
     @GET("/api/comments/book/{book_id}")
     suspend fun getCommentsCounter(@Path("book_id") bookInt: Int): Response<Int>
+
+    @GET("/api/comment/{userId}/{bookId}")
+    suspend fun getUserComment(@Path("userId") userId: Int, @Path("bookId") bookId: Int): Response<Comment>
+
     //@POST("/api/comment/{}")
     //suspend fun insertComment(@Body comment: Comment2): Response<Comment2>
 
-    @POST("/api/comment/{commenttext}/{userid}/{bookid}")
-    suspend fun insertComment(@Path("commenttext") commenttext: String, @Path("userid") userid: Int, @Path("bookid") bookid: Int ): Response<Comment>
+    @PUT("/api/comment/{commentid}/{commenttext}/{rating}/{userid}/{bookid}")
+    suspend fun updateComment(@Path("commentid") commentid: Int, @Path("commenttext") commenttext: String, @Path("rating") rating: Int, @Path("userid") userid: Int, @Path("bookid") bookid: Int ): Response<Comment>
+
+    @POST("/api/comment/{commenttext}/{rating}/{userid}/{bookid}")
+    suspend fun insertComment(@Path("commenttext") commenttext: String, @Path("rating") rating: Int, @Path("userid") userid: Int, @Path("bookid") bookid: Int ): Response<Comment>
+
+    @DELETE("/api/comment/{id}")
+    suspend fun deleteComment(@Path("id") id: Int): Response<Comment>
+
 
 }

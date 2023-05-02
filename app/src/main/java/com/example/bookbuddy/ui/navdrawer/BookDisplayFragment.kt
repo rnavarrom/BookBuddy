@@ -45,6 +45,7 @@ class BookDisplayFragment : Fragment(), CoroutineScope {
             setBook(book)
             getBookMark(book!!.bookId, 1)
             getCommentsNumber(book!!.bookId)
+            getLibraries(isbn)
             loadingEnded()
         }
 
@@ -110,6 +111,18 @@ class BookDisplayFragment : Fragment(), CoroutineScope {
         binding.numberComments.text = commentsNumber.toString()
     }
 
+    fun getLibraries(isbn: String?){
+        var librariesNumber: Int? = 0
+        runBlocking {
+            val crudApi = CrudApi()
+            val corrutina = launch {
+                librariesNumber = crudApi.getBookLibrariesCount(isbn!!)
+            }
+            corrutina.join()
+        }
+        binding.numberLibraries.text = librariesNumber.toString()
+    }
+
     fun loadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.cl.visibility = View.VISIBLE
@@ -136,6 +149,22 @@ class BookDisplayFragment : Fragment(), CoroutineScope {
             val bundle = Bundle()
             bundle.putInt("book_id", book!!.bookId)
             navController.navigate(R.id.nav_read_comment, bundle)
+        }
+
+        binding.iconLibraries.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("isbn", book!!.isbn)
+            navController.navigate(R.id.nav_libraries_list, bundle)
+            /*
+            val newFragment = LibrariesListFragment()
+            newFragment.arguments = bundle
+            val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
+
+            fragmentTransaction.replace(R.id.fragment_book_display, newFragment)
+                .addToBackStack(null)
+                .commit()
+
+             */
         }
     }
 

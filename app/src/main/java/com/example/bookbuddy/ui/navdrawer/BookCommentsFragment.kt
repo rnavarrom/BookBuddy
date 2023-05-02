@@ -62,9 +62,9 @@ class BookCommentsFragment : Fragment(), CoroutineScope {
             val crudApi = CrudApi()
             val corrutina = launch {
                 if (position == 0){
-                    comments = crudApi.getCommentsFromBook(bookId,position) as MutableList<Comment>?
+                    comments = setCardview(crudApi.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?
                 } else {
-                    comments!!.addAll((crudApi.getCommentsFromBook(bookId,position) as MutableList<Comment>?)!!)
+                    comments!!.addAll((setCardview(crudApi.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?)!!)
                 }
 
             }
@@ -104,13 +104,6 @@ class BookCommentsFragment : Fragment(), CoroutineScope {
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-                println("-------------------")
-                println(lastVisibleItem)
-                println(totalItemCount)
-                println(isLoading)
-                println(dy)
-                println("-------------------")
-
                 if (!isLoading && lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
@@ -121,6 +114,15 @@ class BookCommentsFragment : Fragment(), CoroutineScope {
                 }
             }
         })
+    }
+
+    private fun setCardview(coms: ArrayList<Comment>): ArrayList<Comment>{
+        coms.forEach { c ->
+            if (c.user!!.userId == 1){
+                c.typeCardview = 1
+            }
+        }
+        return coms
     }
 
     private fun loadMoreItems() {

@@ -9,6 +9,9 @@
     <!-- For profile picture -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false"/>
@@ -23,6 +26,11 @@
         android:theme="@style/Theme.BookBuddy"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
         <activity
             android:name=".ui.navdrawer.NavDrawerActivity"
             android:exported="false"

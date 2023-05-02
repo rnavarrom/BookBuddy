@@ -137,6 +137,25 @@
             app:layout_constraintTop_toBottomOf="@id/d_book_description_t" />
 
         <ImageView
+            android:id="@+id/icon_libraries"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/ic_library"
+            app:tint="@color/primary_green"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/number_libraries"/>
+
+        <TextView
+            android:id="@+id/number_libraries"
+            android:text="4"
+            android:textColor="@color/primary_green"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@id/icon_libraries"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <ImageView
             android:id="@+id/icon_add_comments"
             android:layout_width="35dp"
             android:layout_height="35dp"

@@ -3,11 +3,13 @@ package com.example.bookbuddy.models.User
 data class Comment(
     val book: Any? = null,
     var bookId: Int,
+    var rating: Int,
     val comentId: Int? = null,
     var comentText: String,
     val fecha: String? = null,
     val user: User? = null,
-    var userId: Int
+    var userId: Int,
+    var typeCardview: Int = 0
 )
 
 data class Comment2(
