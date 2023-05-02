@@ -1,26 +1,25 @@
 package com.example.bookbuddy.api
 
 import com.example.bookbuddy.models.Book
+import com.example.bookbuddy.models.SimpleBook
+import com.example.bookbuddy.models.Test.User
 import com.example.bookbuddy.models.UserList
-import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 
 interface BookAPI {
     @GET("/users/")
     suspend fun getUsers(): Response<UserList>
-
     @GET("/api/user/name/{userName}")
     suspend fun getUserExists(@Path("userName") userName: String): Response<Boolean>
     @GET("/api/user/email/{email}")
     suspend fun getEmailExists(@Path("email") email: String): Response<Boolean>
     @GET("/api/user/{userName}/{password}")
-    suspend fun getUserLogin(@Path("userName") userName: String, @Path("password") password: String): Response<UserItem>
+    suspend fun getUserLogin(@Path("userName") userName: String, @Path("password") password: String): Response<User>
     @GET("/api/books/search/{book}")
     suspend fun getSimpleSearch(@Path("book") book: String): Response<ArrayList<SimpleBook>>
     @POST("/api/user/{name}/{password}/{email}")
     suspend fun insertUser(@Path("name") name: String, @Path("password") password: String, @Path("email") email: String): Response<Boolean>
-
     @GET("/api/book/isbn/{isbn}")
     suspend fun getBookInfo(@Path("isbn") isbn: String): Response<Book>
 

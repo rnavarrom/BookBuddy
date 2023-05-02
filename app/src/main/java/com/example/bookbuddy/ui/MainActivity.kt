@@ -16,6 +16,7 @@ import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.NavDrawerActivity
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.currentUser
+//import com.example.bookbuddy.utils.currentUser
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import kotlinx.coroutines.*
@@ -37,16 +38,21 @@ class MainActivity : AppCompatActivity() {
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
 
         binding.MAButtonLogin.setOnClickListener {
+
             var userName = binding.MAEditUser.text.toString()
             var userPassword = binding.MAEditPassword.text.toString()
 
-            if (!userName.isBlank() && !userPassword.isBlank()) {
+            if (userName.isNotBlank() && userPassword.isNotBlank()) {
+
                 getUsers(userName, Sha.calculateSHA(userPassword))
-                print("---------------" + currentUser.userId)
+                //print("---------------" + currentUser.userId)
                 if (currentUser.userId != -1) {
+
+
                     Toast.makeText(this, "loging in", Toast.LENGTH_LONG).show()
                     var intent = Intent(this, NavDrawerActivity::class.java)
                     startActivity(intent)
+
                     //}else{
                     //  Toast.makeText(this, "Incorrect user or password",Toast.LENGTH_LONG).show()
                     //}
@@ -64,13 +70,17 @@ class MainActivity : AppCompatActivity() {
             Tools.tooglePasswordVisible(editText)
         }
     }
-    fun getUsers(userName: String, password: String){
-        runBlocking {
-            val crudApi = CrudApi()
-            val corrutina = launch {
-                currentUser = crudApi.getUserLogin(userName, password)
-            }
-            corrutina.join()
+
+
+        fun getUsers(userName: String, password: String) {
+            runBlocking {
+                val crudApi = CrudApi()
+                val corrutina = launch {
+                    currentUser = crudApi.getUserLogin(userName, password)
+                }
+                corrutina.join()
         }
+
     }
+
 }

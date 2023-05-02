@@ -10,6 +10,7 @@ import com.example.bookbuddy.databinding.ActivityCreateAccountBinding
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.currentUser
+import com.example.bookbuddy.utils.currentUserCreate
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -18,6 +19,7 @@ class CreateAccountActivity : AppCompatActivity() {
     var checkValues: Boolean = false
     lateinit var user: UserItem
     override fun onCreate(savedInstanceState: Bundle?) {
+
         binding = ActivityCreateAccountBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
 
@@ -25,10 +27,10 @@ class CreateAccountActivity : AppCompatActivity() {
 
             checkValues = CheckFields()
             if(checkValues){
-            currentUser = UserItem()
+            currentUserCreate = UserItem()
             getValues()
 
-            var success = postUser(currentUser)
+            var success = postUser(currentUserCreate)
             if (success) {
                 Toast.makeText(this, "Acount created!", Toast.LENGTH_LONG).show()
                 var intent = Intent(this, MainActivity::class.java)
@@ -63,9 +65,9 @@ class CreateAccountActivity : AppCompatActivity() {
     }
 
     fun getValues() {
-        currentUser.name = binding.CAEditUser.text.toString()
-        currentUser.password = Sha.calculateSHA(binding.CAEditPassword.text.toString())
-        currentUser.email = binding.CAEditEmail.text.toString()
+        currentUserCreate.name = binding.CAEditUser.text.toString()
+        currentUserCreate.password = Sha.calculateSHA(binding.CAEditPassword.text.toString())
+        currentUserCreate.email = binding.CAEditEmail.text.toString()
     }
 
     fun CheckFields(): Boolean {

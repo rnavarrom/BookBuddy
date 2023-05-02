@@ -2,7 +2,9 @@ package com.example.bookbuddy.ui.navdrawer
 
 import android.graphics.text.LineBreaker
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.text.method.ScrollingMovementMethod
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,14 +19,16 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentBookDisplayBinding
 import com.example.bookbuddy.models.*
 import com.example.bookbuddy.utils.navController
-import com.example.bookbuddy.utils.navView
 import kotlinx.coroutines.*
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 
-class BookDisplayFragment : Fragment(), CoroutineScope {
+class BookDisplayFragment : Fragment(), CoroutineScope, TextToSpeech.OnInitListener {
     lateinit var binding: FragmentBookDisplayBinding
     private var job: Job = Job()
     private var book: Book? = null
+    private var tts: TextToSpeech? = null
+    private lateinit var textts: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -37,9 +41,11 @@ class BookDisplayFragment : Fragment(), CoroutineScope {
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
         println("ON CREATE VIEW EXECUTED")
         binding.bookMark.tag = "Add"
-
+        tts = TextToSpeech(context,this)
         val isbn = arguments?.getString("isbn")
-
+        binding.iconTextToSpeach.setOnClickListener {
+            Speak()
+        }
         launch {
             book = getBook(isbn)!!
             setBook(book)
@@ -187,7 +193,31 @@ class BookDisplayFragment : Fragment(), CoroutineScope {
         get() = Dispatchers.Main + job
 
     override fun onDestroy() {
+        if(tts != null){
+            tts!!.stop()
+            tts!!.shutdown()
+        }
         super.onDestroy()
         job.cancel()
+    }
+private fun Speak(){
+    if(tts!!.isSpeaking){
+        tts!!.stop()
+    }else{
+
+        tts!!.getDefaultVoice()
+        textts = binding.dBookTitle.text.toString() + "  " + binding.dBookDescription.text.toString()
+        tts!!.speak(textts, TextToSpeech.QUEUE_FLUSH, null, null)
+    }
+}
+    override fun onInit(p0: Int) {
+        if(p0 == TextToSpeech.SUCCESS){
+            var output = tts!!.setLanguage(Locale("es", "ES")) // tts!!.getDefaultVoice().getLocale()
+            if(output == TextToSpeech.LANG_MISSING_DATA || output == TextToSpeech.LANG_NOT_SUPPORTED){
+                Log.e("TTS", "The language is not supported")
+            }else{
+
+            }
+        }
     }
 }

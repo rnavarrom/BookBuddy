@@ -53,9 +53,8 @@ class ProfileFragment : Fragment() {
         binding =  FragmentProfileBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-        binding.bSelectImage.setOnClickListener {
+        binding.profileImageView.setOnClickListener {
             comprobaPermisos()
-
         }
         return binding.root
     }
@@ -70,7 +69,7 @@ class ProfileFragment : Fragment() {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
             val imageUri = data.data
             // Hacer algo con la imagen seleccionada
-            binding.ivPreviewImage.setImageURI(imageUri)
+            binding.profileImageView.setImageURI(imageUri)
             if (imageUri != null) {
                 uploadImage(imageUri)
             }

@@ -1,18 +1,19 @@
 package com.example.bookbuddy.api
 
-import android.util.Log
 import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.models.Book
+import com.example.bookbuddy.models.Readed
+import com.example.bookbuddy.models.SimpleBook
+import com.example.bookbuddy.models.Test.User
+import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.models.UserItem
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Path
 import java.security.SecureRandom
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
@@ -46,7 +47,7 @@ class CrudApi(): CoroutineScope {
             .addInterceptor(logging)
             .build()
 
-    suspend fun getUserLogin(userName: String, password: String): UserItem {
+    suspend fun getUserLogin(userName: String, password: String): User {
         val response = getRetrofit().create(BookAPI::class.java).getUserLogin(userName, password).body()
         return response!!
     }
@@ -69,59 +70,7 @@ class CrudApi(): CoroutineScope {
         return call.isSuccessful
     }
 
-/*
-    suspend fun insert(user : UserItem) : Boolean{
-        var succesful = false
-        // Create Retrofit
-        val retrofit = getRetrofit()
 
-        // Create Service
-        val service = retrofit.create(BookAPI::class.java)
-
-        // Create JSON using JSONObject
-        val jsonObject = JSONObject()
-        jsonObject.put("name", user.name)
-        jsonObject.put("password", user.password)
-        jsonObject.put("email", user.email)
-
-        // Convert JSONObject to String
-        val jsonObjectString = jsonObject.toString()
-
-        // Create RequestBody ( We're not using any converter, like GsonConverter, MoshiConverter e.t.c, that's why we use RequestBody )
-        val requestBody = jsonObjectString.toRequestBody("application/json".toMediaTypeOrNull())
-
-        CoroutineScope(Dispatchers.IO).launch {
-            // Do the POST request and get response
-            val response = service.insertUser(requestBody)
-
-            withContext(Dispatchers.Main) {
-                if (response.isSuccessful) {
-                    succesful = true
-                    // Convert raw JSON to pretty JSON using GSON library
-                    val gson = GsonBuilder().setPrettyPrinting().create()
-                    val prettyJson = gson.toJson(
-                        JsonParser.parseString(
-                            response.body()
-                                ?.toString() // About this thread blocking annotation : https://github.com/square/retrofit/issues/3255
-                        )
-                    )
-
-                    Log.d("Pretty Printed JSON :", prettyJson)
-
-                } else {
-
-                    Log.e("RETROFIT_ERROR", response.code().toString())
-
-                }
-
-
-            }
-
-
-        }
-        return succesful
-    }
-*/
 
     suspend fun getBook(isbn: String): Book {
         val response = getRetrofit().create(BookAPI::class.java).getBookInfo(isbn).body()

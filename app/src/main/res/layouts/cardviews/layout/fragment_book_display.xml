@@ -12,7 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="20dp"
-        android:visibility="gone">
+        >
+
+        <!--
+android:visibility="gone"
+-->
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl2"
@@ -153,6 +157,16 @@
             android:src="@drawable/ic_book_comments"
             app:tint="@color/primary_green"
             app:layout_constraintEnd_toStartOf="@id/icon_add_comments"
+            app:layout_constraintBottom_toTopOf="@id/number_comments"/>
+
+        <ImageView
+            android:id="@+id/icon_text_to_speach"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="20dp"
+            android:src="@drawable/ic_text_to_speach"
+            app:tint="@color/primary_green"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/number_comments"/>
 
         <TextView

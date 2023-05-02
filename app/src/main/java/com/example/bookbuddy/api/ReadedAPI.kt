@@ -1,8 +1,6 @@
 package com.example.bookbuddy.api
 
-import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Readed
-import com.example.bookbuddy.models.UserList
 import retrofit2.Response
 import retrofit2.http.*
 

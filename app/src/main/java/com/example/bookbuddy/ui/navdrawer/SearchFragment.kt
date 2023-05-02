@@ -40,13 +40,14 @@ class SearchFragment : Fragment() {
         binding.SearchView.setOnKeyListener { view, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
                 // Realizar búsqueda
-                Toast.makeText(context, "", Toast.LENGTH_LONG).show()
+                //Toast.makeText(context, "", Toast.LENGTH_LONG).show()
                 var searchValue = binding.SearchView.text.toString()
                 searchResultList =  performSearch(searchValue, requireContext())
 
                 if(!searchResultList.isEmpty()){
+
                     binding.SearchReciclerView.setLayoutManager(GridLayoutManager(context, 3))
-                    adapter = SearchResultAdapter(searchResultList)
+                    adapter = SearchResultAdapter(searchResultList, requireActivity().supportFragmentManager, this)
                     binding.SearchReciclerView.adapter = adapter
                 }
 

@@ -9,7 +9,115 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="15dp">
+        >
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/profile_imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/nav_header_desc"
+            app:srcCompat="@mipmap/ic_launcher_round"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="30dp"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/profile_imageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_user_name"
+                android:text="User Name"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_texto2"
+                android:text="texto de muestra"
+                />
+            <Button
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:id="@+id/bt_profile"
+                android:text="button"
+                />
+        </LinearLayout>
+        <!--
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/profile_buttons_ll"
+            app:layout_constraintBottom_toTopOf="@+id/profile_rv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="15dp"
+            >
+            -->
+        <View
+            android:id="@+id/dev1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_grey"
+            app:layout_constraintBottom_toTopOf="@+id/profile_bt2"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+        <Button
+            android:layout_width="0dp"
+            app:layout_constraintWidth_percent="0.34"
+            android:layout_height="wrap_content"
+            android:id="@+id/profile_bt1"
+            app:layout_constraintBottom_toTopOf="@+id/profile_rv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/profile_bt2"
+            android:text="bt1"
+            android:textColor="@color/primary_green"
+            style="?android:attr/borderlessButtonStyle"
+            />
+        <Button
+            android:layout_width="0dp"
+            app:layout_constraintWidth_percent="0.33"
+            android:layout_height="wrap_content"
+            android:id="@+id/profile_bt2"
+            app:layout_constraintBottom_toTopOf="@+id/profile_rv"
+            app:layout_constraintStart_toEndOf="@+id/profile_bt1"
+            app:layout_constraintEnd_toStartOf="@+id/profile_bt3"
+            android:text="bt1"
+            android:textColor="@color/primary_green"
+            style="?android:attr/borderlessButtonStyle"
+            />
+        <Button
+            android:layout_width="0dp"
+            app:layout_constraintWidth_percent="0.33"
+            android:layout_height="wrap_content"
+            android:id="@+id/profile_bt3"
+            app:layout_constraintBottom_toTopOf="@+id/profile_rv"
+            app:layout_constraintStart_toEndOf="@+id/profile_bt2"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="bt1"
+            android:textColor="@color/primary_green"
+            style="?android:attr/borderlessButtonStyle"
+            />
+        <!--
+        </LinearLayout>
+        -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            android:id="@+id/profile_rv"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+
+
+        <!--
         <Button
             android:id="@+id/b_select_image"
             android:layout_width="wrap_content"
@@ -23,7 +131,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
-        <!--ImageView to preview the selected image-->
+
         <ImageView
             android:id="@+id/iv_preview_image"
             android:layout_width="match_parent"
@@ -32,6 +140,6 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp" />
-
+-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

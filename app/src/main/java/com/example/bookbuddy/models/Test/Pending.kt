@@ -1,15 +1,15 @@
-package com.example.bookbuddy.models
+package com.example.bookbuddy.models.Test
 
-data class Book(
-    val authors: List<Author>,
+data class Pending(
     val bookId: Int,
+    val bookLibraries: List<Any>,
+    val comments: List<Any>,
     val cover: String,
     val description: String,
-    val genres: List<Genre>,
     val isbn: String,
-    val languages: List<Language>,
     val pages: Int,
     val publicationDate: String,
     val rating: Double,
+    val readeds: List<Any>,
     val title: String
 )
