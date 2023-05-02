@@ -14,7 +14,7 @@ import com.example.bookbuddy.models.SimpleBook
 import com.example.bookbuddy.ui.navdrawer.BookDisplayFragment
 import com.example.bookbuddy.ui.navdrawer.NavDrawerActivity
 import com.example.bookbuddy.utils.navController
-
+/*
 class SimpleBookAdapter(val list: java.util.ArrayList<SimpleBook>) :
     RecyclerView.Adapter<SimpleBookAdapter.viewholder>() {
     class viewholder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -41,3 +41,5 @@ class SimpleBookAdapter(val list: java.util.ArrayList<SimpleBook>) :
         return list.size
     }
 }
+
+ */

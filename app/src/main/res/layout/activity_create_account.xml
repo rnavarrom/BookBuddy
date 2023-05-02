@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.CreateAccountActivity"
-    android:background="@drawable/gradient_background">
+    android:background="@drawable/gradient2">
     <ImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
@@ -14,7 +14,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="350dp"
+        android:layout_marginBottom="450dp"
         android:src="@drawable/logonobg"
         />
     <TextView
@@ -26,17 +26,18 @@
         app:layout_constraintBottom_toTopOf="@+id/CA_Edit_User"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/CA_Image"
+        app:layout_constraintEnd_toEndOf="parent"
         android:textSize="20sp"
         android:layout_marginBottom="20dp"
-        android:layout_marginStart="20dp"
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/CA_Text2"
         app:layout_constraintTop_toBottomOf="@+id/CA_Text1"
-        app:layout_constraintStart_toStartOf="@+id/CA_Text1"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/CA_Edit_User"
+        app:layout_constraintEnd_toEndOf="parent"
         android:text="Join"
         android:textSize="16sp"
         android:textColor="#4CAF50"
@@ -50,8 +51,12 @@
         app:layout_constraintBottom_toTopOf="@+id/CA_Edit_Email"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:drawableStart="@drawable/ic_register_user"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/primary_green"
         />
     <EditText
+        android:inputType="textEmailAddress"
         android:hint="Email"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -59,9 +64,13 @@
         app:layout_constraintBottom_toTopOf="@+id/CA_Edit_Password"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:drawableStart="@drawable/ic_register_email"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/primary_green"
         />
 
     <EditText
+        android:inputType="textPassword"
         android:hint="Password"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -69,8 +78,13 @@
         app:layout_constraintBottom_toTopOf="@+id/CA_Edit_Password2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:drawableStart="@drawable/ic_register_password"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/primary_green"
+        android:maxLength="22"
         />
     <EditText
+        android:inputType="textPassword"
         android:hint="Repeat Password"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -79,6 +93,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginBottom="30dp"
+        android:drawableStart="@drawable/ic_register_password"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/primary_green"
+        android:maxLength="22"
+        />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/password_toggle1"
+        android:src="@drawable/ic_password_toggle"
+        app:layout_constraintTop_toTopOf="@+id/CA_Edit_Password"
+        app:layout_constraintEnd_toEndOf="@+id/CA_Edit_Password"
+        android:layout_marginTop="10dp"
+        />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/password_toggle2"
+        android:src="@drawable/ic_password_toggle"
+        app:layout_constraintTop_toTopOf="@+id/CA_Edit_Password2"
+        app:layout_constraintEnd_toEndOf="@+id/CA_Edit_Password2"
+        android:layout_marginTop="10dp"
         />
     <Button
         android:layout_width="300dp"

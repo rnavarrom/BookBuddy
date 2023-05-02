@@ -1,9 +1,13 @@
 package com.example.bookbuddy.api
 
 import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.models.Book
+import com.example.bookbuddy.models.Readed
+import com.example.bookbuddy.models.SimpleBook
+import com.example.bookbuddy.models.Test.User
 import com.example.bookbuddy.models.*
 import com.example.bookbuddy.models.User.Comment
-import com.example.bookbuddy.models.User.Comment2
+import com.example.bookbuddy.models.UserItem
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +17,6 @@ import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Path
 import java.security.SecureRandom
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
@@ -56,10 +59,30 @@ class CrudApi(): CoroutineScope {
             .addInterceptor(logging)
             .build()
 
-    suspend fun getUserLogin(userName: String, password: String): Boolean {
+    suspend fun getUserLogin(userName: String, password: String): User {
         val response = getRetrofit().create(BookAPI::class.java).getUserLogin(userName, password).body()
         return response!!
     }
+    suspend fun getUserExists(userName: String): Boolean {
+        val response = getRetrofit().create(BookAPI::class.java).getUserExists(userName).body()
+        return response!!
+    }
+    suspend fun getEmailExists(email: String): Boolean {
+        val response = getRetrofit().create(BookAPI::class.java).getEmailExists(email).body()
+        return response!!
+    }
+
+    suspend fun getSimpleSearch(book: String): ArrayList<SimpleBook>{
+        val response = getRetrofit().create(BookAPI::class.java).getSimpleSearch(book).body()
+        return response!!
+    }
+
+    suspend fun addUserToAPI(user: UserItem): Boolean {
+        val call = getRetrofit().create(BookAPI::class.java).insertUser(user.name, user.password, user.email)
+        return call.isSuccessful
+    }
+
+
 
     suspend fun getBook(isbn: String): Book {
         val response = getRetrofit().create(BookAPI::class.java).getBookInfo(isbn).body()
