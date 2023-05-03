@@ -6,20 +6,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-import com.example.bookbuddy.models.Genre
-import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.models.LibraryExtended
-import com.example.bookbuddy.models.SimpleBook
-import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.utils.navController
+
 
 class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var ubi: Location?) :
     RecyclerView.Adapter<LibraryAdapter.viewholder>() {
+
+    private var selected: LibraryExtended? = null
 
     class viewholder(val view: View) : RecyclerView.ViewHolder(view) {
         val libraryName = view.findViewById<TextView>(R.id.lib_name)
@@ -32,7 +33,12 @@ class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var ubi: Lo
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewholder {
         val layout = LayoutInflater.from(parent.context)
         context = parent.context
-        return viewholder(layout.inflate(R.layout.cardview_library, parent, false))
+
+        if (viewType == 0){
+            return viewholder(layout.inflate(R.layout.cardview_library, parent, false))
+        } else{
+            return viewholder(layout.inflate(R.layout.cardview_library_selected, parent, false))
+        }
     }
 
     override fun onBindViewHolder(holder: viewholder, position: Int) {
@@ -42,19 +48,18 @@ class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var ubi: Lo
         holder.libraryCopies.text = list[position].copies.toString() + " copies"
 
         holder.view.setOnClickListener {
-            /*println("CLICKED")
-            println(ubi!!.latitude)
-            println(ubi!!.longitude)
-            println(list[position].library.lat)
-            println(list[position].library.lon)*/
-
-            val bundle = Bundle()
-            bundle.putDouble("latitude", ubi!!.latitude)
-            bundle.putDouble("longitude", ubi!!.longitude)
-            bundle.putSerializable("library", list[position])
-            navController.navigate(R.id.nav_library_map, bundle)
-
-            // TODO: Go to map fragment
+            for (i in 0..list.size - 1) {
+                if (i == position)
+                    if (list[i].cardview == 0)
+                        list[i].cardview = 1
+                    else {
+                        list[i].cardview = 0
+                    }
+                else
+                    list[i].cardview = 0
+            }
+            selected = list[position]
+            notifyDataSetChanged()
         }
     }
 
@@ -66,4 +71,8 @@ class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var ubi: Lo
     override fun getItemCount(): Int {
         return list.size
     }
+
+    override fun getItemViewType(position: Int) = list[position].cardview
+
+    fun getSelected() = selected
 }

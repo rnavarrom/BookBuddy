@@ -31,6 +31,7 @@ import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileBinding
 import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.utils.currentUser
 import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -70,17 +71,22 @@ class ProfileFragment : Fragment(), CoroutineScope {
         binding =  FragmentProfileBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-        profileUser = arguments?.getInt("userid",0)
-        username = arguments?.getString("username")
-        //profilepicture = arguments?.getString("profilepicture")
+        profileUser = arguments?.getInt("userid", currentUser.userId)
+        username = arguments?.getString("username", currentUser.name)
 
+        if (profileUser == null){
+            profileUser = currentUser.userId
+            username = currentUser.name
+        }
 
         launch {
+            println("CHECKPOINT 1")
             loadUser()
+            println("CHECKPOINT 2")
+            loadTabLayout()
+            println("CHECKPOINT 3")
             loadingEnded()
         }
-        //loadTabLayout()
-
 
         binding.bSelectImage.setOnClickListener {
             comprobaPermisos()
@@ -90,12 +96,7 @@ class ProfileFragment : Fragment(), CoroutineScope {
     }
 
     fun loadUser(){
-        println("USER")
-        println(profileUser)
-        if (profileUser == null || profileUser == 0){
-            profileUser = 1
-        }
-
+        binding.tvUsername.text = username
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
@@ -104,7 +105,7 @@ class ProfileFragment : Fragment(), CoroutineScope {
             }
             corrutina.join()
         }
-
+        binding.tvFollowers.text = followers.toString() + " seguidores"
         followButton()
 
     }
@@ -170,7 +171,8 @@ class ProfileFragment : Fragment(), CoroutineScope {
         tabLayout.addTab(tabLayout.newTab().setText("READS"))
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         val adapter = ProfileAdapter(activity?.applicationContext, childFragmentManager,
-            tabLayout.tabCount)
+            tabLayout.tabCount, profileUser!!
+        )
         viewPager.adapter = adapter
         viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

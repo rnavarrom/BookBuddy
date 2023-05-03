@@ -131,6 +131,15 @@ class CrudApi(): CoroutineScope {
         return null
     }
 
+    suspend fun getUserComments(user_id: Int, position: Int): List<Comment>? {
+        val response = getRetrofit().create(CommentAPI::class.java).getUserComments(user_id, position)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
+    }
+
+
     suspend fun getCommentsFromUser(user_id: Int, book_id: Int): Comment? {
         val response = getRetrofit().create(CommentAPI::class.java).getUserComment(user_id, book_id)
         if (response.isSuccessful){

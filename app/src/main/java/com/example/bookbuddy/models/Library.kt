@@ -1,5 +1,7 @@
 package com.example.bookbuddy.models
 
+import android.os.Bundle
+
 data class Library(
     val lat: Double,
     val libraryId: Int,
@@ -11,5 +13,7 @@ data class Library(
 data class LibraryExtended(
     val copies: Int,
     val distance: Double,
-    val library: Library
+    val library: Library,
+    var cardview: Int
 ) : java.io.Serializable
+

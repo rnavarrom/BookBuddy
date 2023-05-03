@@ -21,7 +21,11 @@
         android:id="@+id/nav_scan"
         android:name="com.example.bookbuddy.ui.navdrawer.ScanFragment"
         android:label="Scan"
-        tools:layout="@layout/fragment_scan" />
+        tools:layout="@layout/fragment_scan" >
+        <action
+            android:id="@+id/action_nav_scan_to_nav_book_display"
+            app:destination="@id/nav_book_display" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_recommendations"
@@ -51,7 +55,14 @@
     <fragment
         android:id="@+id/nav_book_display"
         android:name="com.example.bookbuddy.ui.navdrawer.BookDisplayFragment"
-        tools:layout="@layout/fragment_book_display" />
+        tools:layout="@layout/fragment_book_display" >
+        <action
+            android:id="@+id/action_nav_book_display_to_nav_read_comment"
+            app:destination="@id/nav_read_comment" />
+        <argument
+            android:name="bundle"
+            app:argType="android.os.Bundle" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_write_comment"
@@ -61,7 +72,11 @@
     <fragment
         android:id="@+id/nav_read_comment"
         android:name="com.example.bookbuddy.ui.navdrawer.BookCommentsFragment"
-        tools:layout="@layout/fragment_book_comments" />
+        tools:layout="@layout/fragment_book_comments" >
+        <argument
+            android:name="bundle"
+            app:argType="android.os.Bundle" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_libraries_list"

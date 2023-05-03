@@ -39,8 +39,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.MAButtonLogin.setOnClickListener {
 
-            var userName = binding.MAEditUser.text.toString()
-            var userPassword = binding.MAEditPassword.text.toString()
+            //var userName = binding.MAEditUser.text.toString()
+            //var userPassword = binding.MAEditPassword.text.toString()
+            var userName = "test"
+            var userPassword = "test"
 
             if (userName.isNotBlank() && userPassword.isNotBlank()) {
 

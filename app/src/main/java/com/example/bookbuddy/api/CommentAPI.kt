@@ -13,6 +13,9 @@ interface CommentAPI {
     @GET("/api/comments/book/{book_id}")
     suspend fun getCommentsCounter(@Path("book_id") bookInt: Int): Response<Int>
 
+    @GET("/api/comments/user/{user_id}/{position}")
+    suspend fun getUserComments(@Path("user_id") userId: Int, @Path("position") position: Int): Response<List<Comment>>
+
     @GET("/api/comment/{userId}/{bookId}")
     suspend fun getUserComment(@Path("userId") userId: Int, @Path("bookId") bookId: Int): Response<Comment>
 

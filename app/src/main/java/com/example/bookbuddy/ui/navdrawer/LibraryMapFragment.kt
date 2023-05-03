@@ -70,6 +70,7 @@ class LibraryMapFragment : Fragment(), OnMapReadyCallback, CoroutineScope {
 
         latitude = requireArguments().getDouble("latitude")
         longitude = requireArguments().getDouble("longitude")
+        method = requireArguments().getString("method")
 
         val bundle = arguments
         if (bundle != null) {
@@ -78,7 +79,7 @@ class LibraryMapFragment : Fragment(), OnMapReadyCallback, CoroutineScope {
                 loadLibraryBasicInformation(library!!)
             }
         }
-        println("CRASHEO1")
+
         //fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         requestPermissionsMap()
@@ -110,21 +111,17 @@ class LibraryMapFragment : Fragment(), OnMapReadyCallback, CoroutineScope {
                 end.longitude.toString() + ", " + end.latitude.toString()
 
 
-            if (method == "Cotxe")
-                //resp = crudAPI.getCarRoute(startString, endString)
+            if (method == "car")
+                resp = crudAPI.getCarRoute(startString, endString)
             else
-                //resp = crudAPI.getWalkingRoute(startString, endString)
+                resp = crudAPI.getWalkingRoute(startString, endString)
 
             if (resp != null) {
-                println("AAAA")
-                //println(resp!!.coordinates)
-                //drawRoute(mMap, resp!!.coordinates)
-                println("Distància:"+ resp!!.distance.toString()+" metres")
-                //binding.tvLibraryDistance.text = "Distància:"+ resp!!.distance.toString()+" metres"
+                drawRoute(mMap, resp!!.coordinates)
 
-                //requireActivity().findViewById<TextView>(R.id.tvdistancia).setText()
-                //requireActivity().findViewById<TextView>(R.id.tvtemps).setText("Temps: "+resposta!!.duration.toString()+" segons")
-                /*
+                requireActivity().findViewById<TextView>(R.id.tv_library_distance).setText("Distància:"+ resp!!.distance.toString()+" metres")
+                requireActivity().findViewById<TextView>(R.id.tv_library_time).setText("Temps: "+resp!!.duration.toString()+" segons")
+
                 val puntmig = LatLng((latitude+library!!.library.lat)/2, (longitude+library!!.library.lon)/2)
                 var zoom : Float? = null
                 if (resp!!.distance < 1000.0)
@@ -137,19 +134,22 @@ class LibraryMapFragment : Fragment(), OnMapReadyCallback, CoroutineScope {
                     zoom = 12.0f
                 else
                     zoom = 11.0f
-                */
-                /*
+
+                loadingEnded()
                 mMap!!.animateCamera(
 
                     CameraUpdateFactory.newLatLngZoom(puntmig, zoom),
-                    0, null
-                )*/
+                    2500, null
+                )
+
+                /*
+                loadingEnded()
                 mMap!!.animateCamera(
 
-                    CameraUpdateFactory.newLatLngZoom(lib, 10.0f),
+                    CameraUpdateFactory.newLatLngZoom(lib, 6.0f),
                     3000, null
                 )
-                loadingEnded()
+                */
             }
         }
         /*
@@ -265,7 +265,7 @@ class LibraryMapFragment : Fragment(), OnMapReadyCallback, CoroutineScope {
         val supportMapFragment =
             childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
         supportMapFragment!!.getMapAsync(this)
-        loadingEnded()
+        //loadingEnded()
     }
 
     fun loadingEnded(){

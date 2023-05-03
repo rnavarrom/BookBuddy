@@ -10,13 +10,15 @@
         android:id="@+id/main_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/main_content"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/gpscar"
+            android:layout_marginBottom="10dp"
             >
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_libraries"
@@ -24,6 +26,42 @@
                 android:layout_height="wrap_content"
                 />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <ImageButton
+            android:id="@+id/gpscar"
+            android:layout_width="150dp"
+            android:padding="10dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            app:layout_constraintEnd_toStartOf="@id/gpswalk"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/gpssearch"
+            android:background="@drawable/bg_button_selected"
+            android:src="@drawable/ic_car"/>
+        <ImageButton
+            android:id="@+id/gpswalk"
+            android:layout_width="150dp"
+            android:padding="10dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            app:layout_constraintStart_toEndOf="@id/gpscar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/gpssearch"
+            android:background="@drawable/bg_button_standby"
+            android:src="@drawable/ic_walking"/>
+
+        <ImageButton
+            android:id="@+id/gpssearch"
+            android:layout_width="100dp"
+            android:padding="10dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/bg_button_standby"
+            android:src="@drawable/ic_search_icon"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,7 +47,7 @@ class LibrariesListFragment : Fragment(), CoroutineScope {
     private var position = 0
     var isLoading = false
     var libraries: MutableList<LibraryExtended>? = null
-
+    private var gpsCar: Boolean = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -100,6 +101,33 @@ class LibrariesListFragment : Fragment(), CoroutineScope {
     fun loadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
+
+        binding.gpssearch.setOnClickListener {
+            var selectedLibrary = adapter.getSelected()
+            if (selectedLibrary != null){
+                val bundle = Bundle()
+                bundle.putDouble("latitude", ubi!!.latitude)
+                bundle.putDouble("longitude", ubi!!.longitude)
+                bundle.putSerializable("library", selectedLibrary)
+                bundle.putString("method", if (gpsCar) "car" else "walking" )
+                navController.navigate(R.id.nav_library_map, bundle)
+            } else {
+                Toast.makeText(requireContext(), "Select a library to go to", Toast.LENGTH_SHORT).show()
+            }
+
+        }
+
+        binding.gpscar.setOnClickListener{
+            gpsCar = true
+            binding.gpscar.background = getDrawable(requireContext(), R.drawable.bg_button_selected)
+            binding.gpswalk.background = getDrawable(requireContext(), R.drawable.bg_button_standby)
+        }
+
+        binding.gpswalk.setOnClickListener{
+            gpsCar = false
+            binding.gpscar.background = getDrawable(requireContext(), R.drawable.bg_button_standby)
+            binding.gpswalk.background = getDrawable(requireContext(), R.drawable.bg_button_selected)
+        }
 
         binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
             position = 0

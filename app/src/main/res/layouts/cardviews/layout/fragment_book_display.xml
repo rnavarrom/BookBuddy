@@ -5,18 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.navdrawer.BookDisplayFragment">
+    tools:context=".ui.navdrawer.BookDisplayFragment"
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="20dp"
+        android:visibility="gone"
         >
-
-        <!--
-android:visibility="gone"
--->
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl2"

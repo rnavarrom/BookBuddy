@@ -18,6 +18,7 @@ import com.example.bookbuddy.R
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentWriteCommentBinding
 import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -55,7 +56,7 @@ class WriteCommentFragment : Fragment(), CoroutineScope {
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
-                comment = crudApi.getCommentsFromUser(1, book_id)
+                comment = crudApi.getCommentsFromUser(currentUser.userId, book_id)
             }
             corrutina.join()
         }
@@ -102,9 +103,9 @@ class WriteCommentFragment : Fragment(), CoroutineScope {
                 val crudApi = CrudApi()
                 val corrutina = launch {
                     if (comment != null){
-                        crudApi.updateCommentToAPI(comment!!.comentId!!, text, stars, 1, book_id!!)
+                        crudApi.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser.userId, book_id!!)
                     } else {
-                        crudApi.addCommentToAPI(text, stars, 1, book_id!!)
+                        crudApi.addCommentToAPI(text, stars, currentUser.userId, book_id!!)
                     }
                 }
                 corrutina.join()
