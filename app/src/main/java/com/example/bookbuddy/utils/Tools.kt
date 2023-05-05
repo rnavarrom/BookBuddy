@@ -6,6 +6,7 @@ import android.widget.EditText
 import com.example.bookbuddy.api.CrudApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.text.Normalizer
 
 class Tools {
     companion object {
@@ -56,6 +57,12 @@ class Tools {
                 //eyeToggle.setImageResource(R.drawable.ic_eye_hidden)
                 editText.transformationMethod = PasswordTransformationMethod.getInstance()
             }
+        }
+
+        private val REGEX_UNACCENT = "\\p{InCombiningDiacriticalMarks}+".toRegex()
+        fun CharSequence.unaccent(): String {
+            val temp = Normalizer.normalize(this, Normalizer.Form.NFD)
+            return REGEX_UNACCENT.replace(temp, "")
         }
     }
 }

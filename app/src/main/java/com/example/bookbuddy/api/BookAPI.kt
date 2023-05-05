@@ -16,12 +16,18 @@ interface BookAPI {
     suspend fun getEmailExists(@Path("email") email: String): Response<Boolean>
     @GET("/api/user/{userName}/{password}")
     suspend fun getUserLogin(@Path("userName") userName: String, @Path("password") password: String): Response<User>
+    @GET("/api/user/{userId}")
+    suspend fun getUserId(@Path("userId") userId: Int): Response<User>
     @GET("/api/books/search/{book}")
     suspend fun getSimpleSearch(@Path("book") book: String): Response<ArrayList<SimpleBook>>
     @POST("/api/user/{name}/{password}/{email}")
     suspend fun insertUser(@Path("name") name: String, @Path("password") password: String, @Path("email") email: String): Response<Boolean>
     @GET("/api/book/isbn/{isbn}")
     suspend fun getBookInfo(@Path("isbn") isbn: String): Response<Book>
+    @PUT("/api/readed/put/{readedId}/{pagesReaded}")
+    suspend fun updatePagesReaded(@Path("readedId") readedId: Int, @Path("pagesReaded") pagesReaded: Int): Response<Boolean>
+    @PUT("/api/readed/remove/{readedId}")
+    suspend fun removeBookReading(@Path("readedId") readedId: Int): Response<Boolean>
 
 
 /*

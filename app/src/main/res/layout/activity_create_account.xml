@@ -92,7 +92,7 @@
         app:layout_constraintBottom_toTopOf="@+id/CA_Button_Register"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="70dp"
         android:drawableStart="@drawable/ic_register_password"
         android:drawablePadding="10dp"
         android:drawableTint="@color/primary_green"
@@ -115,6 +115,17 @@
         app:layout_constraintTop_toTopOf="@+id/CA_Edit_Password2"
         app:layout_constraintEnd_toEndOf="@+id/CA_Edit_Password2"
         android:layout_marginTop="10dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/userConditions"
+        android:text="Read and accept user conditions"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@+id/CA_Edit_Password2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/CA_Button_Register"
         />
     <Button
         android:layout_width="300dp"

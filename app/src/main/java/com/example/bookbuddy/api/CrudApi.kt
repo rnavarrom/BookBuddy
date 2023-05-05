@@ -63,6 +63,10 @@ class CrudApi(): CoroutineScope {
         val response = getRetrofit().create(BookAPI::class.java).getUserLogin(userName, password).body()
         return response!!
     }
+    suspend fun getUserId(userId: Int): User {
+        val response = getRetrofit().create(BookAPI::class.java).getUserId(userId).body()
+        return response!!
+    }
     suspend fun getUserExists(userName: String): Boolean {
         val response = getRetrofit().create(BookAPI::class.java).getUserExists(userName).body()
         return response!!
@@ -81,9 +85,6 @@ class CrudApi(): CoroutineScope {
         val call = getRetrofit().create(BookAPI::class.java).insertUser(user.name, user.password, user.email)
         return call.isSuccessful
     }
-
-
-
     suspend fun getBook(isbn: String): Book {
         val response = getRetrofit().create(BookAPI::class.java).getBookInfo(isbn).body()
         return response!!
@@ -210,6 +211,15 @@ class CrudApi(): CoroutineScope {
         return call.isSuccessful
     }
 
+    suspend fun updateReadedToAPI(readedId: Int, pagesReaded: Int): Boolean {
+        val call = getRetrofit().create(BookAPI::class.java).updatePagesReaded(readedId, pagesReaded)
+        return call.isSuccessful
+    }
+
+    suspend fun removeBookReading(readedId: Int): Boolean {
+        val call = getRetrofit().create(BookAPI::class.java).removeBookReading(readedId)
+        return call.isSuccessful
+    }
 
     // Trace routes
     suspend fun getWalkingRoute(start: String, end: String): CleanResponse? {

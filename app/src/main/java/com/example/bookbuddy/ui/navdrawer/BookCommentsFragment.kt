@@ -66,7 +66,6 @@ class BookCommentsFragment : Fragment(), CoroutineScope {
                 } else {
                     comments!!.addAll((setCardview(crudApi.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?)!!)
                 }
-
             }
             corrutina.join()
         }

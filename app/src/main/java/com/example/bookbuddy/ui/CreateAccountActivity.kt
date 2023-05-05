@@ -3,12 +3,19 @@ package com.example.bookbuddy.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.CheckBox
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Sha
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.ActivityCreateAccountBinding
+import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.Tools.Companion.unaccent
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.currentUserCreate
 import kotlinx.coroutines.launch
@@ -18,6 +25,7 @@ class CreateAccountActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCreateAccountBinding
     var checkValues: Boolean = false
     lateinit var user: UserItem
+    var conditions = false
     override fun onCreate(savedInstanceState: Bundle?) {
 
         binding = ActivityCreateAccountBinding.inflate(layoutInflater)
@@ -48,6 +56,9 @@ class CreateAccountActivity : AppCompatActivity() {
         }
         binding.passwordToggle2.setOnClickListener {
             Tools.tooglePasswordVisible(binding.CAEditPassword2)
+        }
+        binding.userConditions.setOnClickListener {
+            UserConditions()
         }
         setContentView(binding.root)
     }
@@ -96,6 +107,24 @@ class CreateAccountActivity : AppCompatActivity() {
             Toast.makeText(this, "Email already used!", Toast.LENGTH_LONG).show()
             return false
         }
+        if(!conditions){
+            Toast.makeText(this, "You need to read and accept user conditions", Toast.LENGTH_LONG).show()
+            return false
+        }
         return true
+    }
+
+    fun UserConditions(){
+        val builder = AlertDialog.Builder(this)
+        val inflater = layoutInflater
+        val dialogLayout = inflater.inflate(R.layout.dialog_user_conditions, null)
+        builder.setView(dialogLayout)
+        builder.setPositiveButton("Accept") { dialogInterface, i ->
+            conditions = true
+        }
+        builder.setNegativeButton("Cancel"){dialogInterface, i ->
+            conditions = false
+        }
+        builder.show()
     }
 }

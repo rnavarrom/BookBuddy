@@ -3,7 +3,7 @@ package com.example.bookbuddy.models.Test
 data class User(
     val actualReading: List<ActualReading>,
     val isadmin: Boolean,
-    val name: String,
+    var name: String,
     val pending: List<Pending>,
     val profilePicture: Any,
     val readed: List<Pending>,

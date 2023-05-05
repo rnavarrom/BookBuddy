@@ -6,13 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.lifecycle.lifecycleScope
 import com.example.bookbuddy.R
 import com.example.bookbuddy.databinding.FragmentHomeBinding
 import com.example.bookbuddy.databinding.FragmentSettingsBinding
+import com.example.bookbuddy.utils.UserPreferences
+import kotlinx.coroutines.launch
 
 class SettingsFragment : Fragment() {
     lateinit var binding: FragmentSettingsBinding
-
+    private lateinit var userPrefs: UserPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -23,6 +26,10 @@ class SettingsFragment : Fragment() {
     ): View? {
         binding =  FragmentSettingsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        userPrefs = UserPreferences(requireContext())
+        lifecycleScope.launch {
+            userPrefs.saveCredentials("", "")
+        }
         return binding.root
     }
 }

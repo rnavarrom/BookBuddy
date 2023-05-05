@@ -9,8 +9,9 @@ data class ActualReading(
     val isbn: String,
     val languages: Any,
     val pages: Int,
-    val pagesReaded: Int,
+    var pagesReaded: Int,
     val publicationDate: Any,
     val rating: Any,
-    val title: Any
+    val title: Any,
+    val readedId: Int
 )

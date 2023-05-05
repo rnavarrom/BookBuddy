@@ -7,6 +7,13 @@
     tools:context=".ui.MainActivity"
     android:background="@drawable/gradient2"
     >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:visibility="gone"
+        >
     <ImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
@@ -80,6 +87,16 @@
         app:layout_constraintEnd_toEndOf="@+id/MA_Edit_Password"
         android:layout_marginTop="10dp"
         />
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/MA_CheckBox"
+        android:text="Auto login"
+        app:layout_constraintTop_toBottomOf="@+id/MA_Edit_Password"
+        app:layout_constraintEnd_toEndOf="@+id/MA_Edit_Password"
+        app:layout_constraintBottom_toTopOf="@+id/MA_Button_Login"
+        android:layout_marginBottom="10dp"
+        />
     <Button
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -104,5 +121,23 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/rounded_corners"
         />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loading_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:visibility="visible">
+        <ProgressBar
+            android:id="@+id/loading_bar"
+            android:indeterminate="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

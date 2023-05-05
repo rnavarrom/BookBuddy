@@ -12,7 +12,7 @@
         android:id="@+id/main_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/main_content"
             android:layout_width="match_parent"
@@ -55,7 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="20dp"
-        android:visibility="gone">
+        android:visibility="visible">
         <ProgressBar
             android:id="@+id/loading_bar"
             android:indeterminate="true"
