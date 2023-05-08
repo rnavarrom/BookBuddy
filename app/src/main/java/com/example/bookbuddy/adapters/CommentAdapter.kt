@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.ui.navdrawer.BookCommentsFragmentDirections
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -47,19 +48,11 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
         holder.comment.text = list[position].comentText
 
         holder.profilePicture.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putInt("userid", list[position].user!!.userId)
-            bundle.putString("username", list[position].user!!.name)
-            //bundle.putString("profilepicture", list[position].user!!.profilePicture.toString())
-            navController.navigate(R.id.nav_profile, bundle)
+            goToUserProfile(list[position].user!!.userId, list[position].user!!.name)
         }
 
         holder.username.setOnClickListener{
-            val bundle = Bundle()
-            bundle.putInt("userid", list[position].user!!.userId)
-            bundle.putString("username", list[position].user!!.name)
-            //bundle.putString("profilepicture", list[position].user!!.profilePicture.toString())
-            navController.navigate(R.id.nav_profile, bundle)
+            goToUserProfile(list[position].user!!.userId, list[position].user!!.name)
         }
 
         if (holder.dropmenu != null){
@@ -91,6 +84,15 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
                 popup.show()
             }
         }
+    }
+
+    fun goToUserProfile(userid: Int, username: String){
+        val bundle = Bundle()
+        bundle.putInt("userid", userid)
+        bundle.putString("username", username)
+        //bundle.putString("profilepicture", list[position].user!!.profilePicture.toString())
+        var action = BookCommentsFragmentDirections.actionNavReadCommentToNavProfileDialog(bundle)
+        navController.navigate(action)
     }
 
     fun updateList(newList: ArrayList<Comment>){

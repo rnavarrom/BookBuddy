@@ -1,5 +1,6 @@
 package com.example.bookbuddy.api
 
+import android.media.Image
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Readed
@@ -13,10 +14,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 import java.security.SecureRandom
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
@@ -132,6 +136,15 @@ class CrudApi(): CoroutineScope {
         return null
     }
 
+    suspend fun getUserComments(user_id: Int, position: Int): List<Comment>? {
+        val response = getRetrofit().create(CommentAPI::class.java).getUserComments(user_id, position)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
+    }
+
+
     suspend fun getCommentsFromUser(user_id: Int, book_id: Int): Comment? {
         val response = getRetrofit().create(CommentAPI::class.java).getUserComment(user_id, book_id)
         if (response.isSuccessful){
@@ -158,9 +171,19 @@ class CrudApi(): CoroutineScope {
 
     // Images
 
-    suspend fun addImageToAPI(image: String): Boolean {
+    suspend fun getImageToAPI(image: String): String? {
+        val call = getRetrofit().create(ImageAPI::class.java).getImage(image)
+        return call.body()
+    }
+
+    suspend fun addImageToAPI(image: File): File? {
         val call = getRetrofit().create(ImageAPI::class.java).insertImage(image)
-        return call.isSuccessful
+        return call.body()
+    }
+
+    suspend fun uploadImageToAPI(image: MultipartBody.Part): Response<ResponseBody> {
+        val call = getRetrofit().create(ImageAPI::class.java).uploadImage(image)
+        return call
     }
 
     // Libraries

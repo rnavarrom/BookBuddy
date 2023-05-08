@@ -1,7 +1,7 @@
 package com.example.bookbuddy.models
 
 data class Readed(
-    val book: Any?,
+    val book: Book?,
     val bookId: Int?,
     val curreading: Boolean?,
     val percentatgeRead: Double?,

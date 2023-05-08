@@ -1,7 +1,9 @@
 package com.example.bookbuddy.models.User
 
+import com.example.bookbuddy.models.Book
+
 data class Comment(
-    val book: Any? = null,
+    val book: Book? = null,
     var bookId: Int,
     var rating: Int,
     val comentId: Int? = null,

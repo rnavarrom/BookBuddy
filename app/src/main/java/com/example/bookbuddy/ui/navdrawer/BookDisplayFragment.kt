@@ -10,7 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
+import androidx.navigation.NavOptions
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
@@ -18,12 +22,15 @@ import com.example.bookbuddy.adapters.GenreAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentBookDisplayBinding
 import com.example.bookbuddy.models.*
+import com.example.bookbuddy.utils.Tools.Companion.setToolBar
+import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
-class BookDisplayFragment : Fragment(), CoroutineScope, TextToSpeech.OnInitListener {
+
+class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnInitListener {
     lateinit var binding: FragmentBookDisplayBinding
     private var job: Job = Job()
     private var book: Book? = null
@@ -31,6 +38,10 @@ class BookDisplayFragment : Fragment(), CoroutineScope, TextToSpeech.OnInitListe
     private lateinit var textts: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setStyle(
+            DialogFragment.STYLE_NORMAL,
+            R.style.FullScreenDialogStyle
+        );
     }
 
     override fun onCreateView(
@@ -39,20 +50,35 @@ class BookDisplayFragment : Fragment(), CoroutineScope, TextToSpeech.OnInitListe
     ): View? {
         binding =  FragmentBookDisplayBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-        println("ON CREATE VIEW EXECUTED")
+
+        setToolBar(this, binding.toolbar, (activity as AppCompatActivity?)!!, "Book Display")
+
         binding.bookMark.tag = "Add"
         tts = TextToSpeech(context,this)
-        val isbn = arguments?.getString("isbn")
+        //val isbn = arguments?.getString("isbn")
+        val bundle = arguments?.getBundle("bundle")
+        val isbn = bundle?.getString("isbn")
         binding.iconTextToSpeach.setOnClickListener {
             Speak()
         }
+
         launch {
             book = getBook(isbn)!!
-            setBook(book)
-            getBookMark(book!!.bookId, 1)
-            getCommentsNumber(book!!.bookId)
-            getLibraries(isbn)
-            loadingEnded()
+            if (book == null){
+                //println("book null")
+                //childFragmentManager.popBackStack()
+                dismiss()
+                //val fragmentManager = requireActivity().supportFragmentManager
+                //fragmentManager.popBackStack()
+                //navController.popBackStack(R.id.nav_scan, true)
+                //navController.navigate(R.id.nav_scan, null)
+            } else {
+                setBook(book)
+                getBookMark(book!!.bookId, currentUser.userId)
+                getCommentsNumber(book!!.bookId)
+                getLibraries(isbn)
+                loadingEnded()
+            }
         }
 
         return binding.root
@@ -137,40 +163,33 @@ class BookDisplayFragment : Fragment(), CoroutineScope, TextToSpeech.OnInitListe
 
         binding.bookMark.setOnClickListener {
             if (binding.bookMark.tag.equals("Add")){
-                setBookMark(book!!.bookId, 1)
+                setBookMark(book!!.bookId, currentUser.userId)
                 Toast.makeText(activity, "Added to pending books", Toast.LENGTH_SHORT).show()
             } else {
-                deleteBookMark(book!!.bookId, 1)
+                deleteBookMark(book!!.bookId, currentUser.userId)
                 Toast.makeText(activity, "Remove book from pending", Toast.LENGTH_SHORT).show()
             }
         }
 
         binding.iconAddComments.setOnClickListener {
             val bundle = Bundle()
-            bundle.putInt("book_id", book!!.bookId)
-            navController.navigate(R.id.nav_write_comment, bundle)
+            bundle.putInt("bookid", book!!.bookId)
+            var action = BookDisplayFragmentDirections.actionNavBookDisplayToNavWriteComment(bundle)
+            navController.navigate(action)
         }
 
         binding.iconComments.setOnClickListener {
             val bundle = Bundle()
-            bundle.putInt("book_id", book!!.bookId)
-            navController.navigate(R.id.nav_read_comment, bundle)
+            bundle.putInt("bookid", book!!.bookId)
+            var action = BookDisplayFragmentDirections.actionNavBookDisplayToNavReadComment(bundle)
+            navController.navigate(action)
         }
 
         binding.iconLibraries.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("isbn", book!!.isbn)
-            navController.navigate(R.id.nav_libraries_list, bundle)
-            /*
-            val newFragment = LibrariesListFragment()
-            newFragment.arguments = bundle
-            val fragmentTransaction = requireActivity().supportFragmentManager.beginTransaction()
-
-            fragmentTransaction.replace(R.id.fragment_book_display, newFragment)
-                .addToBackStack(null)
-                .commit()
-
-             */
+            var action = BookDisplayFragmentDirections.actionNavBookDisplayToNavLibrariesList(bundle)
+            navController.navigate(action)
         }
     }
 

@@ -12,8 +12,10 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -24,6 +26,7 @@ import com.example.bookbuddy.databinding.FragmentRecommendationsBinding
 import com.example.bookbuddy.models.CleanResponse
 import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.models.LibraryExtended
+import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -40,7 +43,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
-class LibraryMapFragment : Fragment(), OnMapReadyCallback, CoroutineScope {
+class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope {
     lateinit var binding: FragmentLibraryMapBinding
 
     private var job: Job = Job()
@@ -57,8 +60,14 @@ class LibraryMapFragment : Fragment(), OnMapReadyCallback, CoroutineScope {
 
     var resp : CleanResponse? = null
     var method : String? = "walking"
+
+    lateinit var bundle : Bundle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setStyle(
+            DialogFragment.STYLE_NORMAL,
+            R.style.FullScreenDialogStyle
+        );
     }
 
     override fun onCreateView(
@@ -68,18 +77,24 @@ class LibraryMapFragment : Fragment(), OnMapReadyCallback, CoroutineScope {
         binding =  FragmentLibraryMapBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-        latitude = requireArguments().getDouble("latitude")
-        longitude = requireArguments().getDouble("longitude")
+        setToolBar(this, binding.toolbar, (activity as AppCompatActivity?)!!, "Map")
 
-        val bundle = arguments
+        bundle = arguments?.getBundle("bundle")!!
+        latitude = bundle.getDouble("latitude")
+        longitude = bundle.getDouble("longitude")
+        method = bundle.getString("method")
+
+        println(latitude)
+        println(longitude)
+        println(method)
+
         if (bundle != null) {
             library = bundle.getSerializable("library") as? LibraryExtended
             if (library != null) {
                 loadLibraryBasicInformation(library!!)
+                println("CRASH")
             }
         }
-        println("CRASHEO1")
-        //fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         requestPermissionsMap()
 
@@ -88,10 +103,30 @@ class LibraryMapFragment : Fragment(), OnMapReadyCallback, CoroutineScope {
                 childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
             supportMapFragment!!.getMapAsync(this)
         }
+
+
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        if (arguments != null) {
+            library = bundle.getSerializable("library") as? LibraryExtended
+            if (library != null) {
+                loadLibraryBasicInformation(library!!)
+                println("CRASH")
+            }
+        }
+
+        if (library != null && permissionsGranted) {
+            val supportMapFragment =
+                childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
+            supportMapFragment!!.getMapAsync(this)
+        }
+    }
+
     override fun onMapReady(googleMap: GoogleMap) {
+        print("ENTRO")
         val start = LatLng(latitude, longitude)
         val end = LatLng(library!!.library.lat, library!!.library.lon)
         mMap = googleMap
@@ -109,22 +144,23 @@ class LibraryMapFragment : Fragment(), OnMapReadyCallback, CoroutineScope {
             val endString =
                 end.longitude.toString() + ", " + end.latitude.toString()
 
-
-            if (method == "Cotxe")
-                //resp = crudAPI.getCarRoute(startString, endString)
+            if (method == "car")
+                resp = crudAPI.getCarRoute(startString, endString)
             else
-                //resp = crudAPI.getWalkingRoute(startString, endString)
-
+                resp = crudAPI.getWalkingRoute(startString, endString)
             if (resp != null) {
-                println("AAAA")
-                //println(resp!!.coordinates)
-                //drawRoute(mMap, resp!!.coordinates)
-                println("Distància:"+ resp!!.distance.toString()+" metres")
-                //binding.tvLibraryDistance.text = "Distància:"+ resp!!.distance.toString()+" metres"
+                drawRoute(mMap, resp!!.coordinates)
 
-                //requireActivity().findViewById<TextView>(R.id.tvdistancia).setText()
-                //requireActivity().findViewById<TextView>(R.id.tvtemps).setText("Temps: "+resposta!!.duration.toString()+" segons")
-                /*
+                binding.tvLibraryDistance.text = "Distància:"+ resp!!.distance.toString()+" metres"
+                binding.tvLibraryTime.text = "Temps: "+resp!!.duration.toString()+" segons"
+
+                binding.tvLibraryName.setOnClickListener {
+                    mMap!!.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(lib, 17.0f),
+                        1500, null
+                    )
+                }
+
                 val puntmig = LatLng((latitude+library!!.library.lat)/2, (longitude+library!!.library.lon)/2)
                 var zoom : Float? = null
                 if (resp!!.distance < 1000.0)
@@ -137,28 +173,15 @@ class LibraryMapFragment : Fragment(), OnMapReadyCallback, CoroutineScope {
                     zoom = 12.0f
                 else
                     zoom = 11.0f
-                */
-                /*
+                print("NOCRASH3")
+                loadingEnded()
                 mMap!!.animateCamera(
 
                     CameraUpdateFactory.newLatLngZoom(puntmig, zoom),
-                    0, null
-                )*/
-                mMap!!.animateCamera(
-
-                    CameraUpdateFactory.newLatLngZoom(lib, 10.0f),
-                    3000, null
+                    2500, null
                 )
-                loadingEnded()
             }
         }
-        /*
-        mMap!!.animateCamera(
-
-            CameraUpdateFactory.newLatLngZoom(lib, 10.0f),
-            3000, null
-        )
-        */
     }
 
     fun requestPermissionsMap() {
@@ -264,8 +287,9 @@ class LibraryMapFragment : Fragment(), OnMapReadyCallback, CoroutineScope {
     fun loadFragment(){
         val supportMapFragment =
             childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
+        println("CRASHE")
         supportMapFragment!!.getMapAsync(this)
-        loadingEnded()
+        //loadingEnded()
     }
 
     fun loadingEnded(){

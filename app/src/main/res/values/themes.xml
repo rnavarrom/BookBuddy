@@ -36,5 +36,9 @@
     <style name="Theme.BookBuddy.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="Theme.BookBuddy.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-
+    <style name="FullScreenDialogStyle" parent="AppTheme">
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
 </resources>
