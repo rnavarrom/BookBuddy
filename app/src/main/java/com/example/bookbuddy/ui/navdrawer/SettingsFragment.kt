@@ -26,10 +26,14 @@ class SettingsFragment : Fragment() {
     ): View? {
         binding =  FragmentSettingsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-        userPrefs = UserPreferences(requireContext())
-        lifecycleScope.launch {
-            userPrefs.saveCredentials("", "")
+
+        binding.LogOutButton.setOnClickListener {
+            userPrefs = UserPreferences(requireContext())
+            lifecycleScope.launch {
+                userPrefs.saveCredentials("", "")
+            }
         }
+
         return binding.root
     }
 }
