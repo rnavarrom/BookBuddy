@@ -11,9 +11,11 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -26,6 +28,7 @@ import com.example.bookbuddy.databinding.FragmentRecommendationsBinding
 import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.models.LibraryExtended
 import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.navController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -33,7 +36,7 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 
-class LibrariesListFragment : Fragment(), CoroutineScope {
+class LibrariesListFragment : DialogFragment(), CoroutineScope {
     lateinit var binding: FragmentLibrariesListBinding
     private var job: Job = Job()
     private var isbn: String = ""
@@ -50,6 +53,10 @@ class LibrariesListFragment : Fragment(), CoroutineScope {
     private var gpsCar: Boolean = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setStyle(
+            DialogFragment.STYLE_NORMAL,
+            R.style.FullScreenDialogStyle
+        );
     }
 
     override fun onCreateView(
@@ -59,9 +66,12 @@ class LibrariesListFragment : Fragment(), CoroutineScope {
         binding =  FragmentLibrariesListBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
+        setToolBar(this, binding.toolbar, (activity as AppCompatActivity?)!!, "Library list")
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        isbn = requireArguments().getString("isbn").toString()
+
+        val bundle = arguments?.getBundle("bundle")
+        isbn = bundle?.getString("isbn")!!
 
         requestPermissionsMap()
 
@@ -110,7 +120,8 @@ class LibrariesListFragment : Fragment(), CoroutineScope {
                 bundle.putDouble("longitude", ubi!!.longitude)
                 bundle.putSerializable("library", selectedLibrary)
                 bundle.putString("method", if (gpsCar) "car" else "walking" )
-                navController.navigate(R.id.nav_library_map, bundle)
+                var action = LibrariesListFragmentDirections.actionNavLibrariesListToNavLibraryMap(bundle)
+                navController.navigate(action)
             } else {
                 Toast.makeText(requireContext(), "Select a library to go to", Toast.LENGTH_SHORT).show()
             }

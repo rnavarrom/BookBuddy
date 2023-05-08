@@ -37,19 +37,24 @@ class ScanFragment : Fragment() {
     ): View? {
         binding =  FragmentScanBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
-        /*
+
         if (true){
             val bundle = Bundle()
             bundle.putString("isbn", "9788408004097")
-            navController.navigate(R.id.nav_book_display, bundle)
-        }*/
+            var action = ScanFragmentDirections.actionNavScanToNavBookDisplay(bundle)
+            navController.navigate(action)
+        }
         return binding.root
     }
 
     fun startCamera(){
         val scannerView = binding.scannerView
         val activity = requireActivity()
-        codeScanner = CodeScanner(activity, scannerView)
+        // TODO: FIX THIS
+        if (!this::codeScanner.isInitialized){
+            codeScanner = CodeScanner(activity, scannerView)
+        }
+
         //codeScanner.formats = listOf(BarcodeFormat.QR_CODE, BarcodeFormat.CODE_128)
         codeScanner.decodeCallback = DecodeCallback {
             activity.runOnUiThread {

@@ -6,18 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.navigation.NavDirections
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.api.CrudApi
+import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.ui.navdrawer.ProfileDialogDirections
+import com.example.bookbuddy.ui.navdrawer.ProfileFragmentDirections
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 
-class ProfileBookMarkAdapter(var list: java.util.ArrayList<Readed>) :
+class ProfileBookMarkAdapter(var list: java.util.ArrayList<Readed>, val isProfileFragment: Boolean) :
     RecyclerView.Adapter<ProfileBookMarkAdapter.viewholder>(), CoroutineScope {
     private var job: Job = Job()
     class viewholder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -39,7 +43,13 @@ class ProfileBookMarkAdapter(var list: java.util.ArrayList<Readed>) :
         holder.view.setOnClickListener{
             val bundle = Bundle()
             bundle.putString("isbn", list[position].book!!.isbn)
-            navController.navigate(R.id.nav_book_display, bundle)
+            var action: NavDirections? = null
+            if (isProfileFragment){
+                action = ProfileFragmentDirections.actionNavProfileToNavBookDisplay(bundle)
+            } else {
+                action = ProfileDialogDirections.actionNavProfileDialogToNavBookDisplay(bundle)
+            }
+            navController.navigate(action)
         }
     }
 

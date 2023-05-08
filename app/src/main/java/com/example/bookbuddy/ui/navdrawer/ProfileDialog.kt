@@ -2,45 +2,55 @@ package com.example.bookbuddy.ui.navdrawer
 
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
+import android.content.ContentResolver
+import android.content.ContentValues.TAG
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.media.Image
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
+import android.transition.Transition
 import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.example.bookbuddy.R
 import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
+import com.example.bookbuddy.databinding.DialogProfileBinding
 import com.example.bookbuddy.databinding.FragmentProfileBinding
-import com.example.bookbuddy.utils.Tools.Companion.getPathFromUri
+import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.currentUser
 import com.google.android.material.tabs.TabLayout
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 import kotlinx.coroutines.*
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
 import kotlin.coroutines.CoroutineContext
 
 
-class ProfileFragment : Fragment(), CoroutineScope {
-    lateinit var binding: FragmentProfileBinding
+class ProfileDialog : DialogFragment(), CoroutineScope {
+    lateinit var binding: DialogProfileBinding
     private var job: Job = Job()
 
     private var profileUser: Int? = 0
@@ -57,14 +67,20 @@ class ProfileFragment : Fragment(), CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setStyle(
+            DialogFragment.STYLE_NORMAL,
+            R.style.FullScreenDialogStyle
+        );
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding =  FragmentProfileBinding.inflate(layoutInflater, container, false)
+        binding =  DialogProfileBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+
+        setToolBar(this, binding.toolbar, (activity as AppCompatActivity?)!!, "Anon Profile")
 
         val bundle = arguments?.getBundle("bundle")
         profileUser = bundle?.getInt("userid", currentUser.userId)
@@ -167,7 +183,7 @@ class ProfileFragment : Fragment(), CoroutineScope {
         tabLayout.addTab(tabLayout.newTab().setText("READS"))
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         val adapter = ProfileAdapter(activity?.applicationContext, childFragmentManager,
-            tabLayout.tabCount, profileUser!!, true
+            tabLayout.tabCount, profileUser!!, false
         )
         viewPager.adapter = adapter
         viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
@@ -208,7 +224,6 @@ class ProfileFragment : Fragment(), CoroutineScope {
         val imageBytes = outputStream.toByteArray() // Convierte el OutputStream en un ByteArray
         val imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT)
         */
-        /*
         var base64Image = ""
         Glide.with(this)
             .asBitmap()
@@ -232,72 +247,10 @@ class ProfileFragment : Fragment(), CoroutineScope {
                     // Este método se llama cuando la imagen ha sido eliminada de la memoria caché
                 }
             })
-         */
-
-        //val path = getPathFromUri(requireContext(), imageUri)
-        //println("path")
-        //println(path)
-        /*
-        val inputStream: InputStream? = requireContext().contentResolver.openInputStream(imageUri)
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-        val imageBytes: ByteArray = byteArrayOutputStream.toByteArray()
-        val imageString: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
-        val image = Image("image.jpg", imageString)
-        println("AA")
-        println(imageString)
-        */
-        val contentResolver = requireContext().contentResolver
-        val inputStream: InputStream? = contentResolver.openInputStream(imageUri)
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        val outputStream = ByteArrayOutputStream()
-        val targetWidth = 320
-        val targetHeight = 320
-        val scaleFactor = Math.min(
-            bitmap.width.toDouble() / targetWidth,
-            bitmap.height.toDouble() / targetHeight
-        )
-        val scaledBitmap = Bitmap.createScaledBitmap(
-            bitmap,
-            (bitmap.width / scaleFactor).toInt(),
-            (bitmap.height / scaleFactor).toInt(),
-            false
-        )
-        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        //bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        val byteArray = outputStream.toByteArray()
-
-        val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
-        val image = MultipartBody.Part.createFormData("image", "image.jpg", requestFile)
-
-        var aa: String? = null
         val crudApi = CrudApi()
-        var imagen2: File? = null
         runBlocking {
             val ru = launch {
-                val response = crudApi.uploadImageToAPI(image)
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    if (body != null) {
-                        // Leer los bytes de la imagen
-                        val bytes = body.bytes()
-
-                        // Guardar los bytes en un archivo
-                        val file = File(requireContext().cacheDir, "image2.jpg")
-                        val outputStream = FileOutputStream(file)
-                        outputStream.write(bytes)
-                        outputStream.close()
-
-                        // Mostrar la imagen en un ImageView usando Glide
-                        Glide.with(requireContext())
-                            .load(file)
-                            .into(binding.ivPreviewImage)
-                    }
-                } else {
-                    // Manejar la respuesta de error
-                    // ...
-                }
+                //crudApi.addImageToAPI(base64Image)
             }
             ru.join()
         }

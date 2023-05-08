@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,12 +20,13 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentBookCommentsBinding
 import com.example.bookbuddy.databinding.FragmentSettingsBinding
 import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class BookCommentsFragment : Fragment(), CoroutineScope {
+class BookCommentsFragment : DialogFragment(), CoroutineScope {
     lateinit var binding: FragmentBookCommentsBinding
     private var job: Job = Job()
     private var bookId: Int = 0
@@ -38,6 +41,10 @@ class BookCommentsFragment : Fragment(), CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setStyle(
+            DialogFragment.STYLE_NORMAL,
+            R.style.FullScreenDialogStyle
+        );
     }
 
     override fun onCreateView(
@@ -47,9 +54,10 @@ class BookCommentsFragment : Fragment(), CoroutineScope {
         binding =  FragmentBookCommentsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        //bookId = requireArguments().getInt("book_id")
+        Tools.setToolBar(this, binding.toolbar, (activity as AppCompatActivity?)!!, "Write Comment")
+
         val bundle = arguments?.getBundle("bundle")
-        bookId = bundle!!.getInt("book_id")
+        bookId = bundle!!.getInt("bookid")
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         launch {
@@ -88,8 +96,10 @@ class BookCommentsFragment : Fragment(), CoroutineScope {
 
         binding.addComment.setOnClickListener {
             val bundle = Bundle()
-            bundle.putInt("book_id", bookId)
-            navController.navigate(R.id.nav_write_comment, bundle)
+            bundle.putInt("bookid", bookId)
+            var action = BookCommentsFragmentDirections.actionNavReadCommentToNavWriteComment(bundle)
+            navController.navigate(action)
+
         }
 
         binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {

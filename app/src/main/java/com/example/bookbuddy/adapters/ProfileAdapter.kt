@@ -15,6 +15,7 @@ internal class ProfileAdapter(
     fm: FragmentManager,
     var totalTabs: Int,
     var userId: Int,
+    val isProfileFragment: Boolean
 ) :
     FragmentPagerAdapter(fm) {
     override fun getItem(position: Int): Fragment {
@@ -22,12 +23,14 @@ internal class ProfileAdapter(
         return when (position) {
             0 -> {
                 bundle.putInt("userid", userId)
+                bundle.putBoolean("isfragment", isProfileFragment)
                 val fragment = ProfileCommentsFragment()
                 fragment.arguments = bundle
                 return fragment
             }
             1 -> {
                 bundle.putInt("userid", userId)
+                bundle.putBoolean("isfragment", isProfileFragment)
                 val fragment = ProfileBookMarksFragment()
                 fragment.arguments = bundle
                 return fragment

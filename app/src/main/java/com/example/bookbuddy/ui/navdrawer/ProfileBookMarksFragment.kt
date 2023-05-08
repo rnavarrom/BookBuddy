@@ -31,6 +31,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope {
     lateinit var binding: FragmentProfileBookmarksBinding
     private var job: Job = Job()
     private var userId: Int = currentUser.userId
+    private var isProfileFragment: Boolean = false
     lateinit var adapter: ProfileBookMarkAdapter
 
 
@@ -51,6 +52,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope {
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
         userId = requireArguments().getInt("userid")
+        isProfileFragment = requireArguments().getBoolean("isfragment")
         binding.refresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         launch {
@@ -76,7 +78,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope {
         }
         if (addAdapter){
             binding.rvBookmarks.setLayoutManager(GridLayoutManager(context, 2))
-            adapter = ProfileBookMarkAdapter(readeds as ArrayList<Readed>)
+            adapter = ProfileBookMarkAdapter(readeds as ArrayList<Readed>, isProfileFragment)
             binding.rvBookmarks.adapter = adapter
         } else {
             adapter.updateList(readeds as ArrayList<Readed>)

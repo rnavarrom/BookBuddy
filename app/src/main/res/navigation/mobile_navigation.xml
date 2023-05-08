@@ -15,7 +15,11 @@
         android:id="@+id/nav_search"
         android:name="com.example.bookbuddy.ui.navdrawer.SearchFragment"
         android:label="Search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_nav_search_to_nav_book_display"
+            app:destination="@id/nav_book_display" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_scan"
@@ -43,7 +47,14 @@
         android:id="@+id/nav_profile"
         android:name="com.example.bookbuddy.ui.navdrawer.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <argument
+            android:name="bundle"
+            app:argType="android.os.Bundle" />
+        <action
+            android:id="@+id/action_nav_profile_to_nav_book_display"
+            app:destination="@id/nav_book_display" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_settings"
@@ -52,7 +63,7 @@
         tools:layout="@layout/fragment_settings" />
 
     <!-- test -->
-    <fragment
+    <dialog
         android:id="@+id/nav_book_display"
         android:name="com.example.bookbuddy.ui.navdrawer.BookDisplayFragment"
         tools:layout="@layout/fragment_book_display" >
@@ -62,31 +73,70 @@
         <argument
             android:name="bundle"
             app:argType="android.os.Bundle" />
-    </fragment>
+        <action
+            android:id="@+id/action_nav_book_display_to_nav_write_comment"
+            app:destination="@id/nav_write_comment" />
+        <action
+            android:id="@+id/action_nav_book_display_to_nav_libraries_list"
+            app:destination="@id/nav_libraries_list" />
+    </dialog>
 
-    <fragment
+    <dialog
+        android:id="@+id/nav_profile_dialog"
+        android:name="com.example.bookbuddy.ui.navdrawer.ProfileDialog"
+        tools:layout="@layout/dialog_profile" >
+        <argument
+            android:name="bundle"
+            app:argType="android.os.Bundle" />
+        <action
+            android:id="@+id/action_nav_profile_dialog_to_nav_book_display"
+            app:destination="@id/nav_book_display" />
+    </dialog>
+
+    <dialog
         android:id="@+id/nav_write_comment"
         android:name="com.example.bookbuddy.ui.navdrawer.WriteCommentFragment"
-        tools:layout="@layout/fragment_write_comment" />
+        tools:layout="@layout/fragment_write_comment" >
+        <argument
+            android:name="bundle"
+            app:argType="android.os.Bundle" />
+    </dialog>
 
-    <fragment
+    <dialog
         android:id="@+id/nav_read_comment"
         android:name="com.example.bookbuddy.ui.navdrawer.BookCommentsFragment"
         tools:layout="@layout/fragment_book_comments" >
         <argument
             android:name="bundle"
             app:argType="android.os.Bundle" />
-    </fragment>
+        <action
+            android:id="@+id/action_nav_read_comment_to_nav_write_comment"
+            app:destination="@id/nav_write_comment" />
+        <action
+            android:id="@+id/action_nav_read_comment_to_nav_profile_dialog"
+            app:destination="@id/nav_profile_dialog" />
+    </dialog>
 
-    <fragment
+    <dialog
         android:id="@+id/nav_libraries_list"
         android:name="com.example.bookbuddy.ui.navdrawer.LibrariesListFragment"
-        tools:layout="@layout/fragment_libraries_list" />
+        tools:layout="@layout/fragment_libraries_list" >
+        <argument
+            android:name="bundle"
+            app:argType="android.os.Bundle" />
+        <action
+            android:id="@+id/action_nav_libraries_list_to_nav_library_map"
+            app:destination="@id/nav_library_map" />
+    </dialog>
 
-    <fragment
+    <dialog
         android:id="@+id/nav_library_map"
         android:name="com.example.bookbuddy.ui.navdrawer.LibraryMapFragment"
-        tools:layout="@layout/fragment_library_map" />
+        tools:layout="@layout/fragment_library_map" >
+        <argument
+            android:name="bundle"
+            app:argType="android.os.Bundle" />
+    </dialog>
 
 
 </navigation>

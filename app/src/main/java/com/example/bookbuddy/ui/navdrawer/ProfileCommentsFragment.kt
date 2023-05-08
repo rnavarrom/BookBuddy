@@ -27,6 +27,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope {
     lateinit var binding: FragmentProfileCommentsBinding
     private var job: Job = Job()
     private var userId: Int = currentUser.userId
+    private var isProfileFragment: Boolean = false
     lateinit var adapter: ProfileCommentAdapter
 
 
@@ -47,6 +48,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope {
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
         userId = requireArguments().getInt("userid")
+        isProfileFragment = requireArguments().getBoolean("isfragment")
         binding.refresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         launch {
@@ -74,7 +76,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope {
         }
         if (addAdapter){
             binding.rvComments.layoutManager = LinearLayoutManager(context)
-            adapter = ProfileCommentAdapter(comments as ArrayList<Comment>)
+            adapter = ProfileCommentAdapter(comments as ArrayList<Comment>, isProfileFragment)
             binding.rvComments.adapter = adapter
         } else {
             adapter.updateList(comments as ArrayList<Comment>)

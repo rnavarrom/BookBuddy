@@ -1,6 +1,5 @@
 package com.example.bookbuddy.ui.navdrawer
 
-import android.R.attr.maxLength
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -12,27 +11,34 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.example.bookbuddy.R
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentWriteCommentBinding
 import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 
-class WriteCommentFragment : Fragment(), CoroutineScope {
+class WriteCommentFragment : DialogFragment(), CoroutineScope {
     lateinit var binding: FragmentWriteCommentBinding
     private var job: Job = Job()
 
-    private var book_id: Int = 0
+    private var bookId: Int = 0
     private var comment: Comment? = null
     private var maxCharactersComment: Int = 300
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setStyle(
+            DialogFragment.STYLE_NORMAL,
+            R.style.FullScreenDialogStyle
+        );
     }
 
     override fun onCreateView(
@@ -42,7 +48,10 @@ class WriteCommentFragment : Fragment(), CoroutineScope {
         binding =  FragmentWriteCommentBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
-        book_id = arguments?.getInt("book_id")!!
+        setToolBar(this, binding.toolbar, (activity as AppCompatActivity?)!!, "Write Comment")
+
+        val bundle = arguments?.getBundle("bundle")
+        bookId = bundle?.getInt("bookid")!!
 
         launch {
             loadComment()
@@ -56,7 +65,7 @@ class WriteCommentFragment : Fragment(), CoroutineScope {
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
-                comment = crudApi.getCommentsFromUser(currentUser.userId, book_id)
+                comment = crudApi.getCommentsFromUser(currentUser.userId, bookId)
             }
             corrutina.join()
         }
@@ -103,16 +112,15 @@ class WriteCommentFragment : Fragment(), CoroutineScope {
                 val crudApi = CrudApi()
                 val corrutina = launch {
                     if (comment != null){
-                        crudApi.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser.userId, book_id!!)
+                        crudApi.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser.userId, bookId!!)
                     } else {
-                        crudApi.addCommentToAPI(text, stars, currentUser.userId, book_id!!)
+                        crudApi.addCommentToAPI(text, stars, currentUser.userId, bookId!!)
                     }
                 }
                 corrutina.join()
             }
-            val bundle = Bundle()
-            bundle.putInt("book_id", book_id!!)
-            navController.navigate(R.id.nav_read_comment, bundle)
+            // Close
+            dismiss()
         }
     }
 
