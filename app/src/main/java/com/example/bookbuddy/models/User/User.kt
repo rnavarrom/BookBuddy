@@ -10,7 +10,7 @@ data class User(
     val isadmin: Boolean,
     val name: String,
     val password: Any,
-    val profilePicture: Any,
+    val haspicture: Boolean,
     val profiles: List<Any>,
     val readeds: List<Any>,
     val reports: List<Any>,

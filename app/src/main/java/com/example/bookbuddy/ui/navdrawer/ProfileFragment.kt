@@ -2,6 +2,7 @@ package com.example.bookbuddy.ui.navdrawer
 
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
+import android.content.ContentResolver
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,6 +12,7 @@ import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.util.Base64
 import android.view.LayoutInflater
@@ -23,11 +25,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
+import com.example.bookbuddy.R
 import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileBinding
+import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.getPathFromUri
-import com.example.bookbuddy.utils.currentUser
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*
 import okhttp3.*
@@ -86,9 +90,70 @@ class ProfileFragment : Fragment(), CoroutineScope {
 
         binding.bSelectImage.setOnClickListener {
             comprobaPermisos()
+        }
+
+        binding.bContacts.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+                // Pedir permisos de acceso a los contactos
+                ActivityCompat.requestPermissions(requireActivity(),
+                    arrayOf(android.Manifest.permission.READ_CONTACTS),
+                    REQUEST_READ_CONTACTS)
+            } else {
+                // Obtener los correos electrónicos de los contactos
+                val emails = getEmailsFromContacts()
+                // Guardar los correos electrónicos en una lista
+                val emailList = ArrayList<String>()
+                emailList.addAll(emails)
+                runBlocking {
+                    val crudApi = CrudApi()
+                    val corrutina = launch {
+                        //var a = crudApi.getEmailsContact(currentUser.userId, listOf("email1","email2"))
+                        var addedContacts = crudApi.getEmailsContact(currentUser.userId, emailList)!!
+                        var message = ""
+                        if (addedContacts > 0){
+                            message = "Se han agregado " + addedContacts + " contactos nuevos!"
+                        } else {
+                            message = "No se ha encontrado ningun contacto"
+                        }
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                    }
+                    corrutina.join()
+                }
+            }
+
+
 
         }
+
         return binding.root
+    }
+
+    private fun getEmailsFromContacts(): List<String> {
+        val emails = ArrayList<String>()
+        val contentResolver: ContentResolver = requireActivity().contentResolver
+        val cursor = contentResolver.query(
+            ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+            null,
+            null,
+            null,
+            null
+        )
+
+        if (cursor != null && cursor.moveToFirst()) {
+            val columnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)
+            if (columnIndex >= 0) {
+                do {
+                    val email = cursor.getString(columnIndex)
+                    if (email != null) {
+                        emails.add(email)
+                    }
+                } while (cursor.moveToNext())
+            }
+            cursor.close()
+        }
+
+        return emails
     }
 
     fun loadUser(){
@@ -102,6 +167,13 @@ class ProfileFragment : Fragment(), CoroutineScope {
             corrutina.join()
         }
         binding.tvFollowers.text = followers.toString() + " seguidores"
+
+        if (currentPicture != null){
+            Glide.with(requireContext())
+                .load(currentPicture)
+                .into(binding.profileImageView)
+        }
+
         followButton()
 
     }
@@ -158,6 +230,26 @@ class ProfileFragment : Fragment(), CoroutineScope {
     fun loadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainContent.visibility = View.VISIBLE
+        /*
+        if (currentPicture.isSuccessful){
+            val body = currentPicture.body()
+            if (body != null) {
+                // Leer los bytes de la imagen
+                val bytes = body.bytes()
+
+                // Guardar los bytes en un archivo
+                val file = File(requireContext().cacheDir, currentUser.userId.toString() + "user.jpg")
+                val outputStream = FileOutputStream(file)
+                outputStream.write(bytes)
+                outputStream.close()
+
+                // Mostrar la imagen en un ImageView usando Glide
+                Glide.with(requireContext())
+                    .load(file)
+                    .into(binding.ivPreviewImage)
+            }
+        }
+        */
     }
 
     fun loadTabLayout(){
@@ -198,56 +290,6 @@ class ProfileFragment : Fragment(), CoroutineScope {
     }
 
     fun uploadImage(imageUri: Uri) {
-        /*
-        val contentResolver = requireContext().contentResolver
-        val inputStream: InputStream =
-            contentResolver.openInputStream(imageUri)!! // Abre un InputStream para leer la imagen
-        val bitmap = BitmapFactory.decodeStream(inputStream) // Convierte el InputStream a un Bitmap
-        val outputStream = ByteArrayOutputStream() // Crea un OutputStream para escribir el Bitmap
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream) // Comprime el Bitmap en formato JPEG y escribe los bytes en el OutputStream
-        val imageBytes = outputStream.toByteArray() // Convierte el OutputStream en un ByteArray
-        val imageString = Base64.encodeToString(imageBytes, Base64.DEFAULT)
-        */
-        /*
-        var base64Image = ""
-        Glide.with(this)
-            .asBitmap()
-            .load(imageUri)
-            .override(400, 400) // Aquí puedes especificar el tamaño deseado de la imagen
-            .into(object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(
-                    resource: Bitmap,
-                    transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
-                ) {
-                    val byteArrayOutputStream = ByteArrayOutputStream()
-                    resource.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-                    val byteArray = byteArrayOutputStream.toByteArray()
-
-                    // Convertir el arreglo de bytes a una cadena de texto codificada en base64
-                    base64Image = Base64.encodeToString(byteArray, Base64.DEFAULT)
-                }
-
-
-                override fun onLoadCleared(placeholder: Drawable?) {
-                    // Este método se llama cuando la imagen ha sido eliminada de la memoria caché
-                }
-            })
-         */
-
-        //val path = getPathFromUri(requireContext(), imageUri)
-        //println("path")
-        //println(path)
-        /*
-        val inputStream: InputStream? = requireContext().contentResolver.openInputStream(imageUri)
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-        val imageBytes: ByteArray = byteArrayOutputStream.toByteArray()
-        val imageString: String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
-        val image = Image("image.jpg", imageString)
-        println("AA")
-        println(imageString)
-        */
         val contentResolver = requireContext().contentResolver
         val inputStream: InputStream? = contentResolver.openInputStream(imageUri)
         val bitmap = BitmapFactory.decodeStream(inputStream)
@@ -265,15 +307,12 @@ class ProfileFragment : Fragment(), CoroutineScope {
             false
         )
         scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        //bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
         val byteArray = outputStream.toByteArray()
 
         val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
-        val image = MultipartBody.Part.createFormData("image", "image.jpg", requestFile)
+        val image = MultipartBody.Part.createFormData("image", currentUser.userId.toString() + "user.jpg", requestFile)
 
-        var aa: String? = null
         val crudApi = CrudApi()
-        var imagen2: File? = null
         runBlocking {
             val ru = launch {
                 val response = crudApi.uploadImageToAPI(image)
@@ -282,17 +321,20 @@ class ProfileFragment : Fragment(), CoroutineScope {
                     if (body != null) {
                         // Leer los bytes de la imagen
                         val bytes = body.bytes()
+                        //requireContext().cacheDir.deleteRecursively()
+                        val file = File(requireContext().cacheDir, currentUser.userId.toString() + "user.jpg")
 
-                        // Guardar los bytes en un archivo
-                        val file = File(requireContext().cacheDir, "image2.jpg")
                         val outputStream = FileOutputStream(file)
                         outputStream.write(bytes)
                         outputStream.close()
 
-                        // Mostrar la imagen en un ImageView usando Glide
+                        currentPicture = file
+
                         Glide.with(requireContext())
-                            .load(file)
-                            .into(binding.ivPreviewImage)
+                            .load(BitmapFactory.decodeFile(file.absolutePath))
+                            .into(binding.profileImageView)
+
+                        Tools.setNavigationProfile(requireContext(), file, null)
                     }
                 } else {
                     // Manejar la respuesta de error
@@ -301,6 +343,8 @@ class ProfileFragment : Fragment(), CoroutineScope {
             }
             ru.join()
         }
+
+        //
     }
 
 
@@ -343,15 +387,47 @@ class ProfileFragment : Fragment(), CoroutineScope {
                 }
                 return
             }
+            REQUEST_READ_CONTACTS -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // Permiso de acceso a los contactos concedido
+                    // Obtener los correos electrónicos de los contactos
+                    val emails = getEmailsFromContacts()
+                    // Guardar los correos electrónicos en una lista
+                    val emailList = ArrayList<String>()
+                    emailList.addAll(emails)
+                }
+                return
+            }
         }
     }
 
+    /*
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE -> {
+                if (grantResults.isNotEmpty() &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    permission = true
+                    imageChooser()
 
+                } else {
+                    Toast.makeText(requireContext(), "No s'han acceptat els permisos, per poder utilitzar la gravadora canvia-ho als ajustaments", Toast.LENGTH_LONG).show()
+                    permission = false
+                }
+                return
+            }
+        }
+    }
+    */
 
     companion object {
         private const val PICK_IMAGE_REQUEST = 1
         private const val MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 2
-
+        private const val REQUEST_READ_CONTACTS = 3
     }
 
     override fun onDestroyView() {

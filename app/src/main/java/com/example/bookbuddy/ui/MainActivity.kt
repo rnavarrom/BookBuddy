@@ -27,6 +27,9 @@ import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.NavDrawerActivity
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.UserPreferences
+import com.example.bookbuddy.utils.Tools.Companion.responseToFile
+import com.example.bookbuddy.utils.currentPicture
+import com.example.bookbuddy.utils.currentProfile
 import com.example.bookbuddy.utils.currentUser
 //import com.example.bookbuddy.utils.currentUser
 import com.google.gson.GsonBuilder
@@ -67,12 +70,16 @@ class MainActivity : AppCompatActivity() {
         }
         var userName = intent.getStringExtra("userName")
         binding.MAEditUser.setText(userName)
+
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+
         binding.MAButtonLogin.setOnClickListener {
             var userName = binding.MAEditUser.text.toString()
             var userPassword = binding.MAEditPassword.text.toString()
             if (userName.isNotBlank() && userPassword.isNotBlank()) {
+
                 getUsers(userName, Sha.calculateSHA(userPassword))
+                //print("---------------" + currentUser.userId)
                 if (currentUser.userId != -1) {
                     if(binding.MACheckBox.isChecked){
                         val username = "usuario"
@@ -91,6 +98,9 @@ class MainActivity : AppCompatActivity() {
                     var intent = Intent(this, NavDrawerActivity::class.java)
                     startActivity(intent)
 
+                    //}else{
+                    //  Toast.makeText(this, "Incorrect user or password",Toast.LENGTH_LONG).show()
+                    //}
                 } else {
                     Toast.makeText(this, "Incorrect user or password", Toast.LENGTH_LONG).show()
                 }
@@ -106,15 +116,27 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun getUsers(userName: String, password: String) {
-        runBlocking {
-            val crudApi = CrudApi()
-            val corrutina = launch {
-                currentUser = crudApi.getUserLogin(userName, password)
+
+        fun getUsers(userName: String, password: String) {
+            runBlocking {
+                val crudApi = CrudApi()
+                val corrutina = launch {
+                    currentUser = crudApi.getUserLogin(userName, password)
+                }
+                corrutina.join()
             }
-            corrutina.join()
+            runBlocking {
+                val crudApi = CrudApi()
+                val corrutina = launch {
+                    currentProfile = crudApi.getProfileUser(currentUser.userId)!!
+                    if (currentUser.haspicture){
+                        responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId))
+                    }
+                }
+                corrutina.join()
+            }
         }
-    }
+
     fun loadingEndedHome() {
         getUsers(savedUser, savedPassword)
         var intent = Intent(this, NavDrawerActivity::class.java)

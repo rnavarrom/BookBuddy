@@ -1,8 +1,11 @@
 package com.example.bookbuddy.ui.navdrawer
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Menu
+import android.view.View
+import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -13,13 +16,21 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.core.content.ContentProviderCompat.requireContext
+import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.databinding.ActivityNavDrawerBinding
 import com.example.bookbuddy.ui.MainActivity
 import com.example.bookbuddy.utils.UserPreferences
+import com.example.bookbuddy.utils.Tools.Companion.setNavigationProfile
+import com.example.bookbuddy.utils.currentPicture
+import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import com.example.bookbuddy.utils.navView
 import kotlinx.coroutines.launch
+import com.google.android.material.imageview.ShapeableImageView
+import java.io.File
+import java.io.FileOutputStream
 
 class NavDrawerActivity : AppCompatActivity() {
 
@@ -52,7 +63,9 @@ class NavDrawerActivity : AppCompatActivity() {
             //val drawerLayout = navView.parent as DrawerLayout
             //drawerLayout.closeDrawers()
             //navController.navigate(R.id.nav_settings)
-        }
+        setNavigationProfile(applicationContext, currentPicture, currentUser.name)
+        //setNavigationProfile(applicationContext, BitmapFactory.decodeFile(currentPicture!!.absolutePath), currentUser.name)
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(

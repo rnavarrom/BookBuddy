@@ -166,7 +166,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
 /*
     fun setBookMark(bookId: Int, userId: Int){
         var added = false
-        var readed = Readed(bookId = bookId, userId = userId, book = null, user = null, curreading = false, percentatgeRead = 0.0, readedId = null)
+        var readed = Readed(bookId = bookId, userId = userId, book = null, user = null, curreading = 0, percentatgeRead = 0.0, readedId = null)
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
