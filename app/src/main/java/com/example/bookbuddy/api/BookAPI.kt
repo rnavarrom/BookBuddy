@@ -24,12 +24,24 @@ interface BookAPI {
     suspend fun insertUser(@Path("name") name: String, @Path("password") password: String, @Path("email") email: String): Response<Boolean>
     @GET("/api/book/isbn/{isbn}")
     suspend fun getBookInfo(@Path("isbn") isbn: String): Response<Book>
-    @PUT("/api/readed/put/{readedId}/{pagesReaded}")
-    suspend fun updatePagesReaded(@Path("readedId") readedId: Int, @Path("pagesReaded") pagesReaded: Int): Response<Boolean>
-    @PUT("/api/readed/remove/{readedId}")
-    suspend fun removeBookReading(@Path("readedId") readedId: Int): Response<Boolean>
+    /*
+  @PUT("/api/readed/put/{readedId}/{pagesReaded}")
+  suspend fun updatePagesReaded(@Path("readedId") readedId: Int, @Path("pagesReaded") pagesReaded: Int): Response<Boolean>
+
+  @PUT("/api/readed/remove/{readedId}")
+  suspend fun removeBookAcount(@Path("readedId") readedId: Int): Response<Boolean>
+
+  @PUT("/api/readed/pending/{readedId}")
+  suspend fun setBookPending(@Path("readedId") readedId: Int): Response<Boolean>
+  @PUT("/api/readed/read/{readedId}")
+  suspend fun setBookRead(@Path("readedId") readedId: Int): Response<Boolean>
+  @PUT("/api/readed/reading/{readedId}")
+  suspend fun setBookReading(@Path("readedId") readedId: Int): Response<Boolean>
+
+  @POST("/api/readed/postnew/{}")
 
 
+ */
 /*
     @GET("/productes/?llistat")
     suspend fun getProductes():Response<Productes>

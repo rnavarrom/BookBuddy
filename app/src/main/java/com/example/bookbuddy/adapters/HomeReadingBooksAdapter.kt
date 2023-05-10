@@ -2,6 +2,7 @@ package com.example.bookbuddy.adapters
 
 import android.content.Context
 import android.os.Build
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,12 +20,14 @@ import com.example.bookbuddy.R
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
+import com.example.bookbuddy.ui.navdrawer.HomeFragmentDirections
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.dialogValue
+import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class HomeReadingBooksAdapter(val llista: ArrayList<ActualReading>, fragment: Fragment) : //, context: Context, layoutInf: LayoutInflater
+class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Fragment) : //, context: Context, layoutInf: LayoutInflater
     RecyclerView.Adapter<HomeReadingBooksAdapter.ViewHolder>() {
     lateinit var layout: LayoutInflater
     val fragment = fragment
@@ -60,6 +63,17 @@ class HomeReadingBooksAdapter(val llista: ArrayList<ActualReading>, fragment: Fr
         holder.linearLayout.setOnClickListener {
             ChangeReaded(context, layout, position, holder)
         }
+        holder.imatge.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString("isbn", llista[position].isbn)
+            var action = HomeFragmentDirections.actionNavHomeToNavBookDisplay(bundle)
+            navController.navigate(action)
+        }
+    }
+
+    fun updateList(newList: ArrayList<ActualReading>){
+        llista = newList
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int = llista.size
@@ -90,7 +104,7 @@ class HomeReadingBooksAdapter(val llista: ArrayList<ActualReading>, fragment: Fr
                 holder.progressbar.progress = percent
                 holder.percentage.text = percent.toString()
                 PutBook(llista[position].readedId, llista[position].pagesReaded)
-                RemoveBookReading(llista[position].readedId)
+                //RemoveBookReading(llista[position].readedId)
                 getUser()
                 reloadFragment(fragment)
             }else if ( valueint < llista[position].pages) {
@@ -122,6 +136,7 @@ class HomeReadingBooksAdapter(val llista: ArrayList<ActualReading>, fragment: Fr
         }
         Toast.makeText(context, "Resultat: " + result, Toast.LENGTH_LONG).show()
     }
+    /*
     fun RemoveBookReading(readedId: Int){
         var result = false
         runBlocking {
@@ -133,6 +148,8 @@ class HomeReadingBooksAdapter(val llista: ArrayList<ActualReading>, fragment: Fr
         }
         Toast.makeText(context, "Resultat: " + result, Toast.LENGTH_LONG).show()
     }
+
+     */
     fun reloadFragment(fragment: Fragment){
         Toast.makeText(context, "Reloading fragment", Toast.LENGTH_LONG).show()
 

@@ -7,6 +7,8 @@ import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.models.SimpleBook
 import com.example.bookbuddy.models.Test.User
 import com.example.bookbuddy.models.*
+import com.example.bookbuddy.models.Test.ActualReading
+import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.models.UserItem
 import com.google.gson.GsonBuilder
@@ -100,6 +102,19 @@ class CrudApi(): CoroutineScope {
         return response!!
     }
 
+    suspend fun getReadBooksFromUser(user_id: Int, position: Int): List<Pending?> {
+        val response = getRetrofit().create(ReadedAPI::class.java).getReadBooksFromUser(user_id, position).body()
+        return response!!
+    }
+    suspend fun getPendingBooksFromUser(user_id: Int, position: Int): List<Pending?> {
+        val response = getRetrofit().create(ReadedAPI::class.java).getPendingBooksFromUser(user_id, position).body()
+        return response!!
+    }
+    suspend fun getReadingBooksFromUser(user_id: Int, position: Int): List<ActualReading?> {
+        val response = getRetrofit().create(ReadedAPI::class.java).getReadingBooksFromUser(user_id, position).body()
+        return response!!
+    }
+
     suspend fun getReadedsFromBook(user_id: Int, book_id: Int): Readed? {
         val response = getRetrofit().create(ReadedAPI::class.java).getReadedsFromBook(user_id, book_id)
         if (response.isSuccessful){
@@ -114,6 +129,11 @@ class CrudApi(): CoroutineScope {
     }
 
     suspend fun deleteReadedToAPI(readed_id: Int): Boolean {
+        val call = getRetrofit().create(ReadedAPI::class.java).deleteReaded(readed_id)
+        return call.isSuccessful
+    }
+
+    suspend fun updatePagesReaded(readed_id: Int): Boolean {
         val call = getRetrofit().create(ReadedAPI::class.java).deleteReaded(readed_id)
         return call.isSuccessful
     }
@@ -228,19 +248,28 @@ class CrudApi(): CoroutineScope {
         val call = getRetrofit().create(FollowsAPI::class.java).insertFollow(userId, userFollowedId)
         return call.isSuccessful
     }
-
     suspend fun deleteFollowAPI(userId: Int, userFollowedId: Int): Boolean{
         val call = getRetrofit().create(FollowsAPI::class.java).deleteFollow(userId, userFollowedId)
         return call.isSuccessful
     }
-
     suspend fun updateReadedToAPI(readedId: Int, pagesReaded: Int): Boolean {
-        val call = getRetrofit().create(BookAPI::class.java).updatePagesReaded(readedId, pagesReaded)
+        val call = getRetrofit().create(ReadedAPI::class.java).updatePagesReaded(readedId, pagesReaded)
         return call.isSuccessful
     }
-
-    suspend fun removeBookReading(readedId: Int): Boolean {
-        val call = getRetrofit().create(BookAPI::class.java).removeBookReading(readedId)
+    suspend fun removeBookReading(bookId: Int, userId: Int): Boolean {
+        val call = getRetrofit().create(ReadedAPI::class.java).removeBookReading(bookId, userId)
+        return call.isSuccessful
+    }
+    suspend fun setBookPending(bookId: Int, userId: Int): Boolean {
+        val call = getRetrofit().create(ReadedAPI::class.java).setBookPending(bookId, userId)
+        return call.isSuccessful
+    }
+    suspend fun setBookReading(bookId: Int, userId: Int): Boolean {
+        val call = getRetrofit().create(ReadedAPI::class.java).setBookReading(bookId, userId)
+        return call.isSuccessful
+    }
+    suspend fun setBookRead(bookId: Int, userId: Int): Boolean {
+        val call = getRetrofit().create(ReadedAPI::class.java).setBookRead(bookId, userId)
         return call.isSuccessful
     }
 

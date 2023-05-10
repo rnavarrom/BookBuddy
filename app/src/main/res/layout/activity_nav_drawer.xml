@@ -33,14 +33,14 @@
             android:background="@color/white"
             android:layout_marginLeft="16dp">
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/nav_settings"
+                android:id="@+id/nav_log_out"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Settings"
+                android:text="Log Out"
                 android:textColor="@color/black"
                 android:textAlignment="textStart"
                 android:textAllCaps="false"
-                app:icon="@drawable/ic_menu_settings"
+                app:icon="@drawable/ic_log_out"
                 app:iconTint="@color/black"
                 android:background="@color/white"
                 style="@style/Widget.MaterialComponents.Button.TextButton"/>

@@ -11,7 +11,7 @@ data class ActualReading(
     val pages: Int,
     var pagesReaded: Int,
     val publicationDate: Any,
-    val rating: Any,
+    val rating: Double,
     val title: Any,
     val readedId: Int
 )

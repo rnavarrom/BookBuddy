@@ -32,7 +32,6 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             >
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl2"
                 app:layout_constraintTop_toTopOf="parent"
@@ -55,6 +54,7 @@
                     android:src="@drawable/ic_markbook_read"
                     android:layout_width="30dp"
                     android:layout_height="30dp"/>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView

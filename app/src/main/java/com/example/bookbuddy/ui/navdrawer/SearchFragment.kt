@@ -32,8 +32,7 @@ class SearchFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        binding =  FragmentSearchBinding.inflate(layoutInflater, container, false)
+        binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
 
         //val searchTextView = findViewById<AutoCompleteTextView>(R.id.search_text_view)
 
@@ -42,14 +41,15 @@ class SearchFragment : Fragment() {
                 // Realizar búsqueda
                 //Toast.makeText(context, "", Toast.LENGTH_LONG).show()
                 var searchValue = binding.SearchView.text.toString()
-                searchResultList =  performSearch(searchValue, requireContext())
+                searchResultList = performSearch(searchValue, requireContext())
 
-                if(!searchResultList.isEmpty()){
-
-                    binding.SearchReciclerView.setLayoutManager(GridLayoutManager(context, 3))
-                    adapter = SearchResultAdapter(searchResultList, requireActivity().supportFragmentManager, this)
-                    binding.SearchReciclerView.adapter = adapter
+                if (!searchResultList.isEmpty()) {
+                    Toast.makeText(context, "Nothing found!", Toast.LENGTH_LONG).show()
                 }
+                binding.SearchReciclerView.setLayoutManager(GridLayoutManager(context, 3))
+                adapter =
+                    SearchResultAdapter(searchResultList) //, requireActivity().supportFragmentManager, this
+                binding.SearchReciclerView.adapter = adapter
 
                 true
             } else {
@@ -57,19 +57,14 @@ class SearchFragment : Fragment() {
             }
         }
 
-
-        //
-
         return binding.root
     }
 
+}
 
-    }
-
-
-private fun performSearch(searchValue: String, context : Context) : ArrayList<SimpleBook> {
+private fun performSearch(searchValue: String, context: Context): ArrayList<SimpleBook> {
     // Aquí se realiza la búsqueda con el texto ingresado en el AutoCompleteTextView
-   Toast.makeText(context, "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
 
     var searchResultList = arrayListOf<SimpleBook>()
 

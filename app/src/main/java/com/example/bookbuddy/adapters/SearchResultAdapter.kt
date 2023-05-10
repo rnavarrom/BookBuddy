@@ -15,13 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.SimpleBook
-import com.example.bookbuddy.ui.navdrawer.BookDisplayFragment
-import com.example.bookbuddy.ui.navdrawer.NavDrawerActivity
-import com.example.bookbuddy.ui.navdrawer.SearchFragment
+import com.example.bookbuddy.ui.navdrawer.*
 import com.example.bookbuddy.utils.navController
 
 
-class SearchResultAdapter(val llista: ArrayList<SimpleBook>, var fm: FragmentManager, var sf: Fragment) : RecyclerView.Adapter<SearchResultAdapter.ViewHolder>(){
+class SearchResultAdapter(val llista: ArrayList<SimpleBook>) : RecyclerView.Adapter<SearchResultAdapter.ViewHolder>(){
+    //, var fm: FragmentManager, var sf: Fragment
     class ViewHolder(val vista: View): RecyclerView.ViewHolder(vista){
         val imatge = vista.findViewById<ImageView>(R.id.book_cover)
         val text = vista.findViewById<TextView>(R.id.book_rating)
@@ -49,9 +48,13 @@ class SearchResultAdapter(val llista: ArrayList<SimpleBook>, var fm: FragmentMan
             transaction.addToBackStack(null)
             transaction.commit()
              */
-                val bundle = Bundle()
-                bundle.putString("isbn", llista[position].isbn)
-                navController.navigate(R.id.nav_book_display, bundle)
+            val bundle = Bundle()
+            bundle.putString("isbn", llista[position].isbn)
+            var action = SearchFragmentDirections.actionNavSearchToNavBookDisplay(bundle)
+            navController.navigate(action)
+               // val bundle = Bundle()
+               // bundle.putString("isbn", llista[position].isbn)
+               // navController.navigate(R.id.nav_book_display, bundle)
         }
     }
     override fun getItemCount(): Int = llista.size

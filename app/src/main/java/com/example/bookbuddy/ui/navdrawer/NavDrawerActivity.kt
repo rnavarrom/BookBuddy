@@ -12,15 +12,20 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.bookbuddy.R
 import com.example.bookbuddy.databinding.ActivityNavDrawerBinding
+import com.example.bookbuddy.ui.MainActivity
+import com.example.bookbuddy.utils.UserPreferences
 import com.example.bookbuddy.utils.navController
 import com.example.bookbuddy.utils.navView
+import kotlinx.coroutines.launch
 
 class NavDrawerActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityNavDrawerBinding
+    private lateinit var userPrefs: UserPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,11 +41,17 @@ class NavDrawerActivity : AppCompatActivity() {
         navView = binding.navView
         navController = findNavController(R.id.nav_host_fragment_content_nav_drawer)
 
-        binding.navSettings.setOnClickListener {
-            // TODO: goto to settings fragment
-            val drawerLayout = navView.parent as DrawerLayout
-            drawerLayout.closeDrawers()
-            navController.navigate(R.id.nav_settings)
+        binding.navLogOut.setOnClickListener {
+            userPrefs = UserPreferences(this)
+            lifecycleScope.launch {
+                userPrefs.saveCredentials("", "")
+            }
+            var intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+
+            //val drawerLayout = navView.parent as DrawerLayout
+            //drawerLayout.closeDrawers()
+            //navController.navigate(R.id.nav_settings)
         }
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
