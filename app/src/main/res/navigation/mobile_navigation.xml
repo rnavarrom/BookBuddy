@@ -41,7 +41,11 @@
         android:id="@+id/nav_contacts"
         android:name="com.example.bookbuddy.ui.navdrawer.ContactsFragment"
         android:label="Contacts"
-        tools:layout="@layout/fragment_contacts" />
+        tools:layout="@layout/fragment_contacts" >
+        <action
+            android:id="@+id/action_nav_contacts_to_nav_profile_dialog"
+            app:destination="@id/nav_profile_dialog" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_profile"

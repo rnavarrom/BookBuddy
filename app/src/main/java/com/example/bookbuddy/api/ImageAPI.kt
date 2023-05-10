@@ -9,8 +9,8 @@ import java.io.File
 
 interface ImageAPI {
 
-    @GET("/api/images/{image}")
-    suspend fun getImage(@Path("image") image: String): Response<String>
+    @GET("/api/images/{userid}")
+    suspend fun getImage(@Path("userid") userId: Int): Response<ResponseBody>
 
     @Multipart
     @POST("/api/images/")

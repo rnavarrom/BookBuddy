@@ -11,6 +11,7 @@ data class UserItem(
     val isadmin: Boolean = false,
     var name: String = "",
     var password: String = "",
+    var haspicture: Boolean = false,
     val profiles: List<Any> = emptyList(),
     val reports: List<Any> = emptyList(),
     var userId: Int = -1,

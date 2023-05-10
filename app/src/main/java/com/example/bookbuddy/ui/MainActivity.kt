@@ -15,6 +15,9 @@ import com.example.bookbuddy.databinding.ActivityMainBinding
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.NavDrawerActivity
 import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.Tools.Companion.responseToFile
+import com.example.bookbuddy.utils.currentPicture
+import com.example.bookbuddy.utils.currentProfile
 import com.example.bookbuddy.utils.currentUser
 //import com.example.bookbuddy.utils.currentUser
 import com.google.gson.GsonBuilder
@@ -39,10 +42,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.MAButtonLogin.setOnClickListener {
 
-            //var userName = binding.MAEditUser.text.toString()
-            //var userPassword = binding.MAEditPassword.text.toString()
-            var userName = "test"
-            var userPassword = "test"
+            var userName = binding.MAEditUser.text.toString()
+            var userPassword = binding.MAEditPassword.text.toString()
+            //var userName = "test"
+            //var userPassword = "test"
 
             if (userName.isNotBlank() && userPassword.isNotBlank()) {
 
@@ -81,8 +84,17 @@ class MainActivity : AppCompatActivity() {
                     currentUser = crudApi.getUserLogin(userName, password)
                 }
                 corrutina.join()
+            }
+            runBlocking {
+                val crudApi = CrudApi()
+                val corrutina = launch {
+                    currentProfile = crudApi.getProfileUser(currentUser.userId)!!
+                    if (currentUser.haspicture){
+                        responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId))
+                    }
+                }
+                corrutina.join()
+            }
         }
-
-    }
 
 }

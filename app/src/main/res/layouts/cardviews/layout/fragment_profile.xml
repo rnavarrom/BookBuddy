@@ -10,7 +10,20 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
+        <Button
+            android:visibility="visible"
+            android:id="@+id/b_contacts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="@color/primary_green"
+            android:text="Contacts"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
         <Button
             android:visibility="visible"
             android:id="@+id/b_select_image"
@@ -22,26 +35,19 @@
             android:text="SELECT IMAGE"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/b_contacts"/>
 
-        <!--ImageView to preview the selected image-->
-        <ImageView
-            android:visibility="visible"
-            android:id="@+id/iv_preview_image"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            app:layout_constraintTop_toBottomOf="@id/b_select_image"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp" />
         <!-- TODO -->
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/profile_imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:contentDescription="@string/nav_header_desc"
-            app:srcCompat="@mipmap/ic_launcher_round"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/defaultpic"
+            app:shapeAppearance="@style/CircleImageViewStyle"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="30dp"
@@ -71,6 +77,14 @@
             app:layout_constraintStart_toStartOf="@id/profile_imageView"
             android:layout_marginTop="10dp"
             android:text="500 seguidores"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/search_genres"
+            app:layout_constraintTop_toBottomOf="@id/tv_followers"
+            app:layout_constraintStart_toStartOf="@id/tv_followers"
+            android:text="SEARCHGENRES"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 

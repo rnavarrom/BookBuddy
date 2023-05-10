@@ -3,6 +3,8 @@ package com.example.bookbuddy.utils
 import android.content.ContentUris
 import android.content.Context
 import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -12,14 +14,21 @@ import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.api.CrudApi
+import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import okhttp3.ResponseBody
+import retrofit2.Response
+import java.io.File
+import java.io.FileOutputStream
 
 
 class Tools {
@@ -81,6 +90,50 @@ class Tools {
             toolbar.setTitleTextColor(ContextCompat.getColor(dialogFragment.requireContext(), R.color.white))
             toolbar.setNavigationOnClickListener(View.OnClickListener { dialogFragment.dismiss() })
             toolbar.title = title
+        }
+
+        //fun setNavigationProfile(context: Context, image: Bitmap?, username: String?){
+        fun setNavigationProfile(context: Context, image: File?, username: String?){
+            var hView: View = navView.getHeaderView(0)
+            if (username != null){
+                var profileName: TextView = hView.findViewById(R.id.profile_name)
+                profileName.text = currentUser.name
+            }
+
+            if (image != null){
+                if (currentUser.haspicture){
+                    var profileImg: ShapeableImageView = hView.findViewById(R.id.profile_imageView)
+                    //profileImg.setImageResource(R.drawable.ic_menu_profile)
+
+                    Glide.with(context)
+                        .load(BitmapFactory.decodeFile(image.absolutePath))
+                        .into(profileImg)
+                    //profileImg.setImageURI(Uri.fromFile(image))
+
+                    // Mostrar la imagen en un ImageView usando Glide
+                    /*
+                    profileImg.setImageDrawable(null)
+                    println("ESTOOOOOOOOOOOOOOOOOOOOOOO")
+                    Glide.with(context)
+                        .load(image)
+                        .into(profileImg)
+
+                     */
+                }
+            }
+        }
+
+        fun responseToFile(context: Context, response: Response<ResponseBody>){
+            val body = response.body()
+            // Leer los bytes de la imagen
+            val bytes = body!!.bytes()
+            context.cacheDir.deleteRecursively()
+            val file = File(context.cacheDir, currentUser.userId.toString() + "user.jpg")
+
+            val outputStream = FileOutputStream(file)
+            outputStream.write(bytes)
+            outputStream.close()
+            currentPicture = file
         }
 
         fun getPathFromUri(context: Context, uri: Uri): String? {

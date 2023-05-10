@@ -7,15 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.adapters.HomeBooksAdapter
 import com.example.bookbuddy.adapters.HomeReadingBooksAdapter
 import com.example.bookbuddy.databinding.FragmentHomeBinding
 import com.example.bookbuddy.models.Test.Pending
+import com.example.bookbuddy.utils.currentPicture
 
 import com.example.bookbuddy.utils.currentUser
+import com.example.bookbuddy.utils.navView
+import com.google.android.material.imageview.ShapeableImageView
+import org.w3c.dom.Text
+import java.io.File
+import java.io.FileOutputStream
 
 //import com.example.bookbuddy.utils.currentUser
 
@@ -36,6 +44,8 @@ class HomeFragment : Fragment() {
     ): View? {
         binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+
+
 /*
         var pending = Pending(123456, emptyList(), emptyList(), "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1522157426l/19063._SY475_.jpg",
         "", "", 500, "",3.5, emptyList(),"Libro de Prueba" )

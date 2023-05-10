@@ -1,13 +1,11 @@
 package com.example.bookbuddy.api
 
-import com.example.bookbuddy.models.Book
-import com.example.bookbuddy.models.Follows
-import com.example.bookbuddy.models.Readed
+import com.example.bookbuddy.models.*
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.models.User.Comment2
-import com.example.bookbuddy.models.UserList
 import retrofit2.Response
 import retrofit2.http.*
+import retrofit2.http.Query
 
 interface FollowsAPI {
 
@@ -17,6 +15,15 @@ interface FollowsAPI {
 
     @GET("/api/follows/count/{userid}")
     suspend fun getFollowersUser(@Path("userid") userId: Int): Response<Int>
+
+    //@GET("/api/follows/contacts/{userid}/{emails}")
+    //suspend fun getEmailsContact(@Path("userid") userId: Int, @Path("emails") emails: List<String>): Response<Int>
+
+    @GET("/api/follows/getcontacts/{userid}/{position}")
+    suspend fun getFollowersProfile(@Path("userid") userId: Int, @Path("position") position: Int): Response<List<UserItem>>
+
+    @GET("/api/follows/contacts/{userid}")
+    suspend fun getEmailsContact(@Path("userid") userId: Int, @Query("emails") emails: List<String>): Response<Int>
 
     @POST("/api/follows/{userid}/{userfollowid}")
     suspend fun insertFollow(@Path("userid") userid: Int, @Path("userfollowid") userfollowid: Int): Response<Boolean>

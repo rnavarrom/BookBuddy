@@ -20,6 +20,7 @@ import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Path
 import java.io.File
 import java.security.SecureRandom
 import javax.net.ssl.HostnameVerifier
@@ -168,8 +169,38 @@ class CrudApi(): CoroutineScope {
         return call.isSuccessful
     }
 
+    // Profiles
+
+    suspend fun getProfileUser(userId: Int): Profile? {
+        val response = getRetrofit().create(ProfileAPI::class.java).getProfileUser(userId)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
+    }
+
+    suspend fun addProfileToAPI(genreId: Int, authorId: Int, userId: Int): Profile? {
+        val call = getRetrofit().create(ProfileAPI::class.java).insertProfile(genreId, authorId, userId)
+        return call.body()
+    }
+
+    suspend fun deleteProfileToAPI(id: Int): Boolean{
+        val call = getRetrofit().create(ProfileAPI::class.java).deleteProfile(id)
+        return call.isSuccessful
+    }
+
     // Images
 
+    suspend fun getUserImage(userId: Int): Response<ResponseBody> {
+        val call = getRetrofit().create(ImageAPI::class.java).getImage(userId)
+        return call
+    }
+
+    suspend fun uploadImageToAPI(image: MultipartBody.Part): Response<ResponseBody> {
+        val call = getRetrofit().create(ImageAPI::class.java).uploadImage(image)
+        return call
+    }
+    /*
     suspend fun getImageToAPI(image: String): String? {
         val call = getRetrofit().create(ImageAPI::class.java).getImage(image)
         return call.body()
@@ -184,7 +215,7 @@ class CrudApi(): CoroutineScope {
         val call = getRetrofit().create(ImageAPI::class.java).uploadImage(image)
         return call
     }
-
+    */
     // Libraries
 
     suspend fun getBookLibraries(isbn: String): List<Library> {
@@ -213,11 +244,24 @@ class CrudApi(): CoroutineScope {
     }
 
     suspend fun getFollowerCount(userId: Int): Int? {
-        println("BB")
         val response = getRetrofit().create(FollowsAPI::class.java).getFollowersUser(userId)
-        println("AA")
         if (response.isSuccessful){
-            println("AAA" + response.body().toString())
+            return response.body()
+        }
+        return null
+    }
+
+    suspend fun getFollowersProfile(userId: Int, position: Int): List<UserItem>? {
+        val response = getRetrofit().create(FollowsAPI::class.java).getFollowersProfile(userId, position)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
+    }
+
+    suspend fun getEmailsContact(userId: Int, emails: List<String>): Int? {
+        val response = getRetrofit().create(FollowsAPI::class.java).getEmailsContact(userId, emails)
+        if (response.isSuccessful){
             return response.body()
         }
         return null
