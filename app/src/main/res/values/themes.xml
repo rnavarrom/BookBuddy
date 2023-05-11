@@ -48,4 +48,9 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="DialogFragmentStyle" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="android:layout_marginHorizontal">-20dp</item>
+        <item name="android:layout_marginVertical">-20dp</item>
+    </style>
+
 </resources>

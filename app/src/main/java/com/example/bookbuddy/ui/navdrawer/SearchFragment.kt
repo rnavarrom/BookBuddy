@@ -89,7 +89,7 @@ class SearchFragment : Fragment() {
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
                 var searchValue = binding.SearchView.text.toString()
-                searchResultList =  performSearch(searchValue, requireContext())
+                searchResultList =  performSearch(searchValue)
 
                 if(!searchResultList.isEmpty()){
 
@@ -110,24 +110,21 @@ class SearchFragment : Fragment() {
         return binding.root
     }
 
+    private fun performSearch(searchValue: String) : ArrayList<SimpleBook> {
+        // Aquí se realiza la búsqueda con el texto ingresado en el AutoCompleteTextView
+        Toast.makeText(requireContext(), "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
 
-    }
+        var searchResultList = arrayListOf<SimpleBook>()
 
-
-private fun performSearch(searchValue: String, context : Context) : ArrayList<SimpleBook> {
-    // Aquí se realiza la búsqueda con el texto ingresado en el AutoCompleteTextView
-   Toast.makeText(context, "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
-
-    var searchResultList = arrayListOf<SimpleBook>()
-
-    runBlocking {
-        val crudApi = CrudApi()
-        val corrutina = launch {
-            searchResultList = crudApi.getSimpleSearch(searchValue)
+        runBlocking {
+            val crudApi = CrudApi()
+            val corrutina = launch {
+                searchResultList = crudApi.getSimpleSearch(searchValue)
+            }
+            corrutina.join()
         }
-        corrutina.join()
+        return searchResultList
     }
-    return searchResultList
 }
 
 

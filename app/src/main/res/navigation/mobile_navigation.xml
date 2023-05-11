@@ -58,6 +58,9 @@
         <action
             android:id="@+id/action_nav_profile_to_nav_book_display"
             app:destination="@id/nav_book_display" />
+        <action
+            android:id="@+id/action_nav_profile_to_nav_profile_search"
+            app:destination="@id/nav_profile_search" />
     </fragment>
 
     <fragment
@@ -142,5 +145,13 @@
             app:argType="android.os.Bundle" />
     </dialog>
 
+    <dialog
+        android:id="@+id/nav_profile_search"
+        android:name="com.example.bookbuddy.ui.navdrawer.ProfileSearchDialog"
+        tools:layout="@layout/fragment_profile_search_dialog" >
+        <argument
+            android:name="bundle"
+            app:argType="android.os.Bundle" />
+    </dialog>
 
 </navigation>

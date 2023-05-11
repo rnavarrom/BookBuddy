@@ -179,8 +179,30 @@ class CrudApi(): CoroutineScope {
         return null
     }
 
+    suspend fun getSearchGenres(name: String, position: Int): List<com.example.bookbuddy.models.Test.Genre>? {
+        val response = getRetrofit().create(ProfileAPI::class.java).getSearchGenres(name, position)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
+    }
+
+    suspend fun getSearchAuthors(name: String, position: Int): List<com.example.bookbuddy.models.Test.Author>? {
+        val response = getRetrofit().create(ProfileAPI::class.java).getSearchAuthors(name, position)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
+    }
+
+
     suspend fun addProfileToAPI(genreId: Int, authorId: Int, userId: Int): Profile? {
         val call = getRetrofit().create(ProfileAPI::class.java).insertProfile(genreId, authorId, userId)
+        return call.body()
+    }
+
+    suspend fun updateProfileToAPI(id: Int, profile: Profile): Profile? {
+        val call = getRetrofit().create(ProfileAPI::class.java).updateProfile(id, profile)
         return call.body()
     }
 

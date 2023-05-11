@@ -8,13 +8,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.media.Image
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.provider.ContactsContract
 import android.provider.MediaStore
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,13 +22,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
-import com.example.bookbuddy.R
 import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileBinding
 import com.example.bookbuddy.utils.*
-import com.example.bookbuddy.utils.Tools.Companion.getPathFromUri
-import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*
 import okhttp3.*
@@ -43,7 +37,7 @@ import java.io.InputStream
 import kotlin.coroutines.CoroutineContext
 
 
-class ProfileFragment : Fragment(), CoroutineScope {
+class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnSearchCompleteListener {
     lateinit var binding: FragmentProfileBinding
     private var job: Job = Job()
 
@@ -61,6 +55,10 @@ class ProfileFragment : Fragment(), CoroutineScope {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onSearchComplete(result: Int) {
+        Toast.makeText(requireContext(), "Result " + result.toString(), Toast.LENGTH_LONG).show()
     }
 
     override fun onCreateView(
@@ -230,6 +228,20 @@ class ProfileFragment : Fragment(), CoroutineScope {
     fun loadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainContent.visibility = View.VISIBLE
+
+        binding.searchGenres.setOnClickListener {
+            val bundle = Bundle()
+            val dialog: ProfileSearchDialog = ProfileSearchDialog()
+            dialog.onSearchCompleteListener = this //Changed
+            dialog.show(childFragmentManager, "Date Picker")
+            /*
+            bundle.putInt("userid", userid)
+            bundle.putString("username", username)*/
+            /*
+            var action = ProfileFragmentDirections.actionNavProfileToNavProfileSearch(bundle)
+            navController.navigate(action)
+            */
+        }
         /*
         if (currentPicture.isSuccessful){
             val body = currentPicture.body()
