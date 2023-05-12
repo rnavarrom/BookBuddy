@@ -24,8 +24,11 @@ interface ProfileAPI {
     @POST("/api/profile/{genreid}/{authorid}/{userid}")
     suspend fun insertProfile(@Path("genreid") genreId: Int, @Path("authorid") authorId: Int, @Path("userid") userId: Int): Response<Profile>
 
-    @PUT("/api/profile/{id}")
-    suspend fun updateProfile(@Path("id") id: Int, @Query("profile") profile: Profile): Response<Profile>
+    @PUT("/api/profile/genre/{id}/{genre}")
+    suspend fun updateProfileGenre(@Path("id") id: Int, @Path("genre") genre: Int): Response<Boolean>
+
+    @PUT("/api/profile/author/{id}/{author}")
+    suspend fun updateProfileAuthor(@Path("id") id: Int, @Path("author") author: Int): Response<Boolean>
 
     @DELETE("/api/profile/{id}")
     suspend fun deleteProfile(@Path("id") id: Int): Response<Profile>

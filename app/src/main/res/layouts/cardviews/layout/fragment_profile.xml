@@ -11,19 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible">
-        <Button
-            android:visibility="visible"
-            android:id="@+id/b_contacts"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
-            android:backgroundTint="@color/primary_green"
-            android:text="Contacts"
-            android:textColor="@android:color/white"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+
         <Button
             android:visibility="visible"
             android:id="@+id/b_select_image"
@@ -54,47 +42,148 @@
             android:layout_marginStart="30dp"
             />
 
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/edit_profile_imageView"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:contentDescription="@string/nav_header_desc"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/defaultpic"
+            app:shapeAppearance="@style/CircleImageViewStyle"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="30dp"
+            android:layout_marginStart="30dp"
+            android:visibility="invisible"
+            />
+
         <TextView
             android:id="@+id/tv_username"
             android:layout_marginStart="20dp"
             android:text="AAAAAAAAAA"
+            android:textSize="18dp"
             app:layout_constraintStart_toEndOf="@id/profile_imageView"
             app:layout_constraintTop_toTopOf="@id/profile_imageView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:visibility="visible"/>
 
-        <Button
-            android:id="@+id/bt_follow"
-            app:layout_constraintStart_toStartOf="@id/tv_username"
-            app:layout_constraintTop_toBottomOf="@id/tv_username"
-            android:text="Follow"
+        <EditText
+            android:id="@+id/et_username"
+            android:layout_marginStart="20dp"
+            app:layout_constraintStart_toEndOf="@id/profile_imageView"
+            app:layout_constraintTop_toTopOf="@id/profile_imageView"
+            android:hint="Username"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:visibility="invisible"/>
+
 
         <TextView
             android:id="@+id/tv_followers"
-            app:layout_constraintTop_toBottomOf="@id/profile_imageView"
-            app:layout_constraintStart_toStartOf="@id/profile_imageView"
+            app:layout_constraintTop_toBottomOf="@id/et_username"
+            app:layout_constraintStart_toStartOf="@id/tv_username"
             android:layout_marginTop="10dp"
             android:text="500 seguidores"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <Button
-            android:id="@+id/search_genres"
-            app:layout_constraintTop_toBottomOf="@id/tv_followers"
-            app:layout_constraintStart_toStartOf="@id/tv_followers"
-            android:text="SEARCHGENRES"
+        <TextView
+            android:id="@+id/tv_preferred_genre"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/et2_prefferred_genre"
+            app:layout_constraintBottom_toBottomOf="@id/et2_prefferred_genre"
+            app:layout_constraintStart_toStartOf="@id/profile_imageView"
+            android:layout_marginVertical="15dp"
+            android:text="Preferred Genre: "
+            android:textSize="16dp"
+            android:textColor="@color/primary_green"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/et1_prefferred_genre"
+            android:text="Not selected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            app:layout_constraintStart_toEndOf="@id/tv_preferred_genre"
+            app:layout_constraintTop_toTopOf="@id/et2_prefferred_genre"
+            app:layout_constraintBottom_toBottomOf="@id/et2_prefferred_genre"/>
+
+        <EditText
+            android:id="@+id/et2_prefferred_genre"
+            android:hint="Genre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:layout_marginVertical="10dp"
+            android:layout_marginStart="5dp"
+            app:layout_constraintStart_toEndOf="@id/tv_preferred_genre"
+            app:layout_constraintTop_toBottomOf="@id/profile_imageView"
+            android:singleLine="true"
+            android:focusable="false"
+            android:visibility="invisible"/>
+        <!-- aaa -->
+        <TextView
+            android:id="@+id/tv_preferred_author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/et2_prefferred_author"
+            app:layout_constraintBottom_toBottomOf="@id/et2_prefferred_author"
+            app:layout_constraintStart_toStartOf="@id/profile_imageView"
+            android:layout_marginVertical="15dp"
+            android:text="Preferred Author: "
+            android:textSize="16dp"
+            android:textColor="@color/primary_green"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/et1_prefferred_author"
+            android:text="Not selected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            app:layout_constraintStart_toEndOf="@id/tv_preferred_author"
+            app:layout_constraintTop_toTopOf="@id/et2_prefferred_author"
+            app:layout_constraintBottom_toBottomOf="@id/et2_prefferred_author"/>
+
+        <EditText
+            android:id="@+id/et2_prefferred_author"
+            android:hint="Author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:layout_marginVertical="10dp"
+            android:layout_marginStart="5dp"
+            app:layout_constraintStart_toEndOf="@id/tv_preferred_author"
+            app:layout_constraintTop_toBottomOf="@id/et2_prefferred_genre"
+            android:singleLine="true"
+            android:focusable="false"
+            android:visibility="invisible"/>
+
+        <Button
+            android:visibility="visible"
+            android:id="@+id/b_contacts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="@color/primary_green"
+            android:text="Importar contactes"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/tv_preferred_author"
+            app:layout_constraintTop_toBottomOf="@id/tv_preferred_author"
+            android:layout_marginVertical="10dp"/>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/tv_followers"
+            app:layout_constraintTop_toBottomOf="@id/b_contacts"
             app:tabTextColor="@color/primary_green"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="15dp"
             app:tabIndicatorHeight="2.5dp">
         </com.google.android.material.tabs.TabLayout>
 

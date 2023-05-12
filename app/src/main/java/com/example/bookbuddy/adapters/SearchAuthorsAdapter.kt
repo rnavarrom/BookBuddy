@@ -8,20 +8,16 @@ import android.widget.*
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
+import com.example.bookbuddy.models.Test.Author
 import com.example.bookbuddy.models.Test.Genre
-import com.example.bookbuddy.ui.navdrawer.ProfileSearchDialog
+import com.example.bookbuddy.ui.navdrawer.ProfileAuthorDialog
 import com.example.bookbuddy.utils.currentProfile
-import com.example.bookbuddy.utils.currentUser
-import com.example.bookbuddy.utils.navController
-import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.*
-import java.io.File
-import java.io.FileOutputStream
 import kotlin.coroutines.CoroutineContext
 
 
-class SearchGenresAdapter(var dialogFragment: DialogFragment, var dialog: ProfileSearchDialog.OnGenreSearchCompleteListener?, var list: java.util.ArrayList<Genre>) :
-    RecyclerView.Adapter<com.example.bookbuddy.adapters.SearchGenresAdapter.viewholder>(), CoroutineScope {
+class SearchAuthorsAdapter(var dialogFragment: DialogFragment, var dialog: ProfileAuthorDialog.OnAuthorSearchCompleteListener?, var list: java.util.ArrayList<Author>) :
+    RecyclerView.Adapter<SearchAuthorsAdapter.viewholder>(), CoroutineScope {
     private var job: Job = Job()
     class viewholder(val view: View) : RecyclerView.ViewHolder(view) {
         val name = view.findViewById<TextView>(R.id.tv_search_name)
@@ -40,12 +36,12 @@ class SearchGenresAdapter(var dialogFragment: DialogFragment, var dialog: Profil
         holder.name.text = list[position].name
 
         holder.view.setOnClickListener {
-            addGenreToFavourite(list[position].genreId, list[position].name)
+            addAuthorToFavourite(list[position].authorId, list[position].name)
         }
     }
 
-    fun addGenreToFavourite(id: Int, name: String){
-        currentProfile.genreId = id
+    fun addAuthorToFavourite(id: Int, name: String){
+        currentProfile.authorId = id
         /*
         runBlocking {
             val crudApi = CrudApi()
@@ -55,11 +51,11 @@ class SearchGenresAdapter(var dialogFragment: DialogFragment, var dialog: Profil
             corrutina.join()
         }
         */
-        dialog?.onGenreSearchComplete(id, name)
+        dialog?.onAuthorSearchComplete(id, name)
         dialogFragment.dismiss()
     }
 
-    fun updateList(newList: ArrayList<Genre>){
+    fun updateList(newList: ArrayList<Author>){
         list = newList
         notifyDataSetChanged()
     }

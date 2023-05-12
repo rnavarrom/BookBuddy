@@ -62,7 +62,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:text="TITLE VERY LONG VERY LONG"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -73,28 +72,41 @@
                 android:id="@+id/d_book_author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Author Name"
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="@id/d_book_title"
                 app:layout_constraintTop_toBottomOf="@id/d_book_title" />
 
             <TextView
+                android:id="@+id/d_book_language"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                app:layout_constraintStart_toStartOf="@id/d_book_title"
+                app:layout_constraintTop_toBottomOf="@id/d_book_author" />
+
+            <TextView
                 android:id="@+id/d_book_publishdate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Publish date"
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="@id/d_book_author"
-                app:layout_constraintTop_toBottomOf="@id/d_book_author" />
+                app:layout_constraintTop_toBottomOf="@id/d_book_language" />
 
             <TextView
                 android:id="@+id/d_book_pages"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pages"
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="@id/d_book_publishdate"
                 app:layout_constraintTop_toBottomOf="@id/d_book_publishdate" />
+
+            <TextView
+                android:id="@+id/d_book_isbn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                app:layout_constraintStart_toStartOf="@id/d_book_publishdate"
+                app:layout_constraintTop_toBottomOf="@id/d_book_pages" />
 
             <!-- Description -->
 

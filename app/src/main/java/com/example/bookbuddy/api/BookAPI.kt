@@ -12,6 +12,8 @@ interface BookAPI {
     suspend fun getUsers(): Response<UserList>
     @GET("/api/user/name/{userName}")
     suspend fun getUserExists(@Path("userName") userName: String): Response<Boolean>
+    @GET("/api/books/recommended/{userid}/{position}")
+    suspend fun getRecommendedBooks(@Path("userid") userid: Int, @Path("position") position: Int): Response<List<Book>>
     @GET("/api/user/email/{email}")
     suspend fun getEmailExists(@Path("email") email: String): Response<Boolean>
     @GET("/api/user/{userName}/{password}")
@@ -23,6 +25,8 @@ interface BookAPI {
     @GET("/api/book/isbn/{isbn}")
     suspend fun getBookInfo(@Path("isbn") isbn: String): Response<Book>
 
+    @PUT("/api/user/name/{id}/{name}")
+    suspend fun updateUserName(@Path("id") id: Int, @Path("name") name: String): Response<Boolean>
 
 /*
     @GET("/productes/?llistat")

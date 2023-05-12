@@ -35,7 +35,11 @@
         android:id="@+id/nav_recommendations"
         android:name="com.example.bookbuddy.ui.navdrawer.RecommendationsFragment"
         android:label="Recommendations"
-        tools:layout="@layout/fragment_recommendations" />
+        tools:layout="@layout/fragment_recommendations" >
+        <action
+            android:id="@+id/action_nav_recommendations_to_nav_book_display"
+            app:destination="@id/nav_book_display" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_contacts"

@@ -204,8 +204,25 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         }
 
         binding.dBookTitle.text = book!!.title
-        binding.dBookAuthor.text = book!!.authors.size.toString()
-        binding.dBookPublishdate.text = book!!.publicationDate
+        //binding.dBookAuthor.text = book!!.authors.size.toString()
+
+        if (book!!.authors.size <= 2){
+            book!!.authors.forEach {
+                binding.dBookAuthor.text = binding.dBookAuthor.text.toString() + it.name + "\n"
+            }
+        }
+
+        for (i in book.languages.indices) {
+            binding.dBookLanguage.text = binding.dBookLanguage.text.toString() + book.languages[i].name
+            if (i < book.languages.size - 1) {
+                binding.dBookLanguage.text = binding.dBookLanguage.text.toString() + ", "
+            }
+        }
+        binding.dBookPublishdate.text = book.publicationDate
+        binding.dBookPages.text = "Pages: " + book!!.pages
+        binding.dBookIsbn.text = "Isbn: " + book!!.isbn
+
+
         if (book.genres.size > 10) {
             binding.rvGenres.layoutManager = GridLayoutManager(context, 3)
         } else if (book.genres.size > 5) {
@@ -217,7 +234,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
 
         binding.dBookDescription.text = book!!.description
         binding.dBookDescription.justificationMode = LineBreaker.JUSTIFICATION_MODE_INTER_WORD
-        binding.dBookPages.text = "Pages: " + book!!.pages
         binding.bookRatingDisplay.rating = book?.rating!!.toFloat()
     }
 

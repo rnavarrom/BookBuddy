@@ -1,43 +1,46 @@
 package com.example.bookbuddy.ui.navdrawer
 
 import android.app.Activity.RESULT_OK
-import android.app.AlertDialog
 import android.content.ContentResolver
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.MediaStore
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.example.bookbuddy.R
 import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileBinding
-import com.example.bookbuddy.utils.*
+import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.currentPicture
+import com.example.bookbuddy.utils.currentProfile
+import com.example.bookbuddy.utils.currentUser
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*
-import okhttp3.*
+
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.io.InputStream
 import kotlin.coroutines.CoroutineContext
+import com.bumptech.glide.request.transition.Transition
 
 
-class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnSearchCompleteListener {
+class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreSearchCompleteListener, ProfileAuthorDialog.OnAuthorSearchCompleteListener {
     lateinit var binding: FragmentProfileBinding
     private var job: Job = Job()
 
@@ -51,14 +54,201 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnSearch
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
 
-    var permission = false
+    private lateinit var gMenu: Menu
 
+    private lateinit var settings: MenuItem
+    private lateinit var accept: MenuItem
+    private lateinit var cancel: MenuItem
+
+    private lateinit var tmpUri: Uri
+    private var tmpGenreId: Int = 0
+    private var tmpAuthorId: Int = 0
+
+    var permission = false
+    private var menuItemsVisibility = mutableMapOf("settings" to true, "accept" to false, "cancel" to false)
+    private lateinit var menuItems: ArrayList<MenuItem>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
-    override fun onSearchComplete(result: Int) {
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.profile_menu, menu)
+        println("hola1")
+        gMenu = menu
+        settings = gMenu.findItem(R.id.action_settings)
+        accept = gMenu.findItem(R.id.action_accept)
+        cancel = gMenu.findItem(R.id.action_cancel)
+        menuItems = arrayListOf(settings, accept, cancel)
+
+        menuItems.forEach {
+            it.isVisible = menuItemsVisibility.get(it.title.toString())!!
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                // Navigate to settings screen.
+                actionSettings()
+                true
+            }
+            R.id.action_accept -> {
+                // Save profile changes.
+                actionAccept()
+                true
+            }
+            R.id.action_cancel -> {
+                // Cancel profile changes.
+                actionCancel()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    fun actionSettings(){
+        menuItems.forEach {
+            it.isVisible = !menuItemsVisibility.get(it.title.toString())!!
+            var title = it.title.toString()
+            menuItemsVisibility[title] = it.isVisible
+        }
+
+        binding.profileImageView.visibility = View.INVISIBLE
+        binding.editProfileImageView.visibility = View.VISIBLE
+
+
+        Glide.with(this)
+            .load(binding.profileImageView.drawable)
+            .into(binding.editProfileImageView)
+        //binding.editProfileImageView.setImageDrawable()
+
+        binding.editProfileImageView.setOnClickListener {
+            comprobaPermisos()
+        }
+
+        binding.tvUsername.visibility = View.INVISIBLE
+        binding.etUsername.visibility = View.VISIBLE
+        binding.etUsername.setText(binding.tvUsername.text.toString())
+
+        binding.et1PrefferredGenre.visibility = View.INVISIBLE
+        binding.et2PrefferredGenre.visibility = View.VISIBLE
+        if (!binding.et1PrefferredGenre.visibility.equals("Not selected")){
+            binding.et2PrefferredGenre.setText(binding.et1PrefferredGenre.text.toString())
+        }
+
+        binding.et1PrefferredAuthor.visibility = View.INVISIBLE
+        binding.et2PrefferredAuthor.visibility = View.VISIBLE
+        if (!binding.et1PrefferredAuthor.visibility.equals("Not selected")){
+            binding.et2PrefferredAuthor.setText(binding.et1PrefferredAuthor.text.toString())
+        }
+    }
+
+    fun actionAccept(){
+        menuItems.forEach {
+            it.isVisible = !menuItemsVisibility.get(it.title.toString())!!
+            var title = it.title.toString()
+            menuItemsVisibility[title] = it.isVisible
+        }
+
+        updateUserName()
+        // TODO: FIX lateinit property tmpUri has not been initialized
+        if (this::tmpUri.isInitialized){
+            uploadImage(tmpUri)
+        }
+        updateGenre()
+        updateAuthor()
+        binding.profileImageView.visibility = View.VISIBLE
+        binding.editProfileImageView.visibility = View.INVISIBLE
+
+        binding.tvUsername.visibility = View.VISIBLE
+        binding.etUsername.visibility = View.INVISIBLE
+
+        binding.et1PrefferredGenre.visibility = View.VISIBLE
+        binding.et2PrefferredGenre.visibility = View.INVISIBLE
+
+        binding.et1PrefferredAuthor.visibility = View.VISIBLE
+        binding.et2PrefferredAuthor.visibility = View.INVISIBLE
+    }
+
+    fun updateGenre(){
+        if (binding.et1PrefferredGenre.text.toString() != binding.et2PrefferredGenre.text.toString()){
+            runBlocking {
+                val crudApi = CrudApi()
+                val corrutina = launch {
+                    crudApi.updateProfileGenreToAPI(currentProfile.profileId, tmpGenreId)
+                }
+                corrutina.join()
+            }
+            currentProfile.genre!!.name = binding.et2PrefferredGenre.text.toString()
+            binding.et1PrefferredGenre.setText(binding.et2PrefferredGenre.text.toString())
+        }
+    }
+
+    fun updateAuthor(){
+        if (binding.et1PrefferredAuthor.text.toString() != binding.et2PrefferredAuthor.text.toString()){
+            runBlocking {
+                val crudApi = CrudApi()
+                val corrutina = launch {
+                    crudApi.updateProfileAuthorToAPI(currentProfile.profileId, tmpAuthorId)
+                }
+                corrutina.join()
+            }
+            currentProfile.author!!.name = binding.et2PrefferredAuthor.text.toString()
+            binding.et1PrefferredAuthor.setText(binding.et2PrefferredAuthor.text.toString())
+        }
+    }
+
+    fun updateUserName(){
+        if (binding.etUsername.text.toString().isNotEmpty()){
+            if (!binding.tvUsername.text.toString().equals(binding.etUsername.text.toString())){
+                var userName = binding.etUsername.text.toString().trim()
+                runBlocking {
+                    var crudApi = CrudApi()
+                    var corroutine = launch {
+                        if (!crudApi.getUserExists(userName)){
+                            crudApi.updateUserName(currentUser.userId, userName)
+                            Tools.setNavigationProfile(requireContext(), null, userName)
+                            binding.tvUsername.setText(binding.etUsername.text.toString())
+                        }
+                    }
+                    corroutine.join()
+                }
+            }
+        }
+    }
+
+    fun actionCancel(){
+        menuItems.forEach {
+            it.isVisible = !menuItemsVisibility.get(it.title.toString())!!
+            var title = it.title.toString()
+            menuItemsVisibility[title] = it.isVisible
+        }
+
+        binding.profileImageView.visibility = View.VISIBLE
+        binding.editProfileImageView.visibility = View.INVISIBLE
+
+        binding.tvUsername.visibility = View.VISIBLE
+        binding.etUsername.visibility = View.INVISIBLE
+
+        binding.et1PrefferredGenre.visibility = View.VISIBLE
+        binding.et2PrefferredGenre.visibility = View.INVISIBLE
+
+        binding.et1PrefferredAuthor.visibility = View.VISIBLE
+        binding.et2PrefferredAuthor.visibility = View.INVISIBLE
+    }
+
+    override fun onGenreSearchComplete(result: Int, genreName: String) {
         Toast.makeText(requireContext(), "Result " + result.toString(), Toast.LENGTH_LONG).show()
+        binding.et2PrefferredGenre.setText(genreName)
+        tmpGenreId = result
+    }
+
+    override fun onAuthorSearchComplete(result: Int, authorName: String) {
+        Toast.makeText(requireContext(), "Result " + result.toString(), Toast.LENGTH_LONG).show()
+        binding.et2PrefferredAuthor.setText(authorName)
+        tmpAuthorId = result
     }
 
     override fun onCreateView(
@@ -68,9 +258,11 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnSearch
         binding =  FragmentProfileBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
+        /*
         val bundle = arguments?.getBundle("bundle")
         profileUser = bundle?.getInt("userid", currentUser.userId)
         username = bundle?.getString("username",  currentUser.name)
+        */
 
         if (profileUser == null){
             profileUser = currentUser.userId
@@ -78,11 +270,8 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnSearch
         }
 
         launch {
-            println("CHECKPOINT 1")
             loadUser()
-            println("CHECKPOINT 2")
             loadTabLayout()
-            println("CHECKPOINT 3")
             loadingEnded()
         }
 
@@ -155,73 +344,28 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnSearch
     }
 
     fun loadUser(){
-        binding.tvUsername.text = username
+        binding.tvUsername.text = currentUser.name
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
-                followers = crudApi.getFollowerCount(profileUser!!)!!
-                following = crudApi.getIsFollowing(1,profileUser!!)!!
+                followers = crudApi.getFollowerCount(currentUser.userId)!!
             }
             corrutina.join()
         }
         binding.tvFollowers.text = followers.toString() + " seguidores"
 
+        if (currentProfile.genre != null){
+            binding.et1PrefferredGenre.setText(currentProfile.genre!!.name)
+        }
+
+        if (currentProfile.author != null){
+            binding.et1PrefferredAuthor.setText(currentProfile.author!!.name)
+        }
+
         if (currentPicture != null){
             Glide.with(requireContext())
                 .load(currentPicture)
                 .into(binding.profileImageView)
-        }
-
-        followButton()
-
-    }
-
-    fun followButton(){
-
-        if (following){
-            binding.btFollow.tag = "Following"
-            binding.btFollow.text = "Following"
-        } else {
-            binding.btFollow.tag = "Follow"
-            binding.btFollow.text = "Follow"
-        }
-
-        binding.btFollow.setOnClickListener {
-            if (binding.btFollow.tag.equals("Follow")){
-                var followed = false
-                runBlocking {
-                    val crudApi = CrudApi()
-                    val corrutina = launch {
-                        followed = crudApi.addFollowToAPI(1, profileUser!!)
-                    }
-                    corrutina.join()
-                }
-                if (followed){
-                    binding.btFollow.text = "Following"
-                    binding.btFollow.tag = "Following"
-                }
-            } else {
-                val builder = AlertDialog.Builder(requireContext())
-                builder.setTitle("Do you want to unfollow " + binding.tvUsername.text + "?")
-                builder.setMessage("You will stop receibing notifications from this user")
-                    .setPositiveButton("Unfollow",
-                        DialogInterface.OnClickListener { dialog, id ->
-                            runBlocking {
-                                val crudApi = CrudApi()
-                                val corrutina = launch {
-                                    crudApi.deleteFollowAPI(1, profileUser!!)
-                                }
-                                corrutina.join()
-                            }
-                            binding.btFollow.text = "Follow"
-                            binding.btFollow.tag = "Follow"
-                        })
-                    .setNegativeButton("Cancell",
-                        DialogInterface.OnClickListener { dialog, id ->
-                            // User cancelled the dialog
-                        })
-                builder.show()
-            }
         }
     }
 
@@ -229,10 +373,24 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnSearch
         binding.loadingView.visibility = View.GONE
         binding.mainContent.visibility = View.VISIBLE
 
-        binding.searchGenres.setOnClickListener {
+        binding.et2PrefferredGenre.setOnClickListener {
             val bundle = Bundle()
             val dialog: ProfileSearchDialog = ProfileSearchDialog()
-            dialog.onSearchCompleteListener = this //Changed
+            dialog.onGenreSearchCompleteListener = this //Changed
+            dialog.show(childFragmentManager, "Date Picker")
+            /*
+            bundle.putInt("userid", userid)
+            bundle.putString("username", username)*/
+            /*
+            var action = ProfileFragmentDirections.actionNavProfileToNavProfileSearch(bundle)
+            navController.navigate(action)
+            */
+        }
+
+        binding.et2PrefferredAuthor.setOnClickListener {
+            val bundle = Bundle()
+            val dialog: ProfileAuthorDialog = ProfileAuthorDialog()
+            dialog.onAuthorSearchCompleteListener = this //Changed
             dialog.show(childFragmentManager, "Date Picker")
             /*
             bundle.putInt("userid", userid)
@@ -271,7 +429,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnSearch
         tabLayout.addTab(tabLayout.newTab().setText("READS"))
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         val adapter = ProfileAdapter(activity?.applicationContext, childFragmentManager,
-            tabLayout.tabCount, profileUser!!, true
+            tabLayout.tabCount, currentUser.userId, true
         )
         viewPager.adapter = adapter
         viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
@@ -293,68 +451,93 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnSearch
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
             val imageUri = data.data
+            tmpUri = imageUri!!
             // Hacer algo con la imagen seleccionada
             //binding.ivPreviewImage.setImageURI(imageUri)
             if (imageUri != null) {
-                uploadImage(imageUri)
+                //uploadImage(imageUri)
+                binding.editProfileImageView.setImageURI(tmpUri)
             }
         }
     }
 
+
     fun uploadImage(imageUri: Uri) {
+        /*
         val contentResolver = requireContext().contentResolver
         val inputStream: InputStream? = contentResolver.openInputStream(imageUri)
         val bitmap = BitmapFactory.decodeStream(inputStream)
-        val outputStream = ByteArrayOutputStream()
-        val targetWidth = 320
-        val targetHeight = 320
-        val scaleFactor = Math.min(
-            bitmap.width.toDouble() / targetWidth,
-            bitmap.height.toDouble() / targetHeight
-        )
-        val scaledBitmap = Bitmap.createScaledBitmap(
-            bitmap,
-            (bitmap.width / scaleFactor).toInt(),
-            (bitmap.height / scaleFactor).toInt(),
-            false
-        )
-        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        val byteArray = outputStream.toByteArray()
+        */
+        var bitmap: Bitmap? = null
+        Glide.with(this)
+            .asBitmap()
+            .load(imageUri)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: Transition<in Bitmap>?
+                ) {
+                    // Asigna el bitmap a la variable definida fuera del callback
+                    bitmap = resource
+                    val outputStream = ByteArrayOutputStream()
+                    val targetWidth = 320
+                    val targetHeight = 320
+                    val scaleFactor = Math.min(
+                        bitmap!!.width.toDouble() / targetWidth,
+                        bitmap!!.height.toDouble() / targetHeight
+                    )
+                    val scaledBitmap = Bitmap.createScaledBitmap(
+                        bitmap!!,
+                        (bitmap!!.width / scaleFactor).toInt(),
+                        (bitmap!!.height / scaleFactor).toInt(),
+                        false
+                    )
+                    scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                    val byteArray = outputStream.toByteArray()
 
-        val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
-        val image = MultipartBody.Part.createFormData("image", currentUser.userId.toString() + "user.jpg", requestFile)
+                    val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
+                    val image = MultipartBody.Part.createFormData("image", currentUser.userId.toString() + "user.jpg", requestFile)
 
-        val crudApi = CrudApi()
-        runBlocking {
-            val ru = launch {
-                val response = crudApi.uploadImageToAPI(image)
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    if (body != null) {
-                        // Leer los bytes de la imagen
-                        val bytes = body.bytes()
-                        //requireContext().cacheDir.deleteRecursively()
-                        val file = File(requireContext().cacheDir, currentUser.userId.toString() + "user.jpg")
+                    val crudApi = CrudApi()
+                    runBlocking {
+                        val ru = launch {
+                            val response = crudApi.uploadImageToAPI(image)
+                            if (response.isSuccessful) {
+                                val body = response.body()
+                                if (body != null) {
+                                    // Leer los bytes de la imagen
+                                    val bytes = body.bytes()
+                                    //requireContext().cacheDir.deleteRecursively()
+                                    val file = File(requireContext().cacheDir, currentUser.userId.toString() + "user.jpg")
 
-                        val outputStream = FileOutputStream(file)
-                        outputStream.write(bytes)
-                        outputStream.close()
+                                    val outputStream = FileOutputStream(file)
+                                    outputStream.write(bytes)
+                                    outputStream.close()
 
-                        currentPicture = file
+                                    currentPicture = file
 
-                        Glide.with(requireContext())
-                            .load(BitmapFactory.decodeFile(file.absolutePath))
-                            .into(binding.profileImageView)
+                                    Glide.with(requireContext())
+                                        .load(BitmapFactory.decodeFile(file.absolutePath))
+                                        .into(binding.profileImageView)
 
-                        Tools.setNavigationProfile(requireContext(), file, null)
+                                    Tools.setNavigationProfile(requireContext(), file, null)
+                                }
+                            } else {
+                                // TODO: NOSE
+                                // Manejar la respuesta de error
+                                // ...
+                            }
+                        }
+                        ru.join()
                     }
-                } else {
-                    // Manejar la respuesta de error
-                    // ...
                 }
-            }
-            ru.join()
-        }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    // Opcionalmente, puedes hacer algo aquí cuando se borra la carga
+                }
+            })
+
+
 
         //
     }
