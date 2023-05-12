@@ -29,7 +29,6 @@ interface BookAPI {
     @GET("/api/books/search/{position}")
     suspend fun getSimpleSearch(@Path("position") position: Int, @Query("searchdata") searchdata: List<String>): Response<ArrayList<SimpleBook>>
 
-    /*
   @PUT("/api/readed/put/{readedId}/{pagesReaded}")
   suspend fun updatePagesReaded(@Path("readedId") readedId: Int, @Path("pagesReaded") pagesReaded: Int): Response<Boolean>
 
@@ -45,10 +44,10 @@ interface BookAPI {
 
     @PUT("/api/user/name/{id}/{name}")
     suspend fun updateUserName(@Path("id") id: Int, @Path("name") name: String): Response<Boolean>
-  @POST("/api/readed/postnew/{}")
+  //@POST("/api/readed/postnew/{}")
 
 
- */
+
 /*
     @GET("/productes/?llistat")
     suspend fun getProductes():Response<Productes>
