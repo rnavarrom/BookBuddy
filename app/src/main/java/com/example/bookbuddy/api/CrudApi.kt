@@ -92,9 +92,25 @@ class CrudApi(): CoroutineScope {
         val call = getRetrofit().create(BookAPI::class.java).insertUser(user.name, user.password, user.email)
         return call.isSuccessful
     }
+
+    suspend fun updateUserName(id: Int, name: String): Boolean {
+        val call = getRetrofit().create(BookAPI::class.java).updateUserName(id, name)
+        return call.isSuccessful
+    }
+
+
+
     suspend fun getBook(isbn: String): Book {
         val response = getRetrofit().create(BookAPI::class.java).getBookInfo(isbn).body()
         return response!!
+    }
+
+    suspend fun getRecommendedBooks(userId: Int, position: Int): List<Book>? {
+        val response = getRetrofit().create(BookAPI::class.java).getRecommendedBooks(userId, position)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
     }
 
     // Readed
@@ -200,8 +216,35 @@ class CrudApi(): CoroutineScope {
         return null
     }
 
+    suspend fun getSearchGenres(name: String, position: Int): List<com.example.bookbuddy.models.Test.Genre>? {
+        val response = getRetrofit().create(ProfileAPI::class.java).getSearchGenres(name, position)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
+    }
+
+    suspend fun getSearchAuthors(name: String, position: Int): List<com.example.bookbuddy.models.Test.Author>? {
+        val response = getRetrofit().create(ProfileAPI::class.java).getSearchAuthors(name, position)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
+    }
+
+
     suspend fun addProfileToAPI(genreId: Int, authorId: Int, userId: Int): Profile? {
         val call = getRetrofit().create(ProfileAPI::class.java).insertProfile(genreId, authorId, userId)
+        return call.body()
+    }
+
+    suspend fun updateProfileGenreToAPI(id: Int, genre: Int): Boolean? {
+        val call = getRetrofit().create(ProfileAPI::class.java).updateProfileGenre(id, genre)
+        return call.body()
+    }
+
+    suspend fun updateProfileAuthorToAPI(id: Int, author: Int): Boolean? {
+        val call = getRetrofit().create(ProfileAPI::class.java).updateProfileAuthor(id, author)
         return call.body()
     }
 
@@ -292,6 +335,7 @@ class CrudApi(): CoroutineScope {
         val call = getRetrofit().create(FollowsAPI::class.java).insertFollow(userId, userFollowedId)
         return call.isSuccessful
     }
+
     suspend fun deleteFollowAPI(userId: Int, userFollowedId: Int): Boolean{
         val call = getRetrofit().create(FollowsAPI::class.java).deleteFollow(userId, userFollowedId)
         return call.isSuccessful

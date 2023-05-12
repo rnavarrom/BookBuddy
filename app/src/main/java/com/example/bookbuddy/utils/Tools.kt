@@ -98,7 +98,7 @@ class Tools {
             var hView: View = navView.getHeaderView(0)
             if (username != null){
                 var profileName: TextView = hView.findViewById(R.id.profile_name)
-                profileName.text = currentUser.name
+                profileName.text = username
             }
 
             if (image != null){

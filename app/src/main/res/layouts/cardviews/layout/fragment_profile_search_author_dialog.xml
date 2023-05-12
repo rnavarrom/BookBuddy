@@ -5,14 +5,14 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="20dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.navdrawer.ProfileSearchDialog">
+    tools:context=".ui.navdrawer.ProfileAuthorDialog">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <EditText
             android:id="@+id/search_things"
-            android:hint="Search genres"
+            android:hint="Search authors"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"

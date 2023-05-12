@@ -59,8 +59,6 @@ class ContactsFragment : Fragment(), CoroutineScope {
             val corrutina = launch {
                 if (position == 0){
                     follows = crudApi.getFollowersProfile(currentUser.userId, position) as MutableList<UserItem>?
-                    println("follows")
-                    println(follows)
                 } else {
                     follows!!.addAll((crudApi.getFollowersProfile(currentUser.userId, position) as MutableList<UserItem>?)!!)
                 }

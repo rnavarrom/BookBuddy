@@ -1,0 +1,28 @@
+<!-- sample_menu.xml -->
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_accept"
+        android:icon="@drawable/ic_accept"
+        android:iconTint="@color/white"
+        android:title="accept"
+        android:visible="false"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_cancel"
+        android:icon="@drawable/ic_close"
+        android:iconTint="@color/red_error"
+        android:title="cancel"
+        android:visible="false"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_edit"
+        android:iconTint="@color/white"
+        android:title="settings"
+        android:visible="true"
+        app:showAsAction="ifRoom"/>
+</menu>
