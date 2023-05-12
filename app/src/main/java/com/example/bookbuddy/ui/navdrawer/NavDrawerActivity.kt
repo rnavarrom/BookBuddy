@@ -47,7 +47,6 @@ class NavDrawerActivity : AppCompatActivity() {
         setSupportActionBar(binding.appBarNavDrawer.toolbar)
 
 
-
         val drawerLayout: DrawerLayout = binding.drawerLayout
         navView = binding.navView
         navController = findNavController(R.id.nav_host_fragment_content_nav_drawer)
@@ -56,13 +55,17 @@ class NavDrawerActivity : AppCompatActivity() {
             userPrefs = UserPreferences(this)
             lifecycleScope.launch {
                 userPrefs.saveCredentials("", "")
+                finish()
             }
+            /*
             var intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
+             */
+        }
 
-            //val drawerLayout = navView.parent as DrawerLayout
-            //drawerLayout.closeDrawers()
-            //navController.navigate(R.id.nav_settings)
+        //val drawerLayout = navView.parent as DrawerLayout
+        //drawerLayout.closeDrawers()
+        //navController.navigate(R.id.nav_settings)
         setNavigationProfile(applicationContext, currentPicture, currentUser.name)
         //setNavigationProfile(applicationContext, BitmapFactory.decodeFile(currentPicture!!.absolutePath), currentUser.name)
 
@@ -70,7 +73,12 @@ class NavDrawerActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_search, R.id.nav_scan, R.id.nav_recommendations, R.id.nav_contacts, R.id.nav_profile
+                R.id.nav_home,
+                R.id.nav_search,
+                R.id.nav_scan,
+                R.id.nav_recommendations,
+                R.id.nav_contacts,
+                R.id.nav_profile
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

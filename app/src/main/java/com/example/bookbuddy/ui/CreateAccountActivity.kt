@@ -111,6 +111,7 @@ class CreateAccountActivity : AppCompatActivity() {
             Toast.makeText(this, "You need to read and accept user conditions", Toast.LENGTH_LONG).show()
             return false
         }
+
         return true
     }
 

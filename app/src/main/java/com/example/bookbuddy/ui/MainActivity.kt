@@ -49,8 +49,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var userPrefs: UserPreferences
     private lateinit var savedUser: String
     private lateinit var savedPassword: String
-    companion object{
-       val USERNAME = stringPreferencesKey("username")
+    companion object {
+        val USERNAME = stringPreferencesKey("username")
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -62,9 +62,9 @@ class MainActivity : AppCompatActivity() {
             savedUser = userPrefs.userCredentialsFlow.first().first
             savedPassword = userPrefs.userCredentialsFlow.first().second
 
-            if(!savedUser.isNullOrBlank() && !savedPassword.isNullOrBlank()){
+            if (!savedUser.isNullOrBlank() && !savedPassword.isNullOrBlank()) {
                 loadingEndedHome()
-            }else{
+            } else {
                 loadingEndedLogin()
             }
         }
@@ -81,13 +81,13 @@ class MainActivity : AppCompatActivity() {
                 getUsers(userName, Sha.calculateSHA(userPassword))
                 //print("---------------" + currentUser.userId)
                 if (currentUser.userId != -1) {
-                    if(binding.MACheckBox.isChecked){
+                    if (binding.MACheckBox.isChecked) {
                         val username = "usuario"
                         val password = "contraseña"
                         lifecycleScope.launch {
                             userPrefs.saveCredentials(userName, Sha.calculateSHA(userPassword))
                         }
-                    }else{
+                    } else {
                         val username = "usuario"
                         val password = "contraseña"
                         lifecycleScope.launch {
@@ -115,35 +115,47 @@ class MainActivity : AppCompatActivity() {
             Tools.tooglePasswordVisible(editText)
         }
     }
-
-
-        fun getUsers(userName: String, password: String) {
-            runBlocking {
-                val crudApi = CrudApi()
-                val corrutina = launch {
-                    currentUser = crudApi.getUserLogin(userName, password)
-                }
-                corrutina.join()
+    fun getUsers(userName: String, password: String) {
+        runBlocking {
+            val crudApi = CrudApi()
+            val corrutina = launch {
+                currentUser = crudApi.getUserLogin(userName, password)
             }
-            runBlocking {
-                val crudApi = CrudApi()
-                val corrutina = launch {
-                    currentProfile = crudApi.getProfileUser(currentUser.userId)!!
-                    if (currentUser.haspicture){
-                        responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId))
-                    }
-                }
-                corrutina.join()
-            }
+            corrutina.join()
         }
+        runBlocking {
+            val crudApi = CrudApi()
+            val corrutina = launch {
+                currentProfile = crudApi.getProfileUser(currentUser.userId)!!
+                if (currentUser.haspicture) {
+                    responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId))
+                }
+            }
+            corrutina.join()
+        }
+    }
 
     fun loadingEndedHome() {
         getUsers(savedUser, savedPassword)
         var intent = Intent(this, NavDrawerActivity::class.java)
         startActivity(intent)
     }
-    fun loadingEndedLogin(){
+
+    fun loadingEndedLogin() {
         binding.loadingMain.visibility = View.GONE
         binding.mainContent.visibility = View.VISIBLE
+    }
+
+    override fun onResume() {
+        super.onResume()
+        userPrefs = UserPreferences(this)
+        lifecycleScope.launch {
+            savedUser = userPrefs.userCredentialsFlow.first().first
+            savedPassword = userPrefs.userCredentialsFlow.first().second
+
+            if (savedUser.isNullOrBlank() && savedPassword.isNullOrBlank()) {
+                loadingEndedLogin()
+            }
+        }
     }
 }

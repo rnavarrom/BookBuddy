@@ -1,6 +1,7 @@
 package com.example.bookbuddy.utils
 
 import androidx.navigation.NavController
+import com.example.bookbuddy.models.Profile
 import com.example.bookbuddy.models.Test.User
 import com.example.bookbuddy.models.UserItem
 import com.google.android.material.navigation.NavigationView

@@ -5,8 +5,9 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.navdrawer.SearchFragment"
-    android:id="@+id/container">
-
+    android:id="@+id/container"
+    >
+<!--
     <com.google.android.material.button.MaterialButton
         android:id="@+id/fake_button"
         android:layout_width="0dp"
@@ -15,18 +16,18 @@
         app:layout_constraintTop_toTopOf="@id/Search_view"
         android:layout_marginLeft="20dp"
         />
-
-    <AutoCompleteTextView
-        android:layout_width="match_parent"
+-->
+    <EditText
+        android:layout_width="350dp"
         android:layout_height="40dp"
         android:id="@+id/Search_view"
         android:hint="Book search"
         android:textColor="@color/primary_green"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toEndOf="@id/fake_button"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/advancedSearchButton"
+        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="20dp"
-        android:layout_marginHorizontal="20dp"
+        android:layout_marginStart="30dp"
         android:background="@drawable/custom_progress_bg"
         android:drawableStart="@drawable/ic_search_icon"
         android:drawableTint="@color/primary_green"
@@ -35,15 +36,62 @@
         android:singleLine="true"
         android:maxLines="1"
         />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/advancedSearchButton"
+        android:src="@drawable/ic_search_expand"
+        app:layout_constraintStart_toEndOf="@+id/Search_view"
+        app:layout_constraintTop_toTopOf="@id/Search_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        />
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/advanced"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/Search_view"
         app:layout_constraintBottom_toTopOf="@id/Text_Result"
-        android:visibility="gone"
+        android:visibility="visible"
         android:paddingBottom="0dp"
         >
+        <EditText
+            android:layout_width="350dp"
+            android:layout_height="40dp"
+            android:id="@+id/et_author"
+            android:hint="Author search"
+            android:textColor="@color/primary_green"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@drawable/custom_progress_bg"
+            android:drawableStart="@drawable/ic_search_icon"
+            android:drawableTint="@color/primary_green"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:layout_marginTop="20dp"
+            />
+        <EditText
+            android:layout_width="350dp"
+            android:layout_height="40dp"
+            android:id="@+id/et_genre"
+            android:hint="Genre search"
+            android:textColor="@color/primary_green"
+            app:layout_constraintTop_toBottomOf="@+id/et_author"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@drawable/custom_progress_bg"
+            android:drawableStart="@drawable/ic_search_icon"
+            android:drawableTint="@color/primary_green"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            />
+        <!--
         <com.google.android.material.button.MaterialButton
             android:id="@+id/author_search"
             android:text="Author"
@@ -81,6 +129,7 @@
             android:layout_marginLeft="10dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@id/author_search"/>
+            -->
         <View
             android:id="@+id/view1"
             app:layout_constraintStart_toStartOf="parent"

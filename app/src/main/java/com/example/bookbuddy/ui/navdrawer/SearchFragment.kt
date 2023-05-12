@@ -2,6 +2,7 @@ package com.example.bookbuddy.ui.navdrawer
 
 import android.app.appsearch.SearchResult
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
@@ -38,7 +40,7 @@ class SearchFragment : Fragment() {
         binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
 
         //val searchTextView = findViewById<AutoCompleteTextView>(R.id.search_text_view)
-
+/*
         binding.authorSearch.setOnClickListener {
             if (binding.authorSearch.tag == "selected"){
                 binding.authorSearch.setBackgroundColor(requireContext().getColor(R.color.primary_green))
@@ -68,6 +70,17 @@ class SearchFragment : Fragment() {
             }
         }
 
+ */
+        binding.advancedSearchButton.setOnClickListener {
+            if (binding.advanced.visibility == View.VISIBLE) {
+                binding.advanced.visibility = View.GONE
+                binding.advancedSearchButton.setImageResource(R.drawable.ic_search_expand)
+            } else {
+                binding.advanced.visibility = View.VISIBLE
+                binding.advancedSearchButton.setImageResource(R.drawable.ic_search_constrain)
+            }
+        }
+/*
         binding.SearchView.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 // Este código se ejecutará cuando el AutoCompleteTextView obtenga el foco.
@@ -79,50 +92,81 @@ class SearchFragment : Fragment() {
             }
         }
 
-        binding.SearchView.setOnKeyListener { view, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                // Realizar búsqueda
-                //Toast.makeText(context, "", Toast.LENGTH_LONG).show()
-                binding.advanced.visibility = View.GONE
-                val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+ */
 
-                var searchValue = binding.SearchView.text.toString()
-                searchResultList = performSearch(searchValue, requireContext())
+        var searchList = ArrayList<EditText>()
+        searchList.add(binding.SearchView)
+        searchList.add(binding.etAuthor)
+        searchList.add(binding.etGenre)
 
-                if (!searchResultList.isEmpty()) {
-                    Toast.makeText(context, "Nothing found!", Toast.LENGTH_LONG).show()
+        for (et in searchList) {
+            et.setOnKeyListener { view, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+                    // Realizar búsqueda
+                    //Toast.makeText(context, "", Toast.LENGTH_LONG).show()
+                    binding.advanced.visibility = View.GONE
+                    val inputMethodManager =
+                        requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+
+                    var searchValues = ArrayList<String>()
+
+                    if (binding.SearchView.text.isNullOrBlank() && binding.etAuthor.text.isNullOrBlank() && binding.etGenre.text.isNullOrBlank()) {
+                        binding.SearchView.setBackgroundResource(R.drawable.custom_progress_bg_error)
+                        binding.etAuthor.setBackgroundResource(R.drawable.custom_progress_bg_error)
+                        binding.etGenre.setBackgroundResource(R.drawable.custom_progress_bg_error)
+                    }
+                    if (!binding.SearchView.text.isNullOrBlank()) {
+                        searchValues.add(binding.SearchView.text.toString())
+                    } else {
+                        searchValues.add("")
+                    }
+                    if (!binding.etAuthor.text.isNullOrBlank()) {
+                        searchValues.add(binding.etAuthor.text.toString())
+                    } else {
+                        searchValues.add("")
+                    }
+                    if (!binding.etGenre.text.isNullOrBlank()) {
+                        searchValues.add(binding.etGenre.text.toString())
+                    } else {
+                        searchValues.add("")
+                    }
+
+
+                    searchResultList = performSearch(searchValues)
+
+                    if (!searchResultList.isEmpty()) {
+                        Toast.makeText(context, "Nothing found!", Toast.LENGTH_LONG).show()
+                    }
+                    binding.SearchReciclerView.setLayoutManager(GridLayoutManager(context, 3))
+                    adapter =
+                        SearchResultAdapter(searchResultList) //, requireActivity().supportFragmentManager, this
+                    binding.SearchReciclerView.adapter = adapter
+
+                    true
+                } else {
+                    false
                 }
-                binding.SearchReciclerView.setLayoutManager(GridLayoutManager(context, 3))
-                adapter =
-                    SearchResultAdapter(searchResultList) //, requireActivity().supportFragmentManager, this
-                binding.SearchReciclerView.adapter = adapter
-
-                true
-            } else {
-                false
             }
-        }
 
+        }
         return binding.root
     }
 
-}
+    private fun performSearch(searchValues: ArrayList<String>): ArrayList<SimpleBook> {
+        var searchResultList = arrayListOf<SimpleBook>()
 
-private fun performSearch(searchValue: String, context: Context): ArrayList<SimpleBook> {
-    // Aquí se realiza la búsqueda con el texto ingresado en el AutoCompleteTextView
-    Toast.makeText(context, "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
-
-    var searchResultList = arrayListOf<SimpleBook>()
-
-    runBlocking {
-        val crudApi = CrudApi()
-        val corrutina = launch {
-            searchResultList = crudApi.getSimpleSearch(searchValue)
+        runBlocking {
+            val crudApi = CrudApi()
+            val corrutina = launch {
+                searchResultList = crudApi.getSimpleSearch(0, searchValues as List<String>)
+            }
+            corrutina.join()
         }
-        corrutina.join()
+        return searchResultList
     }
-    return searchResultList
 }
+
+
 
 

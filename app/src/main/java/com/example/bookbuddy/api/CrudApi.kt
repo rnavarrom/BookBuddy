@@ -83,8 +83,8 @@ class CrudApi(): CoroutineScope {
         return response!!
     }
 
-    suspend fun getSimpleSearch(book: String): ArrayList<SimpleBook>{
-        val response = getRetrofit().create(BookAPI::class.java).getSimpleSearch(book).body()
+    suspend fun getSimpleSearch(position: Int, searchvalues: List<String>): ArrayList<SimpleBook>{
+        val response = getRetrofit().create(BookAPI::class.java).getSimpleSearch(position, searchvalues).body()
         return response!!
     }
 

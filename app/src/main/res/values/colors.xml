@@ -11,4 +11,5 @@
     <color name="primary_green_20">#2072bb53</color>
     <color name="light_grey">#9A9A9A</color>
     <color name="red_error">#D31919</color>
+    <color name="red_error_20">#20D31919</color>
 </resources>
