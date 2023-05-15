@@ -1,6 +1,5 @@
 package com.example.bookbuddy.api
 
-import android.media.Image
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Readed
@@ -11,6 +10,8 @@ import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.models.UserItem
+import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.base.safeApiCall
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,8 +23,6 @@ import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Path
-import java.io.File
 import java.security.SecureRandom
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
@@ -31,7 +30,7 @@ import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 import kotlin.coroutines.CoroutineContext
 
-class CrudApi(): CoroutineScope {
+class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineScope {
     val urlapi = "https://api.openrouteservice.org/"
     val apikey = "5b3ce3597851110001cf6248a7e5128d424e4a4dbc75aaece5822482"
 
@@ -66,10 +65,21 @@ class CrudApi(): CoroutineScope {
             .addInterceptor(logging)
             .build()
 
-    suspend fun getUserLogin(userName: String, password: String): User {
+    suspend fun getUserLogin(userName: String, password: String): User? {
         val response = getRetrofit().create(BookAPI::class.java).getUserLogin(userName, password).body()
         return response!!
     }
+
+    /*
+    suspend fun getUserLogin(userName: String, password: String, errorMessage: String): User? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(BookAPI::class.java).getUserLogin(userName, password) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+    }
+    */
+
     suspend fun getUserId(userId: Int): User {
         val response = getRetrofit().create(BookAPI::class.java).getUserId(userId).body()
         return response!!

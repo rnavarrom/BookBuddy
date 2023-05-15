@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.adapters.HomeBooksAdapter
@@ -59,6 +60,11 @@ class HomeFragment : Fragment() {
         readedList = currentUser.readed as MutableList<Pending>
         readingList = currentUser.actualReading as MutableList<ActualReading>
 
+        //val layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        //layoutManager.snapToInterval = itemWidth // ajusta el valor a la anchura de tus elementos
+        //recyclerView.layoutManager = layoutManager
+
+
         binding.homeRv.setLayoutManager(
             LinearLayoutManager(
                 context,
@@ -66,8 +72,12 @@ class HomeFragment : Fragment() {
                 false
             )
         )
+
+
         adapterReading = HomeReadingBooksAdapter(readingList as ArrayList<ActualReading>, this)
         binding.homeRv.adapter = adapterReading
+        val snapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(binding.homeRv)
 
         CallAdapterPending(pendingList as ArrayList<Pending>)
         CallAdapterReaded(readedList as ArrayList<Pending>)

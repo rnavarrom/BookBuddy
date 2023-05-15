@@ -18,18 +18,19 @@
         android:scaleType="centerCrop"
         app:srcCompat="@drawable/defaultpic"
         app:shapeAppearance="@style/CircleImageViewStyle"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/profile_name"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="10dp"/>
 
     <TextView
         android:id="@+id/profile_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/profile_imageView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:paddingTop="15dp"
+        android:layout_marginVertical="20dp"
         android:text="@string/nav_header_title"
         android:textStyle="bold"
         android:textColor="@color/black"
