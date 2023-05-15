@@ -45,9 +45,11 @@
         />
     <EditText
         android:hint="User Name"
-        android:layout_width="300dp"
+        android:inputType="textPersonName"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/CA_Edit_User"
+        android:layout_marginHorizontal="40dp"
         app:layout_constraintBottom_toTopOf="@+id/CA_Edit_Email"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -58,9 +60,10 @@
     <EditText
         android:inputType="textEmailAddress"
         android:hint="Email"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/CA_Edit_Email"
+        android:layout_marginHorizontal="40dp"
         app:layout_constraintBottom_toTopOf="@+id/CA_Edit_Password"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,9 +75,10 @@
     <EditText
         android:inputType="textPassword"
         android:hint="Password"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/CA_Edit_Password"
+        android:layout_marginHorizontal="40dp"
         app:layout_constraintBottom_toTopOf="@+id/CA_Edit_Password2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -86,9 +90,10 @@
     <EditText
         android:inputType="textPassword"
         android:hint="Repeat Password"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/CA_Edit_Password2"
+        android:layout_marginHorizontal="40dp"
         app:layout_constraintBottom_toTopOf="@+id/CA_Button_Register"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

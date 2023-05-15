@@ -1,50 +1,29 @@
 package com.example.bookbuddy.ui
 
-import android.accounts.AccountManager.KEY_PASSWORD
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.method.HideReturnsTransformationMethod
-import android.text.method.PasswordTransformationMethod
-import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import com.example.bookbuddy.Utils.Sha
-import com.example.bookbuddy.api.BookAPI
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.api.logging
 import com.example.bookbuddy.databinding.ActivityMainBinding
-import com.example.bookbuddy.models.Test.User
-import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.NavDrawerActivity
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.UserPreferences
 import com.example.bookbuddy.utils.Tools.Companion.responseToFile
-import com.example.bookbuddy.utils.currentPicture
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentProfile
 import com.example.bookbuddy.utils.currentUser
 //import com.example.bookbuddy.utils.currentUser
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
-import org.json.JSONObject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ApiErrorListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var userPrefs: UserPreferences
     private lateinit var savedUser: String
@@ -115,16 +94,27 @@ class MainActivity : AppCompatActivity() {
             Tools.tooglePasswordVisible(editText)
         }
     }
+
+    override fun onApiError(errorMessage: String) {
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+    }
+
     fun getUsers(userName: String, password: String) {
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@MainActivity)
+            val corrutina = launch {
+                currentUser = crudApi.getUserLogin(userName, password)!!
+                //currentUser = crudApi.getUserLogin(userName, password, "EEEE")!!
+            }
+            /*
             val corrutina = launch {
                 currentUser = crudApi.getUserLogin(userName, password)
             }
+            */
             corrutina.join()
         }
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@MainActivity)
             val corrutina = launch {
                 currentProfile = crudApi.getProfileUser(currentUser.userId)!!
                 if (currentUser.haspicture) {

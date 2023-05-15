@@ -78,11 +78,15 @@ class NavDrawerActivity : AppCompatActivity() {
                 R.id.nav_scan,
                 R.id.nav_recommendations,
                 R.id.nav_contacts,
-                R.id.nav_profile
+                R.id.nav_profile,
+                R.id.nav_admin
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        if (currentUser.isadmin){
+            navView.menu.findItem(R.id.nav_admin).isVisible = true
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
