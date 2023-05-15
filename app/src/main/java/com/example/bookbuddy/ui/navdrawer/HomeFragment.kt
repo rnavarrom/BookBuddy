@@ -36,18 +36,10 @@ class HomeFragment : Fragment() {
     private lateinit var pendingList: MutableList<Pending>
     private lateinit var readedList: MutableList<Pending>
     private lateinit var readingList: MutableList<ActualReading>
-    //private var position = 0
-    //var isLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
-/*
-    override fun onResume() {
-        super.onResume()
-    }
-
- */
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -91,7 +83,6 @@ class HomeFragment : Fragment() {
             FilterBooks(readedList as ArrayList<Pending>, false)
         }
 
-
         binding.rvReadedbooks.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -126,7 +117,6 @@ class HomeFragment : Fragment() {
             }
         })
 
-
         binding.homeRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -145,7 +135,6 @@ class HomeFragment : Fragment() {
         })
         return binding.root
     }
-
     fun LoadMoreRead(position : Int) {
         runBlocking {
             val crudApi = CrudApi()
@@ -161,7 +150,6 @@ class HomeFragment : Fragment() {
         }
         adapterReaded.updateList(readedList as ArrayList<Pending>)
     }
-
     fun LoadMorePending(position : Int) {
         runBlocking {
             val crudApi = CrudApi()
@@ -192,7 +180,6 @@ class HomeFragment : Fragment() {
         }
         adapterReading.updateList(readingList as ArrayList<ActualReading>)
     }
-
     fun FilterBooks(list: ArrayList<Pending>, choseList: Boolean) {
         val builder = AlertDialog.Builder(requireContext())
         val inflater = layoutInflater
@@ -220,7 +207,6 @@ class HomeFragment : Fragment() {
         builder.setNegativeButton("Cancel") { dialogInterface, i -> }
         builder.show()
     }
-
     fun CallAdapterPending(pendingList: ArrayList<Pending>) {
         binding.rvPendingbooks.setLayoutManager(
             LinearLayoutManager(
@@ -232,7 +218,6 @@ class HomeFragment : Fragment() {
         adapterPending = HomeBooksAdapter(pendingList)
         binding.rvPendingbooks.adapter = adapterPending
     }
-
     fun CallAdapterReaded(readedList: ArrayList<Pending>) {
         binding.rvReadedbooks.setLayoutManager(
             LinearLayoutManager(
@@ -244,7 +229,6 @@ class HomeFragment : Fragment() {
         adapterReaded = HomeBooksAdapter(readedList)
         binding.rvReadedbooks.adapter = adapterReaded
     }
-
     fun getUser() {
         runBlocking {
             val crudApi = CrudApi()
@@ -264,5 +248,4 @@ class HomeFragment : Fragment() {
             parentFragmentManager.beginTransaction().detach(this).attach(this).commit();
         }
     }
-
 }
