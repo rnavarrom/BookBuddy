@@ -86,6 +86,8 @@ class NavDrawerActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
         if (currentUser.isadmin){
             navView.menu.findItem(R.id.nav_admin).isVisible = true
+            navView.menu.findItem(R.id.nav_admin).isChecked = false
+            navView.menu.findItem(R.id.nav_home).isChecked = true
         }
     }
 
