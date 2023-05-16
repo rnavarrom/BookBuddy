@@ -20,6 +20,8 @@ var currentPicture: File? = null
 lateinit var currentUserCreate : UserItem
 var dialogValue: String = "125"
 
+var currentLanguageChanged: Boolean = false
+
 
 
 
