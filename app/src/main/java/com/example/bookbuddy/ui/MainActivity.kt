@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.lifecycleScope
 import com.example.bookbuddy.Utils.Sha
+import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.api.logging
 import com.example.bookbuddy.databinding.ActivityMainBinding
@@ -35,6 +36,10 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+
+        val adapter = LanguageSpinnerAdapter(this, arrayOf("american_flag.xml","catalan_flag.xml","spanish_flag.xml"))
+        binding.languageSpinner.adapter = adapter
 
         userPrefs = UserPreferences(this)
         lifecycleScope.launch {
