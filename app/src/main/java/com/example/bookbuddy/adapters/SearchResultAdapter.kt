@@ -15,11 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.SimpleBook
+import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.ui.navdrawer.*
 import com.example.bookbuddy.utils.navController
 
 
-class SearchResultAdapter(val llista: ArrayList<SimpleBook>) : RecyclerView.Adapter<SearchResultAdapter.ViewHolder>(){
+class SearchResultAdapter(var llista: ArrayList<SimpleBook>) : RecyclerView.Adapter<SearchResultAdapter.ViewHolder>(){
     //, var fm: FragmentManager, var sf: Fragment
     class ViewHolder(val vista: View): RecyclerView.ViewHolder(vista){
         val imatge = vista.findViewById<ImageView>(R.id.book_cover)
@@ -58,4 +59,8 @@ class SearchResultAdapter(val llista: ArrayList<SimpleBook>) : RecyclerView.Adap
         }
     }
     override fun getItemCount(): Int = llista.size
+    fun updateList(newList: ArrayList<SimpleBook>){
+        llista = newList
+        notifyDataSetChanged()
+    }
 }

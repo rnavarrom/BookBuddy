@@ -1,34 +1,33 @@
 package com.example.bookbuddy.ui.navdrawer
 
-import android.app.appsearch.SearchResult
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.adapters.SearchResultAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentSearchBinding
 import com.example.bookbuddy.models.SimpleBook
-import com.example.bookbuddy.models.UserItem
+import com.example.bookbuddy.models.Test.Pending
+import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class SearchFragment : Fragment() {
     lateinit var binding: FragmentSearchBinding
-    lateinit var searchResultList: ArrayList<SimpleBook>
+    lateinit var searchResultList: MutableList<SimpleBook>
     private lateinit var adapter: SearchResultAdapter
+    var searchValues = ArrayList<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -109,12 +108,19 @@ class SearchFragment : Fragment() {
                         requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
-                    var searchValues = ArrayList<String>()
+                    var performSearch = false
 
+                    searchValues = ArrayList<String>()
                     if (binding.SearchView.text.isNullOrBlank() && binding.etAuthor.text.isNullOrBlank() && binding.etGenre.text.isNullOrBlank()) {
-                        binding.SearchView.setBackgroundResource(R.drawable.custom_progress_bg_error)
-                        binding.etAuthor.setBackgroundResource(R.drawable.custom_progress_bg_error)
-                        binding.etGenre.setBackgroundResource(R.drawable.custom_progress_bg_error)
+                        binding.SearchView.setBackgroundResource(R.drawable.search_bg_error)
+                        binding.etAuthor.setBackgroundResource(R.drawable.search_bg_error)
+                        binding.etGenre.setBackgroundResource(R.drawable.search_bg_error)
+                        performSearch = false
+                    }else{
+                        binding.SearchView.setBackgroundResource(R.drawable.search_bg)
+                        binding.etAuthor.setBackgroundResource(R.drawable.search_bg)
+                        binding.etGenre.setBackgroundResource(R.drawable.search_bg)
+                        performSearch = true
                     }
                     if (!binding.SearchView.text.isNullOrBlank()) {
                         searchValues.add(binding.SearchView.text.toString())
@@ -131,26 +137,56 @@ class SearchFragment : Fragment() {
                     } else {
                         searchValues.add("")
                     }
-
-
-                    searchResultList = performSearch(searchValues)
-
-                    if (!searchResultList.isEmpty()) {
+                    if(performSearch){
+                        searchResultList = performSearch(searchValues)
+                    }else{
                         Toast.makeText(context, "Nothing found!", Toast.LENGTH_LONG).show()
+                        searchResultList = arrayListOf<SimpleBook>()
                     }
                     binding.SearchReciclerView.setLayoutManager(GridLayoutManager(context, 3))
                     adapter =
-                        SearchResultAdapter(searchResultList) //, requireActivity().supportFragmentManager, this
+                        SearchResultAdapter(searchResultList as ArrayList<SimpleBook>)
                     binding.SearchReciclerView.adapter = adapter
-
                     true
                 } else {
                     false
                 }
             }
-
         }
+
+        binding.SearchReciclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val layoutManager = recyclerView.layoutManager as GridLayoutManager
+                val totalItemCount = layoutManager.itemCount
+                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+
+                if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
+                    recyclerView.post {
+                        var position = totalItemCount
+                        LoadMoreSearch(position, searchValues)
+                    }
+                }
+            }
+        })
         return binding.root
+    }
+
+    fun LoadMoreSearch(position : Int, searchValues: ArrayList<String>) {
+        runBlocking {
+            val crudApi = CrudApi()
+            val corrutina = launch {
+                searchResultList!!.addAll(
+                    crudApi.getSimpleSearch(
+                        position,
+                        searchValues as List<String>
+                    ) as MutableList<SimpleBook>
+                )
+            }
+            corrutina.join()
+        }
+        adapter.updateList(searchResultList as ArrayList<SimpleBook>)
     }
 
     private fun performSearch(searchValues: ArrayList<String>): ArrayList<SimpleBook> {
