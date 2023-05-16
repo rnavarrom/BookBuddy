@@ -4,7 +4,3 @@ package com.example.bookbuddy.datastore;
 
 option java_package = "com.example.bookbuddy.datastore";
 
-message UserPrefs {
-    optional string username = 1;
-    optional string password = 2;
-}
