@@ -28,6 +28,8 @@ class LanguageSpinnerAdapter(context: Context, private val imageNames: Array<Str
         val imageResId = context.resources.getIdentifier(imageName, "drawable", context.packageName)
         imageView.setImageResource(imageResId)
 
+
+
         return view
     }
 }
