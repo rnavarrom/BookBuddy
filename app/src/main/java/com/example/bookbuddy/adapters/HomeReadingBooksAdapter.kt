@@ -23,6 +23,7 @@ import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.ui.navdrawer.HomeFragmentDirections
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.dialogValue
+import com.example.bookbuddy.utils.dummyValue
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -39,6 +40,7 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Fr
         var percentage = vista.findViewById<TextView>(R.id.progress_text)
         var progressbar = vista.findViewById<ProgressBar>(R.id.progress_bar)
         val linearLayout = vista.findViewById<LinearLayout>(R.id.home_ll)
+        //val dummyText = vista.findViewById<TextView>(R.id.NoBooksTV)
 
     }
 
@@ -52,7 +54,15 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Fr
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        println(llista[position].pages.toString())
+        /*
+        println("------------" + llista.size)
+        if(llista.isEmpty()){
+            holder.dummyText.visibility = View.VISIBLE
+            println("Showing dummy")
+        }
+
+         */
+        //println(llista[position].pages.toString())
         holder.pagesReaded.setText(llista[position].pagesReaded.toString())
         holder.pagesTotal.setText(llista[position].pages.toString())
         var percent = MakePercent(llista[position].pagesReaded, llista[position].pages)

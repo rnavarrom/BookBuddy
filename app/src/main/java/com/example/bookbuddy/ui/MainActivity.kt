@@ -3,10 +3,13 @@ package com.example.bookbuddy.ui
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.View
+import android.view.ViewTreeObserver
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -16,6 +19,7 @@ import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.api.logging
 import com.example.bookbuddy.databinding.ActivityMainBinding
+import com.example.bookbuddy.models.Test.User
 import com.example.bookbuddy.ui.navdrawer.NavDrawerActivity
 import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.responseToFile
@@ -94,6 +98,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         setContentView(binding.root)
 
         var currentLanguageCode = getCurrentLanguageCode2()
@@ -165,7 +170,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
 
                 getUsers(userName, Sha.calculateSHA(userPassword))
                 //print("---------------" + currentUser.userId)
-                if (currentUser.userId != -1) {
+                if (currentUser.userId != -1 || currentUser.userId == null) {
                     if (binding.MACheckBox.isChecked) {
                         val username = "usuario"
                         val password = "contraseña"
@@ -199,6 +204,22 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
             val editText = binding.MAEditPassword
             Tools.tooglePasswordVisible(editText)
         }
+
+        val mainLayout = binding.activityMain
+        mainLayout.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                val rect = Rect()
+                mainLayout.getWindowVisibleDisplayFrame(rect)
+                val screenHeight = mainLayout.rootView.height
+                val keyboardHeight = screenHeight - rect.bottom
+                // Verifica si el teclado está oculto
+                if (keyboardHeight < keyboardValue) {
+                    binding.MAImage.visibility = View.VISIBLE
+                }else{
+                    binding.MAImage.visibility = View.GONE
+                }
+            }
+        })
     }
 
     override fun onApiError(errorMessage: String) {
@@ -206,28 +227,32 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     fun getUsers(userName: String, password: String) {
+        currentUser = User()
         runBlocking {
             val crudApi = CrudApi(this@MainActivity)
             val corrutina = launch {
-                currentUser = crudApi.getUserLogin(userName, password)!!
-                //currentUser = crudApi.getUserLogin(userName, password, "EEEE")!!
-            }
-            /*
-            val corrutina = launch {
-                currentUser = crudApi.getUserLogin(userName, password)
-            }
-            */
-            corrutina.join()
-        }
-        runBlocking {
-            val crudApi = CrudApi(this@MainActivity)
-            val corrutina = launch {
-                currentProfile = crudApi.getProfileUser(currentUser.userId)!!
-                if (currentUser.haspicture) {
-                    responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId))
+                //currentUser = crudApi.getUserLogin(userName, password)!!
+                var tempData = crudApi.getUserLogin(userName, password, "Error geting user")
+                if (tempData != null){
+                    currentUser = tempData
                 }
             }
             corrutina.join()
+        }
+        if (currentUser.userId > 0) {
+            runBlocking {
+                val crudApi = CrudApi(this@MainActivity)
+                val corrutina = launch {
+                    var tempData = crudApi.getProfileUser(currentUser.userId, "Error Getting Profile")
+                    if(tempData != null){
+                        currentProfile = tempData
+                        if (currentUser.haspicture) {
+                            responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId))
+                        }
+                    }
+                }
+                corrutina.join()
+            }
         }
     }
 

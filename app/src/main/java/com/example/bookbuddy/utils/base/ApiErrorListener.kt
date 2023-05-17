@@ -1,7 +1,7 @@
 package com.example.bookbuddy.utils.base
 
-import com.example.bookbuddy.models.Test.User
 import retrofit2.Response
+import java.net.ConnectException
 import java.net.SocketTimeoutException
 
 interface ApiErrorListener {
@@ -22,8 +22,11 @@ suspend fun <T> safeApiCall(
             //val errorResponse = response.errorBody()?.string()
             //errorListener.onApiError("Error fetching data: $errorResponse")
             errorListener.onApiError(errorMessage ?: errorMessage)
+            return null
         }
     } catch (e: SocketTimeoutException) {
+        errorListener.onApiError("Cannot reach the server")
+    } catch (e: ConnectException){
         errorListener.onApiError("Cannot reach the server")
     } catch (e: Throwable) {
         //errorListener.onApiError("Error fetching data: ${e.message}")

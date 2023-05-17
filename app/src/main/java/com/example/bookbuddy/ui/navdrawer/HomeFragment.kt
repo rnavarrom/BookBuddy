@@ -34,9 +34,9 @@ class HomeFragment : Fragment() {
     private lateinit var adapterPending: HomeBooksAdapter
     private lateinit var adapterReaded: HomeBooksAdapter
     private lateinit var adapterReading: HomeReadingBooksAdapter
-    private lateinit var pendingList: MutableList<Pending>
-    private lateinit var readedList: MutableList<Pending>
-    private lateinit var readingList: MutableList<ActualReading>
+    private var pendingList: MutableList<Pending> = arrayListOf()
+    private var readedList: MutableList<Pending> = arrayListOf()
+    private var readingList: MutableList<ActualReading> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,9 +56,11 @@ class HomeFragment : Fragment() {
         pendingList.add(pending)
  */
 
-        pendingList = currentUser.pending as MutableList<Pending>
-        readedList = currentUser.readed as MutableList<Pending>
-        readingList = currentUser.actualReading as MutableList<ActualReading>
+        //pendingList = currentUser.pending as MutableList<Pending>
+        //readedList = currentUser.readed as MutableList<Pending>
+        //readingList = currentUser.actualReading as MutableList<ActualReading>
+
+
 
         //val layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         //layoutManager.snapToInterval = itemWidth // ajusta el valor a la anchura de tus elementos
@@ -81,6 +83,14 @@ class HomeFragment : Fragment() {
 
         CallAdapterPending(pendingList as ArrayList<Pending>)
         CallAdapterReaded(readedList as ArrayList<Pending>)
+
+        if(pendingList.isEmpty())
+            LoadMorePending(0)
+        if(readedList.isEmpty())
+            LoadMoreRead(0)
+        if(readingList.isEmpty())
+            LoadMoreReading(0)
+
         binding.refresh.setOnRefreshListener {
             //getUser()
             reloadFragment()
@@ -164,12 +174,12 @@ class HomeFragment : Fragment() {
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
-                pendingList!!.addAll(
-                    crudApi.getPendingBooksFromUser(
-                        currentUser.userId,
-                        position
-                    ) as MutableList<Pending>
-                )
+                      pendingList!!.addAll(
+                        crudApi.getPendingBooksFromUser(
+                            currentUser.userId,
+                            position
+                        ) as MutableList<Pending>
+                    )
             }
             corrutina.join()
         }
@@ -179,12 +189,13 @@ class HomeFragment : Fragment() {
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
-                readingList!!.addAll(
-                    crudApi.getReadingBooksFromUser(
-                        currentUser.userId,
-                        position
-                    ) as MutableList<ActualReading>
-                )
+                    readingList!!.addAll(
+                        crudApi.getReadingBooksFromUser(
+                            currentUser.userId,
+                            position
+                        ) as MutableList<ActualReading>
+                    )
+
             }
             corrutina.join()
         }

@@ -22,6 +22,7 @@ import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.api.CrudApi
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -45,33 +46,42 @@ class Tools {
         }
 
         fun isValidText(text: String): Boolean{
-            val regex = Regex("[a-zA-Z0-9._-]")
+            println(text + "---------------------")
+            val regex = Regex("[a-zA-Z0-9]+")
             return regex.matches(text)
         }
-
-        fun isNameAviable(userName: String): Boolean {
+/*
+        fun isNameAviable(userName: String, errorListener: ApiErrorListener): Boolean {
             var response = false
             runBlocking {
-                val crudApi = CrudApi()
+                val crudApi = CrudApi(errorListener)
                 val corrutina = launch {
-                    response = crudApi.getUserExists(userName)
+                    response = crudApi.getUserExists(userName, "User already Exists")!!
                 }
                 corrutina.join()
             }
             return response
         }
 
-        fun isEmailAviable(email: String): Boolean{
-            var response = false
+
+
+        fun isEmailAviable(email: String, errorListener: ApiErrorListener): Boolean{
+            var response : Boolean? = false
             runBlocking {
-                val crudApi = CrudApi()
+                val crudApi = CrudApi(errorListener)
                 val corrutina = launch {
-                    response = crudApi.getEmailExists(email)
+                    response = crudApi.getEmailExists(email, "Email already exists")!!
                 }
                 corrutina.join()
             }
-            return response
+            if(response != null){
+                return response!!
+            }else{
+                return false
+            }
         }
+*/
+
 
         fun tooglePasswordVisible(editText: EditText){
             if (editText.transformationMethod == PasswordTransformationMethod.getInstance()) {

@@ -46,7 +46,7 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope {
         savedInstanceState: Bundle?
     ): View? {
         binding =  FragmentWriteCommentBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         setToolBar(this, binding.toolbar, (activity as AppCompatActivity?)!!, "Write Comment")
 
