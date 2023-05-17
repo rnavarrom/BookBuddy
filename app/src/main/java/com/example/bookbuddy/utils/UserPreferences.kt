@@ -16,7 +16,6 @@ class UserPreferences(context: Context) {
     public object PreferencesKeys {
         val USERNAME = stringPreferencesKey("username")
         val PASSWORD = stringPreferencesKey("password")
-        val LANGUAGE = stringPreferencesKey("language")
     }
 
     // Guarda el nombre de usuario y la contraseña
@@ -27,23 +26,10 @@ class UserPreferences(context: Context) {
         }
     }
 
-    suspend fun saveLanguageCredentials(language: String) {
-        dataStore.edit { preferences ->
-            preferences[PreferencesKeys.LANGUAGE] = language
-        }
-    }
-
     // Obtiene el nombre de usuario y la contraseña guardados
     val userCredentialsFlow = dataStore.data.map { preferences ->
         val username = preferences[PreferencesKeys.USERNAME] ?: ""
         val password = preferences[PreferencesKeys.PASSWORD] ?: ""
         Pair(username, password)
-    }
-
-    val userLanguageCredentialsFlow = dataStore.data.map { preferences ->
-        println("BBBBBBB")
-        val language = preferences[PreferencesKeys.LANGUAGE] ?: context.resources.configuration.locales.get(0).language.toString()
-        println(language)
-        language
     }
 }

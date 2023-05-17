@@ -21,6 +21,7 @@ import com.example.bookbuddy.databinding.FragmentBookCommentsBinding
 import com.example.bookbuddy.databinding.FragmentSettingsBinding
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
@@ -54,7 +55,7 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope {
         binding =  FragmentBookCommentsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        Tools.setToolBar(this, binding.toolbar, (activity as AppCompatActivity?)!!, "Write Comment")
+        setToolBar(this, binding.toolbar, requireContext(), "Write Comment")
 
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle!!.getInt("bookid")

@@ -11,22 +11,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.DecodeCallback
 import com.example.bookbuddy.R
 import com.example.bookbuddy.databinding.FragmentScanBinding
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.navController
-import com.example.bookbuddy.utils.navView
 
 
 class ScanFragment : Fragment() {
     private lateinit var codeScanner: CodeScanner
     lateinit var binding: FragmentScanBinding
 
+    private var isScannerEnabled = false
+    private var isDialogOpen = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -38,12 +38,6 @@ class ScanFragment : Fragment() {
         binding =  FragmentScanBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-        if (true){
-            val bundle = Bundle()
-            bundle.putString("isbn", "9788408004097")
-            var action = ScanFragmentDirections.actionNavScanToNavBookDisplay(bundle)
-            navController.navigate(action)
-        }
         return binding.root
     }
 
@@ -65,34 +59,17 @@ class ScanFragment : Fragment() {
                 } else {
                     vibrator.vibrate(200)
                 }
-                //Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
                 if (it.text.length == 13 && it.text.matches(Regex("\\d+"))){
-                    /*
-                    val navOptions = NavOptions.Builder()
-                        //.setLaunchSingleTop(true)
-                        .setPopUpTo(R.id.scanner_view, true)
-                        .build()
+                    val bundle = Bundle()
+                    bundle.putString("isbn", it.text)
 
-                    val bundle = Bundle()
-                    bundle.putString("isbn", it.text)
-                    navController.navigate(R.id.nav_book_display, bundle, navOptions)
-                    */
-                    /*
-                    val bundle = Bundle()
-                    bundle.putString("isbn", it.text)
-                    var f = BookDisplayFragment()
-                    f.arguments = bundle
-                    val ft = childFragmentManager.beginTransaction()
-                    ft.replace(R.id.my_frame_layout, f)
-                    ft.addToBackStack("chat_fragment")
-                    ft.commit()
-                    */
-                    val bundle = Bundle()
-                    bundle.putString("isbn", it.text)
                     var action = ScanFragmentDirections.actionNavScanToNavBookDisplay(bundle)
                     navController.navigate(action)
+                    isDialogOpen = true
+                    isScannerEnabled = false
+                    codeScanner.releaseResources()
                 } else {
-                    Toast.makeText(requireContext(), "This is not a ISBN. Press again to Scan", Toast.LENGTH_SHORT).show()
+                    Tools.showSnackBar(requireContext(),requireView(),"This is not a ISBN. Press again to Scan")
                 }
 
             }
@@ -108,11 +85,12 @@ class ScanFragment : Fragment() {
         IntArray) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
+                "HUH"
+                isScannerEnabled = true
                 startCamera()
             } else {
-                Toast.makeText(requireActivity().applicationContext,
-                    "You must give permissions to scan a QR.",
-                    Toast.LENGTH_SHORT).show()
+                Tools.showSnackBar(requireContext(), requireView(),"Camera access needed to scan codes")
+                navController.popBackStack()
             }
         }
     }
@@ -120,16 +98,23 @@ class ScanFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        if (allPermissionsGranted()) {
+        val currentDestination = navController.currentDestination
+        val isDialogOpen = currentDestination?.id == R.id.nav_book_display
+
+        if (allPermissionsGranted() && !isDialogOpen) {
+            isScannerEnabled = true
             startCamera()
+            codeScanner.startPreview()
+        } else if (isDialogOpen){
+            println("El idalogog esta abierto")
         } else {
-            ActivityCompat.requestPermissions(
-                requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+            requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
     }
 
     override fun onPause() {
-        if (allPermissionsGranted()){
+        if (this::codeScanner.isInitialized){
+            isScannerEnabled = false
             codeScanner.releaseResources()
         }
         super.onPause()

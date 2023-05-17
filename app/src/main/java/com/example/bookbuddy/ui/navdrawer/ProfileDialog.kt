@@ -80,7 +80,8 @@ class ProfileDialog : DialogFragment(), CoroutineScope {
         binding =  DialogProfileBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-        setToolBar(this, binding.toolbar, (activity as AppCompatActivity?)!!, "Anon Profile")
+
+        setToolBar(this, binding.toolbar, requireContext(), "Anon Profile")
 
         val bundle = arguments?.getBundle("bundle")
         profileUser = bundle?.getInt("userid", currentUser.userId)

@@ -24,8 +24,8 @@ interface BookAPI {
     //suspend fun getSimpleSearch(@Path("book") book: String, @Path("author") author: String, @Path("genre") genre: String): Response<ArrayList<SimpleBook>>
     @POST("/api/user/{name}/{password}/{email}")
     suspend fun insertUser(@Path("name") name: String, @Path("password") password: String, @Path("email") email: String): Response<Boolean>
-    @GET("/api/book/isbn/{isbn}")
-    suspend fun getBookInfo(@Path("isbn") isbn: String): Response<Book>
+    @GET("/api/book/isbn/{isbn}/{userid}")
+    suspend fun getBookInfo(@Path("isbn") isbn: String, @Path("userid") userid: Int): Response<Book>
     @GET("/api/books/search/{position}")
     suspend fun getSimpleSearch(@Path("position") position: Int, @Query("searchdata") searchdata: List<String>): Response<ArrayList<SimpleBook>>
 

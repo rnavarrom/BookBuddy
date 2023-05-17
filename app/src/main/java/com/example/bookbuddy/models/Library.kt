@@ -12,7 +12,7 @@ data class Library(
 
 data class LibraryExtended(
     val copies: Int,
-    val distance: Double,
+    val distance: Double?,
     val library: Library,
     var cardview: Int
 ) : java.io.Serializable

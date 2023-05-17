@@ -51,15 +51,15 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
     //private lateinit var fusedLocationClient: FusedLocationProviderClient
     val locationRequestCode = 0
     var permissionsGranted = false
-    var latitude: Double = 0.0
-    var longitude: Double = 0.0
+    var latitude: Double? = null
+    var longitude: Double? = null
+    var method : String? = "walking"
     private var library: LibraryExtended? = null
     lateinit var mMap: GoogleMap
 
     val crudAPI = CrudApi()
 
     var resp : CleanResponse? = null
-    var method : String? = "walking"
 
     lateinit var bundle : Bundle
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,13 +77,16 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
         binding =  FragmentLibraryMapBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-        setToolBar(this, binding.toolbar, (activity as AppCompatActivity?)!!, "Map")
+        setToolBar(this, binding.toolbar, requireContext(), "Map")
 
         bundle = arguments?.getBundle("bundle")!!
-        latitude = bundle.getDouble("latitude")
-        longitude = bundle.getDouble("longitude")
-        method = bundle.getString("method")
+        if (bundle.containsKey("latitude") && bundle.containsKey("longitude") && bundle.containsKey("method")){
+            latitude = bundle.getDouble("latitude")
+            longitude = bundle.getDouble("longitude")
+            method = bundle.getString("method")
+        }
 
+        println("Crash1")
         println(latitude)
         println(longitude)
         println(method)
@@ -92,15 +95,13 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
             library = bundle.getSerializable("library") as? LibraryExtended
             if (library != null) {
                 loadLibraryBasicInformation(library!!)
-                println("CRASH")
             }
         }
-
+        println("Crash2")
         requestPermissionsMap()
-
-        if (library != null && permissionsGranted){
-            val supportMapFragment =
-                childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
+        println("Crash3")
+        if (library != null){
+            val supportMapFragment = childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
             supportMapFragment!!.getMapAsync(this)
         }
 
@@ -118,66 +119,93 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
             }
         }
 
-        if (library != null && permissionsGranted) {
+        if (library != null) {
+            println("DEF1")
             val supportMapFragment =
                 childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
             supportMapFragment!!.getMapAsync(this)
+            println("DEF2")
         }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         print("ENTRO")
-        val start = LatLng(latitude, longitude)
-        val end = LatLng(library!!.library.lat, library!!.library.lon)
-        mMap = googleMap
-        checkPermissionsTMP()
-        val lib = LatLng(library!!.library.lat, library!!.library.lon)
+        if (permissionsGranted){
+            val start = LatLng(latitude!!, longitude!!)
+            val end = LatLng(library!!.library.lat, library!!.library.lon)
+            mMap = googleMap
+            checkPermissionsTMP()
+            val lib = LatLng(library!!.library.lat, library!!.library.lon)
 
-        mMap!!.addMarker(
-            MarkerOptions().position(lib).title(library!!.library.name)
-        )
+            mMap!!.addMarker(
+                MarkerOptions().position(lib).title(library!!.library.name)
+            )
 
-        launch {
+            launch {
 
-            val startString =
-                start.longitude.toString() + ", " + start.latitude.toString()
-            val endString =
-                end.longitude.toString() + ", " + end.latitude.toString()
+                val startString =
+                    start.longitude.toString() + ", " + start.latitude.toString()
+                val endString =
+                    end.longitude.toString() + ", " + end.latitude.toString()
 
-            if (method == "car")
-                resp = crudAPI.getCarRoute(startString, endString)
-            else
-                resp = crudAPI.getWalkingRoute(startString, endString)
-            if (resp != null) {
-                drawRoute(mMap, resp!!.coordinates)
+                if (method == "car")
+                    resp = crudAPI.getCarRoute(startString, endString)
+                else
+                    resp = crudAPI.getWalkingRoute(startString, endString)
+                if (resp != null) {
+                    drawRoute(mMap, resp!!.coordinates)
 
-                binding.tvLibraryDistance.text = "Distància:"+ resp!!.distance.toString()+" metres"
-                binding.tvLibraryTime.text = "Temps: "+resp!!.duration.toString()+" segons"
+                    binding.tvLibraryDistance.text = "Distància:"+ resp!!.distance.toString()+" metres"
+                    binding.tvLibraryTime.text = "Temps: "+resp!!.duration.toString()+" segons"
 
-                binding.tvLibraryName.setOnClickListener {
+                    binding.tvLibraryName.setOnClickListener {
+                        mMap!!.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(lib, 17.0f),
+                            1500, null
+                        )
+                    }
+
+                    val puntmig = LatLng((latitude!!+library!!.library.lat)/2, (longitude!!+library!!.library.lon)/2)
+                    var zoom : Float? = null
+                    if (resp!!.distance < 1000.0)
+                        zoom = 15.0f
+                    else if (resp!!.distance<= 5000.0)
+                        zoom = 14.0f
+                    else if (resp!!.distance<= 10000.0)
+                        zoom = 13.0f
+                    else if (resp!!.distance<= 15000.0)
+                        zoom = 12.0f
+                    else
+                        zoom = 11.0f
+                    print("NOCRASH3")
+                    loadingEnded()
                     mMap!!.animateCamera(
-                        CameraUpdateFactory.newLatLngZoom(lib, 17.0f),
+
+                        CameraUpdateFactory.newLatLngZoom(puntmig, zoom),
+                        2500, null
+                    )
+                }
+            }
+        } else {
+            mMap = googleMap
+            val lib = LatLng(library!!.library.lat, library!!.library.lon)
+            mMap.addMarker(
+                MarkerOptions().position(lib).title(library!!.library.name)
+            )
+
+            launch {
+                var zoom: Float= 17.0f
+                binding.tvLibraryName.setOnClickListener {
+                    mMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(lib, zoom),
                         1500, null
                     )
                 }
 
-                val puntmig = LatLng((latitude+library!!.library.lat)/2, (longitude+library!!.library.lon)/2)
-                var zoom : Float? = null
-                if (resp!!.distance < 1000.0)
-                    zoom = 15.0f
-                else if (resp!!.distance<= 5000.0)
-                    zoom = 14.0f
-                else if (resp!!.distance<= 10000.0)
-                    zoom = 13.0f
-                else if (resp!!.distance<= 15000.0)
-                    zoom = 12.0f
-                else
-                    zoom = 11.0f
-                print("NOCRASH3")
                 loadingEnded()
                 mMap!!.animateCamera(
 
-                    CameraUpdateFactory.newLatLngZoom(puntmig, zoom),
+                    CameraUpdateFactory.newLatLngZoom(lib, zoom),
                     2500, null
                 )
             }
@@ -196,32 +224,23 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
             permissionsGranted = true
             loadFragment()
         } else {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    requireActivity(),
+            if (shouldShowRequestPermissionRationale(
                     Manifest.permission.ACCESS_FINE_LOCATION
                 )
             ) {
-                Toast.makeText(
-                    requireContext(),
-                    "El permís ACCESS_FINE_LOCATION no està disponible",
-                    Toast.LENGTH_LONG
-                ).show()
+                //Toast.makeText(requireContext(),"El permís ACCESS_FINE_LOCATION no està disponible",Toast.LENGTH_LONG).show()
                 permissionsGranted = false
+                loadFragment()
             } else {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        requireActivity(),
+                if (shouldShowRequestPermissionRationale(
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     )
                 ) {
-                    Toast.makeText(
-                        requireContext(),
-                        "El permís ACCESS_COARSE_LOCATION no està disponible",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    //Toast.makeText(requireContext(),"El permís ACCESS_COARSE_LOCATION no està disponible",Toast.LENGTH_LONG).show()
                     permissionsGranted = false
+                    loadFragment()
                 } else {
-                    ActivityCompat.requestPermissions(
-                        requireActivity(),
+                    requestPermissions(
                         arrayOf(
                             Manifest.permission.ACCESS_FINE_LOCATION,
                             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -247,6 +266,7 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
                 checkPermissions()
             } else {
                 permissionsGranted = false
+                loadFragment()
             }
         }
     }
@@ -281,10 +301,14 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
 
     fun loadLibraryBasicInformation(library: LibraryExtended){
         binding.tvLibraryName.text = library.library.name
-        binding.tvLibraryDistance.text = String.format("%.1f", library.distance) + " km"
+        //binding.tvLibraryDistance.text = String.format("%.1f", library.distance) + " km"
     }
 
     fun loadFragment(){
+        if (!permissionsGranted){
+            binding.tvLibraryTime.visibility = View.GONE
+            binding.tvLibraryDistance.visibility = View.GONE
+        }
         val supportMapFragment =
             childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
         println("CRASHE")

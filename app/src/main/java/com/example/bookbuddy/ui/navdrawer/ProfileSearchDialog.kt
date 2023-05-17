@@ -34,11 +34,6 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope {
         fun onGenreSearchComplete(result: Int, name: String)
     }
 
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        requireActivity().invalidateOptionsMenu()
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val parentFragment = parentFragment

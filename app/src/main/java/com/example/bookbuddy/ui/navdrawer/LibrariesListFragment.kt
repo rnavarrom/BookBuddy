@@ -4,30 +4,23 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
-import com.example.bookbuddy.adapters.CommentAdapter
 import com.example.bookbuddy.adapters.LibraryAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentLibrariesListBinding
-import com.example.bookbuddy.databinding.FragmentRecommendationsBinding
-import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.models.LibraryExtended
-import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.navController
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -66,12 +59,12 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
         binding =  FragmentLibrariesListBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-        setToolBar(this, binding.toolbar, (activity as AppCompatActivity?)!!, "Library list")
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        setToolBar(this, binding.toolbar, requireContext(), "Library list")
 
         val bundle = arguments?.getBundle("bundle")
         isbn = bundle?.getString("isbn")!!
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
         requestPermissionsMap()
 
@@ -80,6 +73,10 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
 
     fun loadFragment(){
         launch {
+            if (!permissionsGranted){
+                binding.gpscar.visibility = View.INVISIBLE
+                binding.gpswalk.visibility = View.INVISIBLE
+            }
             getLibrariesBook(isbn, true)
             loadingEnded()
         }
@@ -90,7 +87,17 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
             val crudApi = CrudApi()
             val corrutina = launch {
                 if (position == 0){
-                    libraries = crudApi.getBookLibrariesExtended(isbn, ubi!!.latitude, ubi!!.longitude) as MutableList<LibraryExtended>?
+                    if (permissionsGranted){
+                        var tmpLibraries = crudApi.getBookLibrariesExtended(isbn, ubi!!.latitude, ubi!!.longitude) as MutableList<LibraryExtended>?
+                        if (tmpLibraries == null){
+                            libraries = mutableListOf()
+                        } else {
+                            libraries = tmpLibraries
+                        }
+                    } else {
+                        libraries = crudApi.getBookLibraries(isbn) as MutableList<LibraryExtended>?
+                    }
+
                 } else {
                     // TODO: this
                     //libraries!!.addAll((setCardview(crudApi.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?)!!)
@@ -116,10 +123,14 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
             var selectedLibrary = adapter.getSelected()
             if (selectedLibrary != null){
                 val bundle = Bundle()
-                bundle.putDouble("latitude", ubi!!.latitude)
-                bundle.putDouble("longitude", ubi!!.longitude)
+                if (permissionsGranted){
+                    bundle.putDouble("latitude", ubi!!.latitude)
+                    bundle.putDouble("longitude", ubi!!.longitude)
+                    bundle.putString("method", if (gpsCar) "car" else "walking" )
+                }
+
                 bundle.putSerializable("library", selectedLibrary)
-                bundle.putString("method", if (gpsCar) "car" else "walking" )
+
                 var action = LibrariesListFragmentDirections.actionNavLibrariesListToNavLibraryMap(bundle)
                 navController.navigate(action)
             } else {
@@ -193,32 +204,24 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
                 }
 
         } else {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    requireActivity(),
+            if (shouldShowRequestPermissionRationale(
                     Manifest.permission.ACCESS_FINE_LOCATION
                 )
             ) {
-                Toast.makeText(
-                    requireContext(),
-                    "El permís ACCESS_FINE_LOCATION no està disponible",
-                    Toast.LENGTH_LONG
-                ).show()
+                //showSnackBar(requireContext(), requireView(), "Location needed to show closest libraries")
                 permissionsGranted = false
+                loadFragment()
+                //showSnackBar(requireContext(), requireView(), "Location needed to show closest libraries")
             } else {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(
-                        requireActivity(),
+                if (shouldShowRequestPermissionRationale(
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     )
                 ) {
-                    Toast.makeText(
-                        requireContext(),
-                        "El permís ACCESS_COARSE_LOCATION no està disponible",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    //showSnackBar(requireContext(), requireView(), "Location needed to show closest libraries")
                     permissionsGranted = false
+                    loadFragment()
                 } else {
-                    ActivityCompat.requestPermissions(
-                        requireActivity(),
+                    requestPermissions(
                         arrayOf(
                             Manifest.permission.ACCESS_FINE_LOCATION,
                             Manifest.permission.ACCESS_COARSE_LOCATION
@@ -243,7 +246,9 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
             ) {
                 checkPermissions()
             } else {
+                showSnackBar(requireContext(), requireView(), "Location needed to show closest libraries")
                 permissionsGranted = false
+                loadFragment()
             }
         }
     }
@@ -262,8 +267,7 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location : Location? ->
                     ubi = location
-                    loadFragment()
-                }
+                    loadFragment() }
         }
     }
 
