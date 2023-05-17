@@ -15,6 +15,7 @@
     <string name="toggle_flash" translatable="false">Toggle Flash</string>
     <string name="scanned_data" translatable="false">Scanned Data</string>
     <string name="welcome_message">Welcome</string>
+    <string name="profile_preferred_genre">Preferred Genre:</string>
 
 
 </resources>

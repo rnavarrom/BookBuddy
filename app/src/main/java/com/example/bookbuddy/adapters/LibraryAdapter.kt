@@ -44,7 +44,13 @@ class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var ubi: Lo
     override fun onBindViewHolder(holder: viewholder, position: Int) {
         holder.libraryName.text = list[position].library.name
         holder.libraryZip.text = list[position].library.zipCode
-        holder.libraryDistance.text = String.format("%.1f", list[position].distance) + " km"
+
+        if (list[position].distance != null){
+            holder.libraryDistance.text = String.format("%.1f", list[position].distance) + " km"
+        } else {
+            holder.libraryDistance.visibility = View.GONE
+        }
+
         holder.libraryCopies.text = list[position].copies.toString() + " copies"
 
         holder.view.setOnClickListener {

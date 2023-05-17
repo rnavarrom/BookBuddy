@@ -14,6 +14,7 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.lifecycleScope
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.Utils.Sha
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.api.CrudApi
@@ -26,6 +27,7 @@ import com.example.bookbuddy.utils.Tools.Companion.responseToFile
 import com.example.bookbuddy.utils.base.ApiErrorListener
 //import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.Locale
@@ -51,9 +53,8 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
 
     fun getCurrentLanguageCode(code: String): String {
         var finalCode: String = code
-        if (code == "null"){
-            var curLocal = resources.configuration.locales.get(0)
-            finalCode = curLocal.language
+        if (finalCode == "null"){
+            finalCode = applicationContext.resources.configuration.locales.get(0).language.toString()
         }
         when (finalCode){
             "en" -> {
@@ -71,28 +72,31 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
         }
     }
 
-    fun saveLanguageCode(languageCode: String) {
-        lifecycleScope.launch {
-            userPrefs.saveLanguageCredentials(languageCode)
-        }
+    private fun saveLanguageCode(context: Context, languageCode: String) {
+        val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("language_code", languageCode)
+        editor.apply()
     }
 
-    fun getCurrentLanguageCode2(): String {
-        userPrefs = UserPreferences(this)
-        var savedLanguageCode: String = ""
-        lifecycleScope.launch {
-            //savedLanguageCode = userPrefs.userLanguageCredentialsFlow
-            println("AAAAAAAAAAAAAAAAAAAAA")
-            println(savedLanguageCode)
+    fun getStoredLanguage(): String {
+        var sharedPreferences = applicationContext.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        var code = sharedPreferences.getString("language_code", "") ?: ""
+        if (code.isNullOrEmpty()){
+            code = applicationContext.resources.configuration.locales.get(0).language.toString()
         }
-        return savedLanguageCode
-        /*
-        var sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-        println("HOLAAA")
-        println(sharedPreferences.getString("language_code", "en"))
-        return sharedPreferences.getString("language_code", "null") ?: "null"
+        return code
+    }
 
-         */
+    fun bytesToMacAddress(macBytes: ByteArray): String {
+        val macBuilder = StringBuilder()
+        for (byte in macBytes) {
+            macBuilder.append(String.format("%02X:", byte))
+        }
+        if (macBuilder.isNotEmpty()) {
+            macBuilder.deleteCharAt(macBuilder.length - 1)
+        }
+        return macBuilder.toString()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,8 +105,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         setContentView(binding.root)
 
-        var currentLanguageCode = getCurrentLanguageCode2()
-
+        var currentLanguageCode = getStoredLanguage()
         var curr = getCurrentLanguageCode(currentLanguageCode)
         val languages = arrayOf("american_flag","catalan_flag","spanish_flag")
         val adapter = LanguageSpinnerAdapter(this, languages)
@@ -119,18 +122,18 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
                     when (selectedImageName){
                         "american_flag" -> {
                             setLocal(this@MainActivity, "en")
-                            saveLanguageCode("en")
+                            saveLanguageCode(applicationContext,"en")
                         }
                         "catalan_flag" -> {
                             setLocal(this@MainActivity, "ca")
-                            saveLanguageCode("ca")
+                            saveLanguageCode(applicationContext,"ca")
                         }
                         else -> {
                             setLocal(this@MainActivity, "es")
-                            saveLanguageCode("es")
+                            saveLanguageCode(applicationContext,"es")
                         }
                     }
-                    startActivity(intent)
+                    recreate()
                 }
 
             }
@@ -142,8 +145,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
         if (!currentLanguageChanged){
             currentLanguageChanged = true
             setLocal(this@MainActivity, currentLanguageCode)
-            startActivity(intent)
-            //recreate()
+            recreate()
         }
 
 
@@ -187,7 +189,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
                     Toast.makeText(this, "loging in", Toast.LENGTH_LONG).show()
                     var intent = Intent(this, NavDrawerActivity::class.java)
                     startActivity(intent)
-
+                    finish()
                     //}else{
                     //  Toast.makeText(this, "Incorrect user or password",Toast.LENGTH_LONG).show()
                     //}
@@ -229,7 +231,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
     fun getUsers(userName: String, password: String) {
         currentUser = User()
         runBlocking {
-            val crudApi = CrudApi(this@MainActivity)
+            val crudApi = CrudApi(null)
             val corrutina = launch {
                 //currentUser = crudApi.getUserLogin(userName, password)!!
                 var tempData = crudApi.getUserLogin(userName, password, "Error geting user")

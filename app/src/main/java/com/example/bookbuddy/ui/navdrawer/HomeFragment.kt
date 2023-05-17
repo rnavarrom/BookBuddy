@@ -1,5 +1,6 @@
 package com.example.bookbuddy.ui.navdrawer
 
+import android.content.DialogInterface
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,20 +9,17 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.adapters.HomeBooksAdapter
 import com.example.bookbuddy.adapters.HomeReadingBooksAdapter
-import com.example.bookbuddy.adapters.ProfileBookMarkAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentHomeBinding
-import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.utils.Tools.Companion.unaccent
@@ -42,12 +40,41 @@ class HomeFragment : Fragment() {
         super.onCreate(savedInstanceState)
     }
 
+    private fun isHomeFragment(): Boolean {
+        val homeFragmentId = R.id.nav_home
+        val currentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_nav_drawer)
+        println("ASDASDASDASD")
+        println(homeFragmentId)
+        println(currentFragment)
+        return currentFragment?.id == homeFragmentId
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+
+        val onBackPressedDispatcher = requireActivity().onBackPressedDispatcher
+
+        // Agregar un callback al OnBackPressedDispatcher
+        onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                AlertDialog.Builder(requireContext())
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Closing BookBuddy")
+                    .setMessage("Are you sure you want to close this activity?")
+                    .setPositiveButton("Yes", object : DialogInterface.OnClickListener {
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            requireActivity().finish()
+                        }
+                    })
+                    .setNegativeButton("No", null)
+                    .show()
+            }
+        })
 
 /*
         var pending = Pending(123456, emptyList(), emptyList(), "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1522157426l/19063._SY475_.jpg",

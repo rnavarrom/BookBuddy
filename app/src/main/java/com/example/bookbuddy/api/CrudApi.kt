@@ -120,8 +120,8 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
 
 
 
-    suspend fun getBook(isbn: String): Book {
-        val response = getRetrofit().create(BookAPI::class.java).getBookInfo(isbn).body()
+    suspend fun getBook(isbn: String, userId: Int): Book {
+        val response = getRetrofit().create(BookAPI::class.java).getBookInfo(isbn, userId).body()
         return response!!
     }
 
@@ -152,8 +152,8 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         return response!!
     }
 
-    suspend fun getReadedsFromBook(user_id: Int, book_id: Int): Readed? {
-        val response = getRetrofit().create(ReadedAPI::class.java).getReadedsFromBook(user_id, book_id)
+    suspend fun getReadedsFromBook(bookId: Int, userId: Int,): Readed? {
+        val response = getRetrofit().create(ReadedAPI::class.java).getReadedsFromBook(bookId, userId)
         if (response.isSuccessful){
             return response.body()
         }
@@ -234,6 +234,17 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         return call.isSuccessful
     }
 
+    // Book Requests
+    suspend fun addRequestAPI(isbn: String): Boolean {
+        val call = getRetrofit().create(RequestAPI::class.java).insertRequest(isbn)
+        return call.isSuccessful
+    }
+
+    suspend fun deleteRequestAPI(id: Int): Boolean{
+        val call = getRetrofit().create(RequestAPI::class.java).deleteRequest(id)
+        return call.isSuccessful
+    }
+
     // Profiles
 
     suspend fun getProfileUser(userId: Int, errorMessage: String): Profile? {
@@ -309,15 +320,20 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
     }
     */
     // Libraries
-
+    /*
     suspend fun getBookLibraries(isbn: String): List<Library> {
         val response = getRetrofit().create(LibraryAPI::class.java).getLibrariesBook(isbn).body()
         return response!!
     }
+    */
+    suspend fun getBookLibraries(isbn: String): List<LibraryExtended>? {
+        val response = getRetrofit().create(LibraryAPI::class.java).getLibrariesBook(isbn).body()
+        return response
+    }
 
-    suspend fun getBookLibrariesExtended(isbn: String, latitude: Double, longitude: Double): List<LibraryExtended> {
+    suspend fun getBookLibrariesExtended(isbn: String, latitude: Double, longitude: Double): List<LibraryExtended>? {
         val response = getRetrofit().create(LibraryAPI::class.java).getLibrariesExtendedBook(isbn, latitude, longitude).body()
-        return response!!
+        return response
     }
 
     suspend fun getBookLibrariesCount(isbn: String): Int {

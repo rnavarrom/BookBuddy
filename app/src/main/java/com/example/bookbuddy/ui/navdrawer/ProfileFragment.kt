@@ -1,7 +1,9 @@
 package com.example.bookbuddy.ui.navdrawer
 
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -12,8 +14,9 @@ import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.view.*
-import android.widget.Toast
+import android.widget.AdapterView
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.recreate
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
@@ -38,6 +41,10 @@ import java.io.File
 import java.io.FileOutputStream
 import kotlin.coroutines.CoroutineContext
 import com.bumptech.glide.request.transition.Transition
+import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreSearchCompleteListener, ProfileAuthorDialog.OnAuthorSearchCompleteListener {
@@ -67,6 +74,53 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     var permission = false
     private var menuItemsVisibility = mutableMapOf("settings" to true, "accept" to false, "cancel" to false)
     private lateinit var menuItems: ArrayList<MenuItem>
+
+    fun setLocal(activity: Activity, langCode: String){
+        var locale: Locale = Locale(langCode)
+        Locale.setDefault(locale)
+        var resources = activity.resources
+        var config = resources.configuration
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
+    }
+
+    fun getCurrentLanguageCode(code: String): String {
+        var finalCode: String = code
+        if (finalCode == "null"){
+            finalCode = requireActivity().applicationContext.resources.configuration.locales.get(0).language.toString()
+        }
+        when (finalCode){
+            "en" -> {
+                return "american_flag"
+            }
+            "ca" -> {
+                return "catalan_flag"
+            }
+            "es" -> {
+                return "spanish_flag"
+            }
+            else -> {
+                return "american_flag"
+            }
+        }
+    }
+
+    private fun saveLanguageCode(context: Context, languageCode: String) {
+        val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("language_code", languageCode)
+        editor.apply()
+    }
+
+    fun getStoredLanguage(): String {
+        var sharedPreferences = requireActivity().applicationContext.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        var code = sharedPreferences.getString("language_code", "") ?: ""
+        if (code.isNullOrEmpty()){
+            code = requireActivity().applicationContext.resources.configuration.locales.get(0).language.toString()
+        }
+        return code
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -125,7 +179,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         //binding.editProfileImageView.setImageDrawable()
 
         binding.editProfileImageView.setOnClickListener {
-            comprobaPermisos()
+            checkPermissions()
         }
 
         binding.tvUsername.visibility = View.INVISIBLE
@@ -240,13 +294,11 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     }
 
     override fun onGenreSearchComplete(result: Int, genreName: String) {
-        Toast.makeText(requireContext(), "Result " + result.toString(), Toast.LENGTH_LONG).show()
         binding.et2PrefferredGenre.setText(genreName)
         tmpGenreId = result
     }
 
     override fun onAuthorSearchComplete(result: Int, authorName: String) {
-        Toast.makeText(requireContext(), "Result " + result.toString(), Toast.LENGTH_LONG).show()
         binding.et2PrefferredAuthor.setText(authorName)
         tmpAuthorId = result
     }
@@ -258,11 +310,42 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         binding =  FragmentProfileBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-        /*
-        val bundle = arguments?.getBundle("bundle")
-        profileUser = bundle?.getInt("userid", currentUser.userId)
-        username = bundle?.getString("username",  currentUser.name)
-        */
+        var currentLanguageCode = getStoredLanguage()
+        var curr = getCurrentLanguageCode(currentLanguageCode)
+        val languages = arrayOf("american_flag","catalan_flag","spanish_flag")
+        val adapter = LanguageSpinnerAdapter(requireContext(), languages)
+        binding.languageSpinner.adapter = adapter
+        var position = languages.indexOf(curr)
+        binding.languageSpinner.setSelection(position)
+        var lastSelectedPosition = position
+
+        binding.languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (position != lastSelectedPosition) {
+                    val selectedImageName = parent.getItemAtPosition(position).toString()
+                    println(selectedImageName)
+                    when (selectedImageName){
+                        "american_flag" -> {
+                            setLocal(requireActivity(), "en")
+                            saveLanguageCode(requireActivity().applicationContext,"en")
+                        }
+                        "catalan_flag" -> {
+                            setLocal(requireActivity(), "ca")
+                            saveLanguageCode(requireActivity().applicationContext,"ca")
+                        }
+                        else -> {
+                            setLocal(requireActivity(), "es")
+                            saveLanguageCode(requireActivity().applicationContext,"es")
+                        }
+                    }
+                    recreate(requireActivity())
+                }
+
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Acciones a realizar cuando no se selecciona ningún elemento
+            }
+        }
 
         if (profileUser == null){
             profileUser = currentUser.userId
@@ -275,16 +358,11 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             loadingEnded()
         }
 
-        binding.bSelectImage.setOnClickListener {
-            comprobaPermisos()
-        }
-
         binding.bContacts.setOnClickListener {
             if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED) {
                 // Pedir permisos de acceso a los contactos
-                ActivityCompat.requestPermissions(requireActivity(),
-                    arrayOf(android.Manifest.permission.READ_CONTACTS),
+                requestPermissions(arrayOf(android.Manifest.permission.READ_CONTACTS),
                     REQUEST_READ_CONTACTS)
             } else {
                 // Obtener los correos electrónicos de los contactos
@@ -303,7 +381,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                         } else {
                             message = "No se ha encontrado ningun contacto"
                         }
-                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                        showSnackBar(requireContext(), requireView(),message)
                     }
                     corrutina.join()
                 }
@@ -378,13 +456,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             val dialog: ProfileSearchDialog = ProfileSearchDialog()
             dialog.onGenreSearchCompleteListener = this //Changed
             dialog.show(childFragmentManager, "Date Picker")
-            /*
-            bundle.putInt("userid", userid)
-            bundle.putString("username", username)*/
-            /*
-            var action = ProfileFragmentDirections.actionNavProfileToNavProfileSearch(bundle)
-            navController.navigate(action)
-            */
         }
 
         binding.et2PrefferredAuthor.setOnClickListener {
@@ -392,34 +463,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             val dialog: ProfileAuthorDialog = ProfileAuthorDialog()
             dialog.onAuthorSearchCompleteListener = this //Changed
             dialog.show(childFragmentManager, "Date Picker")
-            /*
-            bundle.putInt("userid", userid)
-            bundle.putString("username", username)*/
-            /*
-            var action = ProfileFragmentDirections.actionNavProfileToNavProfileSearch(bundle)
-            navController.navigate(action)
-            */
         }
-        /*
-        if (currentPicture.isSuccessful){
-            val body = currentPicture.body()
-            if (body != null) {
-                // Leer los bytes de la imagen
-                val bytes = body.bytes()
-
-                // Guardar los bytes en un archivo
-                val file = File(requireContext().cacheDir, currentUser.userId.toString() + "user.jpg")
-                val outputStream = FileOutputStream(file)
-                outputStream.write(bytes)
-                outputStream.close()
-
-                // Mostrar la imagen en un ImageView usando Glide
-                Glide.with(requireContext())
-                    .load(file)
-                    .into(binding.ivPreviewImage)
-            }
-        }
-        */
     }
 
     fun loadTabLayout(){
@@ -543,85 +587,55 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     }
 
 
-    fun comprobaPermisos(){
+    fun checkPermissions(){
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED){
-            permission = true
             imageChooser()
         }else{
             if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                Toast.makeText(requireContext(), "El permís READ EXTERNAL STORAGE no està disponible. S'ha de canviar als ajustaments", Toast.LENGTH_LONG).show()
-                permission = false
+                showSnackBar(requireContext(), requireView(),"Galery acces not available")
             }else{
-                ActivityCompat.requestPermissions(
-                    requireActivity(),
+                requestPermissions(
                     arrayOf(
                         android.Manifest.permission.READ_EXTERNAL_STORAGE
                     ),
-                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE
+                    REQUEST_READ_EXTERNAL_STORAGE
                 )
             }
         }
     }
 
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
-        permissions: Array<String>, grantResults: IntArray
+        permissions: Array<out String>, grantResults: IntArray
     ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE -> {
+            REQUEST_READ_EXTERNAL_STORAGE -> {
                 if (grantResults.isNotEmpty() &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    permission = true
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     imageChooser()
-
                 } else {
-                    Toast.makeText(requireContext(), "No s'han acceptat els permisos, per poder utilitzar la gravadora canvia-ho als ajustaments", Toast.LENGTH_LONG).show()
-                    permission = false
+                    showSnackBar(requireContext(), requireView(),"Galery access is required to pick an image")
                 }
                 return
             }
             REQUEST_READ_CONTACTS -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // Permiso de acceso a los contactos concedido
-                    // Obtener los correos electrónicos de los contactos
                     val emails = getEmailsFromContacts()
-                    // Guardar los correos electrónicos en una lista
                     val emailList = ArrayList<String>()
                     emailList.addAll(emails)
-                }
-                return
-            }
-        }
-    }
-
-    /*
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>, grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE -> {
-                if (grantResults.isNotEmpty() &&
-                            grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    permission = true
-                    imageChooser()
-
                 } else {
-                    Toast.makeText(requireContext(), "No s'han acceptat els permisos, per poder utilitzar la gravadora canvia-ho als ajustaments", Toast.LENGTH_LONG).show()
-                    permission = false
+                    showSnackBar(requireContext(), requireView(),"Contacts access is required to import contacts")
                 }
                 return
             }
         }
     }
-    */
 
     companion object {
         private const val PICK_IMAGE_REQUEST = 1
-        private const val MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 2
+        private const val REQUEST_READ_EXTERNAL_STORAGE = 2
         private const val REQUEST_READ_CONTACTS = 3
     }
 

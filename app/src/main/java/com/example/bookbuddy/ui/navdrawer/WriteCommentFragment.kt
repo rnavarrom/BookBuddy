@@ -48,7 +48,7 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope {
         binding =  FragmentWriteCommentBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
-        setToolBar(this, binding.toolbar, (activity as AppCompatActivity?)!!, "Write Comment")
+        setToolBar(this, binding.toolbar, requireContext(), "Write Comment")
 
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle?.getInt("bookid")!!

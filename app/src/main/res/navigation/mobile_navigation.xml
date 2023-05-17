@@ -32,7 +32,7 @@
         tools:layout="@layout/fragment_scan" >
         <action
             android:id="@+id/action_nav_scan_to_nav_book_display"
-            app:destination="@id/nav_book_display" />
+            app:destination="@id/nav_book_display"/>
     </fragment>
 
     <fragment
