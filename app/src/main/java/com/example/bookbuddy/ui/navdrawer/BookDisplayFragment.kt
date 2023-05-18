@@ -20,6 +20,7 @@ import com.example.bookbuddy.databinding.FragmentBookDisplayBinding
 import com.example.bookbuddy.models.*
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
@@ -125,6 +126,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
                         //popup.setOnDismissListener {
                         //holder.dropmenu.setImageResource(R.drawable.ic_drop_down_menu)
                         //}
+                        // TODO: If checked no execute api call
                         popup!!.setOnMenuItemClickListener { item ->
                             var result: Boolean? = false
                             when (item.itemId) {
@@ -222,11 +224,15 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
                         }
                         popup!!.show()
 
+                        var remove = popup!!.menu.findItem(R.id.remove_book)
                         if (readed != null) {
+                            remove.isVisible = true
                             var tmpItem = popup!!.menu.getItem(readed!!.curreading!! - 1)
                             tmpItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
                             tmpItem.setCheckable(true)
                             tmpItem.isChecked = true
+                        } else {
+                            remove.isVisible = false
                         }
                     }
                 }

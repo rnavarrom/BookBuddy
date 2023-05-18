@@ -78,7 +78,6 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
             val bundle = Bundle()
             bundle.putString("isbn", llista[position].isbn)
             bundle.putSerializable("fragment", fragment)
-            println("yesyes")
             var action = HomeFragmentDirections.actionNavHomeToNavBookDisplay(bundle)
             navController.navigate(action)
         }

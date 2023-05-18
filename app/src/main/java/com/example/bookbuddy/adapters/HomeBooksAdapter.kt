@@ -12,16 +12,17 @@ import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.models.Test.Pending
+import com.example.bookbuddy.ui.navdrawer.HomeFragment
 import com.example.bookbuddy.ui.navdrawer.HomeFragmentDirections
 import com.example.bookbuddy.ui.navdrawer.SearchFragmentDirections
 import com.example.bookbuddy.utils.navController
 
-class HomeBooksAdapter(var llista: ArrayList<Pending>) : RecyclerView.Adapter<HomeBooksAdapter.ViewHolder>() {
+class HomeBooksAdapter(var llista: ArrayList<Pending>, fragment: HomeFragment) : RecyclerView.Adapter<HomeBooksAdapter.ViewHolder>() {
     class ViewHolder(val vista: View) : RecyclerView.ViewHolder(vista) {
         val imatge = vista.findViewById<ImageView>(R.id.book_cover)
        // val text = vista.findViewById<TextView>(R.id.book_rating)
     }
-
+    val fragment = fragment
     lateinit var context: Context
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(parent.context)
@@ -43,6 +44,7 @@ class HomeBooksAdapter(var llista: ArrayList<Pending>) : RecyclerView.Adapter<Ho
             //navController.navigate(R.id.nav_book_display, bundle)
             val bundle = Bundle()
             bundle.putString("isbn", llista[position].isbn)
+            bundle.putSerializable("fragment", fragment)
             var action = HomeFragmentDirections.actionNavHomeToNavBookDisplay(bundle)
             navController.navigate(action)
         }

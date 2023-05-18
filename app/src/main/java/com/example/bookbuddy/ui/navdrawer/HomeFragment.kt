@@ -46,6 +46,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
     }
 
     override fun onBookDisplayClose() {
+        println(activeFilterText)
         println("REFRESH")
         val id = navController.currentDestination?.id
         navController.popBackStack(id!!,true)
@@ -311,7 +312,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                 false
             )
         )
-        adapterPending = HomeBooksAdapter(pendingList)
+        adapterPending = HomeBooksAdapter(pendingList, this)
         binding.rvPendingbooks.adapter = adapterPending
     }
     fun CallAdapterReaded(readedList: ArrayList<Pending>) {
@@ -322,7 +323,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                 false
             )
         )
-        adapterReaded = HomeBooksAdapter(readedList)
+        adapterReaded = HomeBooksAdapter(readedList, this)
         binding.rvReadedbooks.adapter = adapterReaded
     }
     fun getUser() {
