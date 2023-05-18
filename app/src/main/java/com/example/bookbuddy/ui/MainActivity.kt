@@ -231,7 +231,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
     fun getUsers(userName: String, password: String) {
         currentUser = User()
         runBlocking {
-            val crudApi = CrudApi(null)
+            val crudApi = CrudApi(this@MainActivity)
             val corrutina = launch {
                 //currentUser = crudApi.getUserLogin(userName, password)!!
                 var tempData = crudApi.getUserLogin(userName, password, "Error geting user")

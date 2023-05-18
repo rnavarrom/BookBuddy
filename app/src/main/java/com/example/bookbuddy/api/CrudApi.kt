@@ -390,7 +390,7 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
     }
     suspend fun removeBookReading(bookId: Int, userId: Int, errorMessage: String): Boolean? {
         return safeApiCall(
-            apiCall = { getRetrofit().create(ReadedAPI::class.java).setBookPending(bookId, userId) },
+            apiCall = { getRetrofit().create(ReadedAPI::class.java).removeBookReading(bookId, userId) },
             errorListener = errorListener!!,
             errorMessage = errorMessage
         )
@@ -423,6 +423,22 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         )
         //val call = getRetrofit().create(ReadedAPI::class.java).setBookRead(bookId, userId)
         //return call.isSuccessful
+    }
+
+    suspend fun filterPendingBook(user_id: Int, filter: String, position: Int, errorMessage: String): List<Pending>? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(ReadedAPI::class.java).filterPendingBooksFromUser(user_id, filter, position) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+    }
+
+    suspend fun filterReadBook(user_id: Int, filter: String, position: Int, errorMessage: String): List<Pending>?{
+        return safeApiCall(
+            apiCall = { getRetrofit().create(ReadedAPI::class.java).filterReadBooksFromUser(user_id, filter, position) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
     }
 
     // Trace routes

@@ -23,11 +23,12 @@ import com.example.bookbuddy.databinding.FragmentHomeBinding
 import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.utils.Tools.Companion.unaccent
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), ApiErrorListener {
     lateinit var binding: FragmentHomeBinding
     private lateinit var adapterPending: HomeBooksAdapter
     private lateinit var adapterReaded: HomeBooksAdapter
@@ -35,6 +36,9 @@ class HomeFragment : Fragment() {
     private var pendingList: MutableList<Pending> = arrayListOf()
     private var readedList: MutableList<Pending> = arrayListOf()
     private var readingList: MutableList<ActualReading> = arrayListOf()
+    private var filterPendingIsOn: Boolean = false
+    private var filterReadIsOn: Boolean = false
+    private var activeFilterText: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,10 +128,10 @@ class HomeFragment : Fragment() {
             binding.refresh.isRefreshing = false
         }
         binding.icPendingSearch.setOnClickListener {
-            FilterBooks(pendingList as ArrayList<Pending>, true)
+            FilterBooks(true) //pendingList as ArrayList<Pending>,
         }
         binding.icReadedSearch.setOnClickListener {
-            FilterBooks(readedList as ArrayList<Pending>, false)
+            FilterBooks(false) //readedList as ArrayList<Pending>,
         }
 
         binding.rvReadedbooks.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -141,7 +145,11 @@ class HomeFragment : Fragment() {
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         var position = totalItemCount
-                        LoadMoreRead(position)
+                        if(!activeFilterText.isNullOrBlank()){
+                            filterReadBooks(activeFilterText, position)
+                        }else{
+                            LoadMoreRead(position)
+                        }
                     }
                 }
             }
@@ -158,7 +166,11 @@ class HomeFragment : Fragment() {
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         var position = totalItemCount
-                        LoadMorePending(position)
+                        if(!activeFilterText.isNullOrBlank()){
+                            filterPendingBooks(activeFilterText, position)
+                        }else{
+                            LoadMorePending(position)
+                        }
                     }
                 }
             }
@@ -182,6 +194,15 @@ class HomeFragment : Fragment() {
         })
         return binding.root
     }
+/*
+    override fun onResume() {
+        super.onResume()
+        pendingList = arrayListOf()
+        readedList = arrayListOf()
+        readingList = arrayListOf()
+    }
+
+ */
     fun LoadMoreRead(position : Int) {
         runBlocking {
             val crudApi = CrudApi()
@@ -222,32 +243,51 @@ class HomeFragment : Fragment() {
                             position
                         ) as MutableList<ActualReading>
                     )
-
             }
             corrutina.join()
         }
         adapterReading.updateList(readingList as ArrayList<ActualReading>)
     }
-    fun FilterBooks(list: ArrayList<Pending>, choseList: Boolean) {
+    fun FilterBooks(choseList: Boolean) {
         val builder = AlertDialog.Builder(requireContext())
         val inflater = layoutInflater
         val dialogLayout = inflater.inflate(R.layout.dialog_filter_books, null)
         val editText = dialogLayout.findViewById<EditText>(R.id.filter_et)
         builder.setView(dialogLayout)
         builder.setPositiveButton("Filter") { dialogInterface, i ->
-            var searchString = editText.text.toString()
+
+            activeFilterText = editText.text.toString()
+            var position = 0
             if (editText.text.isNotBlank()) {
+                /*
                 val filteredList = list.filter { pending ->
                     pending.title.unaccent().contains(searchString, ignoreCase = true)
                 } as ArrayList<Pending>
+                 */
+
                 if (choseList) {
-                    CallAdapterPending(filteredList)
-                    CallAdapterReaded(readedList as ArrayList<Pending>)
+                    pendingList = arrayListOf()
+                    filterPendingBooks(activeFilterText, position)
+                    LoadMoreRead(position)
+                    adapterPending.updateList(pendingList as ArrayList<Pending>)
+                    adapterReaded.updateList(readedList as ArrayList<Pending>)
+                    //CallAdapterPending(filteredList)
+                    //CallAdapterReaded(readedList as ArrayList<Pending>)
+                    //adapterReading.notifyDataSetChanged()
                 } else {
-                    CallAdapterPending(pendingList as ArrayList<Pending>)
-                    CallAdapterReaded(filteredList)
+                    readedList = arrayListOf()
+                    filterReadBooks(activeFilterText, position)
+                    LoadMorePending(position)
+                    adapterPending.updateList(pendingList as ArrayList<Pending>)
+                    adapterReaded.updateList(readedList as ArrayList<Pending>)
+                    //CallAdapterPending(pendingList as ArrayList<Pending>)
+                    //CallAdapterReaded(filteredList)
                 }
             } else {
+                filterPendingIsOn = false
+                filterPendingIsOn = false
+                LoadMoreRead(position)
+                LoadMorePending(position)
                 CallAdapterPending(pendingList as ArrayList<Pending>)
                 CallAdapterReaded(readedList as ArrayList<Pending>)
             }
@@ -286,6 +326,54 @@ class HomeFragment : Fragment() {
             corrutina.join()
         }
     }
+    fun filterPendingBooks(filter: String, position: Int) {
+        runBlocking {
+            val crudApi = CrudApi(this@HomeFragment)
+            val corrutina = launch {
+                if(position == 0){
+                    pendingList = crudApi.filterPendingBook(
+                        currentUser.userId,
+                        filter,
+                        0,
+                        ""
+                    ) as MutableList<Pending>
+                }else{
+                    pendingList.addAll(crudApi.filterPendingBook(
+                        currentUser.userId,
+                        filter,
+                        position,
+                        ""
+                    ) as MutableList<Pending>)
+                }
+            }
+            corrutina.join()
+        }
+    }
+
+    fun filterReadBooks(filter: String, position: Int) {
+        runBlocking {
+            val crudApi = CrudApi( this@HomeFragment)
+            val corrutina = launch {
+                if(position == 0){
+                    readedList =
+                        crudApi.filterReadBook(
+                            currentUser.userId,
+                            filter,
+                            0,
+                            ""
+                        ) as MutableList<Pending>
+                }else{
+                    readedList.addAll(crudApi.filterReadBook(
+                        currentUser.userId,
+                        filter,
+                        position,
+                        "" ) as MutableList<Pending>)
+                }
+            }
+            corrutina.join()
+        }
+    }
+
     fun reloadFragment() {
         getUser()
         Toast.makeText(context, "Reloading fragment", Toast.LENGTH_LONG).show()
@@ -294,6 +382,11 @@ class HomeFragment : Fragment() {
             parentFragmentManager.beginTransaction().attach(this).commitNow();
         } else {
             parentFragmentManager.beginTransaction().detach(this).attach(this).commit();
+
         }
+    }
+
+    override fun onApiError(errorMessage: String) {
+        TODO("Not yet implemented")
     }
 }
