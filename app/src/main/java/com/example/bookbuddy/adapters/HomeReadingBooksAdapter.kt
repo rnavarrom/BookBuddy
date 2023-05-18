@@ -20,6 +20,7 @@ import com.example.bookbuddy.R
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
+import com.example.bookbuddy.ui.navdrawer.HomeFragment
 import com.example.bookbuddy.ui.navdrawer.HomeFragmentDirections
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.dialogValue
@@ -27,7 +28,7 @@ import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Fragment) : //, context: Context, layoutInf: LayoutInflater
+class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: HomeFragment) : //, context: Context, layoutInf: LayoutInflater
     RecyclerView.Adapter<HomeReadingBooksAdapter.ViewHolder>() {
     lateinit var layout: LayoutInflater
     val fragment = fragment
@@ -66,6 +67,8 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Fr
         holder.imatge.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("isbn", llista[position].isbn)
+            bundle.putSerializable("fragment", fragment)
+            println("yesyes")
             var action = HomeFragmentDirections.actionNavHomeToNavBookDisplay(bundle)
             navController.navigate(action)
         }

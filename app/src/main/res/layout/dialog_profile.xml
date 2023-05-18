@@ -25,10 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
-            android:layout_marginTop="20dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginBottom="20dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent">
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/profile_imageView"

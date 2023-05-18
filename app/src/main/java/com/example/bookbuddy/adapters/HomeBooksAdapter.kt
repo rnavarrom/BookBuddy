@@ -33,7 +33,10 @@ class HomeBooksAdapter(var llista: ArrayList<Pending>) : RecyclerView.Adapter<Ho
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         //holder.text.setText(llista[position].rating.toString())
-        Glide.with(holder.vista.context).load(llista[position].cover).into(holder.imatge)
+        Glide.with(holder.vista.context)
+            .load(llista[position].cover)
+            .error(R.drawable.errorimage)
+            .into(holder.imatge)
 
         holder.vista.setOnClickListener {
             //bundle.putString("isbn", llista[position].isbn)

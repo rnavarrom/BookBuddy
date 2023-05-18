@@ -1,5 +1,6 @@
 package com.example.bookbuddy.ui.navdrawer
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -39,6 +40,19 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope {
             DialogFragment.STYLE_NORMAL,
             R.style.FullScreenDialogStyle
         );
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return super.onCreateDialog(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.etWriteComment?.postDelayed({
+            binding.etWriteComment.requestFocus()
+            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.etWriteComment, InputMethodManager.SHOW_IMPLICIT)
+        }, 200)
     }
 
     override fun onCreateView(
@@ -98,7 +112,7 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope {
             }
         })
 
-        binding.bSendComment.setOnClickListener {
+        binding.btnSend.setOnClickListener {
             insertComment()
         }
     }
@@ -106,7 +120,6 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope {
     fun insertComment(){
         var text = binding.etWriteComment.text.toString()
         var stars = binding.ratingWrite.rating.toInt()
-        println(text + "AAAAAAAAAAA")
         if (!text.isNullOrEmpty()){
             runBlocking {
                 val crudApi = CrudApi()
@@ -127,11 +140,6 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.etWriteComment.requestFocus()
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        binding.etWriteComment.requestFocus()
-        imm.showSoftInput(binding.etWriteComment, InputMethodManager.SHOW_IMPLICIT)
-        binding.etWriteComment.requestFocus()
     }
 
     override fun onDestroyView() {

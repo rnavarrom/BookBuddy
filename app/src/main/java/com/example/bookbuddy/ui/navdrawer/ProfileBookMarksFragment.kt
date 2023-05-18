@@ -1,11 +1,8 @@
 package com.example.bookbuddy.ui.navdrawer
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -77,7 +74,8 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope {
             corrutina.join()
         }
         if (addAdapter){
-            binding.rvBookmarks.setLayoutManager(GridLayoutManager(context, 2))
+            var gridLayout = GridLayoutManager(context, 3)
+            binding.rvBookmarks.layoutManager = gridLayout
             adapter = ProfileBookMarkAdapter(readeds as ArrayList<Readed>, isProfileFragment)
             binding.rvBookmarks.adapter = adapter
         } else {

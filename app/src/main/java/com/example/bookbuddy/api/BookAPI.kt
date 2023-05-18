@@ -4,6 +4,7 @@ import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.SimpleBook
 import com.example.bookbuddy.models.Test.User
 import com.example.bookbuddy.models.UserList
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -24,6 +25,10 @@ interface BookAPI {
     //suspend fun getSimpleSearch(@Path("book") book: String, @Path("author") author: String, @Path("genre") genre: String): Response<ArrayList<SimpleBook>>
     @POST("/api/user/{name}/{password}/{email}")
     suspend fun insertUser(@Path("name") name: String, @Path("password") password: String, @Path("email") email: String): Response<Boolean>
+
+    @GET("/api/book/exist/{isbn}")
+    suspend fun getBookExist(@Path("isbn") isbn: String): Response<ResponseBody>
+
     @GET("/api/book/isbn/{isbn}/{userid}")
     suspend fun getBookInfo(@Path("isbn") isbn: String, @Path("userid") userid: Int): Response<Book>
     @GET("/api/books/search/{position}")

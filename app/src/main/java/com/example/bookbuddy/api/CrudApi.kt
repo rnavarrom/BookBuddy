@@ -109,10 +109,20 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
     }
 
 
+    suspend fun getBookExist(isbn: String): Boolean {
+        val response = getRetrofit().create(BookAPI::class.java).getBookExist(isbn)
+        if (response.isSuccessful){
+            return true
+        }
+        return false
+    }
 
-    suspend fun getBook(isbn: String, userId: Int): Book {
-        val response = getRetrofit().create(BookAPI::class.java).getBookInfo(isbn, userId).body()
-        return response!!
+    suspend fun getBook(isbn: String, userId: Int): Book? {
+        val response = getRetrofit().create(BookAPI::class.java).getBookInfo(isbn, userId)
+        if (response.isSuccessful){
+            return response.body()
+        }
+        return null
     }
 
     suspend fun getRecommendedBooks(userId: Int, position: Int): List<Book>? {
@@ -219,7 +229,7 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
     // Book Requests
     suspend fun addRequestAPI(isbn: String): Boolean {
         val call = getRetrofit().create(RequestAPI::class.java).insertRequest(isbn)
-        return call.isSuccessful
+        return call.body()!!
     }
 
     suspend fun deleteRequestAPI(id: Int): Boolean{

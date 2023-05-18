@@ -110,6 +110,7 @@ class Tools {
 
                     Glide.with(context)
                         .load(BitmapFactory.decodeFile(image.absolutePath))
+                        .error(R.drawable.errorimage)
                         .into(profileImg)
                     //profileImg.setImageURI(Uri.fromFile(image))
 

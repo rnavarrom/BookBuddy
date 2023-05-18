@@ -16,9 +16,13 @@ import androidx.fragment.app.Fragment
 import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.DecodeCallback
 import com.example.bookbuddy.R
+import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentScanBinding
 import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.navController
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 class ScanFragment : Fragment() {
@@ -41,6 +45,30 @@ class ScanFragment : Fragment() {
         return binding.root
     }
 
+    fun bookExist(isbn: String): Boolean{
+        var exist = false
+        runBlocking {
+            var api = CrudApi()
+            var corroutine = launch {
+                exist = api.getBookExist(isbn)
+            }
+            corroutine.join()
+        }
+        return exist
+    }
+
+    fun createRequest(isbn: String): Boolean{
+        var succes = false
+        runBlocking {
+            var api = CrudApi()
+            var corroutine = launch {
+                succes = api.addRequestAPI(isbn)
+            }
+            corroutine.join()
+        }
+        return succes
+    }
+
     fun startCamera(){
         val scannerView = binding.scannerView
         val activity = requireActivity()
@@ -60,14 +88,23 @@ class ScanFragment : Fragment() {
                     vibrator.vibrate(200)
                 }
                 if (it.text.length == 13 && it.text.matches(Regex("\\d+"))){
-                    val bundle = Bundle()
-                    bundle.putString("isbn", it.text)
 
-                    var action = ScanFragmentDirections.actionNavScanToNavBookDisplay(bundle)
-                    navController.navigate(action)
-                    isDialogOpen = true
-                    isScannerEnabled = false
-                    codeScanner.releaseResources()
+                    if (!bookExist(it.text)){
+                        var created = createRequest(it.text)
+                        if (created){
+                            showSnackBar(requireContext(), requireView(), "Added book for pending")
+                        } else {
+                            showSnackBar(requireContext(), requireView(), "Book already requested to add")
+                        }
+                    } else {
+                        val bundle = Bundle()
+                        bundle.putString("isbn", it.text)
+                        var action = ScanFragmentDirections.actionNavScanToNavBookDisplay(bundle)
+                        navController.navigate(action)
+                        isDialogOpen = true
+                        isScannerEnabled = false
+                        codeScanner.releaseResources()
+                    }
                 } else {
                     Tools.showSnackBar(requireContext(),requireView(),"This is not a ISBN. Press again to Scan")
                 }

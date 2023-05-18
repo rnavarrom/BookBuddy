@@ -24,10 +24,11 @@ import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.utils.Tools.Companion.unaccent
 import com.example.bookbuddy.utils.currentUser
+import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), BookDisplayFragment.OnBookDisplayClose, java.io.Serializable {
     lateinit var binding: FragmentHomeBinding
     private lateinit var adapterPending: HomeBooksAdapter
     private lateinit var adapterReaded: HomeBooksAdapter
@@ -38,6 +39,13 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onBookDisplayClose() {
+        println("REFRESH")
+        val id = navController.currentDestination?.id
+        navController.popBackStack(id!!,true)
+        navController.navigate(id)
     }
 
     private fun isHomeFragment(): Boolean {

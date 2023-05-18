@@ -128,7 +128,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.profile_menu, menu)
-        println("hola1")
         gMenu = menu
         settings = gMenu.findItem(R.id.action_settings)
         accept = gMenu.findItem(R.id.action_accept)
@@ -175,6 +174,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
         Glide.with(this)
             .load(binding.profileImageView.drawable)
+            .error(R.drawable.defaultpic)
             .into(binding.editProfileImageView)
         //binding.editProfileImageView.setImageDrawable()
 
@@ -443,6 +443,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         if (currentPicture != null){
             Glide.with(requireContext())
                 .load(currentPicture)
+                .error(R.drawable.defaultpic)
                 .into(binding.profileImageView)
         }
     }
@@ -562,6 +563,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
                                     Glide.with(requireContext())
                                         .load(BitmapFactory.decodeFile(file.absolutePath))
+                                        .error(R.drawable.errorimage)
                                         .into(binding.profileImageView)
 
                                     Tools.setNavigationProfile(requireContext(), file, null)

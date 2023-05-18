@@ -33,7 +33,7 @@ class ProfileBookMarkAdapter(var list: java.util.ArrayList<Readed>, val isProfil
         val layout = LayoutInflater.from(parent.context)
         context = parent.context
         var vh : ProfileBookMarkAdapter.viewholder? = null
-        vh = viewholder(layout.inflate(R.layout.cardview_book_only_cover, parent, false))
+        vh = viewholder(layout.inflate(R.layout.cardview_book_only_cover_multiple, parent, false))
         return vh!!
     }
 

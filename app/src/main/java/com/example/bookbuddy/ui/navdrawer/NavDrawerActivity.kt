@@ -53,14 +53,12 @@ class NavDrawerActivity : AppCompatActivity() {
 
         binding.navLogOut.setOnClickListener {
             userPrefs = UserPreferences(this)
+            var intent = Intent(this, MainActivity::class.java)
             lifecycleScope.launch {
                 userPrefs.saveCredentials("", "")
+                startActivity(intent)
                 finish()
             }
-            /*
-            var intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-             */
         }
 
         //val drawerLayout = navView.parent as DrawerLayout

@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
@@ -34,6 +35,15 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope {
         fun onGenreSearchComplete(result: Int, name: String)
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.searchThings?.postDelayed({
+            binding.searchThings.requestFocus()
+            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.searchThings, InputMethodManager.SHOW_IMPLICIT)
+        }, 200)
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val parentFragment = parentFragment
@@ -44,8 +54,24 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
+        /*
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+         */
+        val dialog = dialog
+        if (dialog != null) {
+            val displayMetrics = DisplayMetrics()
+            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+            val screenWidth = displayMetrics.widthPixels
+
+            val marginInPixels = (80 * resources.displayMetrics.density).toInt()
+            val width = screenWidth - marginInPixels
+            val height = ViewGroup.LayoutParams.WRAP_CONTENT
+
+            val window = dialog.window
+            window?.setLayout(width, height)
+        }
     }
 
     override fun onCreateView(
