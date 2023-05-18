@@ -261,7 +261,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                 runBlocking {
                     var crudApi = CrudApi()
                     var corroutine = launch {
-                        if (!crudApi.getUserExists(userName)){
+                        if (!crudApi.getUserExists(userName, "")!!){
                             crudApi.updateUserName(currentUser.userId, userName)
                             Tools.setNavigationProfile(requireContext(), null, userName)
                             binding.tvUsername.setText(binding.etUsername.text.toString())

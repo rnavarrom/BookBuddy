@@ -21,13 +21,14 @@ import com.example.bookbuddy.databinding.FragmentBookCommentsBinding
 import com.example.bookbuddy.databinding.FragmentSettingsBinding
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class BookCommentsFragment : DialogFragment(), CoroutineScope {
+class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentBookCommentsBinding
     private var job: Job = Job()
     private var bookId: Int = 0
@@ -74,9 +75,9 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope {
             val crudApi = CrudApi()
             val corrutina = launch {
                 if (position == 0){
-                    comments = setCardview(crudApi.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?
+                    comments = setCardview(crudApi.getCommentsFromBook(bookId,position, "") as ArrayList<Comment>) as MutableList<Comment>?
                 } else {
-                    comments!!.addAll((setCardview(crudApi.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?)!!)
+                    comments!!.addAll((setCardview(crudApi.getCommentsFromBook(bookId,position, "") as ArrayList<Comment>) as MutableList<Comment>?)!!)
                 }
             }
             corrutina.join()
@@ -157,5 +158,9 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    override fun onApiError(errorMessage: String) {
+        TODO("Not yet implemented")
     }
 }

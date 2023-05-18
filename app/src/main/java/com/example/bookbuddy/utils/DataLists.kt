@@ -19,8 +19,10 @@ lateinit var currentProfile: Profile
 var currentPicture: File? = null
 lateinit var currentUserCreate : UserItem
 var dialogValue: String = "125"
-
+val keyboardValue : Int = 250
 var currentLanguageChanged: Boolean = false
+
+var dummyValue = 358
 
 
 

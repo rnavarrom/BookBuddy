@@ -19,7 +19,10 @@ interface ReadedAPI {
     suspend fun getPendingBooksFromUser(@Path("user_id") user_id: Int, @Path("position") position: Int): Response<List<Pending>>
     @GET("/api/readed/reading/{user_id}/{position}")
     suspend fun getReadingBooksFromUser(@Path("user_id") user_id: Int, @Path("position") position: Int): Response<List<ActualReading>>
-
+    @GET("/api/readed/pendingFilter/{user_id}/{filter}/{position}")
+    suspend fun filterPendingBooksFromUser(@Path("user_id") user_id: Int,@Path("filter") filter: String, @Path("position") position: Int): Response<List<Pending>>
+    @GET("/api/readed/readFilter/{user_id}/{filter}/{position}")
+    suspend fun filterReadBooksFromUser(@Path("user_id") user_id: Int,@Path("filter") filter: String, @Path("position") position: Int): Response<List<Pending>>
 
     @POST("/api/readed/{}")
     suspend fun insertReaded(@Body readed: Readed): Response<Readed>

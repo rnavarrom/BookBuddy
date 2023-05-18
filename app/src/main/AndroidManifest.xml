@@ -41,7 +41,7 @@
             android:exported="false"
             android:label="@string/title_activity_nav_drawer"
             android:theme="@style/Theme.BookBuddy.NoActionBar"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".ui.CreateAccountActivity"
             android:exported="false" />

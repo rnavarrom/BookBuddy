@@ -27,7 +27,8 @@ import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 
-class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnInitListener {
+class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnInitListener,
+    ApiErrorListener {
     lateinit var binding: FragmentBookDisplayBinding
     private var job: Job = Job()
     private var book: Book? = null
@@ -61,17 +62,27 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         );
     }
 
+    fun createRequest(isbn: String) {
+        runBlocking {
+            var api = CrudApi()
+            var corroutine = launch {
+                api.addRequestAPI(isbn)
+            }
+            corroutine.join()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding =  FragmentBookDisplayBinding.inflate(layoutInflater, container, false)
+        binding = FragmentBookDisplayBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
         setToolBar(this, binding.toolbar, requireContext(), "Book Display")
 
         //binding.bookMark.tag = "Add"
-        tts = TextToSpeech(context,this)
+        tts = TextToSpeech(context, this)
         //val isbn = arguments?.getString("isbn")
         val bundle = requireArguments().getBundle("bundle")
         val isbn = bundle!!.getString("isbn")!!
@@ -86,114 +97,141 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
             onBookDisplayClose = fragment
         }
 
-        book = getBook(isbn)
-        readed = getReaded(book!!.bookId)
-        if (book == null){
-            //println("book null")
-            //childFragmentManager.popBackStack()
-            dismiss()
-            //val fragmentManager = requireActivity().supportFragmentManager
-            //fragmentManager.popBackStack()
-            //navController.popBackStack(R.id.nav_scan, true)
-            //navController.navigate(R.id.nav_scan, null)
-        } else {
-            setBook(book)
-            //getBookMark(book!!.bookId, currentUser.userId)
-            getCommentsNumber(book!!.bookId)
-            getLibraries(isbn)
-            if (binding.bookMark != null){
-                binding.bookMark.setOnClickListener {
-                    popup = PopupMenu(context, binding.bookMark)
-                    popup!!.getMenuInflater()
-                        .inflate(R.menu.book_menu, popup!!.getMenu())
-                    //popup.setOnDismissListener {
-                    //holder.dropmenu.setImageResource(R.drawable.ic_drop_down_menu)
-                    //}
-                    popup!!.setOnMenuItemClickListener { item ->
-                        var result = false
-                        when (item.itemId) {
-                            R.id.reading_book-> {
-                                runBlocking {
-                                    val crudApi = CrudApi()
-                                    val corroutine = launch {
-                                        result = crudApi.setBookReading(book!!.bookId, currentUser.userId)
-                                        readed = getReaded(book!!.bookId)
-                                        readed!!.curreading = 3
+        launch {
+            book = getBook(isbn)
+            if (book == null) {
+                createRequest(isbn)
+                dismiss()
+            }
+            readed = getReaded(book!!.bookId)
+            if (book == null) {
+                //println("book null")
+                //childFragmentManager.popBackStack()
+                dismiss()
+                //val fragmentManager = requireActivity().supportFragmentManager
+                //fragmentManager.popBackStack()
+                //navController.popBackStack(R.id.nav_scan, true)
+                //navController.navigate(R.id.nav_scan, null)
+            } else {
+                setBook(book)
+                //getBookMark(book!!.bookId, currentUser.userId)
+                getCommentsNumber(book!!.bookId)
+                getLibraries(isbn)
+                if (binding.bookMark != null) {
+                    binding.bookMark.setOnClickListener {
+                        popup = PopupMenu(context, binding.bookMark)
+                        popup!!.getMenuInflater()
+                            .inflate(R.menu.book_menu, popup!!.getMenu())
+                        //popup.setOnDismissListener {
+                        //holder.dropmenu.setImageResource(R.drawable.ic_drop_down_menu)
+                        //}
+                        popup!!.setOnMenuItemClickListener { item ->
+                            var result: Boolean? = false
+                            when (item.itemId) {
+                                R.id.reading_book -> {
+                                    runBlocking {
+                                        val crudApi = CrudApi(this@BookDisplayFragment)
+                                        val corroutine = launch {
+                                            result = crudApi.setBookReading(
+                                                book!!.bookId,
+                                                currentUser.userId,
+                                                ""
+                                            )
+                                            readed = getReaded(book!!.bookId)
+                                            readed!!.curreading = 3
+                                        }
+                                        corroutine.join()
+                                        //list.removeAt(position)
+                                        //notifyDataSetChanged()
+                                        //Toast.makeText(requireContext(), "___________ " + result, Toast.LENGTH_LONG).show()
+                                        //(parentFragment as HomeFragment) //.onResume()
+                                        //dismiss()
+
                                     }
-                                    corroutine.join()
-                                    //list.removeAt(position)
-                                    //notifyDataSetChanged()
-                                    Toast.makeText(requireContext(), "___________ " + result, Toast.LENGTH_LONG).show()
-                                    //(parentFragment as HomeFragment) //.onResume()
-                                    //dismiss()
-
+                                    true
                                 }
-                                true
-                            }
-                            R.id.pending_book -> {
-                                runBlocking {
-                                    val crudApi = CrudApi()
-                                    val corroutine = launch {
-                                        result = crudApi.setBookPending(book!!.bookId, currentUser.userId)
-                                        readed = getReaded(book!!.bookId)
-                                        readed!!.curreading = 1
+                                R.id.pending_book -> {
+                                    runBlocking {
+                                        val crudApi = CrudApi(this@BookDisplayFragment)
+                                        val corroutine = launch {
+                                            result = crudApi.setBookPending(
+                                                book!!.bookId,
+                                                currentUser.userId,
+                                                ""
+                                            )
+                                            readed = getReaded(book!!.bookId)
+                                            readed!!.curreading = 1
+                                        }
+                                        corroutine.join()
+                                        //list.removeAt(position)
+                                        //notifyDataSetChanged()
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "___________ " + result,
+                                            Toast.LENGTH_LONG
+                                        ).show()
+
                                     }
-                                    corroutine.join()
-                                    //list.removeAt(position)
-                                    //notifyDataSetChanged()
-                                    Toast.makeText(requireContext(), "___________ " + result, Toast.LENGTH_LONG).show()
-
+                                    true
                                 }
-                                true
-                            }
 
-                            R.id.read_book -> {
-                                runBlocking {
-                                    val crudApi = CrudApi()
-                                    val corroutine = launch {
-                                        result = crudApi.setBookRead(book!!.bookId, currentUser.userId)
-                                        readed = getReaded(book!!.bookId)
-                                        readed!!.curreading = 2
+                                R.id.read_book -> {
+                                    runBlocking {
+                                        val crudApi = CrudApi(this@BookDisplayFragment)
+                                        val corroutine = launch {
+                                            result = crudApi.setBookRead(
+                                                book!!.bookId,
+                                                currentUser.userId,
+                                                ""
+                                            )
+                                            readed = getReaded(book!!.bookId)
+                                            readed!!.curreading = 2
+                                        }
+                                        corroutine.join()
+                                        //list.removeAt(position)
+                                        //notifyDataSetChanged()
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "___________ " + result,
+                                            Toast.LENGTH_LONG
+                                        ).show()
+
                                     }
-                                    corroutine.join()
-                                    //list.removeAt(position)
-                                    //notifyDataSetChanged()
-                                    Toast.makeText(requireContext(), "___________ " + result, Toast.LENGTH_LONG).show()
-
+                                    true
                                 }
-                                true
-                            }
 
-                            R.id.remove_book -> {
-                                runBlocking {
-                                    val crudApi = CrudApi()
-                                    val corroutine = launch {
-                                        crudApi.removeBookReading(book!!.bookId, currentUser.userId)
-                                        readed = null
+                                R.id.remove_book -> {
+                                    runBlocking {
+                                        val crudApi = CrudApi(this@BookDisplayFragment)
+                                        val corroutine = launch {
+                                            result = crudApi.removeBookReading(
+                                                book!!.bookId,
+                                                currentUser.userId,
+                                                ""
+                                            )
+                                            readed = null
+                                        }
+                                        corroutine.join()
+                                        //list.removeAt(position)
+                                        //notifyDataSetChanged()
                                     }
-                                    corroutine.join()
-                                    //list.removeAt(position)
-                                    //notifyDataSetChanged()
+                                    true
                                 }
-                                true
+                                else -> false
                             }
-                            else -> false
+                        }
+                        popup!!.show()
+
+                        if (readed != null) {
+                            var tmpItem = popup!!.menu.getItem(readed!!.curreading!! - 1)
+                            tmpItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                            tmpItem.setCheckable(true)
+                            tmpItem.isChecked = true
                         }
                     }
-                    popup!!.show()
-
-                    if (readed != null){
-                        var tmpItem = popup!!.menu.getItem(readed!!.curreading!! - 1)
-                        tmpItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                        tmpItem.setCheckable(true)
-                        tmpItem.isChecked = true
-                    }
-
-
                 }
-
+                loadingEnded()
             }
-            loadingEnded()
         }
 
 
@@ -254,7 +292,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
 
  */
 
-    fun getCommentsNumber(bookId: Int){
+    fun getCommentsNumber(bookId: Int) {
         var commentsNumber: Int? = 0
         runBlocking {
             val crudApi = CrudApi()
@@ -266,7 +304,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         binding.numberComments.text = commentsNumber.toString()
     }
 
-    fun getLibraries(isbn: String?){
+    fun getLibraries(isbn: String?) {
         var librariesNumber: Int? = 0
         runBlocking {
             val crudApi = CrudApi()
@@ -278,25 +316,11 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         binding.numberLibraries.text = librariesNumber.toString()
     }
 
-    fun loadingEnded(){
+    fun loadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.cl.visibility = View.VISIBLE
 
-        binding.dBookDescription.movementMethod = ScrollingMovementMethod();
-/*
-        binding.bookMark.setOnClickListener {
-            if (binding.bookMark.tag.equals("Add")){
-                setBookMark(book!!.bookId, currentUser.userId)
-                Toast.makeText(activity, "Added to pending books", Toast.LENGTH_SHORT).show()
-            } else {
-                deleteBookMark(book!!.bookId, currentUser.userId)
-                Toast.makeText(activity, "Remove book from pending", Toast.LENGTH_SHORT).show()
-            }
-
-        }
-
- */
-
+        binding.dBookDescription.movementMethod = ScrollingMovementMethod()
         binding.iconAddComments.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt("bookid", book!!.bookId)
@@ -312,38 +336,40 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         }
 
         binding.iconLibraries.setOnClickListener {
-            if (binding.numberLibraries.text.toString().toInt() == 0){
+            if (binding.numberLibraries.text.toString().toInt() == 0) {
                 showSnackBar(requireContext(), requireView(), "Book not available in any library")
             } else {
                 val bundle = Bundle()
                 bundle.putString("isbn", book!!.isbn)
-                val action = BookDisplayFragmentDirections.actionNavBookDisplayToNavLibrariesList(bundle)
+                val action =
+                    BookDisplayFragmentDirections.actionNavBookDisplayToNavLibrariesList(bundle)
                 navController.navigate(action)
             }
         }
     }
 
-    fun setBook(book: Book?){
+    fun setBook(book: Book?) {
         try {
             Glide.with(requireActivity().applicationContext)
                 .load(book?.cover)
                 .error(R.drawable.ic_error)
                 .into(binding.dBookCover)
-        } catch (e: Exception){
+        } catch (e: Exception) {
             println(e)
         }
 
         binding.dBookTitle.text = book!!.title
         //binding.dBookAuthor.text = book!!.authors.size.toString()
 
-        if (book!!.authors.size <= 2){
+        if (book!!.authors.size <= 2) {
             book!!.authors.forEach {
                 binding.dBookAuthor.text = binding.dBookAuthor.text.toString() + it.name + "\n"
             }
         }
 
         for (i in book.languages.indices) {
-            binding.dBookLanguage.text = binding.dBookLanguage.text.toString() + book.languages[i].name
+            binding.dBookLanguage.text =
+                binding.dBookLanguage.text.toString() + book.languages[i].name
             if (i < book.languages.size - 1) {
                 binding.dBookLanguage.text = binding.dBookLanguage.text.toString() + ", "
             }
@@ -367,7 +393,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         binding.bookRatingDisplay.rating = book.rating.toFloat()
     }
 
-    fun getBook(isbn: String?) :Book?{
+    fun getBook(isbn: String?): Book? {
         var response: Book? = null
         runBlocking {
             val crudApi = CrudApi()
@@ -378,7 +404,8 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         }
         return response
     }
-    fun getReaded(bookId: Int): Readed?{
+
+    fun getReaded(bookId: Int): Readed? {
         var response: Readed? = null
         runBlocking {
             val crudApi = CrudApi()
@@ -399,7 +426,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         get() = Dispatchers.Main + job
 
     override fun onDestroy() {
-        if(tts != null){
+        if (tts != null) {
             tts!!.stop()
             tts!!.shutdown()
         }
@@ -407,24 +434,29 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         super.onDestroy()
         job.cancel()
     }
-private fun Speak(){
-    if(tts!!.isSpeaking){
-        tts!!.stop()
-    }else{
+    private fun Speak() {
+        if (tts!!.isSpeaking) {
+            tts!!.stop()
+        } else {
 
-        tts!!.getDefaultVoice()
-        textts = binding.dBookTitle.text.toString() + "  " + binding.dBookDescription.text.toString()
-        tts!!.speak(textts, TextToSpeech.QUEUE_FLUSH, null, null)
+            tts!!.getDefaultVoice()
+            textts =
+                binding.dBookTitle.text.toString() + "  " + binding.dBookDescription.text.toString()
+            tts!!.speak(textts, TextToSpeech.QUEUE_FLUSH, null, null)
+        }
     }
-}
     override fun onInit(p0: Int) {
-        if(p0 == TextToSpeech.SUCCESS){
-            var output = tts!!.setLanguage(Locale("es", "ES")) // tts!!.getDefaultVoice().getLocale()
-            if(output == TextToSpeech.LANG_MISSING_DATA || output == TextToSpeech.LANG_NOT_SUPPORTED){
+        if (p0 == TextToSpeech.SUCCESS) {
+            var output =
+                tts!!.setLanguage(Locale("es", "ES")) // tts!!.getDefaultVoice().getLocale()
+            if (output == TextToSpeech.LANG_MISSING_DATA || output == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "The language is not supported")
-            }else{
+            } else {
 
             }
         }
+    }
+    override fun onApiError(errorMessage: String) {
+        TODO("Not yet implemented")
     }
 }
