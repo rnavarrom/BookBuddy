@@ -20,12 +20,13 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentScanBinding
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 
-class ScanFragment : Fragment() {
+class ScanFragment : Fragment(), ApiErrorListener {
     private lateinit var codeScanner: CodeScanner
     lateinit var binding: FragmentScanBinding
 
@@ -60,9 +61,9 @@ class ScanFragment : Fragment() {
     fun createRequest(isbn: String): Boolean{
         var succes = false
         runBlocking {
-            var api = CrudApi()
+            var api = CrudApi(this@ScanFragment)
             var corroutine = launch {
-                succes = api.addRequestAPI(isbn)
+                succes = api.addRequestAPI(isbn, "")!!
             }
             corroutine.join()
         }
@@ -165,5 +166,9 @@ class ScanFragment : Fragment() {
     companion object{
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
+    }
+
+    override fun onApiError(errorMessage: String) {
+        TODO("Not yet implemented")
     }
 }

@@ -249,7 +249,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
                     if(tempData != null){
                         currentProfile = tempData
                         if (currentUser.haspicture) {
-                            responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId))
+                            //responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId, "")!!)
                         }
                     }
                 }

@@ -37,9 +37,14 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
     private var pendingList: MutableList<Pending> = arrayListOf()
     private var readedList: MutableList<Pending> = arrayListOf()
     private var readingList: MutableList<ActualReading> = arrayListOf()
-    private var filterPendingIsOn: Boolean = false
-    private var filterReadIsOn: Boolean = false
     private var activeFilterText: String = ""
+    var lastPositionPending = -1
+    var positionPending = 0
+    var lastPositionRead = -1
+    var positionRead = 0
+    var lastPositionReading = -1
+    var positionReading = 0
+    val startingPosition = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +56,16 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         val id = navController.currentDestination?.id
         navController.popBackStack(id!!,true)
         navController.navigate(id)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        pendingList = arrayListOf()
+            LoadMorePending(startingPosition)
+        readedList = arrayListOf()
+            LoadMoreRead(startingPosition)
+        readingList = arrayListOf()
+            LoadMoreReading(startingPosition)
     }
 
     private fun isHomeFragment(): Boolean {
@@ -125,15 +140,15 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         CallAdapterReaded(readedList as ArrayList<Pending>)
 
         if(pendingList.isEmpty())
-            LoadMorePending(0)
+            LoadMorePending(startingPosition)
         if(readedList.isEmpty())
-            LoadMoreRead(0)
+            LoadMoreRead(startingPosition)
         if(readingList.isEmpty())
-            LoadMoreReading(0)
+            LoadMoreReading(startingPosition)
 
         binding.refresh.setOnRefreshListener {
             //getUser()
-            reloadFragment()
+            //reloadFragment()
             binding.refresh.isRefreshing = false
         }
         binding.icPendingSearch.setOnClickListener {
@@ -153,12 +168,15 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
-                        var position = totalItemCount
-                        if(!activeFilterText.isNullOrBlank()){
-                            filterReadBooks(activeFilterText, position)
-                        }else{
-                            LoadMoreRead(position)
+                        positionRead = totalItemCount
+                        if (lastPositionRead != totalItemCount){
+                            if(!activeFilterText.isNullOrBlank()){
+                                filterReadBooks(activeFilterText, positionRead)
+                            }else{
+                                LoadMorePending(positionRead)
+                            }
                         }
+                        lastPositionRead = totalItemCount
                     }
                 }
             }
@@ -174,12 +192,15 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
-                        var position = totalItemCount
-                        if(!activeFilterText.isNullOrBlank()){
-                            filterPendingBooks(activeFilterText, position)
-                        }else{
-                            LoadMorePending(position)
+                        positionPending = totalItemCount
+                        if (lastPositionPending != totalItemCount){
+                            if(!activeFilterText.isNullOrBlank()){
+                                filterPendingBooks(activeFilterText, positionPending)
+                            }else{
+                                LoadMorePending(positionPending)
+                            }
                         }
+                        lastPositionPending = totalItemCount
                     }
                 }
             }
@@ -193,10 +214,15 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
+
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
-                        var position = totalItemCount
-                        LoadMoreReading(position)
+                        positionReading = totalItemCount
+                        if (lastPositionReading != totalItemCount){
+                            LoadMoreReading(positionReading)
+                        }
+                        lastPositionReading = totalItemCount
+                        //isLoading = true
                     }
                 }
             }
@@ -293,8 +319,6 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                     //CallAdapterReaded(filteredList)
                 }
             } else {
-                filterPendingIsOn = false
-                filterPendingIsOn = false
                 LoadMoreRead(position)
                 LoadMorePending(position)
                 CallAdapterPending(pendingList as ArrayList<Pending>)
@@ -328,9 +352,9 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
     }
     fun getUser() {
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@HomeFragment)
             val corrutina = launch {
-                currentUser = crudApi.getUserId(currentUser.userId)
+                currentUser = crudApi.getUserId(currentUser.userId, "")!!
             }
             corrutina.join()
         }
@@ -382,18 +406,19 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
             corrutina.join()
         }
     }
-
+/*
     fun reloadFragment() {
         getUser()
         Toast.makeText(context, "Reloading fragment", Toast.LENGTH_LONG).show()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            parentFragmentManager.beginTransaction().detach(this).commitNow();
-            parentFragmentManager.beginTransaction().attach(this).commitNow();
+            parentFragmentManager.beginTransaction().detach(this).commitNow()
+            parentFragmentManager.beginTransaction().attach(this).commitNow()
         } else {
-            parentFragmentManager.beginTransaction().detach(this).attach(this).commit();
-
+            parentFragmentManager.beginTransaction().detach(this).attach(this).commit()
         }
     }
+
+ */
 
     override fun onApiError(errorMessage: String) {
         TODO("Not yet implemented")

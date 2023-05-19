@@ -13,6 +13,7 @@ import com.example.bookbuddy.R
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.ui.navdrawer.BookCommentsFragmentDirections
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentPicture
 import com.example.bookbuddy.utils.currentProfile
 import com.example.bookbuddy.utils.currentUser
@@ -24,7 +25,7 @@ import kotlin.coroutines.CoroutineContext
 
 
 class CommentAdapter(var list: java.util.ArrayList<Comment>) :
-    RecyclerView.Adapter<CommentAdapter.viewholder>(), CoroutineScope {
+    RecyclerView.Adapter<CommentAdapter.viewholder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
     class viewholder(val view: View) : RecyclerView.ViewHolder(view) {
         val profilePicture = view.findViewById<ImageView>(R.id.profile_imageView)
@@ -52,11 +53,11 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
 
         if(list[position].user!!.haspicture){
             runBlocking {
-                val crudApi = CrudApi()
+                val crudApi = CrudApi( this@CommentAdapter)
                 val corrutina = launch {
                     if (list[position].user!!.haspicture){
-                        var commentPicture = crudApi.getUserImage(list[position].user!!.userId)
-                        val body = commentPicture.body()
+                        var commentPicture = crudApi.getUserImage(list[position].user!!.userId, "")
+                        val body = commentPicture //.body()
                         if (body != null) {
                             // Leer los bytes de la imagen
                             val bytes = body.bytes()
@@ -103,9 +104,9 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
                     when (item.itemId) {
                         R.id.delete_comment -> {
                             runBlocking {
-                                val crudApi = CrudApi()
+                                val crudApi = CrudApi( this@CommentAdapter)
                                 val corroutine = launch {
-                                    crudApi.deleteCommentToAPI(list[position].comentId!!)
+                                    crudApi.deleteCommentToAPI(list[position].comentId!!, "")
                                 }
                                 corroutine.join()
                                 list.removeAt(position)
@@ -143,4 +144,8 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
+
+    override fun onApiError(errorMessage: String) {
+        TODO("Not yet implemented")
+    }
 }

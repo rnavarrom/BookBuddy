@@ -19,11 +19,12 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentSearchBinding
 import com.example.bookbuddy.models.SimpleBook
 import com.example.bookbuddy.models.Test.Pending
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(), ApiErrorListener{
     lateinit var binding: FragmentSearchBinding
     lateinit var searchResultList: MutableList<SimpleBook>
     private lateinit var adapter: SearchResultAdapter
@@ -175,12 +176,13 @@ class SearchFragment : Fragment() {
 
     fun LoadMoreSearch(position : Int, searchValues: ArrayList<String>) {
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@SearchFragment)
             val corrutina = launch {
                 searchResultList!!.addAll(
                     crudApi.getSimpleSearch(
                         position,
-                        searchValues as List<String>
+                        searchValues as List<String>,
+                        ""
                     ) as MutableList<SimpleBook>
                 )
             }
@@ -193,13 +195,17 @@ class SearchFragment : Fragment() {
         var searchResultList = arrayListOf<SimpleBook>()
 
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@SearchFragment)
             val corrutina = launch {
-                searchResultList = crudApi.getSimpleSearch(0, searchValues as List<String>)
+                searchResultList = crudApi.getSimpleSearch(0, searchValues as List<String>, "")!!
             }
             corrutina.join()
         }
         return searchResultList
+    }
+
+    override fun onApiError(errorMessage: String) {
+        TODO("Not yet implemented")
     }
 }
 

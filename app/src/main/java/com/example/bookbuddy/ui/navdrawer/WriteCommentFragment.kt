@@ -21,16 +21,16 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentWriteCommentBinding
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 
-class WriteCommentFragment : DialogFragment(), CoroutineScope {
+class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentWriteCommentBinding
     private var job: Job = Job()
-
     private var bookId: Int = 0
     private var comment: Comment? = null
     private var maxCharactersComment: Int = 300
@@ -77,9 +77,9 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope {
 
     fun loadComment(){
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@WriteCommentFragment)
             val corrutina = launch {
-                comment = crudApi.getCommentsFromUser(currentUser.userId, bookId)
+                comment = crudApi.getCommentsFromUser(currentUser.userId, bookId, "")
             }
             corrutina.join()
         }
@@ -122,10 +122,10 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope {
         var stars = binding.ratingWrite.rating.toInt()
         if (!text.isNullOrEmpty()){
             runBlocking {
-                val crudApi = CrudApi()
+                val crudApi = CrudApi(this@WriteCommentFragment)
                 val corrutina = launch {
                     if (comment != null){
-                        crudApi.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser.userId, bookId!!)
+                        crudApi.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser.userId, bookId!!, "")
                     } else {
                         crudApi.addCommentToAPI(text, stars, currentUser.userId, bookId!!)
                     }
@@ -153,5 +153,9 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    override fun onApiError(errorMessage: String) {
+        TODO("Not yet implemented")
     }
 }

@@ -25,7 +25,6 @@ class RecommendationsFragment : Fragment(), CoroutineScope {
     private var job: Job = Job()
     lateinit var adapter: RecommendedBooksAdapter
 
-    var currentPage = 0
     private var position = 0
     private var lastPosition = -1
     var isLoading = false
@@ -81,7 +80,6 @@ class RecommendationsFragment : Fragment(), CoroutineScope {
 
         binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
             position = 0
-            currentPage = 0
             getUserRecommended(false)
             binding.mainContent.isRefreshing = false;
         });
@@ -109,7 +107,6 @@ class RecommendationsFragment : Fragment(), CoroutineScope {
     }
 
     private fun loadMoreItems() {
-        currentPage++
         binding.loadingRecommended.visibility = View.VISIBLE
         getUserRecommended(false)
         binding.loadingRecommended.visibility = View.GONE

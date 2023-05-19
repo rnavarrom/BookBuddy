@@ -22,6 +22,7 @@ import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
 import com.example.bookbuddy.ui.navdrawer.HomeFragmentDirections
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.dialogValue
 import com.example.bookbuddy.utils.dummyValue
@@ -30,7 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: HomeFragment) : //, context: Context, layoutInf: LayoutInflater
-    RecyclerView.Adapter<HomeReadingBooksAdapter.ViewHolder>() {
+    RecyclerView.Adapter<HomeReadingBooksAdapter.ViewHolder>(), ApiErrorListener {
     lateinit var layout: LayoutInflater
     val fragment = fragment
 
@@ -138,11 +139,11 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
     }
 
     fun PutBook(readedId: Int, pagesReaded: Int){
-        var result = false
+        var result : Boolean? = false
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi( this@HomeReadingBooksAdapter)
             val corrutina = launch {
-                result = crudApi.updateReadedToAPI(readedId, pagesReaded)
+                result = crudApi.updateReadedToAPI(readedId, pagesReaded, "")
             }
             corrutina.join()
         }
@@ -174,11 +175,15 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
     }
     fun getUser(){
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@HomeReadingBooksAdapter)
             val corrutina = launch {
-                currentUser = crudApi.getUserId(currentUser.userId)
+                currentUser = crudApi.getUserId(currentUser.userId, "")!!
             }
             corrutina.join()
         }
+    }
+
+    override fun onApiError(errorMessage: String) {
+        TODO("Not yet implemented")
     }
 }

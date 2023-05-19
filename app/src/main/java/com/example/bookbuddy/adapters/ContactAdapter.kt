@@ -15,6 +15,7 @@ import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.BookCommentsFragmentDirections
 import com.example.bookbuddy.ui.navdrawer.ContactsFragmentDirections
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentPicture
 import com.example.bookbuddy.utils.currentProfile
 import com.example.bookbuddy.utils.currentUser
@@ -27,7 +28,7 @@ import kotlin.coroutines.CoroutineContext
 
 
 class ContactAdapter(var list: java.util.ArrayList<UserItem>) :
-    RecyclerView.Adapter<ContactAdapter.viewholder>(), CoroutineScope {
+    RecyclerView.Adapter<ContactAdapter.viewholder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
     class viewholder(val view: View) : RecyclerView.ViewHolder(view) {
         val profilePicture = view.findViewById<ShapeableImageView>(R.id.profile_imageView)
@@ -52,11 +53,11 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>) :
 
         if(list[position].haspicture){
             runBlocking {
-                val crudApi = CrudApi()
+                val crudApi = CrudApi(this@ContactAdapter)
                 val corrutina = launch {
                     if (list[position].haspicture){
-                        var commentPicture = crudApi.getUserImage(list[position].userId)
-                        val body = commentPicture.body()
+                        var commentPicture = crudApi.getUserImage(list[position].userId, "")
+                        val body = commentPicture //.body()
                         if (body != null) {
                             // Leer los bytes de la imagen
                             val bytes = body.bytes()
@@ -98,4 +99,8 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>) :
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
+
+    override fun onApiError(errorMessage: String) {
+        TODO("Not yet implemented")
+    }
 }
