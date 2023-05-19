@@ -29,7 +29,7 @@ import kotlin.coroutines.CoroutineContext
 
 
 class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnInitListener,
-    ApiErrorListener {
+    ApiErrorListener, WriteCommentFragment.OnWriteCommentClose, java.io.Serializable {
     lateinit var binding: FragmentBookDisplayBinding
     private var job: Job = Job()
     private var book: Book? = null
@@ -44,16 +44,15 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         fun onBookDisplayClose()
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        println("HOLA")
-        val bundle = requireArguments().getBundle("bundle")
-        val fragment = bundle!!.getSerializable("fragment") as? HomeFragment?
-        if (fragment != null){
-            println("YES")
-            onBookDisplayClose = fragment
-        }
+    override fun onWriteCommentClose(isbn: String) {
+        print("CLOSE")
+        val id = navController.currentDestination?.id
+        navController.popBackStack(id!!,true)
+        val bundle = Bundle()
+        bundle.putString("isbn", isbn)
+        navController.navigate(id, bundle)
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -330,6 +329,8 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         binding.iconAddComments.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt("bookid", book!!.bookId)
+            bundle.putString("isbn", book!!.isbn)
+            bundle.putSerializable("fragment", this)
             var action = BookDisplayFragmentDirections.actionNavBookDisplayToNavWriteComment(bundle)
             navController.navigate(action)
         }

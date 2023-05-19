@@ -9,6 +9,8 @@ import android.view.WindowManager
 import com.example.bookbuddy.R
 import com.example.bookbuddy.databinding.FragmentAdminBinding
 import com.example.bookbuddy.databinding.FragmentBookCommentsBinding
+import com.example.bookbuddy.ui.navdrawer.adminnav.AdminAuthorsFragment
+import com.example.bookbuddy.ui.navdrawer.adminnav.AdminGenresFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -18,8 +20,13 @@ class AdminFragment : Fragment(), CoroutineScope {
     lateinit var binding: FragmentAdminBinding
     private var job: Job = Job()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+
+    fun replaceFragment(fragment: Fragment){
+        val fragmentManager = parentFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.container, fragment)
+        fragmentTransaction.commit()
     }
 
     override fun onCreateView(
@@ -28,19 +35,28 @@ class AdminFragment : Fragment(), CoroutineScope {
     ): View? {
         binding =  FragmentAdminBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-        /*
+
         binding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
-                R.id.home -> {
-                    loadFragment(HomeFragment())
+                R.id.books -> {
+                    //loadFragment(HomeFragment())
                     true
                 }
-                R.id.message -> {
-                    loadFragment(ChatFragment())
+                R.id.genre -> {
+                    replaceFragment(AdminGenresFragment())
                     true
                 }
-                R.id.settings -> {
-                    loadFragment(SettingFragment())
+                R.id.Authors -> {
+                    replaceFragment(AdminAuthorsFragment())
+                    //loadFragment(SettingFragment())
+                    true
+                }
+                R.id.Libraries -> {
+                    //loadFragment(SettingFragment())
+                    true
+                }
+                R.id.users -> {
+                    //loadFragment(SettingFragment())
                     true
                 }
                 else -> {
@@ -48,7 +64,7 @@ class AdminFragment : Fragment(), CoroutineScope {
                 }
             }
         }
-        */
+
         return binding.root
     }
 

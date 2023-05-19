@@ -143,6 +143,90 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         return null
     }
 
+    // Genres
+
+    suspend fun getGenres(genreName: String, search: Boolean, position: Int, errorMessage: String): List<Genre>? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(GenreAPI::class.java).getGenres(genreName, search, position) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+    }
+
+    suspend fun getGenreBooks(genreId: Int, position: Int, errorMessage: String): List<Book>? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(GenreAPI::class.java).getGenreBooks(genreId, position) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+    }
+
+    suspend fun insertGenre(genreName: String, errorMessage: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(GenreAPI::class.java).insertGenre(genreName) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+    }
+
+    suspend fun updateGenre(genreId: Int, genreName: String, errorMessage: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(GenreAPI::class.java).updateGenre(genreId, genreName) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+    }
+
+    suspend fun deleteGenre(genreId: Int, errorMessage: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(GenreAPI::class.java).deleteGenre(genreId) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+    }
+
+    // Authors
+
+    suspend fun getAuthors(authorName: String, search: Boolean, position: Int, errorMessage: String): List<Author>? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(AuthorAPI::class.java).getAuthors(authorName, search, position) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+    }
+
+    suspend fun getAuthorsBooks(authorId: Int, position: Int, errorMessage: String): List<Book>? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(AuthorAPI::class.java).getAuthorBooks(authorId, position) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+    }
+
+    suspend fun insertAuthor(authorName: String, errorMessage: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(AuthorAPI::class.java).insertAuthor(authorName) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+    }
+
+    suspend fun updateAuthor(authorId: Int, authorName: String, errorMessage: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(AuthorAPI::class.java).updateAuthor(authorId, authorName) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+    }
+
+    suspend fun deleteAuthor(authorId: Int, errorMessage: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(AuthorAPI::class.java).deleteAuthor(authorId) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+    }
+
     // Readed
     suspend fun getReadedsFromUser(user_id: Int, position: Int): List<Readed?> {
         val response = getRetrofit().create(ReadedAPI::class.java).getReadedsFromUser(user_id, position).body()

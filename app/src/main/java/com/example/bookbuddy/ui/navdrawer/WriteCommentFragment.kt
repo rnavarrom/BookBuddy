@@ -2,6 +2,7 @@ package com.example.bookbuddy.ui.navdrawer
 
 import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -32,8 +33,15 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope {
     private var job: Job = Job()
 
     private var bookId: Int = 0
+    private var isbn: String = ""
     private var comment: Comment? = null
     private var maxCharactersComment: Int = 300
+
+    public var onWriteCommentClose: OnWriteCommentClose? = null
+    public interface OnWriteCommentClose {
+        fun onWriteCommentClose(isbn: String)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -66,6 +74,11 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope {
 
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle?.getInt("bookid")!!
+        val fragment = bundle.getSerializable("fragment") as? BookDisplayFragment?
+        if (fragment != null){
+            println("YES2")
+            onWriteCommentClose = fragment
+        }
 
         launch {
             loadComment()
@@ -151,6 +164,8 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope {
         get() = Dispatchers.Main + job
 
     override fun onDestroy() {
+        onWriteCommentClose?.onWriteCommentClose(isbn)
+        println("CERRANDO2")
         super.onDestroy()
         job.cancel()
     }

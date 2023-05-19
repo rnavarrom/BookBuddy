@@ -1,0 +1,12 @@
+<!-- sample_menu.xml -->
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_icon"
+        android:iconTint="@color/white"
+        android:title=""
+        app:showAsAction="ifRoom"/>
+</menu>
