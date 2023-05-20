@@ -184,6 +184,6 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
     }
 
     override fun onApiError(errorMessage: String) {
-        TODO("Not yet implemented")
+        Toast.makeText(context,"Aviso error", Toast.LENGTH_LONG).show()
     }
 }

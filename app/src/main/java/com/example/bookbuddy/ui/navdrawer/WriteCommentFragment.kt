@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
@@ -156,6 +157,6 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     }
 
     override fun onApiError(errorMessage: String) {
-        TODO("Not yet implemented")
+        Toast.makeText(requireContext(),"Aviso error", Toast.LENGTH_LONG).show()
     }
 }

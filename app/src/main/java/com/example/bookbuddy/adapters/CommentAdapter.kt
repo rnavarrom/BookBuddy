@@ -146,6 +146,6 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
         get() = Dispatchers.Main + job
 
     override fun onApiError(errorMessage: String) {
-        TODO("Not yet implemented")
+        Toast.makeText(context,"Aviso error", Toast.LENGTH_LONG).show()
     }
 }

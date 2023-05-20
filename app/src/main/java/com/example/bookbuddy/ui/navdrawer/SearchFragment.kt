@@ -205,7 +205,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
     }
 
     override fun onApiError(errorMessage: String) {
-        TODO("Not yet implemented")
+        Toast.makeText(requireContext(),"Aviso error", Toast.LENGTH_LONG).show()
     }
 }
 

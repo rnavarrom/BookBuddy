@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.budiyev.android.codescanner.CodeScanner
@@ -169,6 +170,6 @@ class ScanFragment : Fragment(), ApiErrorListener {
     }
 
     override fun onApiError(errorMessage: String) {
-        TODO("Not yet implemented")
+        Toast.makeText(requireContext(),"Aviso error", Toast.LENGTH_LONG).show()
     }
 }

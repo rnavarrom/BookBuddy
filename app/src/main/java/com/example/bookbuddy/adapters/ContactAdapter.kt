@@ -101,6 +101,6 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>) :
         get() = Dispatchers.Main + job
 
     override fun onApiError(errorMessage: String) {
-        TODO("Not yet implemented")
+        Toast.makeText(context,"Aviso error", Toast.LENGTH_LONG).show()
     }
 }

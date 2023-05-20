@@ -51,8 +51,8 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
     }
 
     override fun onBookDisplayClose() {
-        println(activeFilterText)
-        println("REFRESH")
+        //println(activeFilterText)
+        //println("REFRESH")
         val id = navController.currentDestination?.id
         navController.popBackStack(id!!,true)
         navController.navigate(id)
@@ -61,11 +61,11 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
     override fun onResume() {
         super.onResume()
         pendingList = arrayListOf()
-            LoadMorePending(startingPosition)
+        LoadMorePending(startingPosition)
         readedList = arrayListOf()
-            LoadMoreRead(startingPosition)
+        LoadMoreRead(startingPosition)
         readingList = arrayListOf()
-            LoadMoreReading(startingPosition)
+        LoadMoreReading(startingPosition)
     }
 
     private fun isHomeFragment(): Boolean {
@@ -173,7 +173,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                             if(!activeFilterText.isNullOrBlank()){
                                 filterReadBooks(activeFilterText, positionRead)
                             }else{
-                                LoadMorePending(positionRead)
+                                LoadMoreRead(positionRead)
                             }
                         }
                         lastPositionRead = totalItemCount
@@ -213,8 +213,6 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-
-
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         positionReading = totalItemCount
@@ -222,7 +220,6 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                             LoadMoreReading(positionReading)
                         }
                         lastPositionReading = totalItemCount
-                        //isLoading = true
                     }
                 }
             }
@@ -294,12 +291,6 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
             activeFilterText = editText.text.toString()
             var position = 0
             if (editText.text.isNotBlank()) {
-                /*
-                val filteredList = list.filter { pending ->
-                    pending.title.unaccent().contains(searchString, ignoreCase = true)
-                } as ArrayList<Pending>
-                 */
-
                 if (choseList) {
                     pendingList = arrayListOf()
                     filterPendingBooks(activeFilterText, position)
@@ -319,6 +310,8 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                     //CallAdapterReaded(filteredList)
                 }
             } else {
+                pendingList = arrayListOf()
+                readedList = arrayListOf()
                 LoadMoreRead(position)
                 LoadMorePending(position)
                 CallAdapterPending(pendingList as ArrayList<Pending>)
@@ -421,6 +414,6 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
  */
 
     override fun onApiError(errorMessage: String) {
-        TODO("Not yet implemented")
+        Toast.makeText(requireContext(),"Aviso error", Toast.LENGTH_LONG).show()
     }
 }

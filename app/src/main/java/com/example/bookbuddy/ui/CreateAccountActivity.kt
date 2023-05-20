@@ -154,18 +154,22 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         }
         //Check if the username is not repited in the DB
         var userNameAviable : Boolean? = isNameAviable(binding.CAEditUser.text.toString())
-        if (userNameAviable == null) {
-            return false
-        }else if(!userNameAviable!!){
+
+        //if (userNameAviable == null) {
+        //    return false
+        //}else
+
+        if(!userNameAviable!!){
             binding.CAEditUser.setTextColor(getColor(R.color.red_error))
             Toast.makeText(this, "User name already in use!", Toast.LENGTH_LONG).show()
             return false
         }
         //Chgeck if the email is not repeated in the DB
         var emailAviable : Boolean? = isEmailAviable(binding.CAEditEmail.text.toString())
-        if (emailAviable == null) {
-            return false
-        }else if(!emailAviable){
+        //if (emailAviable == null) {
+        //    return false
+        //}else
+        if(!emailAviable!!){
             binding.CAEditEmail.setTextColor(getColor(R.color.red_error))
             Toast.makeText(this, "Email already used!", Toast.LENGTH_LONG).show()
             return false
