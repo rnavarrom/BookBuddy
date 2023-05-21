@@ -11,18 +11,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.CommentAdapter
 import com.example.bookbuddy.adapters.ProfileCommentAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentBookCommentsBinding
 import com.example.bookbuddy.databinding.FragmentProfileCommentsBinding
 import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class ProfileCommentsFragment : Fragment(), CoroutineScope {
+class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     lateinit var binding: FragmentProfileCommentsBinding
     private var job: Job = Job()
@@ -63,18 +66,26 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope {
 
     fun getCommentsUser(userId: Int, addAdapter: Boolean){
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@ProfileCommentsFragment)
             val corrutina = launch {
                 if (position == 0){
-                    comments = crudApi.getUserComments(userId,position) as MutableList<Comment>?
+                    var tempComments = crudApi.getUserComments(userId,position, "") as MutableList<Comment>?
+                    if(tempComments != null){
+                        comments = tempComments
+                    }
                 } else {
-                    comments!!.addAll(crudApi.getUserComments(userId,position) as MutableList<Comment>)
+                    var tempComments = crudApi.getUserComments(userId,position, "")
+                    if(tempComments != null){
+                        comments!!.addAll( tempComments as MutableList<Comment>)
+                    }
                 }
 
             }
             corrutina.join()
         }
-        if (addAdapter){
+        if(comments == null){
+
+        }else if (addAdapter){
             binding.rvComments.layoutManager = LinearLayoutManager(context)
             adapter = ProfileCommentAdapter(comments as ArrayList<Comment>, isProfileFragment)
             binding.rvComments.adapter = adapter
@@ -133,5 +144,9 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    override fun onApiError(errorMessage: String) {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

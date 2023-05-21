@@ -12,15 +12,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.RecommendedBooksAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentRecommendationsBinding
 import com.example.bookbuddy.models.Book
+import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class RecommendationsFragment : Fragment(), CoroutineScope {
+class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentRecommendationsBinding
     private var job: Job = Job()
     lateinit var adapter: RecommendedBooksAdapter
@@ -54,14 +57,22 @@ class RecommendationsFragment : Fragment(), CoroutineScope {
 
     fun getUserRecommended(addAdapter: Boolean){
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@RecommendationsFragment)
             val corrutina = launch {
                 if (position == 0){
-                    books = crudApi.getRecommendedBooks(currentUser.userId, position) as MutableList<Book>?
+                    var tempBooks = crudApi.getRecommendedBooks(currentUser.userId, position, "") as MutableList<Book>?
+                    if(tempBooks != null){
+                        books = tempBooks
+                    }
                 } else {
-                    books!!.addAll((crudApi.getRecommendedBooks(currentUser.userId, position) as MutableList<Book>?)!!)
+                    var tempBooks = crudApi.getRecommendedBooks(currentUser.userId, position, "")
+                    if(tempBooks != null){
+                        books!!.addAll(tempBooks as MutableList<Book>)!!
+                    }
                 }
-                if (addAdapter){
+                if(books == null){ //addAdapter == null ||
+
+                }else if (addAdapter){
                     binding.rvRecommended.layoutManager = GridLayoutManager(context, 3)
                     adapter = RecommendedBooksAdapter(books as ArrayList<Book>)
                     binding.rvRecommended.adapter = adapter
@@ -124,5 +135,9 @@ class RecommendationsFragment : Fragment(), CoroutineScope {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    override fun onApiError(errorMessage: String) {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

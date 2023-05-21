@@ -11,18 +11,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.CommentAdapter
 import com.example.bookbuddy.adapters.ContactAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentContactsBinding
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.models.UserItem
+import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class ContactsFragment : Fragment(), CoroutineScope {
+class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentContactsBinding
     private var job: Job = Job()
     lateinit var adapter: ContactAdapter
@@ -55,14 +58,22 @@ class ContactsFragment : Fragment(), CoroutineScope {
 
     fun getUserFollows(addAdapter: Boolean){
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@ContactsFragment)
             val corrutina = launch {
                 if (position == 0){
-                    follows = crudApi.getFollowersProfile(currentUser.userId, position) as MutableList<UserItem>?
+                    var tempFollows = crudApi.getFollowersProfile(currentUser.userId, position, "") as MutableList<UserItem>?
+                    if (tempFollows != null){
+                        follows = tempFollows
+                    }
                 } else {
-                    follows!!.addAll((crudApi.getFollowersProfile(currentUser.userId, position) as MutableList<UserItem>?)!!)
+                    var tempFollows = crudApi.getFollowersProfile(currentUser.userId, position, "")
+                    if(tempFollows != null){
+                        follows!!.addAll(tempFollows as MutableList<UserItem>)
+                    }
                 }
-                if (addAdapter){
+                if(follows == null){
+
+                }else if (addAdapter!!){
                     binding.rvContacts.layoutManager = LinearLayoutManager(context)
                     adapter = ContactAdapter(follows as ArrayList<UserItem>)
                     binding.rvContacts.adapter = adapter
@@ -125,5 +136,9 @@ class ContactsFragment : Fragment(), CoroutineScope {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    override fun onApiError(errorMessage: String) {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

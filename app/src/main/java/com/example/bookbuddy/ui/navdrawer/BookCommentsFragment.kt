@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.CommentAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentBookCommentsBinding
@@ -162,6 +163,6 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     }
 
     override fun onApiError(errorMessage: String) {
-        Toast.makeText(requireContext(),"Aviso error", Toast.LENGTH_LONG).show()
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

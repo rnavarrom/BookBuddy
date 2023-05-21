@@ -14,11 +14,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.SearchResultAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentSearchBinding
 import com.example.bookbuddy.models.SimpleBook
 import com.example.bookbuddy.models.Test.Pending
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.launch
@@ -139,7 +141,12 @@ class SearchFragment : Fragment(), ApiErrorListener{
                         searchValues.add("")
                     }
                     if(performSearch){
-                        searchResultList = performSearch(searchValues)
+                        var tempSearch = performSearch(searchValues)
+                        if (tempSearch != null) {
+                            searchResultList = tempSearch
+                        }else{
+                            searchResultList = arrayListOf()
+                        }
                     }else{
                         Toast.makeText(context, "Nothing found!", Toast.LENGTH_LONG).show()
                         searchResultList = arrayListOf<SimpleBook>()
@@ -178,26 +185,27 @@ class SearchFragment : Fragment(), ApiErrorListener{
         runBlocking {
             val crudApi = CrudApi(this@SearchFragment)
             val corrutina = launch {
-                searchResultList!!.addAll(
+                var tempSearchList =
                     crudApi.getSimpleSearch(
                         position,
                         searchValues as List<String>,
                         ""
-                    ) as MutableList<SimpleBook>
-                )
+                    )
+                if (tempSearchList != null)
+                    searchResultList!!.addAll(tempSearchList as MutableList<SimpleBook>)
             }
             corrutina.join()
         }
         adapter.updateList(searchResultList as ArrayList<SimpleBook>)
     }
 
-    private fun performSearch(searchValues: ArrayList<String>): ArrayList<SimpleBook> {
-        var searchResultList = arrayListOf<SimpleBook>()
+    private fun performSearch(searchValues: ArrayList<String>): ArrayList<SimpleBook>? {
+        var searchResultList : ArrayList<SimpleBook>? = arrayListOf()
 
         runBlocking {
             val crudApi = CrudApi(this@SearchFragment)
             val corrutina = launch {
-                searchResultList = crudApi.getSimpleSearch(0, searchValues as List<String>, "")!!
+                searchResultList = crudApi.getSimpleSearch(0, searchValues as List<String>, "")
             }
             corrutina.join()
         }
@@ -205,7 +213,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
     }
 
     override fun onApiError(errorMessage: String) {
-        Toast.makeText(requireContext(),"Aviso error", Toast.LENGTH_LONG).show()
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }
 

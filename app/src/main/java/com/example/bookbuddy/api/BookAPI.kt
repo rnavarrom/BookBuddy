@@ -27,7 +27,7 @@ interface BookAPI {
     suspend fun insertUser(@Path("name") name: String, @Path("password") password: String, @Path("email") email: String): Response<Boolean>
 
     @GET("/api/book/exist/{isbn}")
-    suspend fun getBookExist(@Path("isbn") isbn: String): Response<ResponseBody>
+    suspend fun getBookExist(@Path("isbn") isbn: String): Response<Boolean>//Response<ResponseBody>
 
     @GET("/api/book/isbn/{isbn}/{userid}")
     suspend fun getBookInfo(@Path("isbn") isbn: String, @Path("userid") userid: Int): Response<Book>

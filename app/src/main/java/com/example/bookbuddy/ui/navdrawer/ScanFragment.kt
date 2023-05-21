@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.DecodeCallback
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentScanBinding
 import com.example.bookbuddy.utils.Tools
@@ -47,20 +48,23 @@ class ScanFragment : Fragment(), ApiErrorListener {
         return binding.root
     }
 
-    fun bookExist(isbn: String): Boolean{
-        var exist = false
+    fun bookExist(isbn: String): Boolean? {
+        var exist : Boolean? = false
         runBlocking {
-            var api = CrudApi()
+            var api = CrudApi(this@ScanFragment)
             var corroutine = launch {
-                exist = api.getBookExist(isbn)
+                exist = api.getBookExist(isbn, "")
             }
             corroutine.join()
         }
+        //if(exist == null){
+        //    return true
+        //}
         return exist
     }
 
-    fun createRequest(isbn: String): Boolean{
-        var succes = false
+    fun createRequest(isbn: String): Boolean? {
+        var succes: Boolean? = false
         runBlocking {
             var api = CrudApi(this@ScanFragment)
             var corroutine = launch {
@@ -68,6 +72,9 @@ class ScanFragment : Fragment(), ApiErrorListener {
             }
             corroutine.join()
         }
+        //if(succes == null){
+        //    return false
+        //}
         return succes
     }
 
@@ -91,9 +98,13 @@ class ScanFragment : Fragment(), ApiErrorListener {
                 }
                 if (it.text.length == 13 && it.text.matches(Regex("\\d+"))){
 
-                    if (!bookExist(it.text)){
-                        var created = createRequest(it.text)
-                        if (created){
+                    var a : Boolean? = bookExist(it.text)
+
+                    if(a == null){
+
+                    }else if (a == false){  //!bookExist(it.text)!!
+                        var created : Boolean? = createRequest(it.text)
+                        if (created == true){
                             showSnackBar(requireContext(), requireView(), "Added book for pending")
                         } else {
                             showSnackBar(requireContext(), requireView(), "Book already requested to add")
@@ -170,6 +181,6 @@ class ScanFragment : Fragment(), ApiErrorListener {
     }
 
     override fun onApiError(errorMessage: String) {
-        Toast.makeText(requireContext(),"Aviso error", Toast.LENGTH_LONG).show()
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

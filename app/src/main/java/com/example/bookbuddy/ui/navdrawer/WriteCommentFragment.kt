@@ -18,9 +18,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentWriteCommentBinding
 import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
@@ -157,6 +159,6 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     }
 
     override fun onApiError(errorMessage: String) {
-        Toast.makeText(requireContext(),"Aviso error", Toast.LENGTH_LONG).show()
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

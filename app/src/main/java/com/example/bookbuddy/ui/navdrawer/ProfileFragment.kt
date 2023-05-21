@@ -41,13 +41,15 @@ import java.io.File
 import java.io.FileOutputStream
 import kotlin.coroutines.CoroutineContext
 import com.bumptech.glide.request.transition.Transition
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreSearchCompleteListener, ProfileAuthorDialog.OnAuthorSearchCompleteListener {
+class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreSearchCompleteListener, ProfileAuthorDialog.OnAuthorSearchCompleteListener, ApiErrorListener {
     lateinit var binding: FragmentProfileBinding
     private var job: Job = Job()
 
@@ -227,30 +229,36 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     }
 
     fun updateGenre(){
+        var result: Boolean? = false
         if (binding.et1PrefferredGenre.text.toString() != binding.et2PrefferredGenre.text.toString()){
             runBlocking {
-                val crudApi = CrudApi()
+                val crudApi = CrudApi(this@ProfileFragment)
                 val corrutina = launch {
-                    crudApi.updateProfileGenreToAPI(currentProfile.profileId, tmpGenreId)
+                    result = crudApi.updateProfileGenreToAPI(currentProfile.profileId, tmpGenreId, "")
                 }
                 corrutina.join()
             }
-            currentProfile.genre!!.name = binding.et2PrefferredGenre.text.toString()
-            binding.et1PrefferredGenre.setText(binding.et2PrefferredGenre.text.toString())
+            if (result != null) {
+                currentProfile.genre!!.name = binding.et2PrefferredGenre.text.toString()
+                binding.et1PrefferredGenre.setText(binding.et2PrefferredGenre.text.toString())
+            }
         }
     }
 
     fun updateAuthor(){
+        var result: Boolean? = false
         if (binding.et1PrefferredAuthor.text.toString() != binding.et2PrefferredAuthor.text.toString()){
             runBlocking {
-                val crudApi = CrudApi()
+                val crudApi = CrudApi(this@ProfileFragment)
                 val corrutina = launch {
-                    crudApi.updateProfileAuthorToAPI(currentProfile.profileId, tmpAuthorId)
+                    result = crudApi.updateProfileAuthorToAPI(currentProfile.profileId, tmpAuthorId, "")
                 }
                 corrutina.join()
             }
-            currentProfile.author!!.name = binding.et2PrefferredAuthor.text.toString()
-            binding.et1PrefferredAuthor.setText(binding.et2PrefferredAuthor.text.toString())
+            if (result != null){
+                currentProfile.author!!.name = binding.et2PrefferredAuthor.text.toString()
+                binding.et1PrefferredAuthor.setText(binding.et2PrefferredAuthor.text.toString())
+            }
         }
     }
 
@@ -259,10 +267,10 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             if (!binding.tvUsername.text.toString().equals(binding.etUsername.text.toString())){
                 var userName = binding.etUsername.text.toString().trim()
                 runBlocking {
-                    var crudApi = CrudApi()
+                    var crudApi = CrudApi(this@ProfileFragment)
                     var corroutine = launch {
                         if (!crudApi.getUserExists(userName, "")!!){
-                            crudApi.updateUserName(currentUser.userId, userName)
+                            crudApi.updateUserName(currentUser.userId, userName, "")
                             Tools.setNavigationProfile(requireContext(), null, userName)
                             binding.tvUsername.setText(binding.etUsername.text.toString())
                         }
@@ -371,12 +379,14 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                 val emailList = ArrayList<String>()
                 emailList.addAll(emails)
                 runBlocking {
-                    val crudApi = CrudApi()
+                    val crudApi = CrudApi(this@ProfileFragment)
                     val corrutina = launch {
                         //var a = crudApi.getEmailsContact(currentUser.userId, listOf("email1","email2"))
-                        var addedContacts = crudApi.getEmailsContact(currentUser.userId, emailList)!!
+                        var addedContacts : Int? = crudApi.getEmailsContact(currentUser.userId, emailList, "")
                         var message = ""
-                        if (addedContacts > 0){
+                        if(addedContacts == null){
+
+                        }else if (addedContacts > 0){
                             message = "Se han agregado " + addedContacts + " contactos nuevos!"
                         } else {
                             message = "No se ha encontrado ningun contacto"
@@ -424,9 +434,12 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     fun loadUser(){
         binding.tvUsername.text = currentUser.name
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@ProfileFragment)
             val corrutina = launch {
-                followers = crudApi.getFollowerCount(currentUser.userId)!!
+                 var tempFollowers = crudApi.getFollowerCount(currentUser.userId, "")
+                if(tempFollowers != null){
+                    followers = tempFollowers
+                }
             }
             corrutina.join()
         }
@@ -543,12 +556,12 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
                     val image = MultipartBody.Part.createFormData("image", currentUser.userId.toString() + "user.jpg", requestFile)
 
-                    val crudApi = CrudApi()
+                    val crudApi = CrudApi(this@ProfileFragment)
                     runBlocking {
                         val ru = launch {
-                            val response = crudApi.uploadImageToAPI(image)
-                            if (response.isSuccessful) {
-                                val body = response.body()
+                            val response = crudApi.uploadImageToAPI(image, "")
+                            if (response != null) {
+                                val body = response //.body()
                                 if (body != null) {
                                     // Leer los bytes de la imagen
                                     val bytes = body.bytes()
@@ -652,5 +665,9 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    override fun onApiError(errorMessage: String) {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

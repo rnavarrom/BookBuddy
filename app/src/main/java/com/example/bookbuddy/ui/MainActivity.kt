@@ -14,6 +14,7 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.lifecycleScope
+import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.Utils.Sha
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
@@ -225,7 +226,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     override fun onApiError(errorMessage: String) {
-        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+        Tools.showSnackBar(this, binding.activityMain, "Can't reach the server. Try again!")
     }
 
     fun getUsers(userName: String, password: String) {

@@ -40,10 +40,9 @@ class Tools {
             return regex.matches(password)
         }
 
-        fun isValidText(text: String): Boolean{
-            println(text + "---------------------")
-            val regex = Regex("[a-zA-Z0-9]+")
-            return regex.matches(text)
+        fun isValidText(text: String): Boolean {
+            val regex = Regex("[^a-zA-Z0-9]")
+            return !regex.containsMatchIn(text)
         }
 
         fun tooglePasswordVisible(editText: EditText){

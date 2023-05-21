@@ -14,15 +14,18 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.GenreAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentBookDisplayBinding
 import com.example.bookbuddy.models.*
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
+import com.google.android.material.snackbar.BaseTransientBottomBar.BaseCallback.DismissEvent
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -127,7 +130,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
                         //popup.setOnDismissListener {
                         //holder.dropmenu.setImageResource(R.drawable.ic_drop_down_menu)
                         //}
-                        // TODO: If checked no execute api call
+                        // TODO: If checked no execute api call // Done
 
                         popup!!.setOnMenuItemClickListener { item ->
                             var result: Boolean? = false
@@ -416,7 +419,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         return response
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -460,6 +462,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
     }
 
     override fun onApiError(errorMessage: String) {
-        Toast.makeText(requireContext(),"Aviso error", Toast.LENGTH_LONG).show()
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

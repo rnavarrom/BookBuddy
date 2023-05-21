@@ -30,12 +30,15 @@ import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileBinding
 import com.example.bookbuddy.databinding.FragmentProfileBinding
 import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
@@ -50,7 +53,7 @@ import java.io.InputStream
 import kotlin.coroutines.CoroutineContext
 
 
-class ProfileDialog : DialogFragment(), CoroutineScope {
+class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: DialogProfileBinding
     private var job: Job = Job()
 
@@ -108,10 +111,16 @@ class ProfileDialog : DialogFragment(), CoroutineScope {
         binding.tvUsername.text = username
         var profileImage: File? = null
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@ProfileDialog)
             val corrutina = launch {
-                followers = crudApi.getFollowerCount(profileUser!!)!!
-                following = crudApi.getIsFollowing(currentUser.userId,profileUser!!)!!
+                var tempFollowers = crudApi.getFollowerCount(profileUser!!, "")
+                if(tempFollowers != null){
+                    followers = tempFollowers
+                }
+                var tempFollowing = crudApi.getIsFollowing(currentUser.userId,profileUser!!, "")
+                if(tempFollowing != null){
+                    following = tempFollowing
+                }
                 // TODO: LOAD IMAGE if ()
             }
             corrutina.join()
@@ -133,28 +142,31 @@ class ProfileDialog : DialogFragment(), CoroutineScope {
 
         binding.btFollow.setOnClickListener {
             if (binding.btFollow.tag.equals("Follow")){
-                var followed = false
+                var followed : Boolean? = false
                 runBlocking {
-                    val crudApi = CrudApi()
+                    val crudApi = CrudApi(this@ProfileDialog)
                     val corrutina = launch {
-                        followed = crudApi.addFollowToAPI(currentUser.userId, profileUser!!)
+                        followed = crudApi.addFollowToAPI(currentUser.userId, profileUser!!, "")
                     }
                     corrutina.join()
                 }
-                if (followed){
+                if(followed == null){
+
+                }else if(followed == true){
                     binding.btFollow.text = "Following"
                     binding.btFollow.tag = "Following"
                 }
             } else {
+                var result : Boolean? = false
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("Do you want to unfollow " + binding.tvUsername.text + "?")
                 builder.setMessage("You will stop receibing notifications from this user")
                     .setPositiveButton("Unfollow",
                         DialogInterface.OnClickListener { dialog, id ->
                             runBlocking {
-                                val crudApi = CrudApi()
+                                val crudApi = CrudApi(this@ProfileDialog)
                                 val corrutina = launch {
-                                    crudApi.deleteFollowAPI(currentUser.userId, profileUser!!)
+                                    var result = crudApi.deleteFollowAPI(currentUser.userId, profileUser!!, "")
                                 }
                                 corrutina.join()
                             }
@@ -206,5 +218,9 @@ class ProfileDialog : DialogFragment(), CoroutineScope {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    override fun onApiError(errorMessage: String) {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

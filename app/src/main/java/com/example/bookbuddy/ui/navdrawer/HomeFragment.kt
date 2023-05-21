@@ -16,12 +16,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.HomeBooksAdapter
 import com.example.bookbuddy.adapters.HomeReadingBooksAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentHomeBinding
 import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.unaccent
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
@@ -29,7 +31,8 @@ import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDisplayClose, java.io.Serializable {
+class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDisplayClose,
+    java.io.Serializable {
     lateinit var binding: FragmentHomeBinding
     private lateinit var adapterPending: HomeBooksAdapter
     private lateinit var adapterReaded: HomeBooksAdapter
@@ -54,7 +57,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         //println(activeFilterText)
         //println("REFRESH")
         val id = navController.currentDestination?.id
-        navController.popBackStack(id!!,true)
+        navController.popBackStack(id!!, true)
         navController.navigate(id)
     }
 
@@ -70,7 +73,8 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
     private fun isHomeFragment(): Boolean {
         val homeFragmentId = R.id.nav_home
-        val currentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_nav_drawer)
+        val currentFragment =
+            requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_nav_drawer)
         println("ASDASDASDASD")
         println(homeFragmentId)
         println(currentFragment)
@@ -88,39 +92,23 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         val onBackPressedDispatcher = requireActivity().onBackPressedDispatcher
 
         // Agregar un callback al OnBackPressedDispatcher
-        onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                AlertDialog.Builder(requireContext())
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("Closing BookBuddy")
-                    .setMessage("Are you sure you want to close this activity?")
-                    .setPositiveButton("Yes", object : DialogInterface.OnClickListener {
-                        override fun onClick(dialog: DialogInterface?, which: Int) {
-                            requireActivity().finish()
-                        }
-                    })
-                    .setNegativeButton("No", null)
-                    .show()
-            }
-        })
-
-/*
-        var pending = Pending(123456, emptyList(), emptyList(), "https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1522157426l/19063._SY475_.jpg",
-        "", "", 500, "",3.5, emptyList(),"Libro de Prueba" )
-        pendingList = ArrayList<Pending>()
-        pendingList.add(pending)
- */
-
-        //pendingList = currentUser.pending as MutableList<Pending>
-        //readedList = currentUser.readed as MutableList<Pending>
-        //readingList = currentUser.actualReading as MutableList<ActualReading>
-
-
-
-        //val layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        //layoutManager.snapToInterval = itemWidth // ajusta el valor a la anchura de tus elementos
-        //recyclerView.layoutManager = layoutManager
-
+        onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    AlertDialog.Builder(requireContext())
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Closing BookBuddy")
+                        .setMessage("Are you sure you want to close this activity?")
+                        .setPositiveButton("Yes", object : DialogInterface.OnClickListener {
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                                requireActivity().finish()
+                            }
+                        })
+                        .setNegativeButton("No", null)
+                        .show()
+                }
+            })
 
         binding.homeRv.setLayoutManager(
             LinearLayoutManager(
@@ -130,7 +118,6 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
             )
         )
 
-
         adapterReading = HomeReadingBooksAdapter(readingList as ArrayList<ActualReading>, this)
         binding.homeRv.adapter = adapterReading
         val snapHelper = PagerSnapHelper()
@@ -139,11 +126,11 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         CallAdapterPending(pendingList as ArrayList<Pending>)
         CallAdapterReaded(readedList as ArrayList<Pending>)
 
-        if(pendingList.isEmpty())
+        if (pendingList.isEmpty())
             LoadMorePending(startingPosition)
-        if(readedList.isEmpty())
+        if (readedList.isEmpty())
             LoadMoreRead(startingPosition)
-        if(readingList.isEmpty())
+        if (readingList.isEmpty())
             LoadMoreReading(startingPosition)
 
         binding.refresh.setOnRefreshListener {
@@ -166,13 +153,13 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-                if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
+                if (lastVisibleItem == totalItemCount - 1 && dy >= startingPosition) {
                     recyclerView.post {
                         positionRead = totalItemCount
-                        if (lastPositionRead != totalItemCount){
-                            if(!activeFilterText.isNullOrBlank()){
+                        if (lastPositionRead != totalItemCount) {
+                            if (!activeFilterText.isNullOrBlank()) {
                                 filterReadBooks(activeFilterText, positionRead)
-                            }else{
+                            } else {
                                 LoadMoreRead(positionRead)
                             }
                         }
@@ -190,13 +177,13 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-                if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
+                if (lastVisibleItem == totalItemCount - 1 && dy >= startingPosition) {
                     recyclerView.post {
                         positionPending = totalItemCount
-                        if (lastPositionPending != totalItemCount){
-                            if(!activeFilterText.isNullOrBlank()){
+                        if (lastPositionPending != totalItemCount) {
+                            if (!activeFilterText.isNullOrBlank()) {
                                 filterPendingBooks(activeFilterText, positionPending)
-                            }else{
+                            } else {
                                 LoadMorePending(positionPending)
                             }
                         }
@@ -213,10 +200,10 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-                if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
+                if (lastVisibleItem == totalItemCount - 1 && dy >= startingPosition) {
                     recyclerView.post {
                         positionReading = totalItemCount
-                        if (lastPositionReading != totalItemCount){
+                        if (lastPositionReading != totalItemCount) {
                             LoadMoreReading(positionReading)
                         }
                         lastPositionReading = totalItemCount
@@ -226,16 +213,17 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         })
         return binding.root
     }
-/*
-    override fun onResume() {
-        super.onResume()
-        pendingList = arrayListOf()
-        readedList = arrayListOf()
-        readingList = arrayListOf()
-    }
 
- */
-    fun LoadMoreRead(position : Int) {
+    /*
+        override fun onResume() {
+            super.onResume()
+            pendingList = arrayListOf()
+            readedList = arrayListOf()
+            readingList = arrayListOf()
+        }
+
+     */
+    fun LoadMoreRead(position: Int) {
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
@@ -250,36 +238,41 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         }
         adapterReaded.updateList(readedList as ArrayList<Pending>)
     }
-    fun LoadMorePending(position : Int) {
+
+    fun LoadMorePending(position: Int) {
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
-                      pendingList!!.addAll(
-                        crudApi.getPendingBooksFromUser(
-                            currentUser.userId,
-                            position
-                        ) as MutableList<Pending>
-                    )
+                var tempList = crudApi.getPendingBooksFromUser(
+                    currentUser.userId,
+                    position
+                )
+                if (tempList != null) {
+                    pendingList!!.addAll(tempList as MutableList<Pending>)
+                }
             }
             corrutina.join()
         }
         adapterPending.updateList(pendingList as ArrayList<Pending>)
     }
-    fun LoadMoreReading(position : Int) {
+
+    fun LoadMoreReading(position: Int) {
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
-                    readingList!!.addAll(
-                        crudApi.getReadingBooksFromUser(
-                            currentUser.userId,
-                            position
-                        ) as MutableList<ActualReading>
-                    )
+                var tempList = crudApi.getReadingBooksFromUser(
+                    currentUser.userId,
+                    position
+                )
+                if (tempList != null) {
+                    readingList!!.addAll(tempList as MutableList<ActualReading>)
+                }
             }
             corrutina.join()
         }
         adapterReading.updateList(readingList as ArrayList<ActualReading>)
     }
+
     fun FilterBooks(choseList: Boolean) {
         val builder = AlertDialog.Builder(requireContext())
         val inflater = layoutInflater
@@ -289,7 +282,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         builder.setPositiveButton("Filter") { dialogInterface, i ->
 
             activeFilterText = editText.text.toString()
-            var position = 0
+            var position = startingPosition
             if (editText.text.isNotBlank()) {
                 if (choseList) {
                     pendingList = arrayListOf()
@@ -297,17 +290,12 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                     LoadMoreRead(position)
                     adapterPending.updateList(pendingList as ArrayList<Pending>)
                     adapterReaded.updateList(readedList as ArrayList<Pending>)
-                    //CallAdapterPending(filteredList)
-                    //CallAdapterReaded(readedList as ArrayList<Pending>)
-                    //adapterReading.notifyDataSetChanged()
                 } else {
                     readedList = arrayListOf()
                     filterReadBooks(activeFilterText, position)
                     LoadMorePending(position)
                     adapterPending.updateList(pendingList as ArrayList<Pending>)
                     adapterReaded.updateList(readedList as ArrayList<Pending>)
-                    //CallAdapterPending(pendingList as ArrayList<Pending>)
-                    //CallAdapterReaded(filteredList)
                 }
             } else {
                 pendingList = arrayListOf()
@@ -321,6 +309,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         builder.setNegativeButton("Cancel") { dialogInterface, i -> }
         builder.show()
     }
+
     fun CallAdapterPending(pendingList: ArrayList<Pending>) {
         binding.rvPendingbooks.setLayoutManager(
             LinearLayoutManager(
@@ -332,6 +321,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         adapterPending = HomeBooksAdapter(pendingList, this)
         binding.rvPendingbooks.adapter = adapterPending
     }
+
     fun CallAdapterReaded(readedList: ArrayList<Pending>) {
         binding.rvReadedbooks.setLayoutManager(
             LinearLayoutManager(
@@ -343,6 +333,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         adapterReaded = HomeBooksAdapter(readedList, this)
         binding.rvReadedbooks.adapter = adapterReaded
     }
+
     fun getUser() {
         runBlocking {
             val crudApi = CrudApi(this@HomeFragment)
@@ -352,24 +343,32 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
             corrutina.join()
         }
     }
+
     fun filterPendingBooks(filter: String, position: Int) {
         runBlocking {
             val crudApi = CrudApi(this@HomeFragment)
             val corrutina = launch {
-                if(position == 0){
-                    pendingList = crudApi.filterPendingBook(
+                if (position == startingPosition) {
+                    var tempList = crudApi.filterPendingBook(
                         currentUser.userId,
                         filter,
-                        0,
+                        startingPosition,
                         ""
                     ) as MutableList<Pending>
-                }else{
-                    pendingList.addAll(crudApi.filterPendingBook(
+                    if (tempList != null) {
+                        pendingList = tempList
+                    }
+
+                } else {
+                    var tempList = crudApi.filterPendingBook(
                         currentUser.userId,
                         filter,
                         position,
                         ""
-                    ) as MutableList<Pending>)
+                    )
+                    if (tempList != null) {
+                        pendingList.addAll(tempList as MutableList<Pending>)
+                    }
                 }
             }
             corrutina.join()
@@ -378,22 +377,25 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
     fun filterReadBooks(filter: String, position: Int) {
         runBlocking {
-            val crudApi = CrudApi( this@HomeFragment)
+            val crudApi = CrudApi(this@HomeFragment)
             val corrutina = launch {
-                if(position == 0){
-                    readedList =
+                if (position == startingPosition) {
+                    var tempList =
                         crudApi.filterReadBook(
                             currentUser.userId,
                             filter,
-                            0,
+                            startingPosition,
                             ""
-                        ) as MutableList<Pending>
-                }else{
-                    readedList.addAll(crudApi.filterReadBook(
+                        )
+                    readedList = tempList as MutableList<Pending>
+                } else {
+                    var tempList = crudApi.filterReadBook(
                         currentUser.userId,
                         filter,
                         position,
-                        "" ) as MutableList<Pending>)
+                        ""
+                    )
+                    readedList.addAll(tempList as MutableList<Pending>)
                 }
             }
             corrutina.join()
@@ -414,6 +416,6 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
  */
 
     override fun onApiError(errorMessage: String) {
-        Toast.makeText(requireContext(),"Aviso error", Toast.LENGTH_LONG).show()
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

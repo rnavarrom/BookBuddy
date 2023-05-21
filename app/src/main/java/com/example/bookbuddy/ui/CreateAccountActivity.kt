@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.Utils.Sha
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.ActivityCreateAccountBinding
@@ -69,7 +70,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
             if (success) {
                 Toast.makeText(this, "Acount created!", Toast.LENGTH_LONG).show()
                 var intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("userName", currentUser.name)
+                intent.putExtra("userName", currentUserCreate.name)
                 startActivity(intent)
                 finish()
             } else {
@@ -155,21 +156,18 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         //Check if the username is not repited in the DB
         var userNameAviable : Boolean? = isNameAviable(binding.CAEditUser.text.toString())
 
-        //if (userNameAviable == null) {
-        //    return false
-        //}else
-
-        if(!userNameAviable!!){
+        if (userNameAviable == null) {
+            return false
+        }else if(!userNameAviable!!){
             binding.CAEditUser.setTextColor(getColor(R.color.red_error))
             Toast.makeText(this, "User name already in use!", Toast.LENGTH_LONG).show()
             return false
         }
         //Chgeck if the email is not repeated in the DB
         var emailAviable : Boolean? = isEmailAviable(binding.CAEditEmail.text.toString())
-        //if (emailAviable == null) {
-        //    return false
-        //}else
-        if(!emailAviable!!){
+        if (emailAviable == null) {
+            return false
+        }else if(!emailAviable!!){
             binding.CAEditEmail.setTextColor(getColor(R.color.red_error))
             Toast.makeText(this, "Email already used!", Toast.LENGTH_LONG).show()
             return false
@@ -223,6 +221,6 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     override fun onApiError(errorMessage: String) {
-        Toast.makeText(applicationContext, errorMessage, Toast.LENGTH_SHORT).show()
+    Tools.showSnackBar(this, binding.createAcountLayout, Constants.ErrrorMessage)
     }
 }

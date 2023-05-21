@@ -29,7 +29,7 @@ interface FollowsAPI {
     suspend fun insertFollow(@Path("userid") userid: Int, @Path("userfollowid") userfollowid: Int): Response<Boolean>
 
     @DELETE("/api/follows/{userid}/{userfollowid}")
-    suspend fun deleteFollow(@Path("userid") userid: Int, @Path("userfollowid") userfollowid: Int): Response<Follows>
+    suspend fun deleteFollow(@Path("userid") userid: Int, @Path("userfollowid") userfollowid: Int): Response<Boolean>
 
 
 }

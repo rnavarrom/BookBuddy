@@ -123,18 +123,31 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         )
     }
 
-    suspend fun updateUserName(id: Int, name: String): Boolean {
-        val call = getRetrofit().create(BookAPI::class.java).updateUserName(id, name)
-        return call.isSuccessful
+    suspend fun updateUserName(id: Int, name: String, errorMessage: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(BookAPI::class.java).updateUserName(id, name) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        //val call = getRetrofit().create(BookAPI::class.java).updateUserName(id, name)
+        //return call.isSuccessful
     }
 
 
-    suspend fun getBookExist(isbn: String): Boolean {
+    suspend fun getBookExist(isbn: String, errorMessage: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(BookAPI::class.java).getBookExist(isbn) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        /*
         val response = getRetrofit().create(BookAPI::class.java).getBookExist(isbn)
         if (response.isSuccessful){
             return true
         }
         return false
+
+         */
     }
 
     suspend fun getBook(isbn: String, userId: Int, errorMessage: String): Book? {
@@ -153,18 +166,28 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
          */
     }
 
-    suspend fun getRecommendedBooks(userId: Int, position: Int): List<Book>? {
-        val response = getRetrofit().create(BookAPI::class.java).getRecommendedBooks(userId, position)
-        if (response.isSuccessful){
-            return response.body()
-        }
-        return null
+    suspend fun getRecommendedBooks(userId: Int, position: Int, errorMessage: String): List<Book>? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(BookAPI::class.java).getRecommendedBooks(userId, position) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        //val response = getRetrofit().create(BookAPI::class.java).getRecommendedBooks(userId, position)
+        //if (response.isSuccessful){
+        //    return response.body()
+        //}
+        //return null
     }
 
     // Readed
-    suspend fun getReadedsFromUser(user_id: Int, position: Int): List<Readed?> {
-        val response = getRetrofit().create(ReadedAPI::class.java).getReadedsFromUser(user_id, position).body()
-        return response!!
+    suspend fun getReadedsFromUser(user_id: Int, position: Int, errorMessage: String): List<Readed>? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(ReadedAPI::class.java).getReadedsFromUser(user_id, position) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        //val response = getRetrofit().create(ReadedAPI::class.java).getReadedsFromUser(user_id, position).body()
+        //return response!!
     }
 
     suspend fun getReadBooksFromUser(user_id: Int, position: Int): List<Pending?> {
@@ -245,12 +268,17 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
          */
     }
 
-    suspend fun getUserComments(user_id: Int, position: Int): List<Comment>? {
-        val response = getRetrofit().create(CommentAPI::class.java).getUserComments(user_id, position)
-        if (response.isSuccessful){
-            return response.body()
-        }
-        return null
+    suspend fun getUserComments(user_id: Int, position: Int, errorMessage: String): List<Comment>? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(CommentAPI::class.java).getUserComments(user_id, position) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        //val response = getRetrofit().create(CommentAPI::class.java).getUserComments(user_id, position)
+        //if (response.isSuccessful){
+        //    return response.body()
+        //}
+        //return null
     }
 
 
@@ -344,14 +372,24 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         return call.body()
     }
 
-    suspend fun updateProfileGenreToAPI(id: Int, genre: Int): Boolean? {
-        val call = getRetrofit().create(ProfileAPI::class.java).updateProfileGenre(id, genre)
-        return call.body()
+    suspend fun updateProfileGenreToAPI(id: Int, genre: Int, errorMessage: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(ProfileAPI::class.java).updateProfileGenre(id, genre) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        //val call = getRetrofit().create(ProfileAPI::class.java).updateProfileGenre(id, genre)
+        //return call.body()
     }
 
-    suspend fun updateProfileAuthorToAPI(id: Int, author: Int): Boolean? {
-        val call = getRetrofit().create(ProfileAPI::class.java).updateProfileAuthor(id, author)
-        return call.body()
+    suspend fun updateProfileAuthorToAPI(id: Int, author: Int, errorMessage: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(ProfileAPI::class.java).updateProfileAuthor(id, author) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        //val call = getRetrofit().create(ProfileAPI::class.java).updateProfileAuthor(id, author)
+        //return call.body()
     }
 
     suspend fun deleteProfileToAPI(id: Int): Boolean{
@@ -371,9 +409,14 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         //return call
     }
 
-    suspend fun uploadImageToAPI(image: MultipartBody.Part): Response<ResponseBody> {
-        val call = getRetrofit().create(ImageAPI::class.java).uploadImage(image)
-        return call
+    suspend fun uploadImageToAPI(image: MultipartBody.Part, errorMessage: String): ResponseBody? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(ImageAPI::class.java).uploadImage(image) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        //val call = getRetrofit().create(ImageAPI::class.java).uploadImage(image)
+        //return call
     }
     /*
     suspend fun getImageToAPI(image: String): String? {
@@ -420,46 +463,76 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
 
     // Follows
 
-    suspend fun getIsFollowing(userId: Int, userFollowedId: Int): Boolean? {
-        val response = getRetrofit().create(FollowsAPI::class.java).getFollowing(userId, userFollowedId)
-        if (response.isSuccessful){
-            return response.body()
-        }
-        return null
+    suspend fun getIsFollowing(userId: Int, userFollowedId: Int, errorMessage: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(FollowsAPI::class.java).getFollowing(userId, userFollowedId) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        //val response = getRetrofit().create(FollowsAPI::class.java).getFollowing(userId, userFollowedId)
+        //if (response.isSuccessful){
+        //    return response.body()
+        //}
+        //return null
     }
 
-    suspend fun getFollowerCount(userId: Int): Int? {
-        val response = getRetrofit().create(FollowsAPI::class.java).getFollowersUser(userId)
-        if (response.isSuccessful){
-            return response.body()
-        }
-        return null
+    suspend fun getFollowerCount(userId: Int, errorMessage: String): Int? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(FollowsAPI::class.java).getFollowersUser(userId) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        //val response = getRetrofit().create(FollowsAPI::class.java).getFollowersUser(userId)
+        //if (response.isSuccessful){
+        //    return response.body()
+        //}
+        //return null
     }
 
-    suspend fun getFollowersProfile(userId: Int, position: Int): List<UserItem>? {
-        val response = getRetrofit().create(FollowsAPI::class.java).getFollowersProfile(userId, position)
-        if (response.isSuccessful){
-            return response.body()
-        }
-        return null
+    suspend fun getFollowersProfile(userId: Int, position: Int, errorMessage: String): List<UserItem>? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(FollowsAPI::class.java).getFollowersProfile(userId, position) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        //val response = getRetrofit().create(FollowsAPI::class.java).getFollowersProfile(userId, position)
+        //if (response.isSuccessful){
+        //    return response.body()
+        //}
+        //return null
     }
 
-    suspend fun getEmailsContact(userId: Int, emails: List<String>): Int? {
-        val response = getRetrofit().create(FollowsAPI::class.java).getEmailsContact(userId, emails)
-        if (response.isSuccessful){
-            return response.body()
-        }
-        return null
+    suspend fun getEmailsContact(userId: Int, emails: List<String>, errorMessage: String): Int? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(FollowsAPI::class.java).getEmailsContact(userId, emails) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        //val response = getRetrofit().create(FollowsAPI::class.java).getEmailsContact(userId, emails)
+        //if (response.isSuccessful){
+        //    return response.body()
+        //}
+        //return null
     }
 
-    suspend fun addFollowToAPI(userId: Int, userFollowedId: Int): Boolean {
-        val call = getRetrofit().create(FollowsAPI::class.java).insertFollow(userId, userFollowedId)
-        return call.isSuccessful
+    suspend fun addFollowToAPI(userId: Int, userFollowedId: Int, errorMessage: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(FollowsAPI::class.java).insertFollow(userId, userFollowedId) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        //val call = getRetrofit().create(FollowsAPI::class.java).insertFollow(userId, userFollowedId)
+        //return call.isSuccessful
     }
 
-    suspend fun deleteFollowAPI(userId: Int, userFollowedId: Int): Boolean{
-        val call = getRetrofit().create(FollowsAPI::class.java).deleteFollow(userId, userFollowedId)
-        return call.isSuccessful
+    suspend fun deleteFollowAPI(userId: Int, userFollowedId: Int, errorMessage: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(FollowsAPI::class.java).deleteFollow(userId, userFollowedId) },
+            errorListener = errorListener!!,
+            errorMessage = errorMessage
+        )
+        //val call = getRetrofit().create(FollowsAPI::class.java).deleteFollow(userId, userFollowedId)
+        //return call.isSuccessful
     }
     suspend fun updateReadedToAPI(readedId: Int, pagesReaded: Int, errorMessage: String): Boolean? {
         return safeApiCall(

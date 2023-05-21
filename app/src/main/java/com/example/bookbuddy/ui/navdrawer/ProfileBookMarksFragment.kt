@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.CommentAdapter
 import com.example.bookbuddy.adapters.ProfileBookMarkAdapter
 import com.example.bookbuddy.adapters.ProfileCommentAdapter
@@ -18,19 +19,20 @@ import com.example.bookbuddy.databinding.FragmentProfileBookmarksBinding
 import com.example.bookbuddy.databinding.FragmentProfileCommentsBinding
 import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class ProfileBookMarksFragment : Fragment(), CoroutineScope {
+class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     lateinit var binding: FragmentProfileBookmarksBinding
     private var job: Job = Job()
     private var userId: Int = currentUser.userId
     private var isProfileFragment: Boolean = false
     lateinit var adapter: ProfileBookMarkAdapter
-
 
     var currentPage = 0
     private var position = 0
@@ -56,24 +58,30 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope {
             getCommentsUser(userId, true)
             loadingEnded()
         }
-
         return binding.root
     }
 
     fun getCommentsUser(userId: Int, addAdapter: Boolean){
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@ProfileBookMarksFragment)
             val corrutina = launch {
                 if (position == 0){
-                    readeds = crudApi.getReadedsFromUser(userId,position) as MutableList<Readed>
+                     var tempReadeds = crudApi.getReadedsFromUser(userId,position, "")
+                    if(tempReadeds != null){
+                        readeds = tempReadeds  as MutableList<Readed>
+                    }
                 } else {
-                    readeds!!.addAll(crudApi.getReadedsFromUser(userId,position) as MutableList<Readed>)
+                    var tempReadeds = crudApi.getReadedsFromUser(userId,position, "")
+                    if(tempReadeds != null){
+                        readeds!!.addAll( tempReadeds as MutableList<Readed>)
+                    }
                 }
-
             }
             corrutina.join()
         }
-        if (addAdapter){
+        if(readeds == null){
+
+        }else if (addAdapter){
             var gridLayout = GridLayoutManager(context, 3)
             binding.rvBookmarks.layoutManager = gridLayout
             adapter = ProfileBookMarkAdapter(readeds as ArrayList<Readed>, isProfileFragment)
@@ -133,5 +141,9 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    override fun onApiError(errorMessage: String) {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }
