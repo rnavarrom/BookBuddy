@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.SearchAuthorsAdapter
 import com.example.bookbuddy.adapters.SearchLanguagesAdapter
 import com.example.bookbuddy.api.CrudApi
@@ -17,6 +18,7 @@ import com.example.bookbuddy.databinding.FragmentProfileSearchAuthorDialogBindin
 import com.example.bookbuddy.databinding.FragmentProfileSearchLanguageDialogBinding
 import com.example.bookbuddy.models.Language
 import com.example.bookbuddy.models.Test.Author
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -136,7 +138,7 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
         runBlocking {
             val crudApi = CrudApi(this@ProfileLanguageDialog)
             val corrutina = launch {
-                languages!!.addAll(crudApi.getSearchLanguages(binding.searchThings.text.toString(), position, "Error") as MutableList<Language>)
+                languages!!.addAll(crudApi.getSearchLanguages(binding.searchThings.text.toString(), position) as MutableList<Language>)
             }
             corrutina.join()
         }
@@ -157,7 +159,7 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
         runBlocking {
             val crudApi = CrudApi(this@ProfileLanguageDialog)
             val corrutina = launch {
-                languages = crudApi.getSearchLanguages(searchValue, position, "Error") as MutableList<Language>
+                languages = crudApi.getSearchLanguages(searchValue, position) as MutableList<Language>
             }
             corrutina.join()
         }
@@ -176,7 +178,7 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
-        TODO("Not yet implemented")
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

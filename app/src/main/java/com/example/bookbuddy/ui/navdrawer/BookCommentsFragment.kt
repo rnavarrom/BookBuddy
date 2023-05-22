@@ -77,9 +77,9 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
             val crudApi = CrudApi(this@BookCommentsFragment)
             val corrutina = launch {
                 if (position == 0){
-                    comments = setCardview(crudApi.getCommentsFromBook(bookId,position, "") as ArrayList<Comment>) as MutableList<Comment>?
+                    comments = setCardview(crudApi.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?
                 } else {
-                    comments!!.addAll((setCardview(crudApi.getCommentsFromBook(bookId,position, "") as ArrayList<Comment>) as MutableList<Comment>?)!!)
+                    comments!!.addAll((setCardview(crudApi.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?)!!)
                 }
             }
             corrutina.join()
@@ -162,7 +162,7 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

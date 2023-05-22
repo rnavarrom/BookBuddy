@@ -77,7 +77,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         runBlocking {
             var api = CrudApi(this@BookDisplayFragment)
             var corroutine = launch {
-                api.addRequestAPI(isbn, "")
+                api.addRequestAPI(isbn)
             }
             corroutine.join()
         }
@@ -147,8 +147,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
                                             val corroutine = launch {
                                                 result = crudApi.setBookReading(
                                                     book!!.bookId,
-                                                    currentUser.userId,
-                                                    ""
+                                                    currentUser.userId
                                                 )
                                                 if(result == true ){
                                                     readed = getReaded(book!!.bookId)
@@ -167,8 +166,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
                                             val corroutine = launch {
                                                 result = crudApi.setBookPending(
                                                     book!!.bookId,
-                                                    currentUser.userId,
-                                                    ""
+                                                    currentUser.userId
                                                 )
                                                 if(result == true) {
                                                     readed = getReaded(book!!.bookId)
@@ -188,8 +186,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
                                             val corroutine = launch {
                                                 result = crudApi.setBookRead(
                                                     book!!.bookId,
-                                                    currentUser.userId,
-                                                    ""
+                                                    currentUser.userId
                                                 )
                                                 if(result == true) {
                                                     readed = getReaded(book!!.bookId)
@@ -208,8 +205,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
                                         val corroutine = launch {
                                             result = crudApi.removeBookReading(
                                                 book!!.bookId,
-                                                currentUser.userId,
-                                                ""
+                                                currentUser.userId
                                             )
                                             if(result == true){
                                                 readed = null
@@ -302,7 +298,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         runBlocking {
             val crudApi = CrudApi(this@BookDisplayFragment)
             val corrutina = launch {
-                commentsNumber = crudApi.getCommentsCounter(bookId, "")
+                commentsNumber = crudApi.getCommentsCounter(bookId)
             }
             corrutina.join()
         }
@@ -314,7 +310,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         runBlocking {
             val crudApi = CrudApi(this@BookDisplayFragment)
             val corrutina = launch {
-                librariesNumber = crudApi.getBookLibrariesCount(isbn!!, "")
+                librariesNumber = crudApi.getBookLibrariesCount(isbn!!)
             }
             corrutina.join()
         }
@@ -413,7 +409,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         runBlocking {
             val crudApi = CrudApi(this@BookDisplayFragment)
             val corrutina = launch {
-                response = crudApi.getBook(isbn!!, currentUser.userId, "")
+                response = crudApi.getBook(isbn!!, currentUser.userId)
             }
             corrutina.join()
         }
@@ -425,7 +421,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         runBlocking {
             val crudApi = CrudApi(this@BookDisplayFragment)
             val corrutina = launch {
-                response = crudApi.getReadedsFromBook(bookId, currentUser.userId, "")
+                response = crudApi.getReadedsFromBook(bookId, currentUser.userId)
             }
             corrutina.join()
         }
@@ -471,7 +467,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
             }
         }
     }
-    override fun onApiError(errorMessage: String) {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

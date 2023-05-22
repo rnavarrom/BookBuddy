@@ -95,7 +95,7 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         runBlocking {
             val crudApi = CrudApi(this@WriteCommentFragment)
             val corrutina = launch {
-                comment = crudApi.getCommentsFromUser(currentUser.userId, bookId, "")
+                comment = crudApi.getCommentsFromUser(currentUser.userId, bookId)
             }
             corrutina.join()
         }
@@ -141,7 +141,7 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
                 val crudApi = CrudApi(this@WriteCommentFragment)
                 val corrutina = launch {
                     if (comment != null){
-                        crudApi.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser.userId, bookId!!, "")
+                        crudApi.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser.userId, bookId!!)
                     } else {
                         crudApi.addCommentToAPI(text, stars, currentUser.userId, bookId!!)
                     }
@@ -173,7 +173,7 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

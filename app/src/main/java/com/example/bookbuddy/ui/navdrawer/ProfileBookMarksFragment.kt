@@ -66,12 +66,12 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             val crudApi = CrudApi(this@ProfileBookMarksFragment)
             val corrutina = launch {
                 if (position == 0){
-                     var tempReadeds = crudApi.getReadedsFromUser(userId,position, "")
+                     var tempReadeds = crudApi.getReadedsFromUser(userId,position)
                     if(tempReadeds != null){
                         readeds = tempReadeds  as MutableList<Readed>
                     }
                 } else {
-                    var tempReadeds = crudApi.getReadedsFromUser(userId,position, "")
+                    var tempReadeds = crudApi.getReadedsFromUser(userId,position)
                     if(tempReadeds != null){
                         readeds!!.addAll( tempReadeds as MutableList<Readed>)
                     }
@@ -143,7 +143,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

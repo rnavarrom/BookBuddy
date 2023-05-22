@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.AdminBookLibraryAdapter
 import com.example.bookbuddy.adapters.AdminGenresAdapter
 import com.example.bookbuddy.adapters.AdminLibraryAdapter
@@ -160,7 +161,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 runBlocking {
                     var api = CrudApi(this@ReferencesBookDialog)
                     var coroutine = launch {
-                        result = api.deleteBookGenre(bookId, selection.genreId, "Action failes")!!
+                        result = api.deleteBookGenre(bookId, selection.genreId)!!
                     }
                     coroutine.join()
                 }
@@ -202,7 +203,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                             runBlocking {
                                 var api = CrudApi(this@ReferencesBookDialog)
                                 var coroutine = launch {
-                                    result = api.updateBookLibrary(bookId, selection.library.libraryId, copies, "Action failes")!!
+                                    result = api.updateBookLibrary(bookId, selection.library.libraryId, copies)!!
                                 }
                                 coroutine.join()
                             }
@@ -252,7 +253,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 runBlocking {
                     var api = CrudApi(this@ReferencesBookDialog)
                     var coroutine = launch {
-                        result = api.deleteBookLibrary(bookId, selection.library.libraryId,"Action failes")!!
+                        result = api.deleteBookLibrary(bookId, selection.library.libraryId)!!
                     }
                     coroutine.join()
                 }
@@ -275,7 +276,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         runBlocking {
             val crudApi = CrudApi(this@ReferencesBookDialog)
             val corrutina = launch {
-                author = crudApi.getBookAuthors(bookId , "Cannot get authors")
+                author = crudApi.getBookAuthors(bookId)
             }
             corrutina.join()
         }
@@ -288,7 +289,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         runBlocking {
             val crudApi = CrudApi(this@ReferencesBookDialog)
             val corrutina = launch {
-                lang = crudApi.getBookLang(bookId , "Cannot get languages")
+                lang = crudApi.getBookLang(bookId)
             }
             corrutina.join()
         }
@@ -301,7 +302,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         runBlocking {
             val crudApi = CrudApi(this@ReferencesBookDialog)
             val corrutina = launch {
-                genres = crudApi.getBookGenres(bookId , "Cannot get genres") as MutableList<Genre>?
+                genres = crudApi.getBookGenres(bookId) as MutableList<Genre>?
                 if (addAdapter){
                     binding.rvGenres.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                     adapterGenres = AdminGenresAdapter(genres as ArrayList<Genre>)
@@ -318,7 +319,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         runBlocking {
             val crudApi = CrudApi(this@ReferencesBookDialog)
             val corrutina = launch {
-                libraries = crudApi.getBookLibraries(bookId , "Cannot get genres") as MutableList<LibraryExtended>?
+                libraries = crudApi.getBookLibraries(bookId) as MutableList<LibraryExtended>?
                 if (addAdapter){
                     binding.rvLibraries.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                     adapterLibraries = AdminBookLibraryAdapter(libraries as ArrayList<LibraryExtended>)
@@ -345,8 +346,8 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
-        showSnackBar(requireContext(), requireView(), errorMessage)
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 
     override fun onGenreSearchComplete(result: Int, name: String) {
@@ -361,7 +362,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
             runBlocking {
                 var api = CrudApi(this@ReferencesBookDialog)
                 var corrutine = launch {
-                    resultApi = api.insertBookGenre(bookId, result, "Error")
+                    resultApi = api.insertBookGenre(bookId, result)
                 }
                 corrutine.join()
             }
@@ -391,9 +392,9 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 var api = CrudApi(this@ReferencesBookDialog)
                 var corrutine = launch {
                     if (author != null){
-                        api.deleteBookAuthors(bookId, author!!.authorId, "Error")
+                        api.deleteBookAuthors(bookId, author!!.authorId)
                     }
-                    resultApi = api.insertBookAuthors(bookId, result, "Error")
+                    resultApi = api.insertBookAuthors(bookId, result)
                 }
                 corrutine.join()
             }
@@ -419,9 +420,9 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 var api = CrudApi(this@ReferencesBookDialog)
                 var corrutine = launch {
                     if (author != null){
-                        api.deleteBookLang(bookId, lang!!.languageId, "Error")
+                        api.deleteBookLang(bookId, lang!!.languageId)
                     }
-                    resultApi = api.insertBookLang(bookId, result, "Error")
+                    resultApi = api.insertBookLang(bookId, result)
                 }
                 corrutine.join()
             }
@@ -446,7 +447,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
             runBlocking {
                 var api = CrudApi(this@ReferencesBookDialog)
                 var corrutine = launch {
-                    resultApi = api.insertBookLibrary(bookId, result, 0, "Error")
+                    resultApi = api.insertBookLibrary(bookId, result, 0)
                 }
                 corrutine.join()
             }

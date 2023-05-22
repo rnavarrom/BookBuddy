@@ -23,13 +23,13 @@ interface CommentAPI {
     //suspend fun insertComment(@Body comment: Comment2): Response<Comment2>
 
     @PUT("/api/comment/{commentid}/{commenttext}/{rating}/{userid}/{bookid}")
-    suspend fun updateComment(@Path("commentid") commentid: Int, @Path("commenttext") commenttext: String, @Path("rating") rating: Int, @Path("userid") userid: Int, @Path("bookid") bookid: Int ): Response<Comment>
+    suspend fun updateComment(@Path("commentid") commentid: Int, @Path("commenttext") commenttext: String, @Path("rating") rating: Int, @Path("userid") userid: Int, @Path("bookid") bookid: Int ): Response<Boolean>
 
     @POST("/api/comment/{commenttext}/{rating}/{userid}/{bookid}")
-    suspend fun insertComment(@Path("commenttext") commenttext: String, @Path("rating") rating: Int, @Path("userid") userid: Int, @Path("bookid") bookid: Int ): Response<Comment>
+    suspend fun insertComment(@Path("commenttext") commenttext: String, @Path("rating") rating: Int, @Path("userid") userid: Int, @Path("bookid") bookid: Int ): Response<Boolean>
 
     @DELETE("/api/comment/{id}")
-    suspend fun deleteComment(@Path("id") id: Int): Response<Comment>
+    suspend fun deleteComment(@Path("id") id: Int): Response<Boolean>
 
 
 }

@@ -364,7 +364,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
             val crudApi = CrudApi(this@MainActivity)
             val corrutina = launch {
                 //currentUser = crudApi.getUserLogin(userName, password)!!
-                var tempData = crudApi.getUserLogin(userName, password, "Error geting user")
+                var tempData = crudApi.getUserLogin(userName, password)
                 if (tempData != null){
                     currentUser = tempData
                 }
@@ -375,12 +375,12 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
             runBlocking {
                 val crudApi = CrudApi(this@MainActivity)
                 val corrutina = launch {
-                    var tempData = crudApi.getProfileUser(currentUser.userId, "Error Getting Profile")
+                    var tempData = crudApi.getProfileUser(currentUser.userId)
                     if(tempData != null){
                         currentProfile = tempData
                     }
                     if (currentUser.haspicture) {
-                        responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId, ""))
+                        responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId))
                     }
                 }
                 corrutina.join()

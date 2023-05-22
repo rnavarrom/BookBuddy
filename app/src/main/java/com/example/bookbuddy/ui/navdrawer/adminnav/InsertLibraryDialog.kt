@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentInsertLibraryDialogBinding
 import com.example.bookbuddy.models.Library
@@ -137,9 +138,9 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
             var api = CrudApi(this@InsertLibraryDialog)
             var coroutine = launch {
                 if (mode == "edit"){
-                    result = api.updateLibrary(library.libraryId,name, lat, lon, zip, "Edit failes")!!
+                    result = api.updateLibrary(library.libraryId,name, lat, lon, zip)!!
                 } else {
-                    result = api.insertLibrary(name, lat, lon, zip, "Edit failes")!!
+                    result = api.insertLibrary(name, lat, lon, zip)!!
                 }
             }
             coroutine.join()
@@ -214,7 +215,7 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
-        TODO("Not yet implemented")
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

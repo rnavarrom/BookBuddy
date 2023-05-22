@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.AdminRequestsAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminRequestsBinding
@@ -107,7 +108,7 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                     runBlocking {
                         var api = CrudApi(this@AdminRequestsFragment)
                         var coroutine = launch {
-                            result = api.deleteRequest(selection.bookRequest1, "Action failes")!!
+                            result = api.deleteRequest(selection.bookRequest1)!!
                         }
                         coroutine.join()
                     }
@@ -168,9 +169,9 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             val crudApi = CrudApi(this@AdminRequestsFragment)
             val corrutina = launch {
                 if (position == 0){
-                    bookRequests = crudApi.getRequests(position, "Cannot get BookRequests") as MutableList<BookRequest>?
+                    bookRequests = crudApi.getRequests(position) as MutableList<BookRequest>?
                 } else {
-                    bookRequests!!.addAll((crudApi.getRequests(position, "Cannot get BookRequests") as MutableList<BookRequest>?)!!)
+                    bookRequests!!.addAll((crudApi.getRequests(position) as MutableList<BookRequest>?)!!)
                 }
                 if (addAdapter){
                     binding.rvRequests.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -198,7 +199,7 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
-        showSnackBar(requireContext(), requireView(), errorMessage)
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

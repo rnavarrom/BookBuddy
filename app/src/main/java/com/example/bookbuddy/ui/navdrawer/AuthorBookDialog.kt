@@ -13,12 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.AuthorBooksAdapter
 import com.example.bookbuddy.adapters.RecommendedBooksAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAuthorBookDialogBinding
 import com.example.bookbuddy.databinding.FragmentRecommendationsBinding
 import com.example.bookbuddy.models.Book
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
@@ -73,9 +75,9 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             val crudApi = CrudApi(this@AuthorBookDialog)
             val corrutina = launch {
                 if (position == 0){
-                    books = crudApi.getAuthorsBooks(authorId, position, "Error") as MutableList<Book>?
+                    books = crudApi.getAuthorsBooks(authorId, position) as MutableList<Book>?
                 } else {
-                    books!!.addAll((crudApi.getAuthorsBooks(authorId, position, "Error") as MutableList<Book>?)!!)
+                    books!!.addAll((crudApi.getAuthorsBooks(authorId, position) as MutableList<Book>?)!!)
                 }
                 if (addAdapter){
                     binding.rvBooks.layoutManager = GridLayoutManager(context, 3)
@@ -141,7 +143,7 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
-        TODO("Not yet implemented")
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

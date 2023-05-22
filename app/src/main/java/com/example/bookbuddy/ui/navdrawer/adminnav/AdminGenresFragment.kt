@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.AdminGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminGenresBinding
@@ -129,7 +130,7 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             runBlocking {
                 var api = CrudApi(this@AdminGenresFragment)
                 var coroutine = launch {
-                    result = api.insertGenre(genreName!!, "Insert failed")!!
+                    result = api.insertGenre(genreName!!)!!
                 }
                 coroutine.join()
             }
@@ -152,7 +153,7 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             runBlocking {
                 var api = CrudApi(this@AdminGenresFragment)
                 var coroutine = launch {
-                    result = api.updateGenre(selection!!.genreId, genreName!!, "Action failes")!!
+                    result = api.updateGenre(selection!!.genreId, genreName!!)!!
                 }
                 coroutine.join()
             }
@@ -214,7 +215,7 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 runBlocking {
                     var api = CrudApi(this@AdminGenresFragment)
                     var coroutine = launch {
-                        result = api.deleteGenre(selection.genreId, "Action failes")!!
+                        result = api.deleteGenre(selection.genreId)!!
                     }
                     coroutine.join()
                 }
@@ -269,15 +270,15 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             val corrutina = launch {
                 if (position == 0){
                     if (search.isNullOrEmpty()){
-                        genres = crudApi.getGenres("null", false, position, "Cannot get genres") as MutableList<Genre>?
+                        genres = crudApi.getGenres("null", false, position) as MutableList<Genre>?
                     } else {
-                        genres = crudApi.getGenres(search!!, true, position, "Cannot get genres") as MutableList<Genre>?
+                        genres = crudApi.getGenres(search!!, true, position) as MutableList<Genre>?
                     }
                 } else {
                     if (search.isNullOrEmpty()){
-                        genres!!.addAll((crudApi.getGenres("null", false, position, "Cannot get genres") as MutableList<Genre>?)!!)
+                        genres!!.addAll((crudApi.getGenres("null", false, position) as MutableList<Genre>?)!!)
                     } else {
-                        genres!!.addAll((crudApi.getGenres(search!!, true, position, "Cannot get genres") as MutableList<Genre>?)!!)
+                        genres!!.addAll((crudApi.getGenres(search!!, true, position) as MutableList<Genre>?)!!)
                     }
                 }
                 if (addAdapter){
@@ -311,7 +312,7 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
-        showSnackBar(requireContext(), requireView(), errorMessage)
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.AdminBooksAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminBooksBinding
@@ -226,7 +227,7 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         runBlocking {
             var api = CrudApi(this@AdminBooksFragment)
             var coroutine = launch {
-                var tmpResult = api.deleteBook(book.isbn, false, "Action failes")
+                var tmpResult = api.deleteBook(book.isbn, false)
                 if (tmpResult != null){
                     result = tmpResult
                 }
@@ -251,15 +252,15 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             val corrutina = launch {
                 if (position == 0){
                     if (search.isNullOrEmpty()){
-                        books = crudApi.getAllBooksSearch("null", false, position, "Cannot get books") as MutableList<Book>?
+                        books = crudApi.getAllBooksSearch("null", false, position) as MutableList<Book>?
                     } else {
-                        books = crudApi.getAllBooksSearch(search!!, true, position, "Cannot get books") as MutableList<Book>?
+                        books = crudApi.getAllBooksSearch(search!!, true, position) as MutableList<Book>?
                     }
                 } else {
                     if (search.isNullOrEmpty()){
-                        books!!.addAll((crudApi.getAllBooksSearch("null", false, position, "Cannot get books") as MutableList<Book>?)!!)
+                        books!!.addAll((crudApi.getAllBooksSearch("null", false, position) as MutableList<Book>?)!!)
                     } else {
-                        books!!.addAll((crudApi.getAllBooksSearch(search!!, true, position, "Cannot get books") as MutableList<Book>?)!!)
+                        books!!.addAll((crudApi.getAllBooksSearch(search!!, true, position) as MutableList<Book>?)!!)
                     }
                 }
                 if (addAdapter){
@@ -288,7 +289,7 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
-        showSnackBar(requireContext(), requireView(), errorMessage)
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

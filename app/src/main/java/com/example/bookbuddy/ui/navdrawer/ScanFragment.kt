@@ -53,7 +53,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
         runBlocking {
             var api = CrudApi(this@ScanFragment)
             var corroutine = launch {
-                exist = api.getBookExist(isbn, "")
+                exist = api.getBookExist(isbn)
             }
             corroutine.join()
         }
@@ -65,7 +65,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
         runBlocking {
             var api = CrudApi(this@ScanFragment)
             var corroutine = launch {
-                succes = api.addRequestAPI(isbn, "")!!
+                succes = api.addRequestAPI(isbn)!!
             }
             corroutine.join()
         }
@@ -186,7 +186,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
         private const val REQUEST_CODE_PERMISSIONS = 10
     }
 
-    override fun onApiError(errorMessage: String) {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }
