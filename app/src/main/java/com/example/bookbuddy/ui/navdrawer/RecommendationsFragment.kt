@@ -59,12 +59,12 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             val crudApi = CrudApi(this@RecommendationsFragment)
             val corrutina = launch {
                 if (position == 0){
-                    var tempBooks = crudApi.getRecommendedBooks(currentUser.userId, position, "") as MutableList<Book>?
+                    var tempBooks = crudApi.getRecommendedBooks(currentUser.userId, position) as MutableList<Book>?
                     if(tempBooks != null){
                         books = tempBooks
                     }
                 } else {
-                    var tempBooks = crudApi.getRecommendedBooks(currentUser.userId, position, "")
+                    var tempBooks = crudApi.getRecommendedBooks(currentUser.userId, position)
                     if(tempBooks != null){
                         books!!.addAll(tempBooks as MutableList<Book>)!!
                     }
@@ -135,7 +135,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

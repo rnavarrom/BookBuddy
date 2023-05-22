@@ -97,7 +97,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         runBlocking {
             val crudApi = CrudApi(this@CreateAccountActivity)
             val corrutina = launch {
-                response = crudApi.addUserToAPI(user, "Server not working")
+                response = crudApi.addUserToAPI(user)
             }
             corrutina.join()
         }
@@ -179,7 +179,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         runBlocking {
             val crudApi = CrudApi(this@CreateAccountActivity)
             val corrutina = launch {
-                response = crudApi.getUserExists(userName, "Pruena!")
+                response = crudApi.getUserExists(userName)
             }
             corrutina.join()
         }
@@ -190,7 +190,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         runBlocking {
             val crudApi = CrudApi(this@CreateAccountActivity)
             val corrutina = launch {
-                response = crudApi.getEmailExists(email, "Email already exists")
+                response = crudApi.getEmailExists(email)
             }
             corrutina.join()
         }
@@ -220,7 +220,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         binding.userConditions.setTextColor(getColor(R.color.black))
     }
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
     Tools.showSnackBar(this, binding.createAcountLayout, Constants.ErrrorMessage)
     }
 }

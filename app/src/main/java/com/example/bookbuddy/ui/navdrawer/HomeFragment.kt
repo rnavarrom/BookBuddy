@@ -214,14 +214,14 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
     fun LoadMoreRead(position: Int) {
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@HomeFragment)
             val corrutina = launch {
-                readedList!!.addAll(
-                    crudApi.getReadBooksFromUser(
+                   var tempRead = crudApi.getReadBooksFromUser(
                         currentUser.userId,
-                        position
-                    ) as MutableList<Pending>
-                )
+                        position)
+                if(tempRead != null){
+                    readedList!!.addAll(tempRead as MutableList<Pending>)
+                }
             }
             corrutina.join()
         }
@@ -230,7 +230,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
     fun LoadMorePending(position: Int) {
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@HomeFragment)
             val corrutina = launch {
                 var tempList = crudApi.getPendingBooksFromUser(
                     currentUser.userId,
@@ -247,7 +247,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
     fun LoadMoreReading(position: Int) {
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@HomeFragment)
             val corrutina = launch {
                 var tempList = crudApi.getReadingBooksFromUser(
                     currentUser.userId,
@@ -327,7 +327,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         runBlocking {
             val crudApi = CrudApi(this@HomeFragment)
             val corrutina = launch {
-                currentUser = crudApi.getUserId(currentUser.userId, "")!!
+                currentUser = crudApi.getUserId(currentUser.userId)!!
             }
             corrutina.join()
         }
@@ -341,8 +341,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                     var tempList = crudApi.filterPendingBook(
                         currentUser.userId,
                         filter,
-                        startingPosition,
-                        ""
+                        startingPosition
                     ) as MutableList<Pending>
                     if (tempList != null) {
                         pendingList = tempList
@@ -352,8 +351,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                     var tempList = crudApi.filterPendingBook(
                         currentUser.userId,
                         filter,
-                        position,
-                        ""
+                        position
                     )
                     if (tempList != null) {
                         pendingList.addAll(tempList as MutableList<Pending>)
@@ -373,16 +371,14 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                         crudApi.filterReadBook(
                             currentUser.userId,
                             filter,
-                            startingPosition,
-                            ""
+                            startingPosition
                         )
                     readedList = tempList as MutableList<Pending>
                 } else {
                     var tempList = crudApi.filterReadBook(
                         currentUser.userId,
                         filter,
-                        position,
-                        ""
+                        position
                     )
                     readedList.addAll(tempList as MutableList<Pending>)
                 }
@@ -404,7 +400,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
  */
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

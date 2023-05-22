@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.AdminAuthorsAdapter
 import com.example.bookbuddy.adapters.AdminLibraryAdapter
 import com.example.bookbuddy.adapters.LibraryAdapter
@@ -175,7 +176,7 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 runBlocking {
                     var api = CrudApi(this@AdminLibrariesFragment)
                     var coroutine = launch {
-                        result = api.deleteLibrary(selection.libraryId, "Action failes")!!
+                        result = api.deleteLibrary(selection.libraryId)!!
                     }
                     coroutine.join()
                 }
@@ -230,15 +231,15 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
             val corrutina = launch {
                 if (position == 0){
                     if (search.isNullOrEmpty()){
-                        libraries = crudApi.getLibraries("null", false, position, "Cannot get libraries") as MutableList<Library>?
+                        libraries = crudApi.getLibraries("null", false, position) as MutableList<Library>?
                     } else {
-                        libraries = crudApi.getLibraries(search!!, true, position, "Cannot get libraries") as MutableList<Library>?
+                        libraries = crudApi.getLibraries(search!!, true, position) as MutableList<Library>?
                     }
                 } else {
                     if (search.isNullOrEmpty()){
-                        libraries!!.addAll((crudApi.getLibraries("null", false, position, "Cannot get libraries") as MutableList<Library>?)!!)
+                        libraries!!.addAll((crudApi.getLibraries("null", false, position) as MutableList<Library>?)!!)
                     } else {
-                        libraries!!.addAll((crudApi.getLibraries(search!!, true, position, "Cannot get libraries") as MutableList<Library>?)!!)
+                        libraries!!.addAll((crudApi.getLibraries(search!!, true, position) as MutableList<Library>?)!!)
                     }
                 }
                 if (addAdapter){
@@ -267,7 +268,7 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
-        showSnackBar(requireContext(), requireView(), errorMessage)
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

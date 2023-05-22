@@ -57,8 +57,6 @@ class NavDrawerActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarNavDrawer.toolbar)
 
-
-
         val drawerLayout: DrawerLayout = binding.drawerLayout
         navView = binding.navView
         navController = findNavController(R.id.nav_host_fragment_content_nav_drawer)

@@ -69,12 +69,12 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             val crudApi = CrudApi(this@ProfileCommentsFragment)
             val corrutina = launch {
                 if (position == 0){
-                    var tempComments = crudApi.getUserComments(userId,position, "") as MutableList<Comment>?
+                    var tempComments = crudApi.getUserComments(userId,position) as MutableList<Comment>?
                     if(tempComments != null){
                         comments = tempComments
                     }
                 } else {
-                    var tempComments = crudApi.getUserComments(userId,position, "")
+                    var tempComments = crudApi.getUserComments(userId,position)
                     if(tempComments != null){
                         comments!!.addAll( tempComments as MutableList<Comment>)
                     }
@@ -146,7 +146,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

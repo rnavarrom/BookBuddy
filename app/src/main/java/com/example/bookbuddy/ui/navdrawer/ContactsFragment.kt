@@ -61,12 +61,12 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             val crudApi = CrudApi(this@ContactsFragment)
             val corrutina = launch {
                 if (position == 0){
-                    var tempFollows = crudApi.getFollowersProfile(currentUser.userId, position, "") as MutableList<UserItem>?
+                    var tempFollows = crudApi.getFollowersProfile(currentUser.userId, position) as MutableList<UserItem>?
                     if (tempFollows != null){
                         follows = tempFollows
                     }
                 } else {
-                    var tempFollows = crudApi.getFollowersProfile(currentUser.userId, position, "")
+                    var tempFollows = crudApi.getFollowersProfile(currentUser.userId, position)
                     if(tempFollows != null){
                         follows!!.addAll(tempFollows as MutableList<UserItem>)
                     }
@@ -138,7 +138,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

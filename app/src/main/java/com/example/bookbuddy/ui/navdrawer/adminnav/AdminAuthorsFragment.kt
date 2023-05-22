@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.AdminAuthorsAdapter
 import com.example.bookbuddy.adapters.LibraryAdapter
 import com.example.bookbuddy.adapters.RecommendedBooksAdapter
@@ -135,7 +136,7 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             runBlocking {
                 var api = CrudApi(this@AdminAuthorsFragment)
                 var coroutine = launch {
-                    result = api.insertAuthor(authorName!!, "Insert failed")!!
+                    result = api.insertAuthor(authorName!!)!!
                 }
                 coroutine.join()
             }
@@ -158,7 +159,7 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             runBlocking {
                 var api = CrudApi(this@AdminAuthorsFragment)
                 var coroutine = launch {
-                    result = api.updateAuthor(selection!!.authorId, authorName!!, "Action failes")!!
+                    result = api.updateAuthor(selection!!.authorId, authorName!!)!!
                 }
                 coroutine.join()
             }
@@ -220,7 +221,7 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 runBlocking {
                     var api = CrudApi(this@AdminAuthorsFragment)
                     var coroutine = launch {
-                        result = api.deleteAuthor(selection.authorId, "Action failes")!!
+                        result = api.deleteAuthor(selection.authorId)!!
                     }
                     coroutine.join()
                 }
@@ -275,15 +276,15 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             val corrutina = launch {
                 if (position == 0){
                     if (search.isNullOrEmpty()){
-                        authors = crudApi.getAuthors("null", false, position, "Cannot get authors") as MutableList<Author>?
+                        authors = crudApi.getAuthors("null", false, position) as MutableList<Author>?
                     } else {
-                        authors = crudApi.getAuthors(search!!, true, position, "Cannot get authors") as MutableList<Author>?
+                        authors = crudApi.getAuthors(search!!, true, position) as MutableList<Author>?
                     }
                 } else {
                     if (search.isNullOrEmpty()){
-                        authors!!.addAll((crudApi.getAuthors("null", false, position, "Cannot get authors") as MutableList<Author>?)!!)
+                        authors!!.addAll((crudApi.getAuthors("null", false, position) as MutableList<Author>?)!!)
                     } else {
-                        authors!!.addAll((crudApi.getAuthors(search!!, true, position, "Cannot get authors") as MutableList<Author>?)!!)
+                        authors!!.addAll((crudApi.getAuthors(search!!, true, position) as MutableList<Author>?)!!)
                     }
                 }
                 if (addAdapter){
@@ -317,7 +318,7 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
-        showSnackBar(requireContext(), requireView(), errorMessage)
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

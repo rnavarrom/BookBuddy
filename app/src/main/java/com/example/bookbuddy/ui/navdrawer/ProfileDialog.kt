@@ -113,11 +113,11 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         runBlocking {
             val crudApi = CrudApi(this@ProfileDialog)
             val corrutina = launch {
-                var tempFollowers = crudApi.getFollowerCount(profileUser!!, "")
+                var tempFollowers = crudApi.getFollowerCount(profileUser!!)
                 if(tempFollowers != null){
                     followers = tempFollowers
                 }
-                var tempFollowing = crudApi.getIsFollowing(currentUser.userId,profileUser!!, "")
+                var tempFollowing = crudApi.getIsFollowing(currentUser.userId,profileUser!!)
                 if(tempFollowing != null){
                     following = tempFollowing
                 }
@@ -146,7 +146,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 runBlocking {
                     val crudApi = CrudApi(this@ProfileDialog)
                     val corrutina = launch {
-                        followed = crudApi.addFollowToAPI(currentUser.userId, profileUser!!, "")
+                        followed = crudApi.addFollowToAPI(currentUser.userId, profileUser!!)
                     }
                     corrutina.join()
                 }
@@ -166,7 +166,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                             runBlocking {
                                 val crudApi = CrudApi(this@ProfileDialog)
                                 val corrutina = launch {
-                                    var result = crudApi.deleteFollowAPI(currentUser.userId, profileUser!!, "")
+                                    var result = crudApi.deleteFollowAPI(currentUser.userId, profileUser!!)
                                 }
                                 corrutina.join()
                             }
@@ -220,7 +220,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

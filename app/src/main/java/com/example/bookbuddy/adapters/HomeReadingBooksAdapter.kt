@@ -143,7 +143,7 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
         runBlocking {
             val crudApi = CrudApi( this@HomeReadingBooksAdapter)
             val corrutina = launch {
-                result = crudApi.updateReadedToAPI(readedId, pagesReaded, "")
+                result = crudApi.updateReadedToAPI(readedId, pagesReaded)
             }
             corrutina.join()
         }
@@ -177,13 +177,13 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
         runBlocking {
             val crudApi = CrudApi(this@HomeReadingBooksAdapter)
             val corrutina = launch {
-                currentUser = crudApi.getUserId(currentUser.userId, "")!!
+                currentUser = crudApi.getUserId(currentUser.userId)!!
             }
             corrutina.join()
         }
     }
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
         Toast.makeText(context,"Aviso error", Toast.LENGTH_LONG).show()
     }
 }

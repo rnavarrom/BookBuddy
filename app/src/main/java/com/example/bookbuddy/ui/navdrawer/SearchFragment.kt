@@ -188,8 +188,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
                 var tempSearchList =
                     crudApi.getSimpleSearch(
                         position,
-                        searchValues as List<String>,
-                        ""
+                        searchValues as List<String>
                     )
                 if (tempSearchList != null)
                     searchResultList!!.addAll(tempSearchList as MutableList<SimpleBook>)
@@ -205,14 +204,14 @@ class SearchFragment : Fragment(), ApiErrorListener{
         runBlocking {
             val crudApi = CrudApi(this@SearchFragment)
             val corrutina = launch {
-                searchResultList = crudApi.getSimpleSearch(0, searchValues as List<String>, "")
+                searchResultList = crudApi.getSimpleSearch(0, searchValues as List<String>)
             }
             corrutina.join()
         }
         return searchResultList
     }
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

@@ -20,6 +20,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentInsertBookDialogBinding
 import com.example.bookbuddy.databinding.FragmentInsertLibraryDialogBinding
@@ -211,7 +212,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             runBlocking {
                 var api = CrudApi(this@InsertBookDialog)
                 var coroutine = launch {
-                    isbnExist = api.getBookExist(isbn, "")!!
+                    isbnExist = api.getBookExist(isbn)!!
                 }
                 coroutine.join()
             }
@@ -241,12 +242,12 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             var coroutine = launch {
                 if (mode == "edit"){
                     //result = api.updateLibrary(library.libraryId,name, lat, lon, zip, "Edit failes")!!
-                    editResult = api.updateBook(book.bookId,isbn, title, description, book.rating, pages, date , cover, "Edit failes")
+                    editResult = api.updateBook(book.bookId,isbn, title, description, book.rating, pages, date , cover)
                 } else {
-                    var tmpResult = api.insertBook(isbn, title, description, pages, date , cover, "Edit failes")
+                    var tmpResult = api.insertBook(isbn, title, description, pages, date , cover)
                     if (tmpResult != null){
                         result = tmpResult
-                        api.deleteRequest(requestId, "Cannot delete request")
+                        api.deleteRequest(requestId)
                     }
                 }
             }
@@ -336,7 +337,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
-        println("CRASHHHH")
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

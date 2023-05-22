@@ -10,15 +10,18 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.SearchAuthorsAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileSearchAuthorDialogBinding
 import com.example.bookbuddy.models.Test.Author
+import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 
-class ProfileAuthorDialog : DialogFragment(), CoroutineScope {
+class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentProfileSearchAuthorDialogBinding
     private var job: Job = Job()
     //var searchResultList: ArrayList<Genre> = arrayListOf()
@@ -130,9 +133,12 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope {
 
     private fun loadMoreItems() {
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@ProfileAuthorDialog)
             val corrutina = launch {
-                authors!!.addAll(crudApi.getSearchAuthors(binding.searchThings.text.toString(), position) as MutableList<Author>)
+                var tempAuthors= crudApi.getSearchAuthors(binding.searchThings.text.toString(), position)
+                if(tempAuthors != null){
+                    authors!!.addAll(tempAuthors as MutableList<Author>)
+                }
             }
             corrutina.join()
         }
@@ -151,9 +157,12 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope {
         authors = mutableListOf<Author>()
 
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(this@ProfileAuthorDialog)
             val corrutina = launch {
-                authors = crudApi.getSearchAuthors(searchValue, position) as MutableList<Author>
+                var tempAuthors = crudApi.getSearchAuthors(searchValue, position)
+                if(tempAuthors != null){
+                    authors = tempAuthors as MutableList<Author>
+                }
             }
             corrutina.join()
         }
@@ -170,5 +179,9 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

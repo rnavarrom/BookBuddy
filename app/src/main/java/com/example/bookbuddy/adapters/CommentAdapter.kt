@@ -56,7 +56,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
                 val crudApi = CrudApi( this@CommentAdapter)
                 val corrutina = launch {
                     if (list[position].user!!.haspicture){
-                        var commentPicture = crudApi.getUserImage(list[position].user!!.userId, "")
+                        var commentPicture = crudApi.getUserImage(list[position].user!!.userId)
                         val body = commentPicture //.body()
                         if (body != null) {
                             // Leer los bytes de la imagen
@@ -106,7 +106,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
                             runBlocking {
                                 val crudApi = CrudApi( this@CommentAdapter)
                                 val corroutine = launch {
-                                    crudApi.deleteCommentToAPI(list[position].comentId!!, "")
+                                    crudApi.deleteCommentToAPI(list[position].comentId!!)
                                 }
                                 corroutine.join()
                                 list.removeAt(position)
@@ -145,7 +145,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
         Toast.makeText(context,"Aviso error", Toast.LENGTH_LONG).show()
     }
 }

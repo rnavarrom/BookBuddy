@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.SearchAuthorsAdapter
 import com.example.bookbuddy.adapters.SearchLanguagesAdapter
 import com.example.bookbuddy.adapters.SearchLibrariesAdapter
@@ -20,6 +21,7 @@ import com.example.bookbuddy.databinding.FragmentProfileSearchLibraryDialogBindi
 import com.example.bookbuddy.models.Language
 import com.example.bookbuddy.models.LibraryExtended
 import com.example.bookbuddy.models.Test.Author
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -182,7 +184,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
         job.cancel()
     }
 
-    override fun onApiError(errorMessage: String) {
-        TODO("Not yet implemented")
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

@@ -56,7 +56,7 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>) :
                 val crudApi = CrudApi(this@ContactAdapter)
                 val corrutina = launch {
                     if (list[position].haspicture){
-                        var commentPicture = crudApi.getUserImage(list[position].userId, "")
+                        var commentPicture = crudApi.getUserImage(list[position].userId)
                         val body = commentPicture //.body()
                         if (body != null) {
                             // Leer los bytes de la imagen
@@ -100,7 +100,7 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>) :
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
         Toast.makeText(context,"Aviso error", Toast.LENGTH_LONG).show()
     }
 }
