@@ -16,6 +16,7 @@
     <string name="scanned_data" translatable="false">Scanned Data</string>
     <string name="welcome_message">Welcome</string>
     <string name="profile_preferred_genre">Preferred Genre:</string>
-
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

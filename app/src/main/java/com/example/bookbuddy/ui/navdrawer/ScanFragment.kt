@@ -57,9 +57,6 @@ class ScanFragment : Fragment(), ApiErrorListener {
             }
             corroutine.join()
         }
-        //if(exist == null){
-        //    return true
-        //}
         return exist
     }
 
@@ -72,9 +69,6 @@ class ScanFragment : Fragment(), ApiErrorListener {
             }
             corroutine.join()
         }
-        //if(succes == null){
-        //    return false
-        //}
         return succes
     }
 
@@ -97,6 +91,10 @@ class ScanFragment : Fragment(), ApiErrorListener {
                     vibrator.vibrate(200)
                 }
                 if (it.text.length == 13 && it.text.matches(Regex("\\d+"))){
+                    codeScanner.releaseResources()
+                    if (!bookExist(it.text)){
+                        var created = createRequest(it.text)
+                        if (created){
 
                     var a : Boolean? = bookExist(it.text)
 
@@ -109,6 +107,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
                         } else {
                             showSnackBar(requireContext(), requireView(), "Book already requested to add")
                         }
+                        codeScanner.startPreview()
                     } else {
                         val bundle = Bundle()
                         bundle.putString("isbn", it.text)
@@ -119,7 +118,8 @@ class ScanFragment : Fragment(), ApiErrorListener {
                         codeScanner.releaseResources()
                     }
                 } else {
-                    Tools.showSnackBar(requireContext(),requireView(),"This is not a ISBN. Press again to Scan")
+                    codeScanner.startPreview()
+                    showSnackBar(requireContext(),requireView(),"This is not a ISBN. Press again to Scan")
                 }
 
             }
@@ -135,11 +135,10 @@ class ScanFragment : Fragment(), ApiErrorListener {
         IntArray) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                "HUH"
                 isScannerEnabled = true
                 startCamera()
             } else {
-                Tools.showSnackBar(requireContext(), requireView(),"Camera access needed to scan codes")
+                showSnackBar(requireContext(), requireView(),"Camera access needed to scan codes")
                 navController.popBackStack()
             }
         }

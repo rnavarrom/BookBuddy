@@ -209,7 +209,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
 
         updateUserName()
-        // TODO: FIX lateinit property tmpUri has not been initialized
         if (this::tmpUri.isInitialized){
             uploadImage(tmpUri)
         }
@@ -454,8 +453,10 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
 
         if (currentPicture != null){
+            binding.profileImageView.visibility = View.VISIBLE
+            binding.editProfileImageView.visibility = View.INVISIBLE
             Glide.with(requireContext())
-                .load(currentPicture)
+                .load(BitmapFactory.decodeFile(currentPicture!!.absolutePath))
                 .error(R.drawable.defaultpic)
                 .into(binding.profileImageView)
         }
@@ -512,10 +513,10 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             tmpUri = imageUri!!
             // Hacer algo con la imagen seleccionada
             //binding.ivPreviewImage.setImageURI(imageUri)
-            if (imageUri != null) {
-                //uploadImage(imageUri)
-                binding.editProfileImageView.setImageURI(tmpUri)
-            }
+            Glide.with(requireContext())
+                .load(tmpUri)
+                .into(binding.editProfileImageView)
+            //binding.editProfileImageView.setImageURI(tmpUri)
         }
     }
 
@@ -561,6 +562,9 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                         val ru = launch {
                             val response = crudApi.uploadImageToAPI(image, "")
                             if (response != null) {
+                                if (response!!){
+                                    currentUser.haspicture = true
+                                }
                                 val body = response //.body()
                                 if (body != null) {
                                     // Leer los bytes de la imagen

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.navdrawer.adminnav.InsertBookDialog"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_constraintTop_toTopOf="parent"
+            android:titleTextColor="@color/white"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/Theme.BookBuddy.PopupOverlay"
+            android:title="Mi Toolbar" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="20dp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            >
+
+            <TextView
+                android:id="@+id/tv_id"
+                android:text="Id: "
+                android:textSize="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_green"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <TextView
+                android:id="@+id/et_id"
+                android:textSize="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/tv_id"
+                app:layout_constraintStart_toEndOf="@id/tv_id"/>
+
+            <TextView
+                android:id="@+id/tv_isbn"
+                android:text="Isbn: "
+                android:textSize="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_green"
+                android:layout_marginVertical="15dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_id"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                android:id="@+id/et_isbn"
+                android:inputType="number"
+                android:maxLength="13"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/tv_isbn"
+                app:layout_constraintBottom_toBottomOf="@id/tv_isbn"
+                app:layout_constraintStart_toEndOf="@id/tv_isbn"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:text="Title: "
+                android:textSize="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_green"
+                android:layout_marginVertical="15dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_isbn"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                android:id="@+id/et_title"
+                android:inputType="textPersonName"
+                android:maxLength="26"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/tv_title"
+                app:layout_constraintBottom_toBottomOf="@id/tv_title"
+                app:layout_constraintStart_toEndOf="@id/tv_title"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/tv_description"
+                android:text="Description: "
+                android:textSize="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_green"
+                android:layout_marginVertical="15dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                android:id="@+id/et_description"
+                android:maxLines="5"
+                android:inputType="textMultiLine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/tv_description"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+            <TextView
+                android:id="@+id/tv_pages"
+                android:text="Pages: "
+                android:textSize="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_green"
+                android:layout_marginVertical="15dp"
+                app:layout_constraintTop_toBottomOf="@id/et_description"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                android:id="@+id/et_pages"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:maxLength="4"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/tv_pages"
+                app:layout_constraintBottom_toBottomOf="@id/tv_pages"
+                app:layout_constraintStart_toEndOf="@id/tv_pages" />
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:text="Publish date: "
+                android:textSize="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_green"
+                android:layout_marginVertical="15dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_pages"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                android:id="@+id/et_date"
+                android:singleLine="true"
+                android:focusable="false"
+                android:textAlignment="center"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/tv_date"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/tv_date"
+                app:layout_constraintStart_toEndOf="@id/tv_date"/>
+
+            <TextView
+                android:id="@+id/tv_cover"
+                android:text="Cover: "
+                android:textSize="18dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_green"
+                android:layout_marginVertical="15dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_date"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+            <EditText
+                android:id="@+id/et_cover"
+                android:inputType="textUri"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/tv_cover"
+                app:layout_constraintBottom_toBottomOf="@id/tv_cover"
+                app:layout_constraintStart_toEndOf="@id/tv_cover"
+                app:layout_constraintEnd_toStartOf="@id/btn_cover"/>
+
+            <ImageButton
+                android:id="@+id/btn_cover"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/et_cover"
+                app:layout_constraintTop_toTopOf="@id/et_cover"
+                app:layout_constraintBottom_toBottomOf="@id/et_cover"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:src="@drawable/ic_galery"
+                app:tint="@color/primary_green"
+                android:visibility="invisible"/>
+
+            <ImageView
+                android:id="@+id/iv_cover"
+                android:layout_marginTop="20dp"
+                android:layout_width="100dp"
+                android:layout_height="150dp"
+                android:background="@color/black"
+                app:layout_constraintTop_toBottomOf="@id/tv_cover"
+                app:layout_constraintStart_toStartOf="parent"
+                android:scaleType="centerCrop"
+                android:visibility="invisible"/>
+
+            <Button
+                android:id="@+id/btn_references"
+                android:text="References"
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toBottomOf="@id/tv_cover"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:text="CANCEL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/btn_accept"/>
+
+            <Button
+                android:id="@+id/btn_accept"
+                android:text="ACCEPT"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/btn_cancel"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

@@ -49,13 +49,13 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
     var positionReading = 0
     val startingPosition = 0
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
     override fun onBookDisplayClose() {
-        //println(activeFilterText)
-        //println("REFRESH")
+
         val id = navController.currentDestination?.id
         navController.popBackStack(id!!, true)
         navController.navigate(id)
@@ -75,9 +75,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         val homeFragmentId = R.id.nav_home
         val currentFragment =
             requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_nav_drawer)
-        println("ASDASDASDASD")
-        println(homeFragmentId)
-        println(currentFragment)
+
         return currentFragment?.id == homeFragmentId
     }
 
@@ -135,7 +133,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
         binding.refresh.setOnRefreshListener {
             //getUser()
-            //reloadFragment()
+            reloadFragment()
             binding.refresh.isRefreshing = false
         }
         binding.icPendingSearch.setOnClickListener {
@@ -214,15 +212,6 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         return binding.root
     }
 
-    /*
-        override fun onResume() {
-            super.onResume()
-            pendingList = arrayListOf()
-            readedList = arrayListOf()
-            readingList = arrayListOf()
-        }
-
-     */
     fun LoadMoreRead(position: Int) {
         runBlocking {
             val crudApi = CrudApi()

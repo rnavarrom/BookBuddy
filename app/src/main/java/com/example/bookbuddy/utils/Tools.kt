@@ -47,10 +47,8 @@ class Tools {
 
         fun tooglePasswordVisible(editText: EditText){
             if (editText.transformationMethod == PasswordTransformationMethod.getInstance()) {
-                //eyeToggle.setImageResource(R.drawable.ic_eye_visible)
                 editText.transformationMethod = HideReturnsTransformationMethod.getInstance()
             } else {
-                //eyeToggle.setImageResource(R.drawable.ic_eye_hidden)
                 editText.transformationMethod = PasswordTransformationMethod.getInstance()
             }
         }
@@ -61,18 +59,8 @@ class Tools {
             toolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.primary_green)) // Establece el color de fondo de la Toolbar
             toolbar.setTitleTextColor(ContextCompat.getColor(context, R.color.white)) // Establece el color del texto del título
             toolbar.setNavigationOnClickListener(View.OnClickListener { dialogFragment.dismiss() })
-            /*
-            activity.setSupportActionBar(toolbar)
-            activity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-            activity.supportActionBar!!.setHomeAsUpIndicator(R.drawable.baseline_arrow_back_24)
-            toolbar.setBackgroundColor(ContextCompat.getColor(dialogFragment.requireContext(), R.color.primary_green))
-            toolbar.setTitleTextColor(ContextCompat.getColor(dialogFragment.requireContext(), R.color.white))
-            toolbar.setNavigationOnClickListener(View.OnClickListener { dialogFragment.dismiss() })
-            toolbar.title = title
-            */
         }
 
-        //fun setNavigationProfile(context: Context, image: Bitmap?, username: String?){
         fun setNavigationProfile(context: Context, image: File?, username: String?){
             var hView: View = navView.getHeaderView(0)
             if (username != null){
@@ -83,23 +71,11 @@ class Tools {
             if (image != null){
                 if (currentUser.haspicture){
                     var profileImg: ShapeableImageView = hView.findViewById(R.id.profile_imageView)
-                    //profileImg.setImageResource(R.drawable.ic_menu_profile)
 
                     Glide.with(context)
                         .load(BitmapFactory.decodeFile(image.absolutePath))
                         .error(R.drawable.errorimage)
                         .into(profileImg)
-                    //profileImg.setImageURI(Uri.fromFile(image))
-
-                    // Mostrar la imagen en un ImageView usando Glide
-                    /*
-                    profileImg.setImageDrawable(null)
-                    println("ESTOOOOOOOOOOOOOOOOOOOOOOO")
-                    Glide.with(context)
-                        .load(image)
-                        .into(profileImg)
-
-                     */
                 }
             }
         }
@@ -110,7 +86,6 @@ class Tools {
             val bytes = body!!.bytes()
             context.cacheDir.deleteRecursively()
             val file = File(context.cacheDir, currentUser.userId.toString() + "user.jpg")
-
             val outputStream = FileOutputStream(file)
             outputStream.write(bytes)
             outputStream.close()

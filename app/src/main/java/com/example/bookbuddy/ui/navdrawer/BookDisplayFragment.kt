@@ -32,7 +32,7 @@ import kotlin.coroutines.CoroutineContext
 
 
 class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnInitListener,
-    ApiErrorListener {
+    ApiErrorListener, WriteCommentFragment.OnWriteCommentClose, java.io.Serializable {
     lateinit var binding: FragmentBookDisplayBinding
     private var job: Job = Job()
     private var book: Book? = null
@@ -56,10 +56,17 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
             onBookDisplayClose = fragment
         }
     }
+    override fun onWriteCommentClose(isbn: String) {
+        print("CLOSE")
+        val id = navController.currentDestination?.id
+        navController.popBackStack(id!!,true)
+        val bundle = Bundle()
+        bundle.putString("isbn", isbn)
+        navController.navigate(id, bundle)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println("---------------" + currentUser.userId + "-----------------------------------------")
         setStyle(
             DialogFragment.STYLE_NORMAL,
             R.style.FullScreenDialogStyle
@@ -89,15 +96,14 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         tts = TextToSpeech(context, this)
         //val isbn = arguments?.getString("isbn")
         val bundle = requireArguments().getBundle("bundle")
+        // TODO: null pointer from write comment back
         val isbn = bundle!!.getString("isbn")!!
         binding.iconTextToSpeach.setOnClickListener {
             Speak()
         }
 
-        println("HOLA2")
         val fragment = bundle.getSerializable("fragment") as? HomeFragment?
-        if (fragment != null) {
-            println("YES2")
+        if (fragment != null){
             onBookDisplayClose = fragment
         }
 
@@ -121,7 +127,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
                 //getBookMark(book!!.bookId, currentUser.userId)
                 getCommentsNumber(book!!.bookId)
                 getLibraries(isbn)
-
                 if (binding.bookMark != null) {
                     binding.bookMark.setOnClickListener {
                         popup = PopupMenu(context, binding.bookMark)
@@ -175,6 +180,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
                                     }
                                     true
                                 }
+
                                 R.id.read_book -> {
                                     if (readed == null || readed!!.curreading != 2) {
                                         runBlocking {
@@ -323,6 +329,8 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         binding.iconAddComments.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt("bookid", book!!.bookId)
+            bundle.putString("isbn", book!!.isbn)
+            bundle.putSerializable("fragment", this)
             var action = BookDisplayFragmentDirections.actionNavBookDisplayToNavWriteComment(bundle)
             navController.navigate(action)
         }
@@ -340,8 +348,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
             } else {
                 val bundle = Bundle()
                 bundle.putString("isbn", book!!.isbn)
-                val action =
-                    BookDisplayFragmentDirections.actionNavBookDisplayToNavLibrariesList(bundle)
+                val action = BookDisplayFragmentDirections.actionNavBookDisplayToNavLibrariesList(bundle)
                 navController.navigate(action)
             }
         }
@@ -365,6 +372,15 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
                 binding.dBookAuthor.text = binding.dBookAuthor.text.toString() + it.name + "\n"
             }
         }
+
+        binding.dBookAuthor.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt("authorid", book.authors[0].authorId)
+            bundle.putString("name", book.authors[0].name)
+            var action = BookDisplayFragmentDirections.actionNavBookDisplayToNavAuthorBookDialog(bundle)
+            navController.navigate(action)
+        }
+
 
         for (i in book.languages.indices) {
             binding.dBookLanguage.text =
@@ -404,9 +420,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         return response
     }
 
-    /*
-    -----------------------------------------------------------------
-    */
     fun getReaded(bookId: Int): Readed? {
         var response: Readed? = null
         runBlocking {
@@ -436,7 +449,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         super.onDestroy()
         job.cancel()
     }
-
     private fun Speak() {
         if (tts!!.isSpeaking) {
             tts!!.stop()
@@ -448,7 +460,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
             tts!!.speak(textts, TextToSpeech.QUEUE_FLUSH, null, null)
         }
     }
-
     override fun onInit(p0: Int) {
         if (p0 == TextToSpeech.SUCCESS) {
             var output =
@@ -460,7 +471,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
             }
         }
     }
-
     override fun onApiError(errorMessage: String) {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }

@@ -1,9 +1,11 @@
 package com.example.bookbuddy.ui.navdrawer
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +17,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -58,7 +61,7 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
     lateinit var mMap: GoogleMap
 
     val crudAPI = CrudApi()
-
+    var isGpsEnabled = false
     var resp : CleanResponse? = null
 
     lateinit var bundle : Bundle
@@ -77,6 +80,9 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
         binding =  FragmentLibraryMapBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
+        val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+
         setToolBar(this, binding.toolbar, requireContext(), "Map")
 
         bundle = arguments?.getBundle("bundle")!!
@@ -86,20 +92,14 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
             method = bundle.getString("method")
         }
 
-        println("Crash1")
-        println(latitude)
-        println(longitude)
-        println(method)
-
         if (bundle != null) {
             library = bundle.getSerializable("library") as? LibraryExtended
             if (library != null) {
                 loadLibraryBasicInformation(library!!)
             }
         }
-        println("Crash2")
         requestPermissionsMap()
-        println("Crash3")
+
         if (library != null){
             val supportMapFragment = childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
             supportMapFragment!!.getMapAsync(this)
@@ -129,8 +129,7 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        print("ENTRO")
-        if (permissionsGranted){
+        if (permissionsGranted && latitude != null && longitude != null && isGpsEnabled){
             val start = LatLng(latitude!!, longitude!!)
             val end = LatLng(library!!.library.lat, library!!.library.lon)
             mMap = googleMap
@@ -203,7 +202,7 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
                 }
 
                 loadingEnded()
-                mMap!!.animateCamera(
+                mMap.animateCamera(
 
                     CameraUpdateFactory.newLatLngZoom(lib, zoom),
                     2500, null
@@ -295,7 +294,9 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
             ) == PackageManager.PERMISSION_GRANTED)
         ) {
             permissionsGranted = true
-            mMap.isMyLocationEnabled = true
+            if (isGpsEnabled){
+                mMap.isMyLocationEnabled = true
+            }
         }
     }
 
@@ -305,13 +306,12 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
     }
 
     fun loadFragment(){
-        if (!permissionsGranted){
+        if (!permissionsGranted || latitude == null || longitude == null){
             binding.tvLibraryTime.visibility = View.GONE
             binding.tvLibraryDistance.visibility = View.GONE
         }
         val supportMapFragment =
             childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
-        println("CRASHE")
         supportMapFragment!!.getMapAsync(this)
         //loadingEnded()
     }

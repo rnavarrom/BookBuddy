@@ -73,7 +73,7 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
 
     fun loadFragment(){
         launch {
-            if (!permissionsGranted){
+            if (!permissionsGranted || ubi == null){
                 binding.gpscar.visibility = View.INVISIBLE
                 binding.gpswalk.visibility = View.INVISIBLE
             }
@@ -84,16 +84,20 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
 
     fun getLibrariesBook(isbn: String, addAdapter: Boolean){
         runBlocking {
-            val crudApi = CrudApi()
+            val crudApi = CrudApi(null)
             val corrutina = launch {
                 if (position == 0){
                     if (permissionsGranted){
-                        var tmpLibraries = crudApi.getBookLibrariesExtended(isbn, ubi!!.latitude, ubi!!.longitude) as MutableList<LibraryExtended>?
-                        if (tmpLibraries == null){
-                            libraries = mutableListOf()
+                        if (ubi != null){
+                            var tmpLibraries = crudApi.getBookLibrariesExtended(isbn, ubi!!.latitude, ubi!!.longitude) as MutableList<LibraryExtended>?
+                            if (tmpLibraries == null){
+                                libraries = mutableListOf()
+                            } else {
+                                libraries = tmpLibraries
+                            }
                         } else {
-                            libraries = tmpLibraries
-                        }
+                            showSnackBar(requireContext(), requireView(), "Enable gps to unlock all the potential")
+                            libraries = crudApi.getBookLibraries(isbn) as MutableList<LibraryExtended>?}
                     } else {
                         libraries = crudApi.getBookLibraries(isbn) as MutableList<LibraryExtended>?
                     }
@@ -124,9 +128,11 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
             if (selectedLibrary != null){
                 val bundle = Bundle()
                 if (permissionsGranted){
-                    bundle.putDouble("latitude", ubi!!.latitude)
-                    bundle.putDouble("longitude", ubi!!.longitude)
-                    bundle.putString("method", if (gpsCar) "car" else "walking" )
+                    if (ubi != null){
+                        bundle.putDouble("latitude", ubi!!.latitude)
+                        bundle.putDouble("longitude", ubi!!.longitude)
+                        bundle.putString("method", if (gpsCar) "car" else "walking" )
+                    }
                 }
 
                 bundle.putSerializable("library", selectedLibrary)
