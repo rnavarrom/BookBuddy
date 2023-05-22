@@ -1,10 +1,12 @@
 package com.example.bookbuddy.ui.navdrawer
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.snackbar.Snackbar
@@ -24,6 +26,7 @@ import com.example.bookbuddy.databinding.ActivityNavDrawerBinding
 import com.example.bookbuddy.ui.MainActivity
 import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.setNavigationProfile
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 import com.google.android.material.imageview.ShapeableImageView
 import java.io.File
@@ -37,7 +40,25 @@ class NavDrawerActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityNavDrawerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.appBarNavDrawer.toolbar)
+
         if (currentProfile.authorId == null && currentProfile.genreId == null){
+            val builder = MaterialAlertDialogBuilder(this)
+            builder.setTitle("Preferences")
+                .setMessage("Remember you can change your preferences in your profile")
+                .setPositiveButton("Accept") { dialog, _ ->
+                    // Acciones a realizar al hacer clic en "Aceptar"
+                    dialog.dismiss()
+                }
+                .show()
+            /*
             val builder = AlertDialog.Builder(applicationContext)
             builder.setTitle("Preferences")
             builder.setMessage("Remember you can change your preferences in your profile")
@@ -47,17 +68,8 @@ class NavDrawerActivity : AppCompatActivity() {
             }
             val dialog = builder.create()
             dialog.show()
+            */
         }
-    }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        binding = ActivityNavDrawerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        setSupportActionBar(binding.appBarNavDrawer.toolbar)
-
-
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         navView = binding.navView

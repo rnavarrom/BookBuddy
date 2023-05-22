@@ -2,20 +2,23 @@ package com.example.bookbuddy.ui
 
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.preference.PreferenceManager
+import android.text.InputType
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.lifecycleScope
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.Utils.Sha
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.api.CrudApi
@@ -26,12 +29,16 @@ import com.example.bookbuddy.ui.navdrawer.NavDrawerActivity
 import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.responseToFile
 import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 //import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import okhttp3.logging.HttpLoggingInterceptor
-import java.util.Locale
+import java.util.*
+import javax.mail.*
+import javax.mail.internet.InternetAddress
+import javax.mail.internet.MimeMessage
 
 class MainActivity : AppCompatActivity(), ApiErrorListener {
     private lateinit var binding: ActivityMainBinding
@@ -154,7 +161,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
             savedUser = userPrefs.userCredentialsFlow.first().first
             savedPassword = userPrefs.userCredentialsFlow.first().second
 
-            if (!savedUser.isNullOrBlank() && !savedPassword.isNullOrBlank()) {
+            if (savedUser.isNotBlank() && savedPassword.isNotBlank()) {
                 loadingEndedHome()
             } else {
                 loadingEndedLogin()
@@ -163,15 +170,91 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
         var userName = intent.getStringExtra("userName")
         binding.MAEditUser.setText(userName)
 
+        binding.passwordForgor.setOnClickListener {
+            /*
+            val builder = AlertDialog.Builder(applicationContext)
+            val editText = EditText(applicationContext)
+            editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
+            builder.setTitle("Email")
+            editText.hint = "Email"
 
+            builder.setView(editText)
+
+            builder.setPositiveButton("Ok") { dialog, which ->
+                // Handle "Buscar" button click here
+                var email = editText.text.toString()
+                if (Tools.isEmailValid(email)){
+                    println("TRUE")
+                    /*
+                    var password = generateRandomPassword(10)
+                    var sha = Sha.calculateSHA(password)
+                    println(password)
+                    sendEmail("fenix6rafa@gmail.com")
+                    */
+                }
+
+
+            }
+
+            builder.setNegativeButton("Cancel") { dialog, which ->
+                dialog.cancel()
+            }
+
+            builder.setOnCancelListener(DialogInterface.OnCancelListener {
+                // Handle cancel action here
+                // This will be triggered when the dialog is canceled
+            })
+
+            val dialog = builder.create()
+            dialog.show()
+
+            editText.postDelayed({
+                editText.requestFocus()
+                val imm = applicationContext?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
+            }, 200)
+            */
+            val builder = MaterialAlertDialogBuilder(this)
+            builder.setTitle("Recover password")
+                .setView(R.layout.dialog_layout) // Aquí asignamos el diseño personalizado del diálogo que contiene el EditText
+                .setPositiveButton("Accept") { dialog, _ ->
+                    // Acciones a realizar al hacer clic en "Aceptar"
+                    val dialogView = builder.create().findViewById<View>(R.id.dialog_layout)
+                    val editText = dialogView!!.findViewById<EditText>(R.id.editText)
+                    val inputValue = editText.text.toString()
+
+                    var email = inputValue
+                    if (Tools.isEmailValid(email)){
+                        println("TRUE")
+                        var emailAviable : Boolean? = isEmailAviable(email)
+                        if (emailAviable != null){
+                            var password = generateRandomPassword(10)
+                            sendEmail(email, Sha.calculateSHA(password))
+                        } else {
+                            Tools.showSnackBar(applicationContext, binding.activityMain, "Email not exist")
+                        }
+                        /*
+
+                        */
+                    } else {
+                        Tools.showSnackBar(applicationContext, binding.activityMain, "Email is not correct")
+                    }
+
+                    // Realizar acciones con el valor ingresado en el EditText
+                    //dialog.dismiss()
+                }
+                .show()
+        }
 
         binding.MAButtonLogin.setOnClickListener {
+            // Hide keyboard to change fragment
+            val inputMethodManager = applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(binding.MAButtonLogin.windowToken, 0)
+
             var userName = binding.MAEditUser.text.toString()
             var userPassword = binding.MAEditPassword.text.toString()
             if (userName.isNotBlank() && userPassword.isNotBlank()) {
-
                 getUsers(userName, Sha.calculateSHA(userPassword))
-                //print("---------------" + currentUser.userId)
                 if (currentUser.userId != -1 || currentUser.userId == null) {
                     if (binding.MACheckBox.isChecked) {
                         val username = "usuario"
@@ -222,6 +305,53 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
                 }
             }
         })
+    }
+
+    fun isEmailAviable(email: String): Boolean? {
+        var response : Boolean? = false
+        runBlocking {
+            val crudApi = CrudApi(this@MainActivity)
+            val corrutina = launch {
+                response = crudApi.getEmailExists(email, "Email already exists")
+            }
+            corrutina.join()
+        }
+        return response!!
+    }
+
+    fun generateRandomPassword(length: Int): String {
+        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9') + listOf('!', '@', '#', '$', '%', '&', '*')
+        return (1..length)
+            .map { allowedChars.random() }
+            .joinToString("")
+    }
+
+    private fun sendEmail(email: String, password: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val properties = Properties()
+            properties["mail.smtp.host"] = "smtp.gmail.com"
+            properties["mail.smtp.port"] = "587"
+            properties["mail.smtp.auth"] = "true"
+            properties["mail.smtp.starttls.enable"] = "true"
+
+            val session = Session.getInstance(properties, object : Authenticator() {
+                override fun getPasswordAuthentication(): PasswordAuthentication {
+                    return PasswordAuthentication("bookbuddyinfo2023@gmail.com", "iqqvymaokpfdukci")
+                }
+            })
+
+            try {
+                val message = MimeMessage(session)
+                message.setFrom(InternetAddress("bookbuddyinfo2023@gmail.com"))
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email))
+                message.subject = "BookBuddy Password recovery"
+                message.setText("New password: " + password + ". When u enter in the app change immediately the password in profile")
+                Transport.send(message)
+                println("Correo enviado exitosamente")
+            } catch (e: MessagingException) {
+                println("Error al enviar el correo: ${e.message}")
+            }
+        }
     }
 
     override fun onApiError(errorMessage: String) {
