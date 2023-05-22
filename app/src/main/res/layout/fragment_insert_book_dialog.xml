@@ -190,7 +190,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:src="@drawable/ic_galery"
                 app:tint="@color/primary_green"
-                android:visibility="invisible"/>
+                android:visibility="visible"/>
 
             <ImageView
                 android:id="@+id/iv_cover"
@@ -201,7 +201,7 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_cover"
                 app:layout_constraintStart_toStartOf="parent"
                 android:scaleType="centerCrop"
-                android:visibility="invisible"/>
+                android:visibility="visible"/>
 
             <Button
                 android:id="@+id/btn_references"

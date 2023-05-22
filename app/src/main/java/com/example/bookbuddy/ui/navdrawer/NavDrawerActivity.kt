@@ -35,14 +35,8 @@ class NavDrawerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNavDrawerBinding
     private lateinit var userPrefs: UserPreferences
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        binding = ActivityNavDrawerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        setSupportActionBar(binding.appBarNavDrawer.toolbar)
-
+    override fun onStart() {
+        super.onStart()
         if (currentProfile.authorId == null && currentProfile.genreId == null){
             val builder = AlertDialog.Builder(applicationContext)
             builder.setTitle("Preferences")
@@ -54,6 +48,16 @@ class NavDrawerActivity : AppCompatActivity() {
             val dialog = builder.create()
             dialog.show()
         }
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityNavDrawerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        setSupportActionBar(binding.appBarNavDrawer.toolbar)
+
+
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         navView = binding.navView

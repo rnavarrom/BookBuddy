@@ -133,7 +133,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
         binding.refresh.setOnRefreshListener {
             //getUser()
-            reloadFragment()
+            //reloadFragment()
             binding.refresh.isRefreshing = false
         }
         binding.icPendingSearch.setOnClickListener {

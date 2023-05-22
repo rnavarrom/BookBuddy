@@ -560,11 +560,9 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     val crudApi = CrudApi(this@ProfileFragment)
                     runBlocking {
                         val ru = launch {
-                            val response = crudApi.uploadImageToAPI(image, "")
+                            val response = crudApi.uploadImageToAPI(false, image, "")
                             if (response != null) {
-                                if (response!!){
-                                    currentUser.haspicture = true
-                                }
+                                currentUser.haspicture = true
                                 val body = response //.body()
                                 if (body != null) {
                                     // Leer los bytes de la imagen

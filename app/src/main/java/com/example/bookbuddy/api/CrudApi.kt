@@ -722,7 +722,7 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
 
     suspend fun getUserImage(userId: Int, errorMessage: String): ResponseBody? {
         return safeApiCall(
-            apiCall = { getRetrofit().create(ImageAPI::class.java).getImage(userId) },
+            apiCall = { getRetrofit().create(ImageAPI::class.java).getUserImage(userId) },
             errorListener = errorListener!!,
             errorMessage = errorMessage
         )

@@ -80,8 +80,8 @@ class Tools {
             }
         }
 
-        fun responseToFile(context: Context, response: Response<ResponseBody>){
-            val body = response.body()
+        fun responseToFile(context: Context, response: ResponseBody? ){
+            val body = response//.body()
             // Leer los bytes de la imagen
             val bytes = body!!.bytes()
             context.cacheDir.deleteRecursively()

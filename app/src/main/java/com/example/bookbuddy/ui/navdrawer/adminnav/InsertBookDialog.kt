@@ -211,7 +211,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             runBlocking {
                 var api = CrudApi(this@InsertBookDialog)
                 var coroutine = launch {
-                    isbnExist = api.getBookExist(isbn)
+                    isbnExist = api.getBookExist(isbn, "")!!
                 }
                 coroutine.join()
             }

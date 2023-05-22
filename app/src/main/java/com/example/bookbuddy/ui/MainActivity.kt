@@ -250,7 +250,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
                         currentProfile = tempData
                     }
                     if (currentUser.haspicture) {
-                        responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId))
+                        responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId, ""))
                     }
                 }
                 corrutina.join()
