@@ -1,5 +1,7 @@
 package com.example.bookbuddy.api
 
+import com.example.bookbuddy.models.Language
+import com.example.bookbuddy.models.LibraryExtended
 import com.example.bookbuddy.models.Profile
 import com.example.bookbuddy.models.Test.Author
 import com.example.bookbuddy.models.Test.Genre
@@ -20,6 +22,12 @@ interface ProfileAPI {
 
     @GET("/api/profile/search/authors/{name}/{position}")
     suspend fun getSearchAuthors(@Path("name") name: String, @Path("position") position: Int): Response<List<Author>>
+
+    @GET("/api/profile/search/languages/{name}/{position}")
+    suspend fun getSearchLanguages(@Path("name") name: String, @Path("position") position: Int): Response<List<Language>>
+
+    @GET("/api/profile/search/libraries/{name}/{position}")
+    suspend fun getSearchLibraries(@Path("name") name: String, @Path("position") position: Int): Response<List<LibraryExtended>>
 
     @POST("/api/profile/{genreid}/{authorid}/{userid}")
     suspend fun insertProfile(@Path("genreid") genreId: Int, @Path("authorid") authorId: Int, @Path("userid") userId: Int): Response<Profile>

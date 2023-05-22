@@ -41,6 +41,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
     private var filterReadIsOn: Boolean = false
     private var activeFilterText: String = ""
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -124,11 +125,11 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         CallAdapterPending(pendingList as ArrayList<Pending>)
         CallAdapterReaded(readedList as ArrayList<Pending>)
 
-        if(pendingList.isEmpty())
+        if(pendingList.isNullOrEmpty())
             LoadMorePending(0)
-        if(readedList.isEmpty())
+        if(readedList.isNullOrEmpty())
             LoadMoreRead(0)
-        if(readingList.isEmpty())
+        if(readingList.isNullOrEmpty())
             LoadMoreReading(0)
 
         binding.refresh.setOnRefreshListener {
@@ -347,7 +348,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                         ""
                     ) as MutableList<Pending>
                 }else{
-                    pendingList.addAll(crudApi.filterPendingBook(
+                    pendingList!!.addAll(crudApi.filterPendingBook(
                         currentUser.userId,
                         filter,
                         position,
@@ -372,7 +373,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                             ""
                         ) as MutableList<Pending>
                 }else{
-                    readedList.addAll(crudApi.filterReadBook(
+                    readedList!!.addAll(crudApi.filterReadBook(
                         currentUser.userId,
                         filter,
                         position,

@@ -1,5 +1,6 @@
 package com.example.bookbuddy.utils.base
 
+import org.json.JSONObject
 import retrofit2.Response
 import java.net.ConnectException
 import java.net.SocketTimeoutException
@@ -18,6 +19,16 @@ suspend fun <T> safeApiCall(
         val response = apiCall.invoke()
         if (response.isSuccessful) {
             return response.body()
+        } else if (response.code() == 400) {
+            // La respuesta es un BadRequest (código de estado 400)
+
+            println("CRASH")
+
+            val errorBody = response.errorBody()?.string().toString()
+            errorListener.onApiError(errorBody)
+
+            // Hacer algo con el mensaje de error
+            return null
         } else {
             //val errorResponse = response.errorBody()?.string()
             //errorListener.onApiError("Error fetching data: $errorResponse")

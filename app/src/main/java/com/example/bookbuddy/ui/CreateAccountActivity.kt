@@ -65,17 +65,16 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
                 currentUserCreate = UserItem()
                 getValues()
 
-            var success = postUser(currentUserCreate)
-            if (success) {
-                Toast.makeText(this, "Acount created!", Toast.LENGTH_LONG).show()
-                var intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("userName", currentUser.name)
-                startActivity(intent)
-                finish()
-            } else {
-                Toast.makeText(this, "Acount not created!", Toast.LENGTH_LONG).show()
-            }
-
+                var success = postUser(currentUserCreate)
+                if (success) {
+                    Toast.makeText(this, "Acount created!", Toast.LENGTH_LONG).show()
+                    var intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("userName", currentUser.name)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Toast.makeText(this, "Acount not created!", Toast.LENGTH_LONG).show()
+                }
             }
         }
 

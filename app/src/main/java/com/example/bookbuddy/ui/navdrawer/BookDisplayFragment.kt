@@ -85,15 +85,14 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         tts = TextToSpeech(context, this)
         //val isbn = arguments?.getString("isbn")
         val bundle = requireArguments().getBundle("bundle")
+        // TODO: null pointer from write comment back
         val isbn = bundle!!.getString("isbn")!!
         binding.iconTextToSpeach.setOnClickListener {
             Speak()
         }
 
-        println("HOLA2")
         val fragment = bundle.getSerializable("fragment") as? HomeFragment?
         if (fragment != null){
-            println("YES2")
             onBookDisplayClose = fragment
         }
 
@@ -348,8 +347,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
             } else {
                 val bundle = Bundle()
                 bundle.putString("isbn", book!!.isbn)
-                val action =
-                    BookDisplayFragmentDirections.actionNavBookDisplayToNavLibrariesList(bundle)
+                val action = BookDisplayFragmentDirections.actionNavBookDisplayToNavLibrariesList(bundle)
                 navController.navigate(action)
             }
         }
@@ -373,6 +371,15 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
                 binding.dBookAuthor.text = binding.dBookAuthor.text.toString() + it.name + "\n"
             }
         }
+
+        binding.dBookAuthor.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt("authorid", book.authors[0].authorId)
+            bundle.putString("name", book.authors[0].name)
+            var action = BookDisplayFragmentDirections.actionNavBookDisplayToNavAuthorBookDialog(bundle)
+            navController.navigate(action)
+        }
+
 
         for (i in book.languages.indices) {
             binding.dBookLanguage.text =

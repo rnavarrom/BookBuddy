@@ -14,6 +14,7 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.lifecycleScope
+import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.Utils.Sha
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
@@ -88,22 +89,13 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
         return code
     }
 
-    fun bytesToMacAddress(macBytes: ByteArray): String {
-        val macBuilder = StringBuilder()
-        for (byte in macBytes) {
-            macBuilder.append(String.format("%02X:", byte))
-        }
-        if (macBuilder.isNotEmpty()) {
-            macBuilder.deleteCharAt(macBuilder.length - 1)
-        }
-        return macBuilder.toString()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         setContentView(binding.root)
+
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY)
 
         var currentLanguageCode = getStoredLanguage()
         var curr = getCurrentLanguageCode(currentLanguageCode)
@@ -133,7 +125,12 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
                             saveLanguageCode(applicationContext,"es")
                         }
                     }
-                    recreate()
+                    //recreate()
+                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                    finish()
                 }
 
             }
@@ -145,9 +142,12 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
         if (!currentLanguageChanged){
             currentLanguageChanged = true
             setLocal(this@MainActivity, currentLanguageCode)
-            recreate()
+            //recreate()
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
         }
-
 
         userPrefs = UserPreferences(this)
         lifecycleScope.launch {
@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
         var userName = intent.getStringExtra("userName")
         binding.MAEditUser.setText(userName)
 
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+
 
         binding.MAButtonLogin.setOnClickListener {
             var userName = binding.MAEditUser.text.toString()
@@ -248,9 +248,9 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
                     var tempData = crudApi.getProfileUser(currentUser.userId, "Error Getting Profile")
                     if(tempData != null){
                         currentProfile = tempData
-                        if (currentUser.haspicture) {
-                            responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId))
-                        }
+                    }
+                    if (currentUser.haspicture) {
+                        responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId))
                     }
                 }
                 corrutina.join()

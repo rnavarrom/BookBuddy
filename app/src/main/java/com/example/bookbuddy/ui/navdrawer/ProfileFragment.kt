@@ -43,11 +43,13 @@ import kotlin.coroutines.CoroutineContext
 import com.bumptech.glide.request.transition.Transition
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreSearchCompleteListener, ProfileAuthorDialog.OnAuthorSearchCompleteListener {
+class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreSearchCompleteListener, ProfileAuthorDialog.OnAuthorSearchCompleteListener,
+    ApiErrorListener{
     lateinit var binding: FragmentProfileBinding
     private var job: Job = Job()
 
@@ -207,7 +209,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
 
         updateUserName()
-        // TODO: FIX lateinit property tmpUri has not been initialized
         if (this::tmpUri.isInitialized){
             uploadImage(tmpUri)
         }
@@ -259,9 +260,9 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             if (!binding.tvUsername.text.toString().equals(binding.etUsername.text.toString())){
                 var userName = binding.etUsername.text.toString().trim()
                 runBlocking {
-                    var crudApi = CrudApi()
+                    var crudApi = CrudApi(this@ProfileFragment)
                     var corroutine = launch {
-                        if (!crudApi.getUserExists(userName, "")!!){
+                        if (crudApi.getUserExists(userName, "")!!){
                             crudApi.updateUserName(currentUser.userId, userName)
                             Tools.setNavigationProfile(requireContext(), null, userName)
                             binding.tvUsername.setText(binding.etUsername.text.toString())
@@ -441,8 +442,11 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
 
         if (currentPicture != null){
+            println("HOLA")
+            binding.profileImageView.visibility = View.VISIBLE
+            binding.editProfileImageView.visibility = View.INVISIBLE
             Glide.with(requireContext())
-                .load(currentPicture)
+                .load(BitmapFactory.decodeFile(currentPicture!!.absolutePath))
                 .error(R.drawable.defaultpic)
                 .into(binding.profileImageView)
         }
@@ -499,10 +503,10 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             tmpUri = imageUri!!
             // Hacer algo con la imagen seleccionada
             //binding.ivPreviewImage.setImageURI(imageUri)
-            if (imageUri != null) {
-                //uploadImage(imageUri)
-                binding.editProfileImageView.setImageURI(tmpUri)
-            }
+            Glide.with(requireContext())
+                .load(tmpUri)
+                .into(binding.editProfileImageView)
+            //binding.editProfileImageView.setImageURI(tmpUri)
         }
     }
 
@@ -543,10 +547,16 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
                     val image = MultipartBody.Part.createFormData("image", currentUser.userId.toString() + "user.jpg", requestFile)
 
-                    val crudApi = CrudApi()
+                    val crudApi = CrudApi(this@ProfileFragment)
                     runBlocking {
                         val ru = launch {
-                            val response = crudApi.uploadImageToAPI(image)
+                            if (!currentUser.haspicture){
+                                val res = crudApi.updateProfilePic(currentUser.userId, "error")
+                                if (res!!){
+                                    currentUser.haspicture = true
+                                }
+                            }
+                            val response = crudApi.uploadImageToAPI(false, image)
                             if (response.isSuccessful) {
                                 val body = response.body()
                                 if (body != null) {
@@ -652,5 +662,9 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    override fun onApiError(errorMessage: String) {
+        TODO("Not yet implemented")
     }
 }

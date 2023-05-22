@@ -79,7 +79,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:background="@drawable/bg_button_standby"
-                android:src="@drawable/ic_search_icon"/>
+                android:src="@drawable/ic_search_icon"
+                app:tint="@color/black"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

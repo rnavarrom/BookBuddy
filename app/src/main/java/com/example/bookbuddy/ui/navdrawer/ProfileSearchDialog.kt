@@ -25,9 +25,8 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope {
     //var searchResultList: ArrayList<Genre> = arrayListOf()
     private lateinit var adapter: SearchGenresAdapter
 
-    var currentPage = 0
     private var position = 0
-    var isLoading = false
+    private var lastPosition = -1
     var genres: MutableList<Genre>? = null
 
     public var onGenreSearchCompleteListener: OnGenreSearchCompleteListener? = null
@@ -88,12 +87,13 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope {
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-                if (!isLoading && lastVisibleItem == totalItemCount - 1 && dy >= 0) {
+                if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        println("LOADING MORE")
-                        isLoading = true
-                        loadMoreItems()
+                        if (lastPosition != totalItemCount){
+                            loadMoreItems()
+                        }
+                        lastPosition = totalItemCount
                     }
                 }
             }
@@ -113,7 +113,7 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope {
 
                 if(genres!!.isNotEmpty()){
                     position = 0
-                    isLoading = false
+                    lastPosition = -1
                     binding.rvSearch.layoutManager = LinearLayoutManager(context)
                     adapter = SearchGenresAdapter(this, onGenreSearchCompleteListener, genres as java.util.ArrayList<Genre>)
                     binding.rvSearch.adapter = adapter
@@ -128,7 +128,6 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope {
     }
 
     private fun loadMoreItems() {
-        currentPage++
         runBlocking {
             val crudApi = CrudApi()
             val corrutina = launch {
@@ -137,7 +136,6 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope {
             corrutina.join()
         }
         adapter.updateList(genres as ArrayList<Genre>)
-        isLoading = false
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

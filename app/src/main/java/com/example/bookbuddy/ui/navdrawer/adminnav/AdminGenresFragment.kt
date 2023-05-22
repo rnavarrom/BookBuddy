@@ -3,28 +3,23 @@ package com.example.bookbuddy.ui.navdrawer.adminnav
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.InputType
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
 import com.example.bookbuddy.adapters.AdminGenresAdapter
-import com.example.bookbuddy.adapters.LibraryAdapter
-import com.example.bookbuddy.adapters.RecommendedBooksAdapter
 import com.example.bookbuddy.api.CrudApi
-import com.example.bookbuddy.databinding.FragmentAdminBinding
 import com.example.bookbuddy.databinding.FragmentAdminGenresBinding
-import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Genre
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
-import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -66,6 +61,7 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         val builder = AlertDialog.Builder(requireContext())
         var positiveText = ""
         val editText = EditText(requireContext())
+        editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
         when(type){
             0 -> {
                 positiveText = "Insert"
@@ -101,6 +97,7 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 2 -> {
                     search = editText.text.toString().trim()
                     position = 0
+                    lastPosition = -1
                     getGenres(false)
                 }
             }
@@ -236,6 +233,7 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
             position = 0
+            lastPosition = -1
             getGenres(false)
             binding.mainContent.isRefreshing = false;
         });

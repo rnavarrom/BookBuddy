@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -21,12 +22,8 @@ import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.databinding.ActivityNavDrawerBinding
 import com.example.bookbuddy.ui.MainActivity
-import com.example.bookbuddy.utils.UserPreferences
+import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.setNavigationProfile
-import com.example.bookbuddy.utils.currentPicture
-import com.example.bookbuddy.utils.currentUser
-import com.example.bookbuddy.utils.navController
-import com.example.bookbuddy.utils.navView
 import kotlinx.coroutines.launch
 import com.google.android.material.imageview.ShapeableImageView
 import java.io.File
@@ -46,12 +43,24 @@ class NavDrawerActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarNavDrawer.toolbar)
 
+        if (currentProfile.authorId == null && currentProfile.genreId == null){
+            val builder = AlertDialog.Builder(applicationContext)
+            builder.setTitle("Preferences")
+            builder.setMessage("Remember you can change your preferences in your profile")
+            builder.setPositiveButton("Accept") { dialog, _ ->
+                // Acciones a realizar al hacer clic en "Aceptar"
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.show()
+        }
 
         val drawerLayout: DrawerLayout = binding.drawerLayout
         navView = binding.navView
         navController = findNavController(R.id.nav_host_fragment_content_nav_drawer)
 
         binding.navLogOut.setOnClickListener {
+            currentPicture = null
             userPrefs = UserPreferences(this)
             var intent = Intent(this, MainActivity::class.java)
             lifecycleScope.launch {
@@ -61,11 +70,7 @@ class NavDrawerActivity : AppCompatActivity() {
             }
         }
 
-        //val drawerLayout = navView.parent as DrawerLayout
-        //drawerLayout.closeDrawers()
-        //navController.navigate(R.id.nav_settings)
         setNavigationProfile(applicationContext, currentPicture, currentUser.name)
-        //setNavigationProfile(applicationContext, BitmapFactory.decodeFile(currentPicture!!.absolutePath), currentUser.name)
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.

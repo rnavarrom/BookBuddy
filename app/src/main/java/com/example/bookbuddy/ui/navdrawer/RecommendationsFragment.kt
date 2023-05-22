@@ -25,10 +25,8 @@ class RecommendationsFragment : Fragment(), CoroutineScope {
     private var job: Job = Job()
     lateinit var adapter: RecommendedBooksAdapter
 
-    var currentPage = 0
     private var position = 0
     private var lastPosition = -1
-    var isLoading = false
     var books: MutableList<Book>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +79,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope {
 
         binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
             position = 0
-            currentPage = 0
+            lastPosition = -1
             getUserRecommended(false)
             binding.mainContent.isRefreshing = false;
         });
@@ -94,14 +92,13 @@ class RecommendationsFragment : Fragment(), CoroutineScope {
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-                if (!isLoading && lastVisibleItem == totalItemCount - 1 && dy >= 0) {
+                if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
                         if (lastPosition != totalItemCount){
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
-                        isLoading = true
                     }
                 }
             }
@@ -109,11 +106,9 @@ class RecommendationsFragment : Fragment(), CoroutineScope {
     }
 
     private fun loadMoreItems() {
-        currentPage++
         binding.loadingRecommended.visibility = View.VISIBLE
         getUserRecommended(false)
         binding.loadingRecommended.visibility = View.GONE
-        isLoading = false
     }
 
     override fun onDestroyView() {

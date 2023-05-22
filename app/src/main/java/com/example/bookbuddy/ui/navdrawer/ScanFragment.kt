@@ -88,7 +88,7 @@ class ScanFragment : Fragment() {
                     vibrator.vibrate(200)
                 }
                 if (it.text.length == 13 && it.text.matches(Regex("\\d+"))){
-
+                    codeScanner.releaseResources()
                     if (!bookExist(it.text)){
                         var created = createRequest(it.text)
                         if (created){
@@ -96,6 +96,7 @@ class ScanFragment : Fragment() {
                         } else {
                             showSnackBar(requireContext(), requireView(), "Book already requested to add")
                         }
+                        codeScanner.startPreview()
                     } else {
                         val bundle = Bundle()
                         bundle.putString("isbn", it.text)
@@ -106,7 +107,8 @@ class ScanFragment : Fragment() {
                         codeScanner.releaseResources()
                     }
                 } else {
-                    Tools.showSnackBar(requireContext(),requireView(),"This is not a ISBN. Press again to Scan")
+                    codeScanner.startPreview()
+                    showSnackBar(requireContext(),requireView(),"This is not a ISBN. Press again to Scan")
                 }
 
             }
@@ -122,11 +124,10 @@ class ScanFragment : Fragment() {
         IntArray) {
         if (requestCode == REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                "HUH"
                 isScannerEnabled = true
                 startCamera()
             } else {
-                Tools.showSnackBar(requireContext(), requireView(),"Camera access needed to scan codes")
+                showSnackBar(requireContext(), requireView(),"Camera access needed to scan codes")
                 navController.popBackStack()
             }
         }

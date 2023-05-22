@@ -5,7 +5,7 @@ data class User(
     val isadmin: Boolean = false,
     var name: String = "",
     val pending: List<Pending> = emptyList(),
-    val haspicture: Boolean = false,
+    var haspicture: Boolean = false,
     val readed: List<Pending> = emptyList(),
     val userId: Int = -1
 )

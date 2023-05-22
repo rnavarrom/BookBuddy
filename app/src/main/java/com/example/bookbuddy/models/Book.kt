@@ -1,5 +1,7 @@
 package com.example.bookbuddy.models
 
+import java.io.Serializable
+
 data class Book(
     val authors: List<Author>,
     val bookId: Int,
@@ -11,5 +13,6 @@ data class Book(
     val pages: Int,
     val publicationDate: String,
     val rating: Double,
-    val title: String
-)
+    val title: String,
+    var cardview: Int = 0
+) : Serializable

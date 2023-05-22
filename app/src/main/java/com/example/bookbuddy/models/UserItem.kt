@@ -5,7 +5,7 @@ import java.time.LocalDate
 data class UserItem(
     val bannedUsers: List<Any> = emptyList(),
     val comments: List<Any> = emptyList(),
-    val creationDate: LocalDate? = null,
+    val creationDate: String? = null,
     val followUserfolloweds: List<Any> = emptyList(),
     val followUsers: List<Any> = emptyList(),
     val isadmin: Boolean = false,

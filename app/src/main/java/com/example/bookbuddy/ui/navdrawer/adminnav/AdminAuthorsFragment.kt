@@ -3,6 +3,7 @@ package com.example.bookbuddy.ui.navdrawer.adminnav
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.InputType
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -66,6 +67,7 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         val builder = AlertDialog.Builder(requireContext())
         var positiveText = ""
         val editText = EditText(requireContext())
+        editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
         when(type){
             0 -> {
                 positiveText = "Insert"
@@ -101,6 +103,7 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 2 -> {
                     search = editText.text.toString().trim()
                     position = 0
+                    lastPosition = -1
                     getAuthors(false)
                 }
             }
@@ -236,6 +239,7 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
             position = 0
+            lastPosition = -1
             getAuthors(false)
             binding.mainContent.isRefreshing = false;
         });

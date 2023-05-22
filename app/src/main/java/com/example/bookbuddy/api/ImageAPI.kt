@@ -10,13 +10,12 @@ import java.io.File
 interface ImageAPI {
 
     @GET("/api/images/{userid}")
-    suspend fun getImage(@Path("userid") userId: Int): Response<ResponseBody>
+    suspend fun getUserImage(@Path("userid") userId: Int): Response<ResponseBody>
 
     @Multipart
-    @POST("/api/images/")
-    suspend fun uploadImage(@Part image: MultipartBody.Part): Response<ResponseBody>
+    @POST("/api/images/{iscover}")
+    suspend fun uploadImage(@Path("iscover") iscover: Boolean, @Part image: MultipartBody.Part): Response<ResponseBody>
 
     @POST("/api/images/")
     suspend fun insertImage(@Body image: File): Response<File>
-
 }
