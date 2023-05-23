@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/Search_view"
         app:layout_constraintBottom_toTopOf="@id/Text_Result"
-        android:visibility="visible"
+        android:visibility="gone"
         android:paddingBottom="0dp"
         >
         <EditText
