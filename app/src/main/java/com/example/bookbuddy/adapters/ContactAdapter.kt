@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.models.UserItem
@@ -70,6 +71,7 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>) :
 
                             // Mostrar la imagen en un ImageView usando Glide
                             Glide.with(context)
+                                .setDefaultRequestOptions(profileRequestOptions)
                                 .load(BitmapFactory.decodeFile(file.absolutePath))
                                 .into(holder.profilePicture)
                         }

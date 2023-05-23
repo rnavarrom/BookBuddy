@@ -49,13 +49,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
     var positionReading = 0
     val startingPosition = 0
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onBookDisplayClose() {
-
         val id = navController.currentDestination?.id
         navController.popBackStack(id!!, true)
         navController.navigate(id)
@@ -69,14 +63,37 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         LoadMoreRead(startingPosition)
         readingList = arrayListOf()
         LoadMoreReading(startingPosition)
+
+        emptyReading()
+        emptyPending()
+        emptyReaded()
     }
 
-    private fun isHomeFragment(): Boolean {
-        val homeFragmentId = R.id.nav_home
-        val currentFragment =
-            requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_nav_drawer)
+    fun emptyReading(){
+        if (readingList.isEmpty()){
+            binding.emptyReading.text = "No reading Books"
+            binding.emptyReading.visibility = View.VISIBLE
+        } else {
+            binding.emptyReading.visibility = View.GONE
+        }
+    }
 
-        return currentFragment?.id == homeFragmentId
+    fun emptyPending(){
+        if (pendingList.isEmpty()){
+            binding.emptyPending.text = "No pending Books"
+            binding.emptyPending.visibility = View.VISIBLE
+        } else {
+            binding.emptyPending.visibility = View.GONE
+        }
+    }
+
+    fun emptyReaded(){
+        if (readedList.isEmpty()){
+            binding.emptyReaded.text = "No readed Books"
+            binding.emptyReaded.visibility = View.VISIBLE
+        } else {
+            binding.emptyReaded.visibility = View.GONE
+        }
     }
 
 
@@ -179,7 +196,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                     recyclerView.post {
                         positionPending = totalItemCount
                         if (lastPositionPending != totalItemCount) {
-                            if (!activeFilterText.isNullOrBlank()) {
+                            if (!activeFilterText.isBlank()) {
                                 filterPendingBooks(activeFilterText, positionPending)
                             } else {
                                 LoadMorePending(positionPending)

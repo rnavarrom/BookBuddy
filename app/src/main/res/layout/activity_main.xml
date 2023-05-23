@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity"
-    android:background="@drawable/gradient2"
     android:id="@+id/activity_Main"
     >
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,7 +15,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="20dp"
+        android:background="@color/primary_green"
         android:visibility="visible"
         >
         <Spinner
@@ -26,131 +25,156 @@
             android:spinnerMode="dropdown"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:id="@+id/MA_Image"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/logonobg"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/welcome_message"
-        android:textColor="#4CAF50"
-        android:id="@+id/MA_Text1"
-        app:layout_constraintTop_toBottomOf="@+id/MA_Image"
-        app:layout_constraintBottom_toTopOf="@+id/MA_Edit_User"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:textSize="20sp"
-        android:layout_marginBottom="20dp"
-        />
-    <TextView
-        android:id="@+id/MA_Text2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/MA_Text1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/MA_Edit_User"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="Test"
-        android:textSize="16sp"
-        android:textColor="#4CAF50"
-         />
-    <EditText
-        android:id="@+id/MA_Edit_User"
-        android:inputType="textPersonName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginVertical="20dp"
-        app:layout_constraintTop_toBottomOf="@id/MA_Text2"
-        app:layout_constraintBottom_toTopOf="@+id/MA_Edit_Password"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:hint="User Name"
-        android:drawableStart="@drawable/ic_register_user"
-        android:drawablePadding="10dp"
-        android:drawableTint="@color/primary_green"
-        android:maxLength="22"
-        />
-    <EditText
-        android:id="@+id/MA_Edit_Password"
-        android:inputType="textPassword"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="50dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/MA_Edit_User"
-        app:layout_constraintBottom_toTopOf="@+id/MA_Button_Login"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:hint="Password"
-        android:drawableStart="@drawable/ic_register_password"
-        android:drawablePadding="10dp"
-        android:drawableTint="@color/primary_green"
-        android:maxLength="22"
-        />
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/password_toggle"
-        android:src="@drawable/ic_password_toggle"
-        app:layout_constraintTop_toTopOf="@+id/MA_Edit_Password"
-        app:layout_constraintEnd_toEndOf="@+id/MA_Edit_Password"
-        android:layout_marginTop="10dp"
-        />
-    <CheckBox
-        android:id="@+id/MA_CheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Auto login"
-        app:layout_constraintTop_toBottomOf="@+id/MA_Edit_Password"
-        app:layout_constraintEnd_toEndOf="@+id/MA_Edit_Password"
-        android:layout_marginBottom="10dp"
-        />
-
-        <TextView
-            android:id="@+id/password_forgor"
-            android:text="I FOROGOR MY PASSOWRD"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/MA_Button_Login"
+        <ImageView
+            android:layout_marginTop="20dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:id="@+id/MA_Image"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:padding="20dp"/>
+            android:src="@drawable/logonobg"
+            />
 
-    <Button
-        android:id="@+id/MA_Button_Login"
-        android:layout_width="match_parent"
-        android:layout_marginHorizontal="40dp"
-        android:layout_marginTop="30dp"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/MA_Edit_Password"
-        app:layout_constraintBottom_toTopOf="@id/MA_Button_SignIn"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="Log In"
-        android:background="@drawable/rounded_corners"
-        />
-    <Button
-        android:id="@+id/MA_Button_SignIn"
-        android:layout_marginHorizontal="40dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:text="Sign In"
-        app:layout_constraintTop_toBottomOf="@+id/MA_Button_Login"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginVertical="20dp"
-        android:background="@drawable/rounded_corners"
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BookBuddy"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:layout_marginTop="10dp"
+            android:id="@+id/MA_Text1"
+            app:layout_constraintTop_toBottomOf="@+id/MA_Image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textSize="20sp"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLine"
+            app:layout_constraintGuide_percent=".35"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/aa"
+            app:layout_constraintTop_toBottomOf="@id/guideLine"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="@color/white"
+            android:paddingHorizontal="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:id="@+id/MA_Text2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/MA_Edit_User"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="Login"
+                    android:textSize="16sp"
+                    android:textColor="#4CAF50"
+                    />
+                <EditText
+                    android:id="@+id/MA_Edit_User"
+                    android:inputType="textPersonName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginVertical="20dp"
+                    app:layout_constraintTop_toBottomOf="@id/MA_Text2"
+                    app:layout_constraintBottom_toTopOf="@+id/MA_Edit_Password"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:hint="User Name"
+                    android:drawableStart="@drawable/ic_register_user"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/primary_green"
+                    android:maxLength="22"
+                    />
+                <EditText
+                    android:id="@+id/MA_Edit_Password"
+                    android:inputType="textPassword"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginBottom="50dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/MA_Edit_User"
+                    app:layout_constraintBottom_toTopOf="@+id/MA_Button_Login"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:hint="Password"
+                    android:drawableStart="@drawable/ic_register_password"
+                    android:drawablePadding="10dp"
+                    android:drawableTint="@color/primary_green"
+                    android:maxLength="22"
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/password_toggle"
+                    android:src="@drawable/ic_password_toggle"
+                    app:layout_constraintTop_toTopOf="@+id/MA_Edit_Password"
+                    app:layout_constraintEnd_toEndOf="@+id/MA_Edit_Password"
+                    android:layout_marginTop="10dp"
+                    />
+                <CheckBox
+                    android:id="@+id/MA_CheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Auto login"
+                    app:layout_constraintTop_toBottomOf="@+id/MA_Edit_Password"
+                    app:layout_constraintEnd_toEndOf="@+id/MA_Edit_Password"
+                    android:layout_marginBottom="10dp"
+                    />
+
+                <TextView
+                    android:id="@+id/password_forgor"
+                    android:text="Forgot password?"
+                    android:textColor="@color/primary_green"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toTopOf="@id/MA_Button_Login"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:padding="20dp"/>
+
+                <Button
+                    android:id="@+id/MA_Button_Login"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="40dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/MA_Edit_Password"
+                    app:layout_constraintBottom_toTopOf="@id/MA_Button_SignIn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="Log In"
+                    android:background="@drawable/rounded_corners"
+                    />
+                <Button
+                    android:id="@+id/MA_Button_SignIn"
+                    android:layout_marginHorizontal="40dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="Sign In"
+                    app:layout_constraintTop_toBottomOf="@+id/MA_Button_Login"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginVertical="20dp"
+                    android:background="@drawable/rounded_corners"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentInsertBookDialogBinding
 import com.example.bookbuddy.databinding.FragmentInsertLibraryDialogBinding
@@ -279,6 +280,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             tmpUri = imageUri!!
 
             Glide.with(requireContext())
+                .setDefaultRequestOptions(bookRequestOptions)
                 .load(tmpUri)
                 .into(binding.ivCover)
         }

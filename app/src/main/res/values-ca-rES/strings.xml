@@ -2,4 +2,5 @@
 <resources>
     <string name="welcome_message">Benvingut</string>
     <string name="profile_preferred_genre">Genere preferit:</string>
+    <string name="actual_book">Llibre Actual</string>
 </resources>

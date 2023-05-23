@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
@@ -52,7 +53,7 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
         context = parent.context
         var vh: ViewHolder? = null
         vh = ViewHolder(layout.inflate(R.layout.cardview_books_reading, parent, false))
-        return vh!!
+        return vh
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -65,12 +66,15 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
 
          */
         //println(llista[position].pages.toString())
-        holder.pagesReaded.setText(llista[position].pagesReaded.toString())
-        holder.pagesTotal.setText(llista[position].pages.toString())
+        holder.pagesReaded.text = llista[position].pagesReaded.toString()
+        holder.pagesTotal.text = llista[position].pages.toString()
         var percent = MakePercent(llista[position].pagesReaded, llista[position].pages)
-        holder.percentage.setText(percent.toString())
+        holder.percentage.text = percent.toString()
         holder.progressbar.progress = percent
-        Glide.with(holder.vista.context).load(llista[position].cover).into(holder.imatge)
+        Glide.with(holder.vista.context)
+            .setDefaultRequestOptions(bookRequestOptions)
+            .load(llista[position].cover)
+            .into(holder.imatge)
 
         holder.linearLayout.setOnClickListener {
             ChangeReaded(context, layout, position, holder)
@@ -111,7 +115,7 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
                 var valueint = Integer.parseInt(editText.text.toString())
             if(valueint == llista[position].pages){
                 llista[position].pagesReaded = Integer.parseInt(editText.text.toString())
-                holder.pagesReaded.setText(llista[position].pagesReaded.toString())
+                holder.pagesReaded.text = llista[position].pagesReaded.toString()
                 var percent =
                     MakePercent(Integer.parseInt(editText.text.toString()), llista[position].pages)
                 holder.progressbar.progress = percent
@@ -122,7 +126,7 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
                 reloadFragment(fragment)
             }else if ( valueint < llista[position].pages) {
                 llista[position].pagesReaded = Integer.parseInt(editText.text.toString())
-                holder.pagesReaded.setText(llista[position].pagesReaded.toString())
+                holder.pagesReaded.text = llista[position].pagesReaded.toString()
                 var percent =
                     MakePercent(Integer.parseInt(editText.text.toString()), llista[position].pages)
                 holder.progressbar.progress = percent
@@ -167,10 +171,10 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
         Toast.makeText(context, "Reloading fragment", Toast.LENGTH_LONG).show()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            fragment.parentFragmentManager.beginTransaction().detach(fragment).commitNow();
-            fragment.parentFragmentManager.beginTransaction().attach(fragment).commitNow();
+            fragment.parentFragmentManager.beginTransaction().detach(fragment).commitNow()
+            fragment.parentFragmentManager.beginTransaction().attach(fragment).commitNow()
         } else {
-            fragment.parentFragmentManager.beginTransaction().detach(fragment).attach(fragment).commit();
+            fragment.parentFragmentManager.beginTransaction().detach(fragment).attach(fragment).commit()
         }
     }
     fun getUser(){

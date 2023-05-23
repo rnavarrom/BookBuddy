@@ -126,6 +126,13 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         )
     }
 
+    suspend fun updateUserPassword(email: String, password: String): Boolean? {
+        return safeApiCall(
+            apiCall = { getRetrofit().create(BookAPI::class.java).updateUserPassword(email, password) },
+            errorListener = errorListener!!
+        )
+    }
+
     suspend fun updateUserName(id: Int, name: String): Boolean? {
         return safeApiCall(
             apiCall = { getRetrofit().create(BookAPI::class.java).updateUserName(id, name) },

@@ -28,6 +28,9 @@ interface BookAPI {
     @PUT("/api/user/pic/{id}")
     suspend fun updateProfilePic(@Path("id") userId: Int): Response<Boolean>
 
+    @PUT("/api/user/password/{email}/{password}")
+    suspend fun updateUserPassword(@Path("email") email: String, @Path("password") password: String): Response<Boolean>
+
     @GET("/api/user/requests/{position}")
     suspend fun getRequests(@Path("position") position: Int): Response<List<BookRequest>>
     @DELETE("/api/user/request/{id}")

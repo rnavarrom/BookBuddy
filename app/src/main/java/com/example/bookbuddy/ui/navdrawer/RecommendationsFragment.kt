@@ -46,10 +46,8 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
-        launch {
-            getUserRecommended(true)
-            loadingEnded()
-        }
+        getUserRecommended(true)
+        loadingEnded()
 
         return binding.root
     }
@@ -84,7 +82,17 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     }
 
+    fun emptyBooks(){
+        if (books == null || books!!.isEmpty()){
+            binding.emptyActivity.text = "No recommended books"
+            binding.emptyActivity.visibility = View.VISIBLE
+        } else {
+            binding.emptyActivity.visibility = View.GONE
+        }
+    }
+
     fun loadingEnded(){
+        emptyBooks()
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -92,13 +100,13 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             position = 0
             lastPosition = -1
             getUserRecommended(false)
+            emptyBooks()
             binding.mainContent.isRefreshing = false;
         });
 
         binding.rvRecommended.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-
                 val layoutManager = recyclerView.layoutManager as GridLayoutManager
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()

@@ -30,14 +30,11 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
     lateinit var adapter: ContactAdapter
 
+    val api = CrudApi(this@ContactsFragment)
 
-    var currentPage = 0
     private var position = 0
-    var isLoading = false
+    private var lastPosition = -1
     var follows: MutableList<UserItem>? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,32 +45,38 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
-        launch {
-            getUserFollows(true)
-            loadingEnded()
-        }
+        getUserFollows(true)
+        loadingEnded()
 
         return binding.root
     }
 
+    fun emptyContacts(){
+        if (follows == null || follows!!.isEmpty()){
+            binding.emptyActivity.text = "No contacts"
+            binding.emptyActivity.visibility = View.VISIBLE
+        } else {
+            binding.emptyActivity.visibility = View.GONE
+        }
+    }
+
     fun getUserFollows(addAdapter: Boolean){
         runBlocking {
-            val crudApi = CrudApi(this@ContactsFragment)
             val corrutina = launch {
                 if (position == 0){
-                    var tempFollows = crudApi.getFollowersProfile(currentUser.userId, position) as MutableList<UserItem>?
+                    val tempFollows = api.getFollowersProfile(currentUser.userId, position) as MutableList<UserItem>?
                     if (tempFollows != null){
                         follows = tempFollows
                     }
                 } else {
-                    var tempFollows = crudApi.getFollowersProfile(currentUser.userId, position)
+                    val tempFollows = api.getFollowersProfile(currentUser.userId, position)
                     if(tempFollows != null){
                         follows!!.addAll(tempFollows as MutableList<UserItem>)
                     }
                 }
                 if(follows == null){
 
-                }else if (addAdapter!!){
+                }else if (addAdapter){
                     binding.rvContacts.layoutManager = LinearLayoutManager(context)
                     adapter = ContactAdapter(follows as ArrayList<UserItem>)
                     binding.rvContacts.adapter = adapter
@@ -87,13 +90,15 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     fun loadingEnded(){
+        emptyContacts()
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
         binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
             position = 0
-            currentPage = 0
+            lastPosition = -1
             getUserFollows(false)
+            emptyContacts()
             binding.mainContent.isRefreshing = false;
         });
 
@@ -105,12 +110,13 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-                if (!isLoading && lastVisibleItem == totalItemCount - 1 && dy >= 0) {
+                if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        println("LOADING MORE")
-                        isLoading = true
-                        loadMoreItems()
+                        if (lastPosition != totalItemCount){
+                            loadMoreItems()
+                        }
+                        lastPosition = totalItemCount
                     }
                 }
             }
@@ -118,11 +124,9 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     private fun loadMoreItems() {
-        currentPage++
         binding.loadingContacts.visibility = View.VISIBLE
         getUserFollows(false)
         binding.loadingContacts.visibility = View.GONE
-        isLoading = false
     }
 
     override fun onDestroyView() {

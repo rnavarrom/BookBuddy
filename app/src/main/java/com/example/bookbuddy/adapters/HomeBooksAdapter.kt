@@ -10,6 +10,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
@@ -35,8 +36,8 @@ class HomeBooksAdapter(var llista: ArrayList<Pending>, fragment: HomeFragment) :
 
         //holder.text.setText(llista[position].rating.toString())
         Glide.with(holder.vista.context)
+            .setDefaultRequestOptions(bookRequestOptions)
             .load(llista[position].cover)
-            .error(R.drawable.errorimage)
             .into(holder.imatge)
 
         holder.vista.setOnClickListener {

@@ -18,5 +18,6 @@
     <string name="profile_preferred_genre">Preferred Genre:</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="actual_book">Actual Book</string>
 
 </resources>

@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.models.UserItem
@@ -33,7 +34,11 @@ class RecommendedBooksAdapter(var list: ArrayList<Book>) : RecyclerView.Adapter<
         return vh!!
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Glide.with(holder.vista.context).load(list[position].cover).into(holder.imatge)
+        Glide.with(holder.vista.context)
+            .setDefaultRequestOptions(bookRequestOptions)
+            .load(list[position].cover)
+            .into(holder.imatge)
+
         holder.bookrating.text = list[position].rating.toString()
         holder.vista.setOnClickListener {
             val bundle = Bundle()

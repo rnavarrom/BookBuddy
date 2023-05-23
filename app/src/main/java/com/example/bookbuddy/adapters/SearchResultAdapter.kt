@@ -14,6 +14,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
+import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.models.SimpleBook
 import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.ui.navdrawer.*
@@ -38,7 +40,10 @@ class SearchResultAdapter(var llista: ArrayList<SimpleBook>) : RecyclerView.Adap
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
         holder.text.setText(llista[position].rating.toString())
-        Glide.with(holder.vista.context).load(llista[position].cover).into(holder.imatge)
+        Glide.with(holder.vista.context)
+            .setDefaultRequestOptions(bookRequestOptions)
+            .load(llista[position].cover)
+            .into(holder.imatge)
 
         holder.vista.setOnClickListener{
             /*

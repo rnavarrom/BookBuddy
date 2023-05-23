@@ -42,6 +42,8 @@ import java.io.FileOutputStream
 import kotlin.coroutines.CoroutineContext
 import com.bumptech.glide.request.transition.Transition
 import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
+import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
@@ -175,8 +177,8 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
 
         Glide.with(this)
+            .setDefaultRequestOptions(profileRequestOptions)
             .load(binding.profileImageView.drawable)
-            .error(R.drawable.defaultpic)
             .into(binding.editProfileImageView)
         //binding.editProfileImageView.setImageDrawable()
 
@@ -456,8 +458,8 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             binding.profileImageView.visibility = View.VISIBLE
             binding.editProfileImageView.visibility = View.INVISIBLE
             Glide.with(requireContext())
+                .setDefaultRequestOptions(profileRequestOptions)
                 .load(BitmapFactory.decodeFile(currentPicture!!.absolutePath))
-                .error(R.drawable.defaultpic)
                 .into(binding.profileImageView)
         }
     }
@@ -514,6 +516,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             // Hacer algo con la imagen seleccionada
             //binding.ivPreviewImage.setImageURI(imageUri)
             Glide.with(requireContext())
+                .setDefaultRequestOptions(profileRequestOptions)
                 .load(tmpUri)
                 .into(binding.editProfileImageView)
             //binding.editProfileImageView.setImageURI(tmpUri)
@@ -577,8 +580,8 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                                     currentPicture = file
 
                                     Glide.with(requireContext())
+                                        .setDefaultRequestOptions(profileRequestOptions)
                                         .load(BitmapFactory.decodeFile(file.absolutePath))
-                                        .error(R.drawable.errorimage)
                                         .into(binding.profileImageView)
 
                                     Tools.setNavigationProfile(requireContext(), file, null)

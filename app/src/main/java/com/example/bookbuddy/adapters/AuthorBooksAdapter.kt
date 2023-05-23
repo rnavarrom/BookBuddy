@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.models.UserItem
@@ -33,7 +34,10 @@ class AuthorBooksAdapter(var list: ArrayList<Book>) : RecyclerView.Adapter<Autho
         return vh!!
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Glide.with(holder.vista.context).load(list[position].cover).error(R.drawable.errorimage).into(holder.imatge)
+        Glide.with(holder.vista.context)
+            .setDefaultRequestOptions(bookRequestOptions)
+            .load(list[position].cover)
+            .into(holder.imatge)
 
         holder.vista.setOnClickListener {
             val bundle = Bundle()

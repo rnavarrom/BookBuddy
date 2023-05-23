@@ -215,27 +215,27 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
             }, 200)
             */
             val builder = MaterialAlertDialogBuilder(this)
+            /*
+            val dialogView = layoutInflater.inflate(R.layout.dialog_layout, binding.activityMain)
+            val editText = dialogView.findViewById<EditText>(R.id.editText)
+             */
+            val editText = EditText(applicationContext)
+            editText.hint = "Type here"
             builder.setTitle("Recover password")
-                .setView(R.layout.dialog_layout) // Aquí asignamos el diseño personalizado del diálogo que contiene el EditText
+                .setView(editText) // Aquí asignamos el diseño personalizado del diálogo que contiene el EditText
                 .setPositiveButton("Accept") { dialog, _ ->
                     // Acciones a realizar al hacer clic en "Aceptar"
-                    val dialogView = builder.create().findViewById<View>(R.id.dialog_layout)
-                    val editText = dialogView!!.findViewById<EditText>(R.id.editText)
                     val inputValue = editText.text.toString()
-
                     var email = inputValue
                     if (Tools.isEmailValid(email)){
-                        println("TRUE")
                         var emailAviable : Boolean? = isEmailAviable(email)
                         if (emailAviable != null){
                             var password = generateRandomPassword(10)
-                            sendEmail(email, Sha.calculateSHA(password))
+                            var shaPassword = Sha.calculateSHA(password)
+                            sendEmail(email, shaPassword, password)
                         } else {
                             Tools.showSnackBar(applicationContext, binding.activityMain, "Email not exist")
                         }
-                        /*
-
-                        */
                     } else {
                         Tools.showSnackBar(applicationContext, binding.activityMain, "Email is not correct")
                     }
@@ -312,7 +312,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
         runBlocking {
             val crudApi = CrudApi(this@MainActivity)
             val corrutina = launch {
-                response = crudApi.getEmailExists(email, "Email already exists")
+                response = crudApi.getEmailExists(email)
             }
             corrutina.join()
         }
@@ -320,41 +320,48 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     fun generateRandomPassword(length: Int): String {
-        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9') + listOf('!', '@', '#', '$', '%', '&', '*')
+        val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
         return (1..length)
             .map { allowedChars.random() }
             .joinToString("")
     }
 
-    private fun sendEmail(email: String, password: String) {
+    private fun sendEmail(email: String, shaPassword: String, password: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val properties = Properties()
-            properties["mail.smtp.host"] = "smtp.gmail.com"
-            properties["mail.smtp.port"] = "587"
-            properties["mail.smtp.auth"] = "true"
-            properties["mail.smtp.starttls.enable"] = "true"
+            var api = CrudApi(this@MainActivity)
+            var result = api.updateUserPassword(email, shaPassword)
 
-            val session = Session.getInstance(properties, object : Authenticator() {
-                override fun getPasswordAuthentication(): PasswordAuthentication {
-                    return PasswordAuthentication("bookbuddyinfo2023@gmail.com", "iqqvymaokpfdukci")
+            if (result != null && result){
+                val properties = Properties()
+                properties["mail.smtp.host"] = "smtp.gmail.com"
+                properties["mail.smtp.port"] = "587"
+                properties["mail.smtp.auth"] = "true"
+                properties["mail.smtp.starttls.enable"] = "true"
+
+                val session = Session.getInstance(properties, object : Authenticator() {
+                    override fun getPasswordAuthentication(): PasswordAuthentication {
+                        return PasswordAuthentication("bookbuddyinfo2023@gmail.com", "iqqvymaokpfdukci")
+                    }
+                })
+
+                try {
+                    val message = MimeMessage(session)
+                    message.setFrom(InternetAddress("bookbuddyinfo2023@gmail.com"))
+                    message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email))
+                    message.subject = "BookBuddy Password recovery"
+                    message.setText("New password: " + password + ". When u enter in the app change immediately the password in profile")
+                    Transport.send(message)
+                    Tools.showSnackBar(applicationContext, binding.activityMain, "Email sended")
+                } catch (e: MessagingException) {
+                    Tools.showSnackBar(applicationContext, binding.activityMain, "Error sending email, try again")
                 }
-            })
-
-            try {
-                val message = MimeMessage(session)
-                message.setFrom(InternetAddress("bookbuddyinfo2023@gmail.com"))
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email))
-                message.subject = "BookBuddy Password recovery"
-                message.setText("New password: " + password + ". When u enter in the app change immediately the password in profile")
-                Transport.send(message)
-                println("Correo enviado exitosamente")
-            } catch (e: MessagingException) {
-                println("Error al enviar el correo: ${e.message}")
+            } else {
+                Tools.showSnackBar(applicationContext, binding.activityMain, "Error password")
             }
         }
     }
 
-    override fun onApiError(errorMessage: String) {
+    override fun onApiError() {
         Tools.showSnackBar(this, binding.activityMain, "Can't reach the server. Try again!")
     }
 

@@ -27,12 +27,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
-                android:text="Actual Book"
+                android:text="@string/actual_book"
                 android:textColor="@color/primary_green"
                 android:textSize="25sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toEndOf="@id/ic_actual"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/empty_reading"
+                android:text="No reading books"
+                android:textColor="@color/primary_green"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/refresh1"
+                app:layout_constraintBottom_toBottomOf="@id/refresh1"
+                android:visibility="gone"/>
+
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:id="@+id/refresh1"
                 android:layout_width="match_parent"
@@ -86,6 +100,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/refresh1"
                 app:tint="@color/primary_green" />
+
+            <TextView
+                android:id="@+id/empty_pending"
+                android:text="No pending books"
+                android:textColor="@color/primary_green"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/refresh2"
+                app:layout_constraintBottom_toBottomOf="@id/refresh2"
+                android:visibility="gone"/>
 
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:id="@+id/refresh2"
@@ -143,6 +170,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/refresh2"
                 app:tint="@color/primary_green" />
+
+            <TextView
+                android:id="@+id/empty_readed"
+                android:text="No readed books"
+                android:textColor="@color/primary_green"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/refresh3"
+                app:layout_constraintBottom_toBottomOf="@id/refresh3"
+                android:visibility="gone"/>
 
             <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
                 android:id="@+id/refresh3"

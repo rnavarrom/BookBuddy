@@ -10,6 +10,7 @@ import androidx.navigation.NavDirections
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Readed
@@ -38,7 +39,10 @@ class ProfileBookMarkAdapter(var list: java.util.ArrayList<Readed>, val isProfil
     }
 
     override fun onBindViewHolder(holder: viewholder, position: Int) {
-        Glide.with(holder.view.context).load(list[position].book!!.cover).into(holder.bookCover)
+        Glide.with(holder.view.context)
+            .setDefaultRequestOptions(bookRequestOptions)
+            .load(list[position].book!!.cover)
+            .into(holder.bookCover)
 
         holder.view.setOnClickListener{
             val bundle = Bundle()

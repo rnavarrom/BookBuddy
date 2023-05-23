@@ -1,16 +1,7 @@
 package com.example.bookbuddy.Utils
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Context.WIFI_SERVICE
-import android.net.wifi.WifiManager
-import android.util.Log
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.InetAddress
-import java.net.NetworkInterface
-import java.net.SocketException
-import java.util.*
+import com.bumptech.glide.request.RequestOptions
+import com.example.bookbuddy.R
 
 class Constants {
     companion object{
@@ -22,5 +13,12 @@ class Constants {
         //const val BASE_URL = "https://192.168.1.52:7137/"
 
         const val ErrrorMessage = "Can't reach the server. Try again!"
+        val bookRequestOptions = RequestOptions()
+            .placeholder(R.drawable.book_placeholder)
+            .error(R.drawable.book_placeholder)
+
+        val profileRequestOptions = RequestOptions()
+            .placeholder(R.drawable.default_picture) // ID del recurso del placeholder
+            .error(R.drawable.default_picture)
     }
 }

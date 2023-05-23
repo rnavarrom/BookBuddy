@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.adapters.GenreAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentBookDisplayBinding
@@ -353,8 +354,8 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
     fun setBook(book: Book?) {
         try {
             Glide.with(requireActivity().applicationContext)
+                .setDefaultRequestOptions(bookRequestOptions)
                 .load(book?.cover)
-                .error(R.drawable.ic_error)
                 .into(binding.dBookCover)
         } catch (e: Exception) {
             println(e)

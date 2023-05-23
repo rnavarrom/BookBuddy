@@ -16,7 +16,7 @@
         android:contentDescription="@string/nav_header_desc"
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/defaultpic"
+        app:srcCompat="@drawable/default_picture"
         app:shapeAppearance="@style/CircleImageViewStyle"
         app:layout_constraintBottom_toTopOf="@id/profile_name"
         app:layout_constraintStart_toStartOf="parent"
