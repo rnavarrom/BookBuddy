@@ -1,16 +1,14 @@
 package com.example.bookbuddy.ui.navdrawer
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.RecommendedBooksAdapter
@@ -32,17 +30,13 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var lastPosition = -1
     var books: MutableList<Book>? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentRecommendationsBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
@@ -52,11 +46,11 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         return binding.root
     }
 
-    fun getUserRecommended(addAdapter: Boolean){
+    private fun getUserRecommended(addAdapter: Boolean){
         runBlocking {            
             val corrutina = launch {
                 if (position == 0) {
-                    var tempBooks = api.getRecommendedBooks(
+                    val tempBooks = api.getRecommendedBooks(
                         currentUser.userId,
                         position
                     ) as MutableList<Book>?
@@ -64,9 +58,9 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                         books = tempBooks
                     }
                 } else {
-                    var tempBooks = api.getRecommendedBooks(currentUser.userId, position)
+                    val tempBooks = api.getRecommendedBooks(currentUser.userId, position)
                     if (tempBooks != null) {
-                        books!!.addAll(tempBooks as MutableList<Book>)!!
+                        books!!.addAll(tempBooks as MutableList<Book>)
                     }
                 }
                 if (books != null) { //addAdapter == null ||
@@ -84,7 +78,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     }
 
-    fun emptyBooks(){
+    private fun emptyBooks(){
         if (books == null || books!!.isEmpty()){
             binding.emptyActivity.text = "No recommended books"
             binding.emptyActivity.visibility = View.VISIBLE
@@ -98,13 +92,13 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
-        binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
+        binding.mainContent.setOnRefreshListener {
             position = 0
             lastPosition = -1
             getUserRecommended(false)
             emptyBooks()
-            binding.mainContent.isRefreshing = false;
-        });
+            binding.mainContent.isRefreshing = false
+        }
 
         binding.rvRecommended.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

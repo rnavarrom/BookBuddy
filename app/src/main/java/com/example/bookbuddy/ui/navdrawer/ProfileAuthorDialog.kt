@@ -1,11 +1,13 @@
 package com.example.bookbuddy.ui.navdrawer
 
-import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,14 +34,14 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private var lastPosition = -1
     var authors: MutableList<Author>? = null
 
-    public var onAuthorSearchCompleteListener: OnAuthorSearchCompleteListener? = null
-    public interface OnAuthorSearchCompleteListener {
+    var onAuthorSearchCompleteListener: OnAuthorSearchCompleteListener? = null
+    interface OnAuthorSearchCompleteListener {
         fun onAuthorSearchComplete(result: Int, name: String)
     }
 
     override fun onResume() {
         super.onResume()
-        binding.searchThings?.postDelayed({
+        binding.searchThings.postDelayed({
             binding.searchThings.requestFocus()
             val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(binding.searchThings, InputMethodManager.SHOW_IMPLICIT)
@@ -81,7 +83,7 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentProfileSearchAuthorDialogBinding.inflate(layoutInflater, container, false)
 
         binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -112,7 +114,7 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
-                var searchValue = binding.searchThings.text.toString()
+                val searchValue = binding.searchThings.text.toString()
 
                 performSearch(searchValue)
 
@@ -136,7 +138,7 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         runBlocking {
             
             val corrutina = launch {
-                var tempAuthors= api.getSearchAuthors(binding.searchThings.text.toString(), position)
+                val tempAuthors= api.getSearchAuthors(binding.searchThings.text.toString(), position)
                 if(tempAuthors != null){
                     authors!!.addAll(tempAuthors as MutableList<Author>)
                 }
@@ -146,16 +148,11 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         adapter.updateList(authors as ArrayList<Author>)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
-        return super.onCreateDialog(savedInstanceState)
-    }
-
     private fun performSearch(searchValue: String) {
-        authors = mutableListOf<Author>()
+        authors = mutableListOf()
         runBlocking {            
             val corrutina = launch {
-                var tempAuthors = api.getSearchAuthors(searchValue, position)
+                val tempAuthors = api.getSearchAuthors(searchValue, position)
                 if(tempAuthors != null){
                     authors = tempAuthors as MutableList<Author>
                 }

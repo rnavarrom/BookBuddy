@@ -1,8 +1,6 @@
 package com.example.bookbuddy.ui.navdrawer
 
-import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -13,11 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.api.CrudApi
@@ -27,7 +22,6 @@ import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
-import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -39,28 +33,24 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     private var isbn: String = ""
     private var comment: Comment? = null
     private var maxCharactersComment: Int = 300
-    val api = CrudApi(this@WriteCommentFragment)
+    private val api = CrudApi(this@WriteCommentFragment)
 
-    public var onWriteCommentClose: OnWriteCommentClose? = null
-    public interface OnWriteCommentClose {
+    private var onWriteCommentClose: OnWriteCommentClose? = null
+    interface OnWriteCommentClose {
         fun onWriteCommentClose(isbn: String)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
-            DialogFragment.STYLE_NORMAL,
+            STYLE_NORMAL,
             R.style.FullScreenDialogStyle
-        );
-    }
-
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return super.onCreateDialog(savedInstanceState)
+        )
     }
 
     override fun onResume() {
         super.onResume()
-        binding.etWriteComment?.postDelayed({
+        binding.etWriteComment.postDelayed({
             binding.etWriteComment.requestFocus()
             val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(binding.etWriteComment, InputMethodManager.SHOW_IMPLICIT)
@@ -70,7 +60,7 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentWriteCommentBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
@@ -92,7 +82,7 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         return binding.root
     }
 
-    fun loadComment(){
+    private fun loadComment(){
         runBlocking {            
             val corrutina = launch {
                 comment = api.getCommentsFromUser(currentUser.userId, bookId)
@@ -117,7 +107,7 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 binding.wordCounter.text = s!!.length.toString() + "/" + maxCharactersComment.toString()
-                if (s!!.length == maxCharactersComment){
+                if (s.length == maxCharactersComment){
                     binding.etWriteComment.background = ContextCompat.getDrawable(requireContext(), R.drawable.edit_text_border_comment_max)
                 } else {
                     binding.etWriteComment.background = ContextCompat.getDrawable(requireContext(), R.drawable.edit_text_border_comment)
@@ -133,16 +123,18 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         }
     }
 
-    fun insertComment(){
-        var text = binding.etWriteComment.text.toString()
-        var stars = binding.ratingWrite.rating.toInt()
-        if (!text.isNullOrEmpty()){
+    private fun insertComment(){
+        val text = binding.etWriteComment.text.toString()
+        val stars = binding.ratingWrite.rating.toInt()
+        if (text.isNotEmpty()){
             runBlocking {                
                 val corrutina = launch {
                     if (comment != null){
-                        api.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser.userId, bookId!!)
+                        api.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser.userId,
+                            bookId
+                        )
                     } else {
-                        api.addCommentToAPI(text, stars, currentUser.userId, bookId!!)
+                        api.addCommentToAPI(text, stars, currentUser.userId, bookId)
                     }
                 }
                 corrutina.join()
@@ -152,10 +144,6 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         }
     }
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

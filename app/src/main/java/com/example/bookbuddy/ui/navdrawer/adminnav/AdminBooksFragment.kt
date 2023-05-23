@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.AdminBooksAdapter
@@ -41,8 +40,7 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private lateinit var searchItem: MenuItem
 
     private var search: String? = null
-    private var bookName: String? = null
-
+    private val api = CrudApi(this@AdminBooksFragment)
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)
         gMenu = menu
@@ -63,16 +61,15 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun showCustomDialog() {
         //type 0 -> insert, 1 -> edit, 2 -> search
         val builder = AlertDialog.Builder(requireContext())
-        var positiveText = ""
         val editText = EditText(requireContext())
         editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
-        positiveText = "Search"
+        val positiveText = "Search"
         builder.setTitle("Search book")
         editText.hint = "Search book"
 
         builder.setView(editText)
 
-        builder.setPositiveButton(positiveText) { dialog, which ->
+        builder.setPositiveButton(positiveText) { _, _ ->
             // Handle "Buscar" button click here
             search = editText.text.toString().trim()
             position = 0
@@ -80,15 +77,10 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             getBooks(false)
         }
 
-        builder.setNegativeButton("Cancel") { dialog, which ->
+        builder.setNegativeButton("Cancel") { dialog, _ ->
             // Handle "Cancelar" button click here
             dialog.cancel()
         }
-
-        builder.setOnCancelListener(DialogInterface.OnCancelListener {
-            // Handle cancel action here
-            // This will be triggered when the dialog is canceled
-        })
 
         val dialog = builder.create()
         dialog.show()
@@ -100,8 +92,8 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }, 200)
     }
 
-    fun insertBook(){
-        var fra = requireArguments().getSerializable("fragment") as? AdminFragment?
+    private fun insertBook(){
+        val fra = requireArguments().getSerializable("fragment") as? AdminFragment?
 
         if (fra != null){
             println("OKS")
@@ -110,25 +102,25 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         val bundle = Bundle()
         //bundle.putSerializable("fragment", arguments?.getSerializable("fragment") as? AdminFragment?)
         bundle.putSerializable("fragment", fra)
-        //var action = AdminLibrariesFragmentDirections.actionNavBookToNavInsertBook(bundle)
-        var action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
+        //val action = AdminLibrariesFragmentDirections.actionNavBookToNavInsertBook(bundle)
+        val action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
         navController.navigate(action)
     }
 
-    fun editBook(book: Book){
-        var fra = requireArguments().getSerializable("fragment") as? AdminFragment?
+    private fun editBook(book: Book){
+        val fra = requireArguments().getSerializable("fragment") as? AdminFragment?
 
         val bundle = Bundle()
         bundle.putSerializable("book", book)
         bundle.putSerializable("fragment", fra)
-        //var action = AdminLibrariesFragmentDirections.actionNavBookToNavInsertBook(bundle)
-        var action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
+        //val action = AdminLibrariesFragmentDirections.actionNavBookToNavInsertBook(bundle)
+        val action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
         navController.navigate(action)
     /*
         val bundle = Bundle()
         bundle.putSerializable("fragment", arguments?.getSerializable("fragment") as? AdminFragment?)
         bundle.putSerializable("book", book)
-        var action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
+        val action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
         navController.navigate(action)*/
     }
 
@@ -140,7 +132,7 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentAdminBooksBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
@@ -194,12 +186,12 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
         }
 
-        binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
+        binding.mainContent.setOnRefreshListener {
             position = 0
             lastPosition = -1
             getBooks(false)
-            binding.mainContent.isRefreshing = false;
-        });
+            binding.mainContent.isRefreshing = false
+        }
 
         binding.rvBooks.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -223,11 +215,10 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     private fun deleteBook(book: Book){
-        var result: Boolean= false
+        var result = false
         runBlocking {
-            var api = CrudApi(this@AdminBooksFragment)
-            var coroutine = launch {
-                var tmpResult = api.deleteBook(book.isbn, false)
+            val coroutine = launch {
+                val tmpResult = api.deleteBook(book.isbn, false)
                 if (tmpResult != null){
                     result = tmpResult
                 }
@@ -246,15 +237,15 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         getBooks(false)
     }
 
-    fun getBooks(addAdapter: Boolean){
+    private fun getBooks(addAdapter: Boolean){
         runBlocking {
             val crudApi = CrudApi(this@AdminBooksFragment)
             val corrutina = launch {
                 if (position == 0){
-                    if (search.isNullOrEmpty()){
-                        books = crudApi.getAllBooksSearch("null", false, position) as MutableList<Book>?
+                    books = if (search.isNullOrEmpty()){
+                        crudApi.getAllBooksSearch("null", false, position) as MutableList<Book>?
                     } else {
-                        books = crudApi.getAllBooksSearch(search!!, true, position) as MutableList<Book>?
+                        crudApi.getAllBooksSearch(search!!, true, position) as MutableList<Book>?
                     }
                 } else {
                     if (search.isNullOrEmpty()){

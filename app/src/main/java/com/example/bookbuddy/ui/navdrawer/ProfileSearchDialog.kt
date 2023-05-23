@@ -1,17 +1,17 @@
 package com.example.bookbuddy.ui.navdrawer
 
-import android.app.Dialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.adapters.SearchAuthorsAdapter
 import com.example.bookbuddy.adapters.SearchGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileSearchDialogBinding
@@ -20,7 +20,6 @@ import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-
 
 class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
     lateinit var binding: FragmentProfileSearchDialogBinding
@@ -32,14 +31,14 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
     private var lastPosition = -1
     var genres: MutableList<Genre>? = null
 
-    public var onGenreSearchCompleteListener: OnGenreSearchCompleteListener? = null
-    public interface OnGenreSearchCompleteListener {
+    var onGenreSearchCompleteListener: OnGenreSearchCompleteListener? = null
+    interface OnGenreSearchCompleteListener {
         fun onGenreSearchComplete(result: Int, name: String)
     }
 
     override fun onResume() {
         super.onResume()
-        binding.searchThings?.postDelayed({
+        binding.searchThings.postDelayed({
             binding.searchThings.requestFocus()
             val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(binding.searchThings, InputMethodManager.SHOW_IMPLICIT)
@@ -79,7 +78,7 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentProfileSearchDialogBinding.inflate(layoutInflater, container, false)
 
         binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -110,7 +109,7 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
                 val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
-                var searchValue = binding.searchThings.text.toString()
+                val searchValue = binding.searchThings.text.toString()
 
                 performSearch(searchValue)
 
@@ -133,7 +132,7 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
     private fun loadMoreItems() {
         runBlocking {
             val corrutina = launch {
-                var tempGenres = api.getSearchGenres(binding.searchThings.text.toString(), position)
+                val tempGenres = api.getSearchGenres(binding.searchThings.text.toString(), position)
                 if(tempGenres != null){
                     genres!!.addAll( tempGenres as MutableList<Genre>)
                 }
@@ -143,19 +142,14 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
         adapter.updateList(genres as ArrayList<Genre>)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
-        return super.onCreateDialog(savedInstanceState)
-    }
-
     private fun performSearch(searchValue: String) {
         // Aquí se realiza la búsqueda con el texto ingresado en el AutoCompleteTextView
         //Toast.makeText(requireContext(), "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
 
-        genres = mutableListOf<Genre>()
+        genres = mutableListOf()
         runBlocking {
             val corrutina = launch {
-                var tempGenres = api.getSearchGenres(searchValue, position)
+                val tempGenres = api.getSearchGenres(searchValue, position)
                 if(tempGenres != null){
                     genres = tempGenres as MutableList<Genre>
                 }

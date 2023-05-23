@@ -3,35 +3,20 @@ package com.example.bookbuddy.ui.navdrawer
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.DialogFragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentLibraryMapBinding
-import com.example.bookbuddy.databinding.FragmentRecommendationsBinding
 import com.example.bookbuddy.models.CleanResponse
-import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.models.LibraryExtended
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -52,33 +37,33 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
     private var job: Job = Job()
 
     //private lateinit var fusedLocationClient: FusedLocationProviderClient
-    val locationRequestCode = 0
-    var permissionsGranted = false
-    var latitude: Double? = null
-    var longitude: Double? = null
-    var method : String? = "walking"
+    private val locationRequestCode = 0
+    private var permissionsGranted = false
+    private var latitude: Double? = null
+    private var longitude: Double? = null
+    private var method : String? = "walking"
     private var library: LibraryExtended? = null
-    lateinit var mMap: GoogleMap
+    private lateinit var mMap: GoogleMap
 
-    val crudAPI = CrudApi()
-    var isGpsEnabled = false
-    var resp : CleanResponse? = null
+    val api = CrudApi()
+    private var isGpsEnabled = false
+    private var resp : CleanResponse? = null
 
     lateinit var bundle : Bundle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
-            DialogFragment.STYLE_NORMAL,
+            STYLE_NORMAL,
             R.style.FullScreenDialogStyle
-        );
+        )
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentLibraryMapBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
         val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -136,7 +121,7 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
             checkPermissionsTMP()
             val lib = LatLng(library!!.library.lat, library!!.library.lon)
 
-            mMap!!.addMarker(
+            mMap.addMarker(
                 MarkerOptions().position(lib).title(library!!.library.name)
             )
 
@@ -147,38 +132,59 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
                 val endString =
                     end.longitude.toString() + ", " + end.latitude.toString()
 
-                if (method == "car")
-                    resp = crudAPI.getCarRoute(startString, endString)
+                resp = if (method == "car")
+                    api.getCarRoute(startString, endString)
                 else
-                    resp = crudAPI.getWalkingRoute(startString, endString)
+                    api.getWalkingRoute(startString, endString)
                 if (resp != null) {
                     drawRoute(mMap, resp!!.coordinates)
 
-                    binding.tvLibraryDistance.text = "Distància:"+ resp!!.distance.toString()+" metres"
-                    binding.tvLibraryTime.text = "Temps: "+resp!!.duration.toString()+" segons"
+                    val distance = resp!!.distance
+                    val timeInSeconds = resp!!.duration
+
+                    var distanceText: String?
+                    var timeText: String?
+
+                    if (distance < 1000) {
+                        distanceText = "Distancia: " + distance.toString() + " m"
+                    } else {
+                        val distanceInKm = distance / 1000.0
+                        distanceText = "Distancia: " + String.format("%.2f", distanceInKm) + " km"
+                    }
+
+                    val hours = timeInSeconds / 3600
+                    val minutes = (timeInSeconds % 3600) / 60
+
+                    val formattedHours = String.format("%02d", hours)
+                    val formattedMinutes = String.format("%02d", minutes)
+
+                    timeText = "Tiempo: ${formattedHours}:${formattedMinutes} " + "h"
+
+                    binding.tvLibraryDistance.text = distanceText
+                    binding.tvLibraryTime.text = timeText
 
                     binding.tvLibraryName.setOnClickListener {
-                        mMap!!.animateCamera(
+                        mMap.animateCamera(
                             CameraUpdateFactory.newLatLngZoom(lib, 17.0f),
                             1500, null
                         )
                     }
 
                     val puntmig = LatLng((latitude!!+library!!.library.lat)/2, (longitude!!+library!!.library.lon)/2)
-                    var zoom : Float? = null
-                    if (resp!!.distance < 1000.0)
-                        zoom = 15.0f
+                    val zoom: Float?
+                    zoom = if (resp!!.distance < 1000.0)
+                        15.0f
                     else if (resp!!.distance<= 5000.0)
-                        zoom = 14.0f
+                        14.0f
                     else if (resp!!.distance<= 10000.0)
-                        zoom = 13.0f
+                        13.0f
                     else if (resp!!.distance<= 15000.0)
-                        zoom = 12.0f
+                        12.0f
                     else
-                        zoom = 11.0f
+                        11.0f
                     print("NOCRASH3")
                     loadingEnded()
-                    mMap!!.animateCamera(
+                    mMap.animateCamera(
 
                         CameraUpdateFactory.newLatLngZoom(puntmig, zoom),
                         2500, null
@@ -193,7 +199,7 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
             )
 
             launch {
-                var zoom: Float= 17.0f
+                val zoom = 17.0f
                 binding.tvLibraryName.setOnClickListener {
                     mMap.animateCamera(
                         CameraUpdateFactory.newLatLngZoom(lib, zoom),
@@ -211,7 +217,7 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
         }
     }
 
-    fun requestPermissionsMap() {
+    private fun requestPermissionsMap() {
         if (
             (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) &&
@@ -270,7 +276,7 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
         }
     }
 
-    fun checkPermissions() {
+    private fun checkPermissions() {
         if (
             (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) &&
@@ -284,7 +290,7 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
         }
     }
 
-    fun checkPermissionsTMP() {
+    private fun checkPermissionsTMP() {
         if (
             (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) &&
@@ -300,12 +306,12 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
         }
     }
 
-    fun loadLibraryBasicInformation(library: LibraryExtended){
+    private fun loadLibraryBasicInformation(library: LibraryExtended){
         binding.tvLibraryName.text = library.library.name
         //binding.tvLibraryDistance.text = String.format("%.1f", library.distance) + " km"
     }
 
-    fun loadFragment(){
+    private fun loadFragment(){
         if (!permissionsGranted || latitude == null || longitude == null){
             binding.tvLibraryTime.visibility = View.GONE
             binding.tvLibraryDistance.visibility = View.GONE
@@ -326,11 +332,11 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
         coordinates!!.forEach {
             polyLineOptions.add(LatLng(it[1], it[0]))
         }
-        polyLineOptions.color(Color.BLUE)
+        polyLineOptions.color(ContextCompat.getColor(requireContext(), R.color.primary_green))
         polyLineOptions.endCap(RoundCap())
         polyLineOptions.width(6.0f)
 
-        val poly = map.addPolyline(polyLineOptions)
+        map.addPolyline(polyLineOptions)
     }
 
 

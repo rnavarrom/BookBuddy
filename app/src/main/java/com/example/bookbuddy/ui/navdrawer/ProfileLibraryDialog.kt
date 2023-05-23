@@ -1,26 +1,22 @@
 package com.example.bookbuddy.ui.navdrawer
 
-import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.util.DisplayMetrics
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.adapters.SearchAuthorsAdapter
-import com.example.bookbuddy.adapters.SearchLanguagesAdapter
 import com.example.bookbuddy.adapters.SearchLibrariesAdapter
 import com.example.bookbuddy.api.CrudApi
-import com.example.bookbuddy.databinding.FragmentProfileSearchAuthorDialogBinding
-import com.example.bookbuddy.databinding.FragmentProfileSearchLanguageDialogBinding
 import com.example.bookbuddy.databinding.FragmentProfileSearchLibraryDialogBinding
-import com.example.bookbuddy.models.Language
 import com.example.bookbuddy.models.LibraryExtended
-import com.example.bookbuddy.models.Test.Author
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import kotlinx.coroutines.*
@@ -37,8 +33,8 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
     private var lastPosition = -1
     var libraries: MutableList<LibraryExtended>? = null
 
-    public var onLibrarySearchCompleteListener: OnLibrarySearchCompleteListener? = null
-    public interface OnLibrarySearchCompleteListener {
+    var onLibrarySearchCompleteListener: OnLibrarySearchCompleteListener? = null
+    interface OnLibrarySearchCompleteListener {
         fun onLibrarySearchComplete(result: Int, name: String)
     }
 
@@ -86,7 +82,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentProfileSearchLibraryDialogBinding.inflate(layoutInflater, container, false)
 
         binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -117,7 +113,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
                 val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
-                var searchValue = binding.searchThings.text.toString()
+                val searchValue = binding.searchThings.text.toString()
 
                 performSearch(searchValue)
 
@@ -147,17 +143,12 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
         adapter.updateList(libraries as ArrayList<LibraryExtended>)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
-        return super.onCreateDialog(savedInstanceState)
-    }
-
     private fun performSearch(searchValue: String) {
         // Aquí se realiza la búsqueda con el texto ingresado en el AutoCompleteTextView
         //Toast.makeText(requireContext(), "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
         position = 0
         lastPosition = -1
-        libraries = mutableListOf<LibraryExtended>()
+        libraries = mutableListOf()
 
         if (searchValue.isNotEmpty()){
             runBlocking {                

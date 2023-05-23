@@ -1,8 +1,6 @@
 package com.example.bookbuddy.ui.navdrawer.adminnav
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,14 +12,11 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentInsertLibraryDialogBinding
 import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
-import com.example.bookbuddy.ui.navdrawer.HomeFragment
-import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
@@ -37,33 +32,33 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
     private var mode = "insert"
     private lateinit var library: Library
 
-    lateinit var mMap: GoogleMap
+    private lateinit var mMap: GoogleMap
     private var currentMarker: Marker? = null
 
-    public var onAdminDialogClose: OnAdminDialogClose? = null
-
-    public interface OnAdminDialogClose {
+    var onAdminDialogClose: OnAdminDialogClose? = null
+    private val api = CrudApi(this@InsertLibraryDialog)
+    interface OnAdminDialogClose {
         fun onAdminDialogClose()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
-            DialogFragment.STYLE_NORMAL,
+            STYLE_NORMAL,
             R.style.FullScreenDialogStyle
-        );
+        )
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentInsertLibraryDialogBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
 
         val bundle = arguments?.getBundle("bundle")
-        var toolbarMessage = ""
+        val toolbarMessage: String
         val fragment = bundle!!.getSerializable("fragment") as? AdminFragment?
         if (fragment != null){
             onAdminDialogClose = fragment
@@ -104,19 +99,19 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
         return binding.root
     }
 
-    fun editLibrary(){
+    private fun editLibrary(){
         var result = false
 
-        var name = binding.etName.text.toString().trim()
-        var zip = binding.etZip.text.toString()
-        var lat = binding.etLat.text.toString().toDoubleOrNull()
-        var lon = binding.etLon.text.toString().toDoubleOrNull()
+        val name = binding.etName.text.toString().trim()
+        val zip = binding.etZip.text.toString()
+        val lat = binding.etLat.text.toString().toDoubleOrNull()
+        val lon = binding.etLon.text.toString().toDoubleOrNull()
         println(binding.etLon.text.toString())
-        if (name.isNullOrEmpty()){
+        if (name.isEmpty()){
             showSnackBar(requireContext(), requireView(), "Name cannot be empty")
             return
         }
-        if (zip.isNullOrEmpty()){
+        if (zip.isEmpty()){
             showSnackBar(requireContext(), requireView(), "Zip cannot be empty")
             return
         } else {
@@ -135,12 +130,11 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
         }
 
         runBlocking {
-            var api = CrudApi(this@InsertLibraryDialog)
-            var coroutine = launch {
-                if (mode == "edit"){
-                    result = api.updateLibrary(library.libraryId,name, lat, lon, zip)!!
+            val coroutine = launch {
+                result = if (mode == "edit"){
+                    api.updateLibrary(library.libraryId,name, lat, lon, zip)!!
                 } else {
-                    result = api.insertLibrary(name, lat, lon, zip)!!
+                    api.insertLibrary(name, lat, lon, zip)!!
                 }
             }
             coroutine.join()
@@ -166,7 +160,7 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
                 MarkerOptions().position(lib).title(library.name)
             )
 
-            var zoom: Float= 17.0f
+            val zoom = 17.0f
             mMap.animateCamera(
 
                 CameraUpdateFactory.newLatLngZoom(lib, zoom),
@@ -183,8 +177,8 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
         }
 
         binding.btnGoto.setOnClickListener {
-            var lat = binding.etLat.text.toString().toDoubleOrNull()
-            var lon = binding.etLon.text.toString().toDoubleOrNull()
+            val lat = binding.etLat.text.toString().toDoubleOrNull()
+            val lon = binding.etLon.text.toString().toDoubleOrNull()
 
             if (lat != null && lon != null){
                 val lib = LatLng(lat, lon)
@@ -192,7 +186,7 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
                 currentMarker?.remove()
 
                 currentMarker = mMap.addMarker(MarkerOptions().title(binding.etName.text.toString()).position(lib))
-                var zoom: Float= 17.0f
+                val zoom = 17.0f
                 mMap.animateCamera(
                     CameraUpdateFactory.newLatLngZoom(lib, zoom),
                     2500, null

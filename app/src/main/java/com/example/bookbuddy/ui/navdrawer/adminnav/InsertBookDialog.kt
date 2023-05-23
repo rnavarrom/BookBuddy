@@ -8,45 +8,25 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentInsertBookDialogBinding
-import com.example.bookbuddy.databinding.FragmentInsertLibraryDialogBinding
 import com.example.bookbuddy.models.Book
-import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
-import com.example.bookbuddy.ui.navdrawer.BookDisplayFragmentDirections
-import com.example.bookbuddy.ui.navdrawer.HomeFragment
-import com.example.bookbuddy.ui.navdrawer.ProfileFragment
-import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.navController
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.GoogleMap.OnMapClickListener
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.*
-import java.net.HttpURLConnection
-import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -58,38 +38,40 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private var mode = "insert"
     private lateinit var book: Book
 
-    public var onAdminDialogClose: OnAdminDialogClose? = null
+    var onAdminDialogClose: OnAdminDialogClose? = null
 
     private lateinit var tmpUri: Uri
 
     var fragment: AdminFragment? = null
     private var isRequest = false
     private var requestId = 0
-    public interface OnAdminDialogClose {
+
+    private val api = CrudApi(this@InsertBookDialog)
+    interface OnAdminDialogClose {
         fun onAdminDialogClose()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
-            DialogFragment.STYLE_NORMAL,
+            STYLE_NORMAL,
             R.style.FullScreenDialogStyle
-        );
+        )
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentInsertBookDialogBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
 
         val bundle = arguments?.getBundle("bundle")
         var toolbarMessage = ""
         println("CRR")
         if (bundle != null && bundle.containsKey("fragment")){
-            fragment = bundle!!.getSerializable("fragment") as? AdminFragment?
+            fragment = bundle.getSerializable("fragment") as? AdminFragment?
             if (fragment != null){
                 onAdminDialogClose = fragment
             }
@@ -152,16 +134,16 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private fun openReferences(){
         val bundle = Bundle()
         bundle.putInt("bookid", book.bookId)
-        var action = InsertBookDialogDirections.actionNavInsertBookToNavReferencesBook(bundle)
+        val action = InsertBookDialogDirections.actionNavInsertBookToNavReferencesBook(bundle)
         navController.navigate(action)
     }
 
     private fun showDatePicker() {
         val dateString = binding.etDate.text.toString()
 
-        var initialYear: Int
-        var initialMonth: Int
-        var initialDay: Int
+        val initialYear: Int
+        val initialMonth: Int
+        val initialDay: Int
         val calendar = Calendar.getInstance()
         if (dateString.isNotEmpty()) {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -192,15 +174,15 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         datePickerDialog.show()
     }
 
-    fun editLibrary(){
+    private fun editLibrary(){
         var result: Book? = null
         var editResult: Boolean? = null
-        var isbn = binding.etIsbn.text.toString().trim()
-        var title = binding.etTitle.text.toString().trim()
-        var description = binding.etDescription.text.toString().trim()
-        var pages = binding.etPages.text.toString().toIntOrNull()
-        var date = binding.etDate.text.toString()
-        var cover = binding.etCover.text.toString().trim()
+        val isbn = binding.etIsbn.text.toString().trim()
+        val title = binding.etTitle.text.toString().trim()
+        val description = binding.etDescription.text.toString().trim()
+        val pages = binding.etPages.text.toString().toIntOrNull()
+        val date = binding.etDate.text.toString()
+        val cover = binding.etCover.text.toString().trim()
 
         if (isbn.isEmpty()){
             showSnackBar(requireContext(), requireView(), "Isbn cannot be empty")
@@ -211,8 +193,8 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         if (book.isbn != isbn){
             var isbnExist = false
             runBlocking {
-                var api = CrudApi(this@InsertBookDialog)
-                var coroutine = launch {
+
+                val coroutine = launch {
                     isbnExist = api.getBookExist(isbn)!!
                 }
                 coroutine.join()
@@ -239,13 +221,12 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
 
         runBlocking {
-            var api = CrudApi(this@InsertBookDialog)
-            var coroutine = launch {
+            val coroutine = launch {
                 if (mode == "edit"){
                     //result = api.updateLibrary(library.libraryId,name, lat, lon, zip, "Edit failes")!!
                     editResult = api.updateBook(book.bookId,isbn, title, description, book.rating, pages, date , cover)
                 } else {
-                    var tmpResult = api.insertBook(isbn, title, description, pages, date , cover)
+                    val tmpResult = api.insertBook(isbn, title, description, pages, date , cover)
                     if (tmpResult != null){
                         result = tmpResult
                         api.deleteRequest(requestId)
@@ -268,7 +249,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    fun imageChooser(){
+    private fun imageChooser(){
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, REQUEST_CODE_GALLERY)
     }
@@ -287,7 +268,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     }
 
 
-    fun checkPermissions(){
+    private fun checkPermissions(){
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
             == PackageManager.PERMISSION_GRANTED){
             imageChooser()

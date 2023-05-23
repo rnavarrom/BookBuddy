@@ -4,39 +4,34 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.Test.Genre
 import com.example.bookbuddy.ui.navdrawer.ProfileSearchDialog
 import com.example.bookbuddy.utils.currentProfile
-import com.example.bookbuddy.utils.currentUser
-import com.example.bookbuddy.utils.navController
-import com.google.android.material.imageview.ShapeableImageView
-import kotlinx.coroutines.*
-import java.io.File
-import java.io.FileOutputStream
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
 
-class SearchGenresAdapter(var dialogFragment: DialogFragment, var dialog: ProfileSearchDialog.OnGenreSearchCompleteListener?, var list: java.util.ArrayList<Genre>) :
-    RecyclerView.Adapter<com.example.bookbuddy.adapters.SearchGenresAdapter.viewholder>(), CoroutineScope {
+class SearchGenresAdapter(private var dialogFragment: DialogFragment, var dialog: ProfileSearchDialog.OnGenreSearchCompleteListener?, var list: java.util.ArrayList<Genre>) :
+    RecyclerView.Adapter<SearchGenresAdapter.ViewHolder>(), CoroutineScope {
     private var job: Job = Job()
-    class viewholder(val view: View) : RecyclerView.ViewHolder(view) {
-        val name = view.findViewById<TextView>(R.id.tv_search_name)
+    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        val name = view.findViewById<TextView>(R.id.tv_search_name)!!
     }
 
     private lateinit var context: Context
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewholder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(parent.context)
         context = parent.context
-
-        var vh = viewholder(layout.inflate(R.layout.cardview_profile_search, parent, false))
-        return vh!!
+        return ViewHolder(layout.inflate(R.layout.cardview_profile_search, parent, false))
     }
 
-    override fun onBindViewHolder(holder: viewholder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.name.text = list[position].name
 
         holder.view.setOnClickListener {
@@ -44,7 +39,7 @@ class SearchGenresAdapter(var dialogFragment: DialogFragment, var dialog: Profil
         }
     }
 
-    fun addGenreToFavourite(id: Int, name: String){
+    private fun addGenreToFavourite(id: Int, name: String){
         currentProfile.genreId = id
         dialog?.onGenreSearchComplete(id, name)
         dialogFragment.dismiss()

@@ -1,55 +1,25 @@
 package com.example.bookbuddy.ui.navdrawer
 
-import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
-import android.content.ContentResolver
-import android.content.ContentValues.TAG
-import android.content.DialogInterface
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
-import android.transition.Transition
-import android.util.Base64
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileBinding
-import com.example.bookbuddy.databinding.FragmentProfileBinding
-import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.google.android.material.tabs.TabLayout
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import kotlinx.coroutines.*
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import java.io.ByteArrayOutputStream
 import java.io.File
-import java.io.IOException
-import java.io.InputStream
 import kotlin.coroutines.CoroutineContext
 
 
@@ -71,17 +41,17 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
-            DialogFragment.STYLE_NORMAL,
+            STYLE_NORMAL,
             R.style.FullScreenDialogStyle
-        );
+        )
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  DialogProfileBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
 
         setToolBar(this, binding.toolbar, requireContext(), "Anon Profile")
@@ -106,16 +76,16 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         return binding.root
     }
 
-    fun loadUser(){
+    private fun loadUser(){
         binding.tvUsername.text = username
         var profileImage: File? = null
         runBlocking {            
             val corrutina = launch {
-                var tempFollowers = api.getFollowerCount(profileUser!!)
+                val tempFollowers = api.getFollowerCount(profileUser!!)
                 if(tempFollowers != null){
                     followers = tempFollowers
                 }
-                var tempFollowing = api.getIsFollowing(currentUser.userId,profileUser!!)
+                val tempFollowing = api.getIsFollowing(currentUser.userId,profileUser!!)
                 if(tempFollowing != null){
                     following = tempFollowing
                 }
@@ -128,7 +98,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
     }
 
-    fun followButton(){
+    private fun followButton(){
 
         if (following){
             binding.btFollow.tag = "Following"
@@ -157,21 +127,20 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("Do you want to unfollow " + binding.tvUsername.text + "?")
                 builder.setMessage("You will stop receibing notifications from this user")
-                    .setPositiveButton("Unfollow",
-                        DialogInterface.OnClickListener { dialog, id ->
-                            runBlocking {                                
-                                val corrutina = launch {
-                                    var result = api.deleteFollowAPI(currentUser.userId, profileUser!!)
-                                }
-                                corrutina.join()
+                    .setPositiveButton("Unfollow") { _, _ ->
+                        runBlocking {
+                            val corrutina = launch {
+                                var result = api.deleteFollowAPI(currentUser.userId, profileUser!!)
                             }
-                            binding.btFollow.text = "Follow"
-                            binding.btFollow.tag = "Follow"
-                        })
-                    .setNegativeButton("Cancell",
-                        DialogInterface.OnClickListener { dialog, id ->
-                            // User cancelled the dialog
-                        })
+                            corrutina.join()
+                        }
+                        binding.btFollow.text = "Follow"
+                        binding.btFollow.tag = "Follow"
+                    }/*
+                    .setNegativeButton("Cancell"
+                    ) { _, _ ->
+                        // User cancelled the dialog
+                    }*/
                 builder.show()
             }
         }
@@ -182,7 +151,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         binding.mainContent.visibility = View.VISIBLE
     }
 
-    fun loadTabLayout(){
+    private fun loadTabLayout(){
         tabLayout = binding.tabLayout
         viewPager = binding.viewPager
         tabLayout.addTab(tabLayout.newTab().setText("COMMENTS"))

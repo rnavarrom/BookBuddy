@@ -1,32 +1,24 @@
 package com.example.bookbuddy.ui.navdrawer.adminnav
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.AdminAuthorsAdapter
-import com.example.bookbuddy.adapters.LibraryAdapter
-import com.example.bookbuddy.adapters.RecommendedBooksAdapter
 import com.example.bookbuddy.api.CrudApi
-import com.example.bookbuddy.databinding.FragmentAdminBinding
 import com.example.bookbuddy.databinding.FragmentAdminAuthorsBinding
-import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Author
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
-import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -45,6 +37,7 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private var search: String? = null
     private var authorName: String? = null
+    private val api = CrudApi(this@AdminAuthorsFragment)
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)
@@ -69,13 +62,13 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         var positiveText = ""
         val editText = EditText(requireContext())
         editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
-        when(type){
+        when (type) {
             0 -> {
                 positiveText = "Insert"
                 builder.setTitle("Insert Author")
                 editText.hint = "Insert author"
             }
-            1 ->  {
+            1 -> {
                 positiveText = "Edit"
                 builder.setTitle("Edit Author " + adapter.getSelected()!!.name)
                 editText.hint = "Edit author"
@@ -89,15 +82,15 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         builder.setView(editText)
 
-        builder.setPositiveButton(positiveText) { dialog, which ->
+        builder.setPositiveButton(positiveText) { _, _ ->
             // Handle "Buscar" button click here
 
-            when(type){
+            when (type) {
                 0 -> {
                     authorName = editText.text.toString().trim()
                     insertAuthor()
                 }
-                1 ->  {
+                1 -> {
                     authorName = editText.text.toString().trim()
                     editAuthor()
                 }
@@ -110,15 +103,10 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
         }
 
-        builder.setNegativeButton("Cancel") { dialog, which ->
+        builder.setNegativeButton("Cancel") { dialog, _ ->
             // Handle "Cancelar" button click here
             dialog.cancel()
         }
-
-        builder.setOnCancelListener(DialogInterface.OnCancelListener {
-            // Handle cancel action here
-            // This will be triggered when the dialog is canceled
-        })
 
         val dialog = builder.create()
         dialog.show()
@@ -130,12 +118,11 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }, 200)
     }
 
-    fun insertAuthor(){
+    private fun insertAuthor() {
         var result = false
-        if (!authorName.isNullOrEmpty()){
+        if (!authorName.isNullOrEmpty()) {
             runBlocking {
-                var api = CrudApi(this@AdminAuthorsFragment)
-                var coroutine = launch {
+                val coroutine = launch {
                     result = api.insertAuthor(authorName!!)!!
                 }
                 coroutine.join()
@@ -152,13 +139,12 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    fun editAuthor(){
+    private fun editAuthor() {
         val selection = adapter.getSelected()
         var result = false
-        if (!authorName.isNullOrEmpty()){
+        if (!authorName.isNullOrEmpty()) {
             runBlocking {
-                var api = CrudApi(this@AdminAuthorsFragment)
-                var coroutine = launch {
+                val coroutine = launch {
                     result = api.updateAuthor(selection!!.authorId, authorName!!)!!
                 }
                 coroutine.join()
@@ -184,11 +170,16 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding =  FragmentAdminAuthorsBinding.inflate(layoutInflater, container, false)
+    ): View {
+        binding = FragmentAdminAuthorsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
+        binding.mainContent.setColorSchemeColors(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primary_green
+            )
+        )
 
         getAuthors(true)
         loadingEnded()
@@ -196,7 +187,7 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         return binding.root
     }
 
-    fun loadingEnded(){
+    fun loadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -206,7 +197,7 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         binding.btnEdit.setOnClickListener {
             val selection = adapter.getSelected()
-            if (selection != null){
+            if (selection != null) {
                 showCustomDialog(1)
             } else {
                 showSnackBar(requireContext(), requireView(), "Pick a Author first")
@@ -217,10 +208,9 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.btnDelete.setOnClickListener {
             val selection = adapter.getSelected()
             var result = false
-            if (selection != null){
+            if (selection != null) {
                 runBlocking {
-                    var api = CrudApi(this@AdminAuthorsFragment)
-                    var coroutine = launch {
+                    val coroutine = launch {
                         result = api.deleteAuthor(selection.authorId)!!
                     }
                     coroutine.join()
@@ -238,12 +228,12 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
         }
 
-        binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
+        binding.mainContent.setOnRefreshListener {
             position = 0
             lastPosition = -1
             getAuthors(false)
-            binding.mainContent.isRefreshing = false;
-        });
+            binding.mainContent.isRefreshing = false
+        }
 
         binding.rvAuthors.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -256,7 +246,7 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -270,25 +260,38 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         getAuthors(false)
     }
 
-    fun getAuthors(addAdapter: Boolean){
+    private fun getAuthors(addAdapter: Boolean) {
         runBlocking {
             val crudApi = CrudApi(this@AdminAuthorsFragment)
-            val corrutina = launch {
-                if (position == 0){
-                    if (search.isNullOrEmpty()){
-                        authors = crudApi.getAuthors("null", false, position) as MutableList<Author>?
+            val corrutine = launch {
+                if (position == 0) {
+                    authors = if (search.isNullOrEmpty()) {
+                        crudApi.getAuthors("null", false, position) as MutableList<Author>?
                     } else {
-                        authors = crudApi.getAuthors(search!!, true, position) as MutableList<Author>?
+                        crudApi.getAuthors(search!!, true, position) as MutableList<Author>?
                     }
                 } else {
-                    if (search.isNullOrEmpty()){
-                        authors!!.addAll((crudApi.getAuthors("null", false, position) as MutableList<Author>?)!!)
+                    if (search.isNullOrEmpty()) {
+                        authors!!.addAll(
+                            (crudApi.getAuthors(
+                                "null",
+                                false,
+                                position
+                            ) as MutableList<Author>?)!!
+                        )
                     } else {
-                        authors!!.addAll((crudApi.getAuthors(search!!, true, position) as MutableList<Author>?)!!)
+                        authors!!.addAll(
+                            (crudApi.getAuthors(
+                                search!!,
+                                true,
+                                position
+                            ) as MutableList<Author>?)!!
+                        )
                     }
                 }
-                if (addAdapter){
-                    binding.rvAuthors.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                if (addAdapter) {
+                    binding.rvAuthors.layoutManager =
+                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                     authors!!.forEach {
                         println(it.authorId)
                         println(it.name)
@@ -300,7 +303,7 @@ class AdminAuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                     adapter.updateList(authors as ArrayList<Author>)
                 }
             }
-            corrutina.join()
+            corrutine.join()
         }
     }
 

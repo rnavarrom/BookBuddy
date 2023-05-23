@@ -1,37 +1,26 @@
 package com.example.bookbuddy.ui.navdrawer.adminnav
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.adapters.AdminAuthorsAdapter
 import com.example.bookbuddy.adapters.AdminLibraryAdapter
-import com.example.bookbuddy.adapters.LibraryAdapter
-import com.example.bookbuddy.adapters.RecommendedBooksAdapter
 import com.example.bookbuddy.api.CrudApi
-import com.example.bookbuddy.databinding.FragmentAdminBinding
-import com.example.bookbuddy.databinding.FragmentAdminAuthorsBinding
 import com.example.bookbuddy.databinding.FragmentAdminLibrariesBinding
-import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.ui.navdrawer.AdminFragmentDirections
-import com.example.bookbuddy.ui.navdrawer.BookDisplayFragmentDirections
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
-import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -50,8 +39,7 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private lateinit var searchItem: MenuItem
 
     private var search: String? = null
-    private var libraryName: String? = null
-
+    private val api = CrudApi(this@AdminLibrariesFragment)
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)
         gMenu = menu
@@ -72,16 +60,15 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun showCustomDialog() {
         //type 0 -> insert, 1 -> edit, 2 -> search
         val builder = AlertDialog.Builder(requireContext())
-        var positiveText = ""
         val editText = EditText(requireContext())
         editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
-        positiveText = "Search"
+        val positiveText = "Search"
         builder.setTitle("Search library")
         editText.hint = "Search library"
 
         builder.setView(editText)
 
-        builder.setPositiveButton(positiveText) { dialog, which ->
+        builder.setPositiveButton(positiveText) { _, _ ->
             // Handle "Buscar" button click here
             search = editText.text.toString().trim()
             position = 0
@@ -89,15 +76,10 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
             getLibraries(false)
         }
 
-        builder.setNegativeButton("Cancel") { dialog, which ->
+        builder.setNegativeButton("Cancel") { dialog, _ ->
             // Handle "Cancelar" button click here
             dialog.cancel()
         }
-
-        builder.setOnCancelListener(DialogInterface.OnCancelListener {
-            // Handle cancel action here
-            // This will be triggered when the dialog is canceled
-        })
 
         val dialog = builder.create()
         dialog.show()
@@ -109,8 +91,8 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }, 200)
     }
 
-    fun insertLibrary(){
-        var fra = requireArguments().getSerializable("fragment") as? AdminFragment?
+    private fun insertLibrary(){
+        val fra = requireArguments().getSerializable("fragment") as? AdminFragment?
 
         if (fra != null){
             println("OKS")
@@ -118,16 +100,16 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         val bundle = Bundle()
         bundle.putSerializable("fragment", arguments?.getSerializable("fragment") as? AdminFragment?)
-        //var action = AdminLibrariesFragmentDirections.actionNavLibraryToNavInsertLibrary(bundle)
-        var action = AdminFragmentDirections.actionNavAdminToNavInsertLibrary(bundle)
+        //val action = AdminLibrariesFragmentDirections.actionNavLibraryToNavInsertLibrary(bundle)
+        val action = AdminFragmentDirections.actionNavAdminToNavInsertLibrary(bundle)
         navController.navigate(action)
     }
 
-    fun editLibrary(library: Library){
+    private fun editLibrary(library: Library){
         val bundle = Bundle()
         bundle.putSerializable("fragment", arguments?.getSerializable("fragment") as? AdminFragment?)
         bundle.putSerializable("library", library)
-        var action = AdminFragmentDirections.actionNavAdminToNavInsertLibrary(bundle)
+        val action = AdminFragmentDirections.actionNavAdminToNavInsertLibrary(bundle)
         navController.navigate(action)
     }
 
@@ -139,7 +121,7 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentAdminLibrariesBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
@@ -174,8 +156,7 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
             var result = false
             if (selection != null){
                 runBlocking {
-                    var api = CrudApi(this@AdminLibrariesFragment)
-                    var coroutine = launch {
+                    val coroutine = launch {
                         result = api.deleteLibrary(selection.libraryId)!!
                     }
                     coroutine.join()
@@ -193,12 +174,12 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
         }
 
-        binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
+        binding.mainContent.setOnRefreshListener {
             position = 0
             lastPosition = -1
             getLibraries(false)
-            binding.mainContent.isRefreshing = false;
-        });
+            binding.mainContent.isRefreshing = false
+        }
 
         binding.rvLibraries.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -225,15 +206,15 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
         getLibraries(false)
     }
 
-    fun getLibraries(addAdapter: Boolean){
+    private fun getLibraries(addAdapter: Boolean){
         runBlocking {
             val crudApi = CrudApi(this@AdminLibrariesFragment)
             val corrutina = launch {
                 if (position == 0){
-                    if (search.isNullOrEmpty()){
-                        libraries = crudApi.getLibraries("null", false, position) as MutableList<Library>?
+                    libraries = if (search.isNullOrEmpty()){
+                        crudApi.getLibraries("null", false, position) as MutableList<Library>?
                     } else {
-                        libraries = crudApi.getLibraries(search!!, true, position) as MutableList<Library>?
+                        crudApi.getLibraries(search!!, true, position) as MutableList<Library>?
                     }
                 } else {
                     if (search.isNullOrEmpty()){

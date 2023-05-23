@@ -7,15 +7,14 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.example.bookbuddy.ui.navdrawer.ProfileBookMarksFragment
 import com.example.bookbuddy.ui.navdrawer.ProfileCommentsFragment
-import com.example.bookbuddy.ui.navdrawer.ProfileFragment
 
 @Suppress("DEPRECATION")
 internal class ProfileAdapter(
     var context: Context?,
     fm: FragmentManager,
-    var totalTabs: Int,
+    private var totalTabs: Int,
     var userId: Int,
-    val isProfileFragment: Boolean
+    private val isProfileFragment: Boolean
 ) :
     FragmentPagerAdapter(fm) {
     override fun getItem(position: Int): Fragment {

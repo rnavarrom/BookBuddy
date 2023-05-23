@@ -13,7 +13,7 @@ class AdminGenresAdapter(var list: ArrayList<Genre>) : RecyclerView.Adapter<Admi
     private var selected: Genre? = null
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val name = view.findViewById<TextView>(R.id.genre_name)
+        val name = view.findViewById<TextView>(R.id.genre_name)!!
     }
 
     lateinit var context: Context
@@ -21,16 +21,16 @@ class AdminGenresAdapter(var list: ArrayList<Genre>) : RecyclerView.Adapter<Admi
         val layout = LayoutInflater.from(parent.context)
         context = parent.context
 
-        if (viewType == 0){
-            return ViewHolder(layout.inflate(R.layout.cardview_admin_genre, parent, false))
+        return if (viewType == 0){
+            ViewHolder(layout.inflate(R.layout.cardview_admin_genre, parent, false))
         } else{
-            return ViewHolder(layout.inflate(R.layout.cardview_admin_genre_selected, parent, false))
+            ViewHolder(layout.inflate(R.layout.cardview_admin_genre_selected, parent, false))
         }
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.name.text = list[position].name
         holder.view.setOnClickListener {
-            for (i in 0..list.size - 1) {
+            for (i in 0 until list.size) {
                 if (i == position)
                     if (list[i].cardview == 0){
                         list[i].cardview = 1
