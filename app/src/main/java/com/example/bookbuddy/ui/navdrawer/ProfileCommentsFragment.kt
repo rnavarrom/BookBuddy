@@ -56,11 +56,8 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         launch {
             getCommentsUser(userId, true)
-            println("CHECKPOINT 3")
             loadingEnded()
-            println("CHECKPOINT 4")
         }
-
         return binding.root
     }
 
@@ -91,7 +88,6 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             adapter.updateList(comments as ArrayList<Comment>)
         }
     }
-
 
     fun loadingEnded(){
         binding.loadingView.visibility = View.GONE

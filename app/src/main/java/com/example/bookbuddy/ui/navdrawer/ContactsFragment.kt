@@ -29,7 +29,6 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentContactsBinding
     private var job: Job = Job()
     lateinit var adapter: ContactAdapter
-
     val api = CrudApi(this@ContactsFragment)
 
     private var position = 0
@@ -87,7 +86,6 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
             corrutina.join()
         }
-
     }
 
     fun loadingEnded(){
@@ -100,8 +98,8 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             lastPosition = -1
             getUserFollows(false)
             emptyContacts()
-            binding.mainContent.isRefreshing = false;
-        });
+            binding.mainContent.isRefreshing = false
+        })
 
         binding.rvContacts.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

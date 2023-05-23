@@ -51,9 +51,9 @@ class NavDrawerActivity : AppCompatActivity() {
 
         if (currentProfile.authorId == null && currentProfile.genreId == null){
             val builder = MaterialAlertDialogBuilder(this)
-            builder.setTitle("Preferences")
-                .setMessage("Remember you can change your preferences in your profile")
-                .setPositiveButton("Accept") { dialog, _ ->
+            builder.setTitle(getString(R.string.DG_Preferences))
+                .setMessage(getString(R.string.DG_Remember))
+                .setPositiveButton(getString(R.string.DG_Accept)) { dialog, _ ->
                     // Acciones a realizar al hacer clic en "Aceptar"
                     dialog.dismiss()
                 }

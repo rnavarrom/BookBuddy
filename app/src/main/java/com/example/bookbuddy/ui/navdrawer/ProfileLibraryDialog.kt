@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.SearchAuthorsAdapter
 import com.example.bookbuddy.adapters.SearchLanguagesAdapter
@@ -62,7 +63,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
         if (parentFragment is OnLibrarySearchCompleteListener) {
             onLibrarySearchCompleteListener = parentFragment
         } else {
-            throw IllegalArgumentException("Parent fragment must implement OnSearchCompleteListener")
+            throw IllegalArgumentException(getString(R.string.Throw_ParentFragment))
         }
     }
 
@@ -140,7 +141,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
     private fun loadMoreItems() {
         runBlocking {            
             val corrutina = launch {
-                libraries!!.addAll(api.getSearchLibraries(binding.searchThings.text.toString(), position, "Error") as MutableList<LibraryExtended>)
+                libraries!!.addAll(api.getSearchLibraries(binding.searchThings.text.toString(), position) as MutableList<LibraryExtended>)
             }
             corrutina.join()
         }
@@ -162,7 +163,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
         if (searchValue.isNotEmpty()){
             runBlocking {                
                 val corrutina = launch {
-                    libraries = api.getSearchLibraries(searchValue, position, "Error") as MutableList<LibraryExtended>
+                    libraries = api.getSearchLibraries(searchValue, position) as MutableList<LibraryExtended>
                 }
                 corrutina.join()
             }

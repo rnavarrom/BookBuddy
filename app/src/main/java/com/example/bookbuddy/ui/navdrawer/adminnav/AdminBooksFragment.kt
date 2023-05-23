@@ -31,7 +31,7 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentAdminBooksBinding
     private var job: Job = Job()
     lateinit var adapter: AdminBooksAdapter
-
+    val api = CrudApi(this@AdminBooksFragment)
     private var position = 0
     private var lastPosition = -1
     private var books: MutableList<Book>? = null
@@ -50,7 +50,6 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         return when (item.itemId) {
             R.id.action_search -> {
                 showCustomDialog()
@@ -66,9 +65,9 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         var positiveText = ""
         val editText = EditText(requireContext())
         editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
-        positiveText = "Search"
-        builder.setTitle("Search book")
-        editText.hint = "Search book"
+        positiveText = getString(R.string.BT_Search)
+        builder.setTitle(getString(R.string.SearchBook))
+        editText.hint = getString(R.string.SearchBook)
 
         builder.setView(editText)
 
@@ -80,7 +79,7 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             getBooks(false)
         }
 
-        builder.setNegativeButton("Cancel") { dialog, which ->
+        builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialog, which ->
             // Handle "Cancelar" button click here
             dialog.cancel()
         }
@@ -102,10 +101,6 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     fun insertBook(){
         var fra = requireArguments().getSerializable("fragment") as? AdminFragment?
-
-        if (fra != null){
-            println("OKS")
-        }
 
         val bundle = Bundle()
         //bundle.putSerializable("fragment", arguments?.getSerializable("fragment") as? AdminFragment?)
@@ -165,7 +160,7 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             if (selection != null){
                 editBook(selection)
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a Book first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_PickABook))
             }
 
         }
@@ -175,14 +170,14 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             if (selection != null){
                 val builder = AlertDialog.Builder(requireContext())
 
-                builder.setTitle("Do you want to delete this book?")
-                builder.setMessage("Are you sure you want to delete book with isbn = " + selection.isbn + "?")
-                builder.setPositiveButton("Yes") { dialogInterface: DialogInterface, _: Int ->
+                builder.setTitle(getString(R.string.DeleteBookQuestion))
+                builder.setMessage(getString(R.string.DeleteBookQuestion2) + selection.isbn + "?")
+                builder.setPositiveButton(getString(R.string.Yes)) { dialogInterface: DialogInterface, _: Int ->
                     // Acciones a realizar si el usuario selecciona "Sí"
                     deleteBook(selection)
                     dialogInterface.dismiss()
                 }
-                builder.setNegativeButton("Cancel") { dialogInterface: DialogInterface, _: Int ->
+                builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialogInterface: DialogInterface, _: Int ->
                     // Acciones a realizar si el usuario selecciona "No"
                     dialogInterface.dismiss()
                 }
@@ -190,7 +185,7 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 val dialog = builder.create()
                 dialog.show()
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a Book first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_PickABook))
             }
         }
 
@@ -225,7 +220,6 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun deleteBook(book: Book){
         var result: Boolean= false
         runBlocking {
-            var api = CrudApi(this@AdminBooksFragment)
             var coroutine = launch {
                 var tmpResult = api.deleteBook(book.isbn, false)
                 if (tmpResult != null){
@@ -236,7 +230,7 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
 
         if (result) {
-            showSnackBar(requireContext(), requireView(), "Book deleted")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_BookDelete))
             books!!.remove(book)
             adapter.updateList(books as ArrayList<Book>)
         }
@@ -248,19 +242,19 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     fun getBooks(addAdapter: Boolean){
         runBlocking {
-            val crudApi = CrudApi(this@AdminBooksFragment)
+            
             val corrutina = launch {
                 if (position == 0){
                     if (search.isNullOrEmpty()){
-                        books = crudApi.getAllBooksSearch("null", false, position) as MutableList<Book>?
+                        books = api.getAllBooksSearch("null", false, position) as MutableList<Book>?
                     } else {
-                        books = crudApi.getAllBooksSearch(search!!, true, position) as MutableList<Book>?
+                        books = api.getAllBooksSearch(search!!, true, position) as MutableList<Book>?
                     }
                 } else {
                     if (search.isNullOrEmpty()){
-                        books!!.addAll((crudApi.getAllBooksSearch("null", false, position) as MutableList<Book>?)!!)
+                        books!!.addAll((api.getAllBooksSearch("null", false, position) as MutableList<Book>?)!!)
                     } else {
-                        books!!.addAll((crudApi.getAllBooksSearch(search!!, true, position) as MutableList<Book>?)!!)
+                        books!!.addAll((api.getAllBooksSearch(search!!, true, position) as MutableList<Book>?)!!)
                     }
                 }
                 if (addAdapter){

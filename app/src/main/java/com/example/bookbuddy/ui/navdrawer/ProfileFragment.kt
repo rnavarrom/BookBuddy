@@ -384,11 +384,11 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                         if(addedContacts == null){
 
                         }else if (addedContacts > 0){
-                            message = "Se han agregado " + addedContacts + " contactos nuevos!"
+                            message = getString(R.string.MSG_Added) + addedContacts + getString(R.string.MSG_NewContacts)
                         } else {
-                            message = "No se ha encontrado ningun contacto"
+                            message = getString(R.string.MSG_NoContactsFound)
                         }
-                        showSnackBar(requireContext(), requireView(),message)
+                        showSnackBar(requireContext(), requireView(), message)
                     }
                     corrutina.join()
                 }

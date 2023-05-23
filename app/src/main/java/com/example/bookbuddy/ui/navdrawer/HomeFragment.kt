@@ -310,7 +310,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                 CallAdapterReaded(readedList as ArrayList<Pending>)
             }
         }
-        builder.setNegativeButton("Cancel") { dialogInterface, i -> }
+        builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialogInterface, i -> }
         builder.show()
     }
 

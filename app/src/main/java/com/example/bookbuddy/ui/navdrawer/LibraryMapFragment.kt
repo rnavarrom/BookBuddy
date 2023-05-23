@@ -154,8 +154,10 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
                 if (resp != null) {
                     drawRoute(mMap, resp!!.coordinates)
 
-                    binding.tvLibraryDistance.text = "Distància:"+ resp!!.distance.toString()+" metres"
-                    binding.tvLibraryTime.text = "Temps: "+resp!!.duration.toString()+" segons"
+                    binding.tvLibraryDistance.text = getString(R.string.MAP_Distance) + resp!!.distance.toString()+getString(
+                                            R.string.MAP_Meters)
+                    binding.tvLibraryTime.text = getString(R.string.MAP_Time)+resp!!.duration.toString()+getString(
+                                            R.string.MAP_Minutes)
 
                     binding.tvLibraryName.setOnClickListener {
                         mMap!!.animateCamera(
@@ -176,10 +178,8 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
                         zoom = 12.0f
                     else
                         zoom = 11.0f
-                    print("NOCRASH3")
                     loadingEnded()
                     mMap!!.animateCamera(
-
                         CameraUpdateFactory.newLatLngZoom(puntmig, zoom),
                         2500, null
                     )
@@ -203,7 +203,6 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
 
                 loadingEnded()
                 mMap.animateCamera(
-
                     CameraUpdateFactory.newLatLngZoom(lib, zoom),
                     2500, null
                 )
@@ -249,7 +248,6 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
                 }
             }
         }
-
     }
 
     override fun onRequestPermissionsResult(
@@ -302,7 +300,6 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
 
     fun loadLibraryBasicInformation(library: LibraryExtended){
         binding.tvLibraryName.text = library.library.name
-        //binding.tvLibraryDistance.text = String.format("%.1f", library.distance) + " km"
     }
 
     fun loadFragment(){

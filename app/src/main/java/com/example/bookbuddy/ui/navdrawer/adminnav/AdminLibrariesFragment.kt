@@ -75,9 +75,9 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
         var positiveText = ""
         val editText = EditText(requireContext())
         editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
-        positiveText = "Search"
-        builder.setTitle("Search library")
-        editText.hint = "Search library"
+        positiveText = getString(R.string.BT_Search)
+        builder.setTitle(getString(R.string.SearchLibrary))
+        editText.hint = getString(R.string.SearchLibrary)
 
         builder.setView(editText)
 
@@ -89,7 +89,7 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
             getLibraries(false)
         }
 
-        builder.setNegativeButton("Cancel") { dialog, which ->
+        builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialog, which ->
             // Handle "Cancelar" button click here
             dialog.cancel()
         }
@@ -164,7 +164,7 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
             if (selection != null){
                 editLibrary(selection)
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a Library first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.PickLibrary))
             }
 
         }
@@ -182,14 +182,14 @@ class AdminLibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 }
 
                 if (result) {
-                    showSnackBar(requireContext(), requireView(), "Library deleted")
+                    showSnackBar(requireContext(), requireView(), getString(R.string.LibraryDelete))
                     libraries!!.remove(selection)
                     adapter.updateList(libraries as ArrayList<Library>)
                 } else {
-                    showSnackBar(requireContext(), requireView(), "Library has books")
+                    showSnackBar(requireContext(), requireView(), getString(R.string.LibraryHasBook))
                 }
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a Library first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.PickLibrary))
             }
         }
 

@@ -74,13 +74,12 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         binding =  FragmentWriteCommentBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
-        setToolBar(this, binding.toolbar, requireContext(), "Write Comment")
+        setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_WriteComment))
 
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle?.getInt("bookid")!!
         val fragment = bundle.getSerializable("fragment") as? BookDisplayFragment?
         if (fragment != null){
-            println("YES2")
             onWriteCommentClose = fragment
         }
 

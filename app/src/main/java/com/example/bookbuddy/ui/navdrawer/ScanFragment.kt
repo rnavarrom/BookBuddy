@@ -31,7 +31,7 @@ import kotlinx.coroutines.runBlocking
 class ScanFragment : Fragment(), ApiErrorListener {
     private lateinit var codeScanner: CodeScanner
     lateinit var binding: FragmentScanBinding
-
+    var api = CrudApi(this@ScanFragment)
     private var isScannerEnabled = false
     private var isDialogOpen = false
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +51,6 @@ class ScanFragment : Fragment(), ApiErrorListener {
     fun bookExist(isbn: String): Boolean? {
         var exist : Boolean? = false
         runBlocking {
-            var api = CrudApi(this@ScanFragment)
             var corroutine = launch {
                 exist = api.getBookExist(isbn)
             }
@@ -63,7 +62,6 @@ class ScanFragment : Fragment(), ApiErrorListener {
     fun createRequest(isbn: String): Boolean? {
         var succes: Boolean? = false
         runBlocking {
-            var api = CrudApi(this@ScanFragment)
             var corroutine = launch {
                 succes = api.addRequestAPI(isbn)!!
             }
@@ -103,13 +101,13 @@ class ScanFragment : Fragment(), ApiErrorListener {
                                 showSnackBar(
                                     requireContext(),
                                     requireView(),
-                                    "Added book for pending"
+                                    getString(R.string.SB_AddedBookPending)
                                 )
                             } else {
                                 showSnackBar(
                                     requireContext(),
                                     requireView(),
-                                    "Book already requested to add"
+                                    getString(R.string.SB_BookAlreadyRequested)
                                 )
                             }
                             codeScanner.startPreview()
@@ -126,7 +124,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
                     }
                 } else {
                     codeScanner.startPreview()
-                    showSnackBar(requireContext(),requireView(),"This is not a ISBN. Press again to Scan")
+                    showSnackBar(requireContext(),requireView(),getString(R.string.SB_TryAgainScan))
                 }
 
             }
@@ -145,7 +143,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
                 isScannerEnabled = true
                 startCamera()
             } else {
-                showSnackBar(requireContext(), requireView(),"Camera access needed to scan codes")
+                showSnackBar(requireContext(), requireView(),getString(R.string.SB_CammerAccessNedded))
                 navController.popBackStack()
             }
         }
@@ -153,6 +151,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
 
 
     override fun onResume() {
+        //TODO : Rafa Miralo y arreglalo
         super.onResume()
         val currentDestination = navController.currentDestination
         val isDialogOpen = currentDestination?.id == R.id.nav_book_display

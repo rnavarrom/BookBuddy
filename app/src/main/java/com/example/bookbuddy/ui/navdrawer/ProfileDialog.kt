@@ -84,7 +84,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
 
-        setToolBar(this, binding.toolbar, requireContext(), "Anon Profile")
+        setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_Profile))
 
         val bundle = arguments?.getBundle("bundle")
         profileUser = bundle?.getInt("userid", currentUser.userId)
@@ -96,11 +96,8 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
 
         launch {
-            println("CHECKPOINT 1")
             loadUser()
-            println("CHECKPOINT 2")
             loadTabLayout()
-            println("CHECKPOINT 3")
             loadingEnded()
         }
         return binding.root
@@ -125,17 +122,16 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
         binding.tvFollowers.text = followers.toString() + " seguidores"
         followButton()
-
     }
 
     fun followButton(){
 
         if (following){
             binding.btFollow.tag = "Following"
-            binding.btFollow.text = "Following"
+            binding.btFollow.text = getString(R.string.BT_Following)
         } else {
             binding.btFollow.tag = "Follow"
-            binding.btFollow.text = "Follow"
+            binding.btFollow.text = getString(R.string.BT_Follow)
         }
 
         binding.btFollow.setOnClickListener {
@@ -149,15 +145,15 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 }
                 if(followed != null){
                 if(followed == true){
-                    binding.btFollow.text = "Following"
+                    binding.btFollow.text = getString(R.string.BT_Following)
                     binding.btFollow.tag = "Following"
                 }}
             } else {
                 var result : Boolean? = false
                 val builder = AlertDialog.Builder(requireContext())
-                builder.setTitle("Do you want to unfollow " + binding.tvUsername.text + "?")
-                builder.setMessage("You will stop receibing notifications from this user")
-                    .setPositiveButton("Unfollow",
+                builder.setTitle(getString(R.string.MSG_WantUnfollow) + binding.tvUsername.text + "?")
+                builder.setMessage(getString(R.string.MSG_WantUnfollow2))
+                    .setPositiveButton(getString(R.string.BT_Unfollow),
                         DialogInterface.OnClickListener { dialog, id ->
                             runBlocking {                                
                                 val corrutina = launch {
@@ -165,10 +161,10 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                                 }
                                 corrutina.join()
                             }
-                            binding.btFollow.text = "Follow"
+                            binding.btFollow.text = getString(R.string.BT_Follow)
                             binding.btFollow.tag = "Follow"
                         })
-                    .setNegativeButton("Cancell",
+                    .setNegativeButton(getString(R.string.BT_Cancel),
                         DialogInterface.OnClickListener { dialog, id ->
                             // User cancelled the dialog
                         })
@@ -185,8 +181,8 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     fun loadTabLayout(){
         tabLayout = binding.tabLayout
         viewPager = binding.viewPager
-        tabLayout.addTab(tabLayout.newTab().setText("COMMENTS"))
-        tabLayout.addTab(tabLayout.newTab().setText("READS"))
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.TB_Comments)))
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.TB_Reads)))
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         val adapter = ProfileAdapter(activity?.applicationContext, childFragmentManager,
             tabLayout.tabCount, profileUser!!, false

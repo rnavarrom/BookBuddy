@@ -93,7 +93,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         binding = FragmentBookDisplayBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
 
-        setToolBar(this, binding.toolbar, requireContext(), "Book Display")
+        setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_BookDisplay))
 
         //binding.bookMark.tag = "Add"
         tts = TextToSpeech(context, this)
@@ -305,7 +305,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
     fun getCommentsNumber(bookId: Int) {
         var commentsNumber: Int? = 0
         runBlocking {
-            val api = CrudApi(this@BookDisplayFragment)
             val corrutina = launch {
                 commentsNumber = api.getCommentsCounter(bookId)
             }
@@ -317,7 +316,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
     fun getLibraries(isbn: String?) {
         var librariesNumber: Int? = 0
         runBlocking {
-            val api = CrudApi(this@BookDisplayFragment)
             val corrutina = launch {
                 librariesNumber = api.getBookLibrariesCount(isbn!!)
             }
@@ -349,7 +347,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
 
         binding.iconLibraries.setOnClickListener {
             if (binding.numberLibraries.text.toString().toInt() == 0) {
-                showSnackBar(requireContext(), requireView(), "Book not available in any library")
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_BookNotAviable))
             } else {
                 val bundle = Bundle()
                 bundle.putString("isbn", book!!.isbn)
@@ -416,7 +414,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
     fun getBook(isbn: String?): Book? {
         var response: Book? = null
         runBlocking {
-            val api = CrudApi(this@BookDisplayFragment)
             val corrutina = launch {
                 response = api.getBook(isbn!!, currentUser.userId)
             }
@@ -428,7 +425,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
     fun getReaded(bookId: Int): Readed? {
         var response: Readed? = null
         runBlocking {
-            val api = CrudApi(this@BookDisplayFragment)
             val corrutina = launch {
                 response = api.getReadedsFromBook(bookId, currentUser.userId)
             }

@@ -42,7 +42,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
     private var job: Job = Job()
     lateinit var adapterGenres: AdminGenresAdapter
     lateinit var adapterLibraries: AdminBookLibraryAdapter
-
+    val api = CrudApi(this@ReferencesBookDialog)
     private var author: Author? = null
     private var lang: Language? = null
     private var genres: MutableList<Genre>? = null
@@ -118,7 +118,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         binding =  FragmentAdminBookReferencesDialogBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        Tools.setToolBar(this, binding.toolbar, requireContext(), "Book refrences")
+        Tools.setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_BookReferences))
 
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle!!.getInt("bookid")
@@ -158,8 +158,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
             val selection = adapterGenres.getSelected()
             var result = false
             if (selection != null){
-                runBlocking {
-                    var api = CrudApi(this@ReferencesBookDialog)
+                runBlocking {                    
                     var coroutine = launch {
                         result = api.deleteBookGenre(bookId, selection.genreId)!!
                     }
@@ -167,14 +166,14 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 }
 
                 if (result) {
-                    showSnackBar(requireContext(), requireView(), "Genre deleted")
+                    showSnackBar(requireContext(), requireView(), getString(R.string.GenreDelete))
                     genres!!.remove(selection)
                     adapterGenres.updateList(genres as ArrayList<Genre>)
                 } else {
-                    showSnackBar(requireContext(), requireView(), "Genre has books")
+                    showSnackBar(requireContext(), requireView(), getString(R.string.GenreHasBook))
                 }
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a Genre first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.PickGenre))
             }
         }
 
@@ -194,14 +193,13 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 builder.setTitle("Number of copies")
                 editText.hint = selection.copies.toString() + " copies"
                 builder.setView(editText)
-                builder.setPositiveButton("Edit") { dialog, which ->
+                builder.setPositiveButton(getString(R.string.BT_Edit)) { dialog, which ->
                     var copiesString = editText.text.toString()
 
                     if (!copiesString.isEmpty()){
                         var copies = copiesString.toInt()
                         if (copies >= 0){
-                            runBlocking {
-                                var api = CrudApi(this@ReferencesBookDialog)
+                            runBlocking {                                
                                 var coroutine = launch {
                                     result = api.updateBookLibrary(bookId, selection.library.libraryId, copies)!!
                                 }
@@ -209,17 +207,17 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                             }
 
                             if (result) {
-                                showSnackBar(requireContext(), requireView(), "Copies Edited")
+                                showSnackBar(requireContext(), requireView(), getString(R.string.SB_CopiesEdited))
                                 selection!!.copies = copies
                                 adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)
                             } else {
-                                showSnackBar(requireContext(), requireView(), "Duplicated genre")
+                                showSnackBar(requireContext(), requireView(), getString(R.string.GenreDuplicated))
                             }
                         } else {
-                            showSnackBar(requireContext(), requireView(), "Cannot be negatives")
+                            showSnackBar(requireContext(), requireView(), getString(R.string.SB_NoNegatives))
                         }
                     } else {
-                        showSnackBar(requireContext(), requireView(), "Not changedº")
+                        showSnackBar(requireContext(), requireView(), getString(R.string.SB_NotChanged))
                     }
                 }
 
@@ -242,7 +240,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                     imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
                 }, 200)
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a library to edit")
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_PickLibraryToEdit))
             }
         }
 
@@ -250,8 +248,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
             val selection = adapterLibraries.getSelected()
             var result = false
             if (selection != null){
-                runBlocking {
-                    var api = CrudApi(this@ReferencesBookDialog)
+                runBlocking {                    
                     var coroutine = launch {
                         result = api.deleteBookLibrary(bookId, selection.library.libraryId)!!
                     }
@@ -259,24 +256,23 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 }
 
                 if (result) {
-                    showSnackBar(requireContext(), requireView(), "Library deleted")
+                    showSnackBar(requireContext(), requireView(), getString(R.string.SB_LibraryEdited))
                     libraries!!.remove(selection)
                     adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)
                 } else {
-                    showSnackBar(requireContext(), requireView(), "Genre has books")
+                    showSnackBar(requireContext(), requireView(), getString(R.string.GenreHasBook))
                 }
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a Library first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.PickLibrary))
             }
         }
     }
 
 
     fun getAuthor(){
-        runBlocking {
-            val crudApi = CrudApi(this@ReferencesBookDialog)
+        runBlocking {            
             val corrutina = launch {
-                author = crudApi.getBookAuthors(bookId)
+                author = api.getBookAuthors(bookId)
             }
             corrutina.join()
         }
@@ -286,10 +282,9 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
     }
 
     fun getLang(){
-        runBlocking {
-            val crudApi = CrudApi(this@ReferencesBookDialog)
+        runBlocking {            
             val corrutina = launch {
-                lang = crudApi.getBookLang(bookId)
+                lang = api.getBookLang(bookId)
             }
             corrutina.join()
         }
@@ -299,10 +294,9 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
     }
 
     fun getGenres(addAdapter: Boolean){
-        runBlocking {
-            val crudApi = CrudApi(this@ReferencesBookDialog)
+        runBlocking {            
             val corrutina = launch {
-                genres = crudApi.getBookGenres(bookId) as MutableList<Genre>?
+                genres = api.getBookGenres(bookId) as MutableList<Genre>?
                 if (addAdapter){
                     binding.rvGenres.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                     adapterGenres = AdminGenresAdapter(genres as ArrayList<Genre>)
@@ -316,10 +310,9 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
     }
 
     fun getLibraries(addAdapter: Boolean){
-        runBlocking {
-            val crudApi = CrudApi(this@ReferencesBookDialog)
+        runBlocking {            
             val corrutina = launch {
-                libraries = crudApi.getBookLibraries(bookId) as MutableList<LibraryExtended>?
+                libraries = api.getBookLibraries(bookId) as MutableList<LibraryExtended>?
                 if (addAdapter){
                     binding.rvLibraries.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                     adapterLibraries = AdminBookLibraryAdapter(libraries as ArrayList<LibraryExtended>)
