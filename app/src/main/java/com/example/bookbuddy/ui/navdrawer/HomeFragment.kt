@@ -37,6 +37,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
     private lateinit var adapterPending: HomeBooksAdapter
     private lateinit var adapterReaded: HomeBooksAdapter
     private lateinit var adapterReading: HomeReadingBooksAdapter
+    val api = CrudApi(this@HomeFragment)
     private var pendingList: MutableList<Pending> = arrayListOf()
     private var readedList: MutableList<Pending> = arrayListOf()
     private var readingList: MutableList<ActualReading> = arrayListOf()
@@ -231,9 +232,8 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
     fun LoadMoreRead(position: Int) {
         runBlocking {
-            val crudApi = CrudApi(this@HomeFragment)
             val corrutina = launch {
-                   var tempRead = crudApi.getReadBooksFromUser(
+                   var tempRead = api.getReadBooksFromUser(
                         currentUser.userId,
                         position)
                 if(tempRead != null){
@@ -247,9 +247,8 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
     fun LoadMorePending(position: Int) {
         runBlocking {
-            val crudApi = CrudApi(this@HomeFragment)
             val corrutina = launch {
-                var tempList = crudApi.getPendingBooksFromUser(
+                var tempList = api.getPendingBooksFromUser(
                     currentUser.userId,
                     position
                 )
@@ -264,9 +263,8 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
     fun LoadMoreReading(position: Int) {
         runBlocking {
-            val crudApi = CrudApi(this@HomeFragment)
             val corrutina = launch {
-                var tempList = crudApi.getReadingBooksFromUser(
+                var tempList = api.getReadingBooksFromUser(
                     currentUser.userId,
                     position
                 )
@@ -342,9 +340,8 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
     fun getUser() {
         runBlocking {
-            val crudApi = CrudApi(this@HomeFragment)
             val corrutina = launch {
-                currentUser = crudApi.getUserId(currentUser.userId)!!
+                currentUser = api.getUserId(currentUser.userId)!!
             }
             corrutina.join()
         }
@@ -352,10 +349,9 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
     fun filterPendingBooks(filter: String, position: Int) {
         runBlocking {
-            val crudApi = CrudApi(this@HomeFragment)
             val corrutina = launch {
                 if (position == startingPosition) {
-                    var tempList = crudApi.filterPendingBook(
+                    var tempList = api.filterPendingBook(
                         currentUser.userId,
                         filter,
                         startingPosition
@@ -365,7 +361,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                     }
 
                 } else {
-                    var tempList = crudApi.filterPendingBook(
+                    var tempList = api.filterPendingBook(
                         currentUser.userId,
                         filter,
                         position
@@ -381,18 +377,17 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
 
     fun filterReadBooks(filter: String, position: Int) {
         runBlocking {
-            val crudApi = CrudApi(this@HomeFragment)
             val corrutina = launch {
                 if (position == startingPosition) {
                     var tempList =
-                        crudApi.filterReadBook(
+                        api.filterReadBook(
                             currentUser.userId,
                             filter,
                             startingPosition
                         )
                     readedList = tempList as MutableList<Pending>
                 } else {
-                    var tempList = crudApi.filterReadBook(
+                    var tempList = api.filterReadBook(
                         currentUser.userId,
                         filter,
                         position

@@ -56,7 +56,7 @@ import kotlin.coroutines.CoroutineContext
 class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: DialogProfileBinding
     private var job: Job = Job()
-
+    val api = CrudApi(this@ProfileDialog)
     private var profileUser: Int? = 0
     private var username: String? = ""
 
@@ -103,21 +103,19 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             println("CHECKPOINT 3")
             loadingEnded()
         }
-
         return binding.root
     }
 
     fun loadUser(){
         binding.tvUsername.text = username
         var profileImage: File? = null
-        runBlocking {
-            val crudApi = CrudApi(this@ProfileDialog)
+        runBlocking {            
             val corrutina = launch {
-                var tempFollowers = crudApi.getFollowerCount(profileUser!!)
+                var tempFollowers = api.getFollowerCount(profileUser!!)
                 if(tempFollowers != null){
                     followers = tempFollowers
                 }
-                var tempFollowing = crudApi.getIsFollowing(currentUser.userId,profileUser!!)
+                var tempFollowing = api.getIsFollowing(currentUser.userId,profileUser!!)
                 if(tempFollowing != null){
                     following = tempFollowing
                 }
@@ -143,19 +141,17 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         binding.btFollow.setOnClickListener {
             if (binding.btFollow.tag.equals("Follow")){
                 var followed : Boolean? = false
-                runBlocking {
-                    val crudApi = CrudApi(this@ProfileDialog)
+                runBlocking {                    
                     val corrutina = launch {
-                        followed = crudApi.addFollowToAPI(currentUser.userId, profileUser!!)
+                        followed = api.addFollowToAPI(currentUser.userId, profileUser!!)
                     }
                     corrutina.join()
                 }
-                if(followed == null){
-
-                }else if(followed == true){
+                if(followed != null){
+                if(followed == true){
                     binding.btFollow.text = "Following"
                     binding.btFollow.tag = "Following"
-                }
+                }}
             } else {
                 var result : Boolean? = false
                 val builder = AlertDialog.Builder(requireContext())
@@ -163,10 +159,9 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 builder.setMessage("You will stop receibing notifications from this user")
                     .setPositiveButton("Unfollow",
                         DialogInterface.OnClickListener { dialog, id ->
-                            runBlocking {
-                                val crudApi = CrudApi(this@ProfileDialog)
+                            runBlocking {                                
                                 val corrutina = launch {
-                                    var result = crudApi.deleteFollowAPI(currentUser.userId, profileUser!!)
+                                    var result = api.deleteFollowAPI(currentUser.userId, profileUser!!)
                                 }
                                 corrutina.join()
                             }

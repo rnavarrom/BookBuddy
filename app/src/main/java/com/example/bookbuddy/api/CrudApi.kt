@@ -744,13 +744,21 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
     }
     */
     suspend fun getBookLibraries(isbn: String): List<LibraryExtended>? {
-        val response = getRetrofit().create(LibraryAPI::class.java).getLibrariesBook(isbn).body()
-        return response
+        return safeApiCall(
+            apiCall = { getRetrofit().create(LibraryAPI::class.java).getLibrariesBook(isbn) },
+            errorListener = errorListener!!
+        )
+        //val response = getRetrofit().create(LibraryAPI::class.java).getLibrariesBook(isbn).body()
+        //return response
     }
 
     suspend fun getBookLibrariesExtended(isbn: String, latitude: Double, longitude: Double): List<LibraryExtended>? {
-        val response = getRetrofit().create(LibraryAPI::class.java).getLibrariesExtendedBook(isbn, latitude, longitude).body()
-        return response
+        return safeApiCall(
+            apiCall = { getRetrofit().create(LibraryAPI::class.java).getLibrariesExtendedBook(isbn, latitude, longitude) },
+            errorListener = errorListener!!
+        )
+        //val response = getRetrofit().create(LibraryAPI::class.java).getLibrariesExtendedBook(isbn, latitude, longitude).body()
+        //return response
     }
 
     suspend fun getBookLibrariesCount(isbn: String): Int? {
@@ -886,51 +894,58 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
 
     // Trace routes
     suspend fun getWalkingRoute(start: String, end: String): CleanResponse? {
-        var response: Response<com.example.bookbuddy.models.Response>? = null
+        try {
+            var response: Response<com.example.bookbuddy.models.Response>? = null
 
-        val corrutina = launch {
-            response =
-                getRetrofitRoute().create(RouteAPI::class.java)
-                    .getWalkingRoute(apikey, start, end)
-        }
-        corrutina.join()
+            val corrutina = launch {
+                response =
+                    getRetrofitRoute().create(RouteAPI::class.java)
+                        .getWalkingRoute(apikey, start, end)
+            }
+            corrutina.join()
 
-        if (response!!.isSuccessful) {
-            val resposta = CleanResponse(
-                response!!.body()!!.features[0].geometry.coordinates,
-                response!!.body()!!.features[0].properties.summary.distance,
-                response!!.body()!!.features[0].properties.summary.duration
-            )
-
-            return resposta
-        } else{
-            return null
-        }
-    }
-
-    suspend fun getCarRoute(start: String, end: String): CleanResponse? {
-        var response: Response<com.example.bookbuddy.models.Response>? = null
-
-        val corrutina = launch {
-            response =
-                getRetrofitRoute().create(RouteAPI::class.java)
-                    .getCarRoute(apikey, start, end)
-        }
-        corrutina.join()
-
-        if (response!!.isSuccessful) {
             if (response!!.isSuccessful) {
                 val resposta = CleanResponse(
                     response!!.body()!!.features[0].geometry.coordinates,
                     response!!.body()!!.features[0].properties.summary.distance,
                     response!!.body()!!.features[0].properties.summary.duration
                 )
-
                 return resposta
-            } else{
+            } else {
                 return null
             }
-        } else{
+        }catch(ex: java.lang.Exception){
+            return null
+        }
+    }
+
+    suspend fun getCarRoute(start: String, end: String): CleanResponse? {
+        try {
+            var response: Response<com.example.bookbuddy.models.Response>? = null
+
+            val corrutina = launch {
+                response =
+                    getRetrofitRoute().create(RouteAPI::class.java)
+                        .getCarRoute(apikey, start, end)
+            }
+            corrutina.join()
+
+            if (response!!.isSuccessful) {
+                if (response!!.isSuccessful) {
+                    val resposta = CleanResponse(
+                        response!!.body()!!.features[0].geometry.coordinates,
+                        response!!.body()!!.features[0].properties.summary.distance,
+                        response!!.body()!!.features[0].properties.summary.duration
+                    )
+
+                    return resposta
+                } else {
+                    return null
+                }
+            } else {
+                return null
+            }
+        }catch(ex: java.lang.Exception){
             return null
         }
     }

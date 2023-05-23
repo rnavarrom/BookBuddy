@@ -27,7 +27,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentRecommendationsBinding
     private var job: Job = Job()
     lateinit var adapter: RecommendedBooksAdapter
-
+    val api = CrudApi(this@RecommendationsFragment)
     private var position = 0
     private var lastPosition = -1
     var books: MutableList<Book>? = null
@@ -53,29 +53,31 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     fun getUserRecommended(addAdapter: Boolean){
-        runBlocking {
-            val crudApi = CrudApi(this@RecommendationsFragment)
+        runBlocking {            
             val corrutina = launch {
-                if (position == 0){
-                    var tempBooks = crudApi.getRecommendedBooks(currentUser.userId, position) as MutableList<Book>?
-                    if(tempBooks != null){
+                if (position == 0) {
+                    var tempBooks = api.getRecommendedBooks(
+                        currentUser.userId,
+                        position
+                    ) as MutableList<Book>?
+                    if (tempBooks != null) {
                         books = tempBooks
                     }
                 } else {
-                    var tempBooks = crudApi.getRecommendedBooks(currentUser.userId, position)
-                    if(tempBooks != null){
+                    var tempBooks = api.getRecommendedBooks(currentUser.userId, position)
+                    if (tempBooks != null) {
                         books!!.addAll(tempBooks as MutableList<Book>)!!
                     }
                 }
-                if(books == null){ //addAdapter == null ||
-
-                }else if (addAdapter){
+                if (books != null) { //addAdapter == null ||
+                    if (addAdapter) {
                     binding.rvRecommended.layoutManager = GridLayoutManager(context, 3)
                     adapter = RecommendedBooksAdapter(books as ArrayList<Book>)
                     binding.rvRecommended.adapter = adapter
                 } else {
                     adapter.updateList(books as ArrayList<Book>)
                 }
+            }
             }
             corrutina.join()
         }

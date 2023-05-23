@@ -32,7 +32,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var userId: Int = currentUser.userId
     private var isProfileFragment: Boolean = false
     lateinit var adapter: ProfileCommentAdapter
-
+    val api = CrudApi(this@ProfileCommentsFragment)
 
     var currentPage = 0
     private var position = 0
@@ -65,21 +65,19 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     fun getCommentsUser(userId: Int, addAdapter: Boolean){
-        runBlocking {
-            val crudApi = CrudApi(this@ProfileCommentsFragment)
+        runBlocking {            
             val corrutina = launch {
                 if (position == 0){
-                    var tempComments = crudApi.getUserComments(userId,position) as MutableList<Comment>?
+                    var tempComments = api.getUserComments(userId,position) as MutableList<Comment>?
                     if(tempComments != null){
                         comments = tempComments
                     }
                 } else {
-                    var tempComments = crudApi.getUserComments(userId,position)
+                    var tempComments = api.getUserComments(userId,position)
                     if(tempComments != null){
                         comments!!.addAll( tempComments as MutableList<Comment>)
                     }
                 }
-
             }
             corrutina.join()
         }

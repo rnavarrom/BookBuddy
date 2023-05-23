@@ -30,7 +30,7 @@ import kotlin.coroutines.CoroutineContext
 class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentProfileSearchLibraryDialogBinding
     private var job: Job = Job()
-    //var searchResultList: ArrayList<Genre> = arrayListOf()
+    val api = CrudApi(this@ProfileLibraryDialog)
     private lateinit var adapter: SearchLibrariesAdapter
 
     private var position = 0
@@ -138,10 +138,9 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
     }
 
     private fun loadMoreItems() {
-        runBlocking {
-            val crudApi = CrudApi(this@ProfileLibraryDialog)
+        runBlocking {            
             val corrutina = launch {
-                libraries!!.addAll(crudApi.getSearchLibraries(binding.searchThings.text.toString(), position, "Error") as MutableList<LibraryExtended>)
+                libraries!!.addAll(api.getSearchLibraries(binding.searchThings.text.toString(), position, "Error") as MutableList<LibraryExtended>)
             }
             corrutina.join()
         }
@@ -161,10 +160,9 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
         libraries = mutableListOf<LibraryExtended>()
 
         if (searchValue.isNotEmpty()){
-            runBlocking {
-                val crudApi = CrudApi(this@ProfileLibraryDialog)
+            runBlocking {                
                 val corrutina = launch {
-                    libraries = crudApi.getSearchLibraries(searchValue, position, "Error") as MutableList<LibraryExtended>
+                    libraries = api.getSearchLibraries(searchValue, position, "Error") as MutableList<LibraryExtended>
                 }
                 corrutina.join()
             }

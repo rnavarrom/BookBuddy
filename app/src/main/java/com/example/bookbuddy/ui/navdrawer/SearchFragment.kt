@@ -30,6 +30,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
     lateinit var binding: FragmentSearchBinding
     lateinit var searchResultList: MutableList<SimpleBook>
     private lateinit var adapter: SearchResultAdapter
+    val crudApi = CrudApi(this@SearchFragment)
     var searchValues = ArrayList<String>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -183,7 +184,6 @@ class SearchFragment : Fragment(), ApiErrorListener{
 
     fun LoadMoreSearch(position : Int, searchValues: ArrayList<String>) {
         runBlocking {
-            val crudApi = CrudApi(this@SearchFragment)
             val corrutina = launch {
                 var tempSearchList =
                     crudApi.getSimpleSearch(
@@ -202,7 +202,6 @@ class SearchFragment : Fragment(), ApiErrorListener{
         var searchResultList : ArrayList<SimpleBook>? = arrayListOf()
 
         runBlocking {
-            val crudApi = CrudApi(this@SearchFragment)
             val corrutina = launch {
                 searchResultList = crudApi.getSimpleSearch(0, searchValues as List<String>)
             }

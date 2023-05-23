@@ -27,7 +27,7 @@ import kotlin.coroutines.CoroutineContext
 class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentProfileSearchLanguageDialogBinding
     private var job: Job = Job()
-    //var searchResultList: ArrayList<Genre> = arrayListOf()
+    val api = CrudApi(this@ProfileLanguageDialog)
     private lateinit var adapter: SearchLanguagesAdapter
 
     private var position = 0
@@ -135,10 +135,9 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
     }
 
     private fun loadMoreItems() {
-        runBlocking {
-            val crudApi = CrudApi(this@ProfileLanguageDialog)
+        runBlocking {            
             val corrutina = launch {
-                languages!!.addAll(crudApi.getSearchLanguages(binding.searchThings.text.toString(), position) as MutableList<Language>)
+                languages!!.addAll(api.getSearchLanguages(binding.searchThings.text.toString(), position) as MutableList<Language>)
             }
             corrutina.join()
         }
@@ -157,9 +156,9 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
         languages = mutableListOf<Language>()
 
         runBlocking {
-            val crudApi = CrudApi(this@ProfileLanguageDialog)
+            val api = CrudApi(this@ProfileLanguageDialog)
             val corrutina = launch {
-                languages = crudApi.getSearchLanguages(searchValue, position) as MutableList<Language>
+                languages = api.getSearchLanguages(searchValue, position) as MutableList<Language>
             }
             corrutina.join()
         }

@@ -42,15 +42,6 @@ class SearchAuthorsAdapter(var dialogFragment: DialogFragment, var dialog: Profi
 
     fun addAuthorToFavourite(id: Int, name: String){
         currentProfile.authorId = id
-        /*
-        runBlocking {
-            val crudApi = CrudApi()
-            val corrutina = launch {
-                crudApi.updateProfileGenreToAPI(currentProfile.profileId, id)
-            }
-            corrutina.join()
-        }
-        */
         dialog?.onAuthorSearchComplete(id, name)
         dialogFragment.dismiss()
     }

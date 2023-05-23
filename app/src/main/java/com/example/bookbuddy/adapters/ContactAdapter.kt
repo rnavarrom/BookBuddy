@@ -11,16 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.BookCommentsFragmentDirections
 import com.example.bookbuddy.ui.navdrawer.ContactsFragmentDirections
+import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.base.ApiErrorListener
-import com.example.bookbuddy.utils.currentPicture
-import com.example.bookbuddy.utils.currentProfile
-import com.example.bookbuddy.utils.currentUser
-import com.example.bookbuddy.utils.navController
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.*
 import java.io.File
@@ -29,23 +27,23 @@ import kotlin.coroutines.CoroutineContext
 
 
 class ContactAdapter(var list: java.util.ArrayList<UserItem>) :
-    RecyclerView.Adapter<ContactAdapter.viewholder>(), CoroutineScope, ApiErrorListener {
+    RecyclerView.Adapter<ContactAdapter.ViewHolder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
-    class viewholder(val view: View) : RecyclerView.ViewHolder(view) {
+    lateinit var view : View
+    val api = CrudApi(this@ContactAdapter)
+    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val profilePicture = view.findViewById<ShapeableImageView>(R.id.profile_imageView)
         val username = view.findViewById<TextView>(R.id.tv_name)
     }
 
     private lateinit var context: Context
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewholder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(parent.context)
         context = parent.context
-
-        var vh = viewholder(layout.inflate(R.layout.cardview_contact, parent, false))
-        return vh!!
+        view = parent
+        return ViewHolder(layout.inflate(R.layout.cardview_contact, parent, false))!!
     }
-
-    override fun onBindViewHolder(holder: viewholder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.username.text = list[position].name
 
         holder.view.setOnClickListener {
@@ -54,10 +52,9 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>) :
 
         if(list[position].haspicture){
             runBlocking {
-                val crudApi = CrudApi(this@ContactAdapter)
                 val corrutina = launch {
                     if (list[position].haspicture){
-                        var commentPicture = crudApi.getUserImage(list[position].userId)
+                        var commentPicture = api.getUserImage(list[position].userId)
                         val body = commentPicture //.body()
                         if (body != null) {
                             // Leer los bytes de la imagen
@@ -103,6 +100,6 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>) :
         get() = Dispatchers.Main + job
 
     override fun onApiError() {
-        Toast.makeText(context,"Aviso error", Toast.LENGTH_LONG).show()
+        Tools.showSnackBar(context, view, Constants.ErrrorMessage)
     }
 }

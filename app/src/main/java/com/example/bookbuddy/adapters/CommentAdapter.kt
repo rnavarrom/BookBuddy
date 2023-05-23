@@ -28,6 +28,7 @@ import kotlin.coroutines.CoroutineContext
 class CommentAdapter(var list: java.util.ArrayList<Comment>) :
     RecyclerView.Adapter<CommentAdapter.viewholder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
+    val api = CrudApi( this@CommentAdapter)
     class viewholder(val view: View) : RecyclerView.ViewHolder(view) {
         val profilePicture = view.findViewById<ImageView>(R.id.profile_imageView)
         val username = view.findViewById<TextView>(R.id.tv_name)
@@ -54,10 +55,10 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
 
         if(list[position].user!!.haspicture){
             runBlocking {
-                val crudApi = CrudApi( this@CommentAdapter)
+
                 val corrutina = launch {
                     if (list[position].user!!.haspicture){
-                        var commentPicture = crudApi.getUserImage(list[position].user!!.userId)
+                        var commentPicture = api.getUserImage(list[position].user!!.userId)
                         val body = commentPicture //.body()
                         if (body != null) {
                             // Leer los bytes de la imagen
@@ -106,9 +107,8 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
                     when (item.itemId) {
                         R.id.delete_comment -> {
                             runBlocking {
-                                val crudApi = CrudApi( this@CommentAdapter)
                                 val corroutine = launch {
-                                    crudApi.deleteCommentToAPI(list[position].comentId!!)
+                                    api.deleteCommentToAPI(list[position].comentId!!)
                                 }
                                 corroutine.join()
                                 list.removeAt(position)

@@ -10,19 +10,22 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.SearchAuthorsAdapter
 import com.example.bookbuddy.adapters.SearchGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileSearchDialogBinding
 import com.example.bookbuddy.models.Test.Genre
+import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 
-class ProfileSearchDialog : DialogFragment(), CoroutineScope {
+class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
     lateinit var binding: FragmentProfileSearchDialogBinding
     private var job: Job = Job()
-    //var searchResultList: ArrayList<Genre> = arrayListOf()
+    val api = CrudApi(this@ProfileSearchDialog)
     private lateinit var adapter: SearchGenresAdapter
 
     private var position = 0
@@ -129,9 +132,11 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope {
 
     private fun loadMoreItems() {
         runBlocking {
-            val crudApi = CrudApi()
             val corrutina = launch {
-                genres!!.addAll(crudApi.getSearchGenres(binding.searchThings.text.toString(), position) as MutableList<Genre>)
+                var tempGenres = api.getSearchGenres(binding.searchThings.text.toString(), position)
+                if(tempGenres != null){
+                    genres!!.addAll( tempGenres as MutableList<Genre>)
+                }
             }
             corrutina.join()
         }
@@ -148,11 +153,12 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope {
         //Toast.makeText(requireContext(), "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
 
         genres = mutableListOf<Genre>()
-
         runBlocking {
-            val crudApi = CrudApi()
             val corrutina = launch {
-                genres = crudApi.getSearchGenres(searchValue, position) as MutableList<Genre>
+                var tempGenres = api.getSearchGenres(searchValue, position)
+                if(tempGenres != null){
+                    genres = tempGenres as MutableList<Genre>
+                }
             }
             corrutina.join()
         }
@@ -169,5 +175,9 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

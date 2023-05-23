@@ -46,15 +46,6 @@ class SearchGenresAdapter(var dialogFragment: DialogFragment, var dialog: Profil
 
     fun addGenreToFavourite(id: Int, name: String){
         currentProfile.genreId = id
-        /*
-        runBlocking {
-            val crudApi = CrudApi()
-            val corrutina = launch {
-                crudApi.updateProfileGenreToAPI(currentProfile.profileId, id)
-            }
-            corrutina.join()
-        }
-        */
         dialog?.onGenreSearchComplete(id, name)
         dialogFragment.dismiss()
     }
