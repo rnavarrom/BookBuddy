@@ -39,6 +39,7 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     private var isbn: String = ""
     private var comment: Comment? = null
     private var maxCharactersComment: Int = 300
+    val api = CrudApi(this@WriteCommentFragment)
 
     public var onWriteCommentClose: OnWriteCommentClose? = null
     public interface OnWriteCommentClose {
@@ -92,10 +93,9 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     }
 
     fun loadComment(){
-        runBlocking {
-            val crudApi = CrudApi(this@WriteCommentFragment)
+        runBlocking {            
             val corrutina = launch {
-                comment = crudApi.getCommentsFromUser(currentUser.userId, bookId)
+                comment = api.getCommentsFromUser(currentUser.userId, bookId)
             }
             corrutina.join()
         }
@@ -137,13 +137,12 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         var text = binding.etWriteComment.text.toString()
         var stars = binding.ratingWrite.rating.toInt()
         if (!text.isNullOrEmpty()){
-            runBlocking {
-                val crudApi = CrudApi(this@WriteCommentFragment)
+            runBlocking {                
                 val corrutina = launch {
                     if (comment != null){
-                        crudApi.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser.userId, bookId!!)
+                        api.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser.userId, bookId!!)
                     } else {
-                        crudApi.addCommentToAPI(text, stars, currentUser.userId, bookId!!)
+                        api.addCommentToAPI(text, stars, currentUser.userId, bookId!!)
                     }
                 }
                 corrutina.join()
@@ -168,7 +167,6 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
 
     override fun onDestroy() {
         onWriteCommentClose?.onWriteCommentClose(isbn)
-        println("CERRANDO2")
         super.onDestroy()
         job.cancel()
     }

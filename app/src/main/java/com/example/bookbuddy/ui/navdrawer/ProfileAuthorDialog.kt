@@ -26,6 +26,7 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
     //var searchResultList: ArrayList<Genre> = arrayListOf()
     private lateinit var adapter: SearchAuthorsAdapter
+    val api = CrudApi(this@ProfileAuthorDialog)
 
     private var position = 0
     private var lastPosition = -1
@@ -133,9 +134,9 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
     private fun loadMoreItems() {
         runBlocking {
-            val crudApi = CrudApi(this@ProfileAuthorDialog)
+            
             val corrutina = launch {
-                var tempAuthors= crudApi.getSearchAuthors(binding.searchThings.text.toString(), position)
+                var tempAuthors= api.getSearchAuthors(binding.searchThings.text.toString(), position)
                 if(tempAuthors != null){
                     authors!!.addAll(tempAuthors as MutableList<Author>)
                 }
@@ -151,15 +152,10 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     }
 
     private fun performSearch(searchValue: String) {
-        // Aquí se realiza la búsqueda con el texto ingresado en el AutoCompleteTextView
-        //Toast.makeText(requireContext(), "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
-
         authors = mutableListOf<Author>()
-
-        runBlocking {
-            val crudApi = CrudApi(this@ProfileAuthorDialog)
+        runBlocking {            
             val corrutina = launch {
-                var tempAuthors = crudApi.getSearchAuthors(searchValue, position)
+                var tempAuthors = api.getSearchAuthors(searchValue, position)
                 if(tempAuthors != null){
                     authors = tempAuthors as MutableList<Author>
                 }

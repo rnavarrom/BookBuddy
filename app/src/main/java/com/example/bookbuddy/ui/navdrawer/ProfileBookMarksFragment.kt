@@ -33,6 +33,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var userId: Int = currentUser.userId
     private var isProfileFragment: Boolean = false
     lateinit var adapter: ProfileBookMarkAdapter
+    val api = CrudApi(this@ProfileBookMarksFragment)
 
     var currentPage = 0
     private var position = 0
@@ -62,16 +63,15 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     fun getCommentsUser(userId: Int, addAdapter: Boolean){
-        runBlocking {
-            val crudApi = CrudApi(this@ProfileBookMarksFragment)
+        runBlocking {            
             val corrutina = launch {
                 if (position == 0){
-                     var tempReadeds = crudApi.getReadedsFromUser(userId,position)
+                     var tempReadeds = api.getReadedsFromUser(userId,position)
                     if(tempReadeds != null){
                         readeds = tempReadeds  as MutableList<Readed>
                     }
                 } else {
-                    var tempReadeds = crudApi.getReadedsFromUser(userId,position)
+                    var tempReadeds = api.getReadedsFromUser(userId,position)
                     if(tempReadeds != null){
                         readeds!!.addAll( tempReadeds as MutableList<Readed>)
                     }

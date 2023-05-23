@@ -148,6 +148,9 @@
         <action
             android:id="@+id/action_nav_book_display_to_nav_author_book_dialog"
             app:destination="@id/nav_author_book_dialog" />
+        <action
+            android:id="@+id/action_nav_book_display_to_nav_home"
+            app:destination="@id/nav_home" />
     </dialog>
 
     <dialog

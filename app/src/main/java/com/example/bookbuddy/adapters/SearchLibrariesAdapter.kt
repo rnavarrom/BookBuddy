@@ -45,15 +45,6 @@ class SearchLibrariesAdapter(var dialogFragment: DialogFragment, var dialog: Pro
     }
 
     fun addLibraryToFavourite(id: Int, name: String){
-        /*
-        runBlocking {
-            val crudApi = CrudApi()
-            val corrutina = launch {
-                crudApi.updateProfileGenreToAPI(currentProfile.profileId, id)
-            }
-            corrutina.join()
-        }
-        */
         dialog?.onLibrarySearchComplete(id, name)
         dialogFragment.dismiss()
     }

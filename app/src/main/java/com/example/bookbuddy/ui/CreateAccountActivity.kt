@@ -33,6 +33,7 @@ import kotlinx.coroutines.runBlocking
 
 class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     private lateinit var binding: ActivityCreateAccountBinding
+    val api = CrudApi(this@CreateAccountActivity)
     var checkValues: Boolean = false
     lateinit var user: UserItem
     var conditions = false
@@ -95,9 +96,8 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     fun postUser(user: UserItem): Boolean {
         var response : Boolean? = false
         runBlocking {
-            val crudApi = CrudApi(this@CreateAccountActivity)
             val corrutina = launch {
-                response = crudApi.addUserToAPI(user)
+                response = api.addUserToAPI(user)
             }
             corrutina.join()
         }
@@ -177,9 +177,8 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     fun isNameAviable(userName: String): Boolean? {
         var response : Boolean? = false
         runBlocking {
-            val crudApi = CrudApi(this@CreateAccountActivity)
             val corrutina = launch {
-                response = crudApi.getUserExists(userName)
+                response = api.getUserExists(userName)
             }
             corrutina.join()
         }
@@ -188,9 +187,8 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     fun isEmailAviable(email: String): Boolean? {
         var response : Boolean? = false
         runBlocking {
-            val crudApi = CrudApi(this@CreateAccountActivity)
             val corrutina = launch {
-                response = crudApi.getEmailExists(email)
+                response = api.getEmailExists(email)
             }
             corrutina.join()
         }

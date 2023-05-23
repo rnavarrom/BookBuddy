@@ -16,12 +16,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.LibraryAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentLibrariesListBinding
 import com.example.bookbuddy.models.LibraryExtended
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.navController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -29,11 +32,12 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 
-class LibrariesListFragment : DialogFragment(), CoroutineScope {
+class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentLibrariesListBinding
     private var job: Job = Job()
     private var isbn: String = ""
     lateinit var adapter: LibraryAdapter
+    val api = CrudApi(this@LibrariesListFragment)
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     val locationRequestCode = 0
@@ -83,13 +87,13 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
     }
 
     fun getLibrariesBook(isbn: String, addAdapter: Boolean){
-        runBlocking {
-            val crudApi = CrudApi(null)
+        var tmpLibraries : MutableList<LibraryExtended>?
+        runBlocking {            
             val corrutina = launch {
                 if (position == 0){
                     if (permissionsGranted){
                         if (ubi != null){
-                            var tmpLibraries = crudApi.getBookLibrariesExtended(isbn, ubi!!.latitude, ubi!!.longitude) as MutableList<LibraryExtended>?
+                                tmpLibraries = api.getBookLibrariesExtended(isbn, ubi!!.latitude, ubi!!.longitude) as MutableList<LibraryExtended>?
                             if (tmpLibraries == null){
                                 libraries = mutableListOf()
                             } else {
@@ -97,14 +101,21 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
                             }
                         } else {
                             showSnackBar(requireContext(), requireView(), "Enable gps to unlock all the potential")
-                            libraries = crudApi.getBookLibraries(isbn) as MutableList<LibraryExtended>?}
+                            tmpLibraries = api.getBookLibraries(isbn) as MutableList<LibraryExtended>?
+                            if(tmpLibraries != null){
+                                libraries = tmpLibraries
+                            }
+                        }
                     } else {
-                        libraries = crudApi.getBookLibraries(isbn) as MutableList<LibraryExtended>?
+                        tmpLibraries = api.getBookLibraries(isbn) as MutableList<LibraryExtended>?
+                        if(tmpLibraries != null){
+                            libraries = tmpLibraries
+                        }
                     }
 
                 } else {
                     // TODO: this
-                    //libraries!!.addAll((setCardview(crudApi.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?)!!)
+                    //libraries!!.addAll((setCardview(api.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?)!!)
                 }
 
             }
@@ -122,7 +133,6 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
     fun loadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
-
         binding.gpssearch.setOnClickListener {
             var selectedLibrary = adapter.getSelected()
             if (selectedLibrary != null){
@@ -202,7 +212,6 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
             ) == PackageManager.PERMISSION_GRANTED)
         ) {
             permissionsGranted = true
-
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location : Location? ->
                     ubi = location
@@ -288,5 +297,9 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope {
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
+    }
+
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

@@ -43,15 +43,6 @@ class SearchLanguagesAdapter(var dialogFragment: DialogFragment, var dialog: Pro
     }
 
     fun addLanguageToFavourite(id: Int, name: String){
-        /*
-        runBlocking {
-            val crudApi = CrudApi()
-            val corrutina = launch {
-                crudApi.updateProfileGenreToAPI(currentProfile.profileId, id)
-            }
-            corrutina.join()
-        }
-        */
         dialog?.onLanguageSearchComplete(id, name)
         dialogFragment.dismiss()
     }

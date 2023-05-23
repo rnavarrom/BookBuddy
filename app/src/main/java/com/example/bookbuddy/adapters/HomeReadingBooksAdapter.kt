@@ -13,20 +13,19 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
 import com.example.bookbuddy.ui.navdrawer.HomeFragmentDirections
+import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.base.ApiErrorListener
-import com.example.bookbuddy.utils.currentUser
-import com.example.bookbuddy.utils.dialogValue
-import com.example.bookbuddy.utils.dummyValue
-import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -34,6 +33,8 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
     RecyclerView.Adapter<HomeReadingBooksAdapter.ViewHolder>(), ApiErrorListener {
     lateinit var layout: LayoutInflater
     val fragment = fragment
+    lateinit var view : View
+    val api = CrudApi(this@HomeReadingBooksAdapter)
 
     class ViewHolder(val vista: View) : RecyclerView.ViewHolder(vista) {
         val imatge = vista.findViewById<ImageView>(R.id.actual_book_image)
@@ -43,13 +44,13 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
         var progressbar = vista.findViewById<ProgressBar>(R.id.progress_bar)
         val linearLayout = vista.findViewById<LinearLayout>(R.id.home_ll)
         //val dummyText = vista.findViewById<TextView>(R.id.NoBooksTV)
-
     }
 
     lateinit var context: Context
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         layout = LayoutInflater.from(parent.context)
         context = parent.context
+        view = parent
         var vh: ViewHolder? = null
         vh = ViewHolder(layout.inflate(R.layout.cardview_books_reading, parent, false))
         return vh!!
@@ -141,28 +142,13 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
     fun PutBook(readedId: Int, pagesReaded: Int){
         var result : Boolean? = false
         runBlocking {
-            val crudApi = CrudApi( this@HomeReadingBooksAdapter)
             val corrutina = launch {
-                result = crudApi.updateReadedToAPI(readedId, pagesReaded)
+                result = api.updateReadedToAPI(readedId, pagesReaded)
             }
             corrutina.join()
         }
         Toast.makeText(context, "Resultat: " + result, Toast.LENGTH_LONG).show()
     }
-    /*
-    fun RemoveBookReading(readedId: Int){
-        var result = false
-        runBlocking {
-            val crudApi = CrudApi()
-            val corrutina = launch {
-                result = crudApi.removeBookReading(readedId)
-            }
-            corrutina.join()
-        }
-        Toast.makeText(context, "Resultat: " + result, Toast.LENGTH_LONG).show()
-    }
-
-     */
     fun reloadFragment(fragment: Fragment){
         Toast.makeText(context, "Reloading fragment", Toast.LENGTH_LONG).show()
 
@@ -175,15 +161,17 @@ class HomeReadingBooksAdapter(var llista: ArrayList<ActualReading>, fragment: Ho
     }
     fun getUser(){
         runBlocking {
-            val crudApi = CrudApi(this@HomeReadingBooksAdapter)
             val corrutina = launch {
-                currentUser = crudApi.getUserId(currentUser.userId)!!
+                currentUser = api.getUserId(currentUser.userId)!!
             }
             corrutina.join()
         }
     }
 
     override fun onApiError() {
-        Toast.makeText(context,"Aviso error", Toast.LENGTH_LONG).show()
+        //if (this::context.isInitialized){
+
+        //}
+        Tools.showSnackBar(context, view, Constants.ErrrorMessage)
     }
 }

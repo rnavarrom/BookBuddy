@@ -31,7 +31,7 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentAuthorBookDialogBinding
     private var job: Job = Job()
     lateinit var adapter: AuthorBooksAdapter
-
+    val crudApi = CrudApi(this@AuthorBookDialog)
     private var position = 0
     private var lastPosition = -1
     var books: MutableList<Book>? = null
@@ -71,13 +71,21 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     }
 
     fun getAuthorBooks(addAdapter: Boolean){
+        var tempBooks : List<Book>?
         runBlocking {
-            val crudApi = CrudApi(this@AuthorBookDialog)
+
             val corrutina = launch {
                 if (position == 0){
-                    books = crudApi.getAuthorsBooks(authorId, position) as MutableList<Book>?
+                    tempBooks = crudApi.getAuthorsBooks(authorId, position)
+                    if(tempBooks !=  null){
+                        books = tempBooks as MutableList<Book>?
+                    }
                 } else {
-                    books!!.addAll((crudApi.getAuthorsBooks(authorId, position) as MutableList<Book>?)!!)
+                    tempBooks = crudApi.getAuthorsBooks(authorId, position)
+                            if(tempBooks != null){
+                                books!!.addAll( tempBooks as MutableList<Book>)
+                            }
+
                 }
                 if (addAdapter){
                     binding.rvBooks.layoutManager = GridLayoutManager(context, 3)

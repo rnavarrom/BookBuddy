@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
     private lateinit var userPrefs: UserPreferences
     private lateinit var savedUser: String
     private lateinit var savedPassword: String
+    val api = CrudApi(this@MainActivity)
 
     companion object {
         val USERNAME = stringPreferencesKey("username")
@@ -230,11 +231,9 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
 
     fun getUsers(userName: String, password: String) {
         currentUser = User()
-        runBlocking {
-            val crudApi = CrudApi(this@MainActivity)
-            val corrutina = launch {
-                //currentUser = crudApi.getUserLogin(userName, password)!!
-                var tempData = crudApi.getUserLogin(userName, password)
+        runBlocking {            
+            val corrutina = launch {                
+                var tempData = api.getUserLogin(userName, password)
                 if (tempData != null){
                     currentUser = tempData
                 }
@@ -242,15 +241,14 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
             corrutina.join()
         }
         if (currentUser.userId > 0) {
-            runBlocking {
-                val crudApi = CrudApi(this@MainActivity)
+            runBlocking {                
                 val corrutina = launch {
-                    var tempData = crudApi.getProfileUser(currentUser.userId)
+                    var tempData = api.getProfileUser(currentUser.userId)
                     if(tempData != null){
                         currentProfile = tempData
                     }
                     if (currentUser.haspicture) {
-                        responseToFile(applicationContext, crudApi.getUserImage(currentUser.userId))
+                        responseToFile(applicationContext, api.getUserImage(currentUser.userId))
                     }
                 }
                 corrutina.join()

@@ -35,7 +35,7 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     private var job: Job = Job()
     private var bookId: Int = 0
     lateinit var adapter: CommentAdapter
-
+    val api = CrudApi(this@BookCommentsFragment)
 
     var currentPage = 0
     private var position = 0
@@ -74,12 +74,12 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
 
     fun getCommentsBook(bookId: Int, addAdapter: Boolean){
         runBlocking {
-            val crudApi = CrudApi(this@BookCommentsFragment)
+            
             val corrutina = launch {
                 if (position == 0){
-                    comments = setCardview(crudApi.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?
+                    comments = setCardview(api.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?
                 } else {
-                    comments!!.addAll((setCardview(crudApi.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?)!!)
+                    comments!!.addAll((setCardview(api.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?)!!)
                 }
             }
             corrutina.join()

@@ -29,7 +29,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentContactsBinding
     private var job: Job = Job()
     lateinit var adapter: ContactAdapter
-
+    val api = CrudApi(this@ContactsFragment)
 
     var currentPage = 0
     private var position = 0
@@ -58,27 +58,27 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     fun getUserFollows(addAdapter: Boolean){
         runBlocking {
-            val crudApi = CrudApi(this@ContactsFragment)
+            
             val corrutina = launch {
                 if (position == 0){
-                    var tempFollows = crudApi.getFollowersProfile(currentUser.userId, position) as MutableList<UserItem>?
+                    var tempFollows = api.getFollowersProfile(currentUser.userId, position) as MutableList<UserItem>?
                     if (tempFollows != null){
                         follows = tempFollows
                     }
                 } else {
-                    var tempFollows = crudApi.getFollowersProfile(currentUser.userId, position)
+                    var tempFollows = api.getFollowersProfile(currentUser.userId, position)
                     if(tempFollows != null){
                         follows!!.addAll(tempFollows as MutableList<UserItem>)
                     }
                 }
-                if(follows == null){
-
-                }else if (addAdapter!!){
-                    binding.rvContacts.layoutManager = LinearLayoutManager(context)
-                    adapter = ContactAdapter(follows as ArrayList<UserItem>)
-                    binding.rvContacts.adapter = adapter
-                } else {
-                    adapter.updateList(follows as ArrayList<UserItem>)
+                if(follows != null) {
+                    if (addAdapter!!) {
+                        binding.rvContacts.layoutManager = LinearLayoutManager(context)
+                        adapter = ContactAdapter(follows as ArrayList<UserItem>)
+                        binding.rvContacts.adapter = adapter
+                    } else {
+                        adapter.updateList(follows as ArrayList<UserItem>)
+                    }
                 }
             }
             corrutina.join()
