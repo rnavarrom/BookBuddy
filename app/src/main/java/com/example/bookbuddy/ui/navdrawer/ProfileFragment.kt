@@ -22,33 +22,30 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
+import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileBinding
 import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentPicture
 import com.example.bookbuddy.utils.currentProfile
 import com.example.bookbuddy.utils.currentUser
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*
-
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.coroutines.CoroutineContext
-import com.bumptech.glide.request.transition.Transition
-import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
-import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
-import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
-import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
 import java.util.*
-import kotlin.collections.ArrayList
+import kotlin.coroutines.CoroutineContext
 
 
 class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreSearchCompleteListener, ProfileAuthorDialog.OnAuthorSearchCompleteListener, ApiErrorListener {
@@ -80,31 +77,31 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     private lateinit var menuItems: ArrayList<MenuItem>
 
     fun setLocal(activity: Activity, langCode: String){
-        var locale: Locale = Locale(langCode)
+        val locale = Locale(langCode)
         Locale.setDefault(locale)
-        var resources = activity.resources
-        var config = resources.configuration
+        val resources = activity.resources
+        val config = resources.configuration
         config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
     }
 
-    fun getCurrentLanguageCode(code: String): String {
+    private fun getCurrentLanguageCode(code: String): String {
         var finalCode: String = code
         if (finalCode == "null"){
             finalCode = requireActivity().applicationContext.resources.configuration.locales.get(0).language.toString()
         }
-        when (finalCode){
+        return when (finalCode){
             "en" -> {
-                return "american_flag"
+                "american_flag"
             }
             "ca" -> {
-                return "catalan_flag"
+                "catalan_flag"
             }
             "es" -> {
-                return "spanish_flag"
+                "spanish_flag"
             }
             else -> {
-                return "american_flag"
+                "american_flag"
             }
         }
     }
@@ -116,10 +113,10 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         editor.apply()
     }
 
-    fun getStoredLanguage(): String {
-        var sharedPreferences = requireActivity().applicationContext.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+    private fun getStoredLanguage(): String {
+        val sharedPreferences = requireActivity().applicationContext.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
         var code = sharedPreferences.getString("language_code", "") ?: ""
-        if (code.isNullOrEmpty()){
+        if (code.isEmpty()){
             code = requireActivity().applicationContext.resources.configuration.locales.get(0).language.toString()
         }
         return code
@@ -139,7 +136,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         menuItems = arrayListOf(settings, accept, cancel)
 
         menuItems.forEach {
-            it.isVisible = menuItemsVisibility.get(it.title.toString())!!
+            it.isVisible = menuItemsVisibility[it.title.toString()]!!
         }
     }
 
@@ -165,9 +162,9 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
     }
 
-    fun actionSettings(){
+    private fun actionSettings(){
         menuItems.forEach {
-            it.isVisible = !menuItemsVisibility.get(it.title.toString())!!
+            it.isVisible = !menuItemsVisibility[it.title.toString()]!!
             var title = it.title.toString()
             menuItemsVisibility[title] = it.isVisible
         }
@@ -203,10 +200,10 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
     }
 
-    fun actionAccept(){
+    private fun actionAccept(){
         menuItems.forEach {
-            it.isVisible = !menuItemsVisibility.get(it.title.toString())!!
-            var title = it.title.toString()
+            it.isVisible = !menuItemsVisibility[it.title.toString()]!!
+            val title = it.title.toString()
             menuItemsVisibility[title] = it.isVisible
         }
 
@@ -229,7 +226,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         binding.et2PrefferredAuthor.visibility = View.INVISIBLE
     }
 
-    fun updateGenre(){
+    private fun updateGenre(){
         var result: Boolean? = false
         if (binding.et1PrefferredGenre.text.toString() != binding.et2PrefferredGenre.text.toString()){
             runBlocking {
@@ -240,12 +237,12 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             }
             if (result != null) {
                 currentProfile.genre!!.name = binding.et2PrefferredGenre.text.toString()
-                binding.et1PrefferredGenre.setText(binding.et2PrefferredGenre.text.toString())
+                binding.et1PrefferredGenre.text = binding.et2PrefferredGenre.text.toString()
             }
         }
     }
 
-    fun updateAuthor(){
+    private fun updateAuthor(){
         var result: Boolean? = false
         if (binding.et1PrefferredAuthor.text.toString() != binding.et2PrefferredAuthor.text.toString()){
             runBlocking {
@@ -256,21 +253,21 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             }
             if (result != null){
                 currentProfile.author!!.name = binding.et2PrefferredAuthor.text.toString()
-                binding.et1PrefferredAuthor.setText(binding.et2PrefferredAuthor.text.toString())
+                binding.et1PrefferredAuthor.text = binding.et2PrefferredAuthor.text.toString()
             }
         }
     }
 
-    fun updateUserName(){
+    private fun updateUserName(){
         if (binding.etUsername.text.toString().isNotEmpty()){
-            if (!binding.tvUsername.text.toString().equals(binding.etUsername.text.toString())){
-                var userName = binding.etUsername.text.toString().trim()
+            if (binding.tvUsername.text.toString() != binding.etUsername.text.toString()){
+                val userName = binding.etUsername.text.toString().trim()
                 runBlocking {
-                    var corroutine = launch {
+                    val corroutine = launch {
                         if (!api.getUserExists(userName)!!){
                             api.updateUserName(currentUser.userId, userName)
                             Tools.setNavigationProfile(requireContext(), null, userName)
-                            binding.tvUsername.setText(binding.etUsername.text.toString())
+                            binding.tvUsername.text = binding.etUsername.text.toString()
                         }
                     }
                     corroutine.join()
@@ -279,10 +276,10 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
     }
 
-    fun actionCancel(){
+    private fun actionCancel(){
         menuItems.forEach {
-            it.isVisible = !menuItemsVisibility.get(it.title.toString())!!
-            var title = it.title.toString()
+            it.isVisible = !menuItemsVisibility[it.title.toString()]!!
+            val title = it.title.toString()
             menuItemsVisibility[title] = it.isVisible
         }
 
@@ -312,12 +309,12 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentProfileBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        var currentLanguageCode = getStoredLanguage()
-        var curr = getCurrentLanguageCode(currentLanguageCode)
+        val currentLanguageCode = getStoredLanguage()
+        val curr = getCurrentLanguageCode(currentLanguageCode)
         val languages = arrayOf("american_flag","catalan_flag","spanish_flag")
         val adapter = LanguageSpinnerAdapter(requireContext(), languages)
         binding.languageSpinner.adapter = adapter
@@ -428,11 +425,11 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         return emails
     }
 
-    fun loadUser(){
+    private fun loadUser(){
         binding.tvUsername.text = currentUser.name
         runBlocking {
             val corrutina = launch {
-                 var tempFollowers = api.getFollowerCount(currentUser.userId)
+                val tempFollowers = api.getFollowerCount(currentUser.userId)
                 if(tempFollowers != null){
                     followers = tempFollowers
                 }
@@ -442,11 +439,11 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         binding.tvFollowers.text = followers.toString() + " seguidores"
 
         if (currentProfile.genre != null){
-            binding.et1PrefferredGenre.setText(currentProfile.genre!!.name)
+            binding.et1PrefferredGenre.text = currentProfile.genre!!.name
         }
 
         if (currentProfile.author != null){
-            binding.et1PrefferredAuthor.setText(currentProfile.author!!.name)
+            binding.et1PrefferredAuthor.text = currentProfile.author!!.name
         }
 
         if (currentPicture != null){
@@ -464,21 +461,19 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         binding.mainContent.visibility = View.VISIBLE
 
         binding.et2PrefferredGenre.setOnClickListener {
-            val bundle = Bundle()
-            val dialog: ProfileSearchDialog = ProfileSearchDialog()
+            val dialog = ProfileSearchDialog()
             dialog.onGenreSearchCompleteListener = this //Changed
             dialog.show(childFragmentManager, "Date Picker")
         }
 
         binding.et2PrefferredAuthor.setOnClickListener {
-            val bundle = Bundle()
-            val dialog: ProfileAuthorDialog = ProfileAuthorDialog()
+            val dialog = ProfileAuthorDialog()
             dialog.onAuthorSearchCompleteListener = this //Changed
             dialog.show(childFragmentManager, "Date Picker")
         }
     }
 
-    fun loadTabLayout(){
+    private fun loadTabLayout(){
         tabLayout = binding.tabLayout
         viewPager = binding.viewPager
         tabLayout.addTab(tabLayout.newTab().setText("COMMENTS"))
@@ -498,7 +493,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         })
     }
 
-    fun imageChooser(){
+    private fun imageChooser(){
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, PICK_IMAGE_REQUEST)
     }
@@ -519,13 +514,13 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     }
 
 
-    fun uploadImage(imageUri: Uri) {
+    private fun uploadImage(imageUri: Uri) {
         /*
         val contentResolver = requireContext().contentResolver
         val inputStream: InputStream? = contentResolver.openInputStream(imageUri)
         val bitmap = BitmapFactory.decodeStream(inputStream)
         */
-        var bitmap: Bitmap? = null
+        var bitmap: Bitmap?
         Glide.with(this)
             .asBitmap()
             .load(imageUri)
@@ -599,7 +594,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     }
 
 
-    fun checkPermissions(){
+    private fun checkPermissions(){
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED){
             imageChooser()
@@ -664,6 +659,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     }
 
     override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

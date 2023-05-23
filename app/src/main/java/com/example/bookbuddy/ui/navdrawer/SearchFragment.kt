@@ -11,7 +11,6 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
@@ -19,27 +18,25 @@ import com.example.bookbuddy.adapters.SearchResultAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentSearchBinding
 import com.example.bookbuddy.models.SimpleBook
-import com.example.bookbuddy.models.Test.Pending
-import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
-import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class SearchFragment : Fragment(), ApiErrorListener{
     lateinit var binding: FragmentSearchBinding
-    lateinit var searchResultList: MutableList<SimpleBook>
+    private lateinit var searchResultList: MutableList<SimpleBook>
     private lateinit var adapter: SearchResultAdapter
-    val crudApi = CrudApi(this@SearchFragment)
+    val api = CrudApi(this@SearchFragment)
     var searchValues = ArrayList<String>()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+
+    private var position = 0
+    private var lastPosition = -1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
 
         //val searchTextView = findViewById<AutoCompleteTextView>(R.id.search_text_view)
@@ -97,7 +94,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
 
  */
 
-        var searchList = ArrayList<EditText>()
+        val searchList = ArrayList<EditText>()
         searchList.add(binding.SearchView)
         searchList.add(binding.etAuthor)
         searchList.add(binding.etGenre)
@@ -112,9 +109,9 @@ class SearchFragment : Fragment(), ApiErrorListener{
                         requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
-                    var performSearch = false
+                    val performSearch: Boolean
 
-                    searchValues = ArrayList<String>()
+                    searchValues = ArrayList()
                     if (binding.SearchView.text.isNullOrBlank() && binding.etAuthor.text.isNullOrBlank() && binding.etGenre.text.isNullOrBlank()) {
                         binding.SearchView.setBackgroundResource(R.drawable.search_bg_error)
                         binding.etAuthor.setBackgroundResource(R.drawable.search_bg_error)
@@ -142,7 +139,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
                         searchValues.add("")
                     }
                     if(performSearch){
-                        var tempSearch = performSearch(searchValues)
+                        val tempSearch = performSearch(searchValues)
                         if (tempSearch != null) {
                             searchResultList = tempSearch
                         }else{
@@ -152,7 +149,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
                         Tools.showSnackBar(requireContext(), requireView(), getString(R.string.SB_NothingFound))
                         searchResultList = arrayListOf<SimpleBook>()
                     }
-                    binding.SearchReciclerView.setLayoutManager(GridLayoutManager(context, 3))
+                    binding.SearchReciclerView.layoutManager = GridLayoutManager(context, 3)
                     adapter =
                         SearchResultAdapter(searchResultList as ArrayList<SimpleBook>)
                     binding.SearchReciclerView.adapter = adapter
@@ -173,8 +170,11 @@ class SearchFragment : Fragment(), ApiErrorListener{
 
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
-                        var position = totalItemCount
-                        LoadMoreSearch(position, searchValues)
+                        position = totalItemCount
+                        if (lastPosition != totalItemCount){
+                            loadMoreSearch(position, searchValues)
+                        }
+                        lastPosition = totalItemCount
                     }
                 }
             }
@@ -182,16 +182,16 @@ class SearchFragment : Fragment(), ApiErrorListener{
         return binding.root
     }
 
-    fun LoadMoreSearch(position : Int, searchValues: ArrayList<String>) {
+    private fun loadMoreSearch(position : Int, searchValues: ArrayList<String>) {
         runBlocking {
             val corrutina = launch {
-                var tempSearchList =
-                    crudApi.getSimpleSearch(
+                val tempSearchList =
+                    api.getSimpleSearch(
                         position,
                         searchValues as List<String>
                     )
                 if (tempSearchList != null)
-                    searchResultList!!.addAll(tempSearchList as MutableList<SimpleBook>)
+                    searchResultList.addAll(tempSearchList as MutableList<SimpleBook>)
             }
             corrutina.join()
         }
@@ -200,10 +200,11 @@ class SearchFragment : Fragment(), ApiErrorListener{
 
     private fun performSearch(searchValues: ArrayList<String>): ArrayList<SimpleBook>? {
         var searchResultList : ArrayList<SimpleBook>? = arrayListOf()
-
+        position = 0
+        lastPosition = -1
         runBlocking {
             val corrutina = launch {
-                searchResultList = crudApi.getSimpleSearch(0, searchValues as List<String>)
+                searchResultList = api.getSimpleSearch(position, searchValues as List<String>)
             }
             corrutina.join()
         }
@@ -211,7 +212,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
     }
 
     override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }
 

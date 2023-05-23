@@ -1,27 +1,23 @@
 package com.example.bookbuddy.ui.navdrawer.adminnav
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.AdminBookLibraryAdapter
 import com.example.bookbuddy.adapters.AdminGenresAdapter
-import com.example.bookbuddy.adapters.AdminLibraryAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminBookReferencesDialogBinding
-import com.example.bookbuddy.databinding.FragmentAdminGenresBinding
 import com.example.bookbuddy.models.*
 import com.example.bookbuddy.ui.navdrawer.ProfileAuthorDialog
 import com.example.bookbuddy.ui.navdrawer.ProfileLanguageDialog
@@ -40,15 +36,16 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
     ProfileLibraryDialog.OnLibrarySearchCompleteListener {
     lateinit var binding: FragmentAdminBookReferencesDialogBinding
     private var job: Job = Job()
-    lateinit var adapterGenres: AdminGenresAdapter
-    lateinit var adapterLibraries: AdminBookLibraryAdapter
-    val api = CrudApi(this@ReferencesBookDialog)
+    private lateinit var adapterGenres: AdminGenresAdapter
+    private lateinit var adapterLibraries: AdminBookLibraryAdapter
+
     private var author: Author? = null
     private var lang: Language? = null
     private var genres: MutableList<Genre>? = null
     private var libraries: MutableList<LibraryExtended>? = null
 
     private var bookId: Int = 0
+    private val api = CrudApi(this@ReferencesBookDialog)
     /*
     editText.postDelayed({
             editText.requestFocus()
@@ -106,15 +103,15 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
-            DialogFragment.STYLE_NORMAL,
+            STYLE_NORMAL,
             R.style.FullScreenDialogStyle
-        );
+        )
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentAdminBookReferencesDialogBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
@@ -158,8 +155,8 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
             val selection = adapterGenres.getSelected()
             var result = false
             if (selection != null){
-                runBlocking {                    
-                    var coroutine = launch {
+                runBlocking {
+                    val coroutine = launch {
                         result = api.deleteBookGenre(bookId, selection.genreId)!!
                     }
                     coroutine.join()
@@ -184,7 +181,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
 
         binding.btnEditLibrary.setOnClickListener {
-            var selection = adapterLibraries.getSelected()
+            val selection = adapterLibraries.getSelected()
             var result = false
             if (selection != null){
                 val builder = AlertDialog.Builder(requireContext())
@@ -193,14 +190,14 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 builder.setTitle("Number of copies")
                 editText.hint = selection.copies.toString() + " copies"
                 builder.setView(editText)
-                builder.setPositiveButton(getString(R.string.BT_Edit)) { dialog, which ->
+                builder.setPositiveButton(getString(R.string.BT_Edit)) { _, _ ->
                     var copiesString = editText.text.toString()
 
-                    if (!copiesString.isEmpty()){
-                        var copies = copiesString.toInt()
+                    if (copiesString.isNotEmpty()){
+                        val copies = copiesString.toInt()
                         if (copies >= 0){
-                            runBlocking {                                
-                                var coroutine = launch {
+                            runBlocking {
+                                val coroutine = launch {
                                     result = api.updateBookLibrary(bookId, selection.library.libraryId, copies)!!
                                 }
                                 coroutine.join()
@@ -221,15 +218,10 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                     }
                 }
 
-                builder.setNegativeButton("Cancel") { dialog, which ->
+                builder.setNegativeButton("Cancel") { dialog, _ ->
                     // Handle "Cancelar" button click here
                     dialog.cancel()
                 }
-
-                builder.setOnCancelListener(DialogInterface.OnCancelListener {
-                    // Handle cancel action here
-                    // This will be triggered when the dialog is canceled
-                })
 
                 val dialog = builder.create()
                 dialog.show()
@@ -248,8 +240,8 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
             val selection = adapterLibraries.getSelected()
             var result = false
             if (selection != null){
-                runBlocking {                    
-                    var coroutine = launch {
+                runBlocking {
+                    val coroutine = launch {
                         result = api.deleteBookLibrary(bookId, selection.library.libraryId)!!
                     }
                     coroutine.join()
@@ -269,8 +261,8 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
     }
 
 
-    fun getAuthor(){
-        runBlocking {            
+    private fun getAuthor(){
+        runBlocking {
             val corrutina = launch {
                 author = api.getBookAuthors(bookId)
             }
@@ -281,8 +273,8 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
     }
 
-    fun getLang(){
-        runBlocking {            
+    private fun getLang(){
+        runBlocking {
             val corrutina = launch {
                 lang = api.getBookLang(bookId)
             }
@@ -293,8 +285,8 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
     }
 
-    fun getGenres(addAdapter: Boolean){
-        runBlocking {            
+    private fun getGenres(addAdapter: Boolean){
+        runBlocking {
             val corrutina = launch {
                 genres = api.getBookGenres(bookId) as MutableList<Genre>?
                 if (addAdapter){
@@ -309,8 +301,8 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
     }
 
-    fun getLibraries(addAdapter: Boolean){
-        runBlocking {            
+    private fun getLibraries(addAdapter: Boolean){
+        runBlocking {
             val corrutina = launch {
                 libraries = api.getBookLibraries(bookId) as MutableList<LibraryExtended>?
                 if (addAdapter){
@@ -353,8 +345,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
         if (!genreExist){
             runBlocking {
-                var api = CrudApi(this@ReferencesBookDialog)
-                var corrutine = launch {
+                val corrutine = launch {
                     resultApi = api.insertBookGenre(bookId, result)
                 }
                 corrutine.join()
@@ -364,7 +355,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
 
         if (resultApi != null && resultApi as Boolean){
-            var tmpGenre = Genre(result, name)
+            val tmpGenre = Genre(result, name)
             genres!!.add(tmpGenre)
             genres!!.sortBy { it.name }
             adapterGenres.updateList(genres as ArrayList<Genre>)
@@ -382,8 +373,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
 
         if (!authorExist){
             runBlocking {
-                var api = CrudApi(this@ReferencesBookDialog)
-                var corrutine = launch {
+                val corrutine = launch {
                     if (author != null){
                         api.deleteBookAuthors(bookId, author!!.authorId)
                     }
@@ -410,8 +400,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
 
         if (!languageExist){
             runBlocking {
-                var api = CrudApi(this@ReferencesBookDialog)
-                var corrutine = launch {
+                val corrutine = launch {
                     if (author != null){
                         api.deleteBookLang(bookId, lang!!.languageId)
                     }
@@ -438,8 +427,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
         if (!libraryExist){
             runBlocking {
-                var api = CrudApi(this@ReferencesBookDialog)
-                var corrutine = launch {
+                val corrutine = launch {
                     resultApi = api.insertBookLibrary(bookId, result, 0)
                 }
                 corrutine.join()
@@ -449,7 +437,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
 
         if (resultApi != null && resultApi as Boolean){
-            var tmpLibrary = LibraryExtended(library = Library(0.0, result, 0.0, name, ""), distance = null, copies = 0)
+            val tmpLibrary = LibraryExtended(library = Library(0.0, result, 0.0, name, ""), distance = null, copies = 0)
             libraries!!.add(tmpLibrary)
             libraries!!.sortBy { it.library.name}
             adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)

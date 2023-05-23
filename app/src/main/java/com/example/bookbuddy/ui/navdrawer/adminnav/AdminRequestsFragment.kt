@@ -1,18 +1,16 @@
 package com.example.bookbuddy.ui.navdrawer.adminnav
 
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.text.InputType
-import android.view.*
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.AdminRequestsAdapter
@@ -37,12 +35,11 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var bookRequests: MutableList<BookRequest>? = null
 
     private var isbn: String? = null
-
-    fun insertBookRequest(){
+    private val api = CrudApi(this@AdminRequestsFragment)
+    private fun insertBookRequest(){
         var result = false
         if (!isbn.isNullOrEmpty()){
-
-
+            // TODO: This?
             if (result) {
                 showSnackBar(requireContext(), requireView(), getString(R.string.BookRequestInserted))
                 //adapter.updateList(BookRequests as ArrayList<BookRequest>)
@@ -62,7 +59,7 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentAdminRequestsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
@@ -82,13 +79,13 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             val selection = adapter.getSelected()
             var result = false
             if (selection != null){
-                var fra = requireArguments().getSerializable("fragment") as? AdminFragment?
+                val fra = requireArguments().getSerializable("fragment") as? AdminFragment?
                 val bundle = Bundle()
                 bundle.putInt("id", selection.bookRequest1)
                 bundle.putString("isbn", selection.bookIsbn)
                 bundle.putSerializable("fragment", fra)
-                //var action = AdminLibrariesFragmentDirections.actionNavBookToNavInsertBook(bundle)
-                var action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
+                //val action = AdminLibrariesFragmentDirections.actionNavBookToNavInsertBook(bundle)
+                val action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
                 navController.navigate(action)
             } else {
                 showSnackBar(requireContext(), requireView(), getString(R.string.PickBookFirst))
@@ -106,8 +103,7 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 builder.setPositiveButton(getString(R.string.Yes)) { dialogInterface: DialogInterface, _: Int ->
                     // Acciones a realizar si el usuario selecciona "Sí"
                     runBlocking {
-                        var api = CrudApi(this@AdminRequestsFragment)
-                        var coroutine = launch {
+                        val coroutine = launch {
                             result = api.deleteRequest(selection.bookRequest1)!!
                         }
                         coroutine.join()
@@ -132,12 +128,12 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
         }
 
-        binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
+        binding.mainContent.setOnRefreshListener {
             position = 0
             lastPosition = -1
             getRequests(false)
-            binding.mainContent.isRefreshing = false;
-        });
+            binding.mainContent.isRefreshing = false
+        }
 
         binding.rvRequests.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -164,14 +160,13 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         getRequests(false)
     }
 
-    fun getRequests(addAdapter: Boolean){
+    private fun getRequests(addAdapter: Boolean){
         runBlocking {
-            val crudApi = CrudApi(this@AdminRequestsFragment)
             val corrutina = launch {
                 if (position == 0){
-                    bookRequests = crudApi.getRequests(position) as MutableList<BookRequest>?
+                    bookRequests = api.getRequests(position) as MutableList<BookRequest>?
                 } else {
-                    bookRequests!!.addAll((crudApi.getRequests(position) as MutableList<BookRequest>?)!!)
+                    bookRequests!!.addAll((api.getRequests(position) as MutableList<BookRequest>?)!!)
                 }
                 if (addAdapter){
                     binding.rvRequests.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)

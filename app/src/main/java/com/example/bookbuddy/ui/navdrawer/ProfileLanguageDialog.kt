@@ -33,10 +33,10 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
 
     private var position = 0
     private var lastPosition = -1
-    var languages: MutableList<Language>? = null
+    private var languages: MutableList<Language>? = null
 
-    public var onLanguageSearchCompleteListener: OnLanguageSearchCompleteListener? = null
-    public interface OnLanguageSearchCompleteListener {
+    var onLanguageSearchCompleteListener: OnLanguageSearchCompleteListener? = null
+    interface OnLanguageSearchCompleteListener {
         fun onLanguageSearchComplete(result: Int, name: String)
     }
 
@@ -84,7 +84,7 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentProfileSearchLanguageDialogBinding.inflate(layoutInflater, container, false)
 
         binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -115,7 +115,7 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
                 val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
-                var searchValue = binding.searchThings.text.toString()
+                val searchValue = binding.searchThings.text.toString()
 
                 performSearch(searchValue)
 
@@ -145,16 +145,11 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
         adapter.updateList(languages as ArrayList<Language>)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-
-        return super.onCreateDialog(savedInstanceState)
-    }
-
     private fun performSearch(searchValue: String) {
         // Aquí se realiza la búsqueda con el texto ingresado en el AutoCompleteTextView
         //Toast.makeText(requireContext(), "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
 
-        languages = mutableListOf<Language>()
+        languages = mutableListOf()
 
         runBlocking {
             val corrutina = launch {

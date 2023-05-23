@@ -3,7 +3,6 @@ package com.example.bookbuddy.ui.navdrawer
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -11,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.budiyev.android.codescanner.CodeScanner
@@ -20,7 +18,6 @@ import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentScanBinding
-import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.navController
@@ -31,27 +28,25 @@ import kotlinx.coroutines.runBlocking
 class ScanFragment : Fragment(), ApiErrorListener {
     private lateinit var codeScanner: CodeScanner
     lateinit var binding: FragmentScanBinding
-    var api = CrudApi(this@ScanFragment)
+
     private var isScannerEnabled = false
     private var isDialogOpen = false
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private val api = CrudApi(this@ScanFragment)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentScanBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
         return binding.root
     }
 
-    fun bookExist(isbn: String): Boolean? {
+    private fun bookExist(isbn: String): Boolean? {
         var exist : Boolean? = false
         runBlocking {
-            var corroutine = launch {
+            val corroutine = launch {
                 exist = api.getBookExist(isbn)
             }
             corroutine.join()
@@ -59,10 +54,10 @@ class ScanFragment : Fragment(), ApiErrorListener {
         return exist
     }
 
-    fun createRequest(isbn: String): Boolean? {
+    private fun createRequest(isbn: String): Boolean? {
         var succes: Boolean? = false
         runBlocking {
-            var corroutine = launch {
+            val corroutine = launch {
                 succes = api.addRequestAPI(isbn)!!
             }
             corroutine.join()
@@ -70,7 +65,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
         return succes
     }
 
-    fun startCamera(){
+    private fun startCamera(){
         val scannerView = binding.scannerView
         val activity = requireActivity()
         // TODO: FIX THIS
@@ -83,11 +78,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
             activity.runOnUiThread {
                 // Vibrate
                 val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                if (Build.VERSION.SDK_INT >= 26) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
-                } else {
-                    vibrator.vibrate(200)
-                }
+                vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
                 if (it.text.length == 13 && it.text.matches(Regex("\\d+"))){
                     codeScanner.releaseResources()
                     if (!bookExist(it.text)!!) {
@@ -96,7 +87,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
                         if (a == null) {
 
                         } else if (a == false) {  //!bookExist(it.text)!!
-                            var created: Boolean? = createRequest(it.text)
+                            val created: Boolean? = createRequest(it.text)
                             if (created == true) {
                                 showSnackBar(
                                     requireContext(),
@@ -114,7 +105,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
                         } else {
                             val bundle = Bundle()
                             bundle.putString("isbn", it.text)
-                            var action =
+                            val action =
                                 ScanFragmentDirections.actionNavScanToNavBookDisplay(bundle)
                             navController.navigate(action)
                             isDialogOpen = true

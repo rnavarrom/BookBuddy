@@ -1,28 +1,23 @@
 package com.example.bookbuddy.ui.navdrawer
 
 import android.os.Bundle
-import android.view.*
-import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.adapters.CommentAdapter
 import com.example.bookbuddy.adapters.ProfileBookMarkAdapter
-import com.example.bookbuddy.adapters.ProfileCommentAdapter
 import com.example.bookbuddy.api.CrudApi
-import com.example.bookbuddy.databinding.FragmentBookCommentsBinding
 import com.example.bookbuddy.databinding.FragmentProfileBookmarksBinding
-import com.example.bookbuddy.databinding.FragmentProfileCommentsBinding
 import com.example.bookbuddy.models.Readed
-import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
-import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -33,21 +28,16 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var userId: Int = currentUser.userId
     private var isProfileFragment: Boolean = false
     lateinit var adapter: ProfileBookMarkAdapter
-    val api = CrudApi(this@ProfileBookMarksFragment)
+    private val api = CrudApi(this@ProfileBookMarksFragment)
 
-    var currentPage = 0
     private var position = 0
-    var isLoading = false
-    var readeds: MutableList<Readed>? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private var lastPosition = -1
+    private var readeds: MutableList<Readed>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentProfileBookmarksBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
@@ -62,16 +52,16 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         return binding.root
     }
 
-    fun getCommentsUser(userId: Int, addAdapter: Boolean){
+    private fun getCommentsUser(userId: Int, addAdapter: Boolean){
         runBlocking {            
             val corrutina = launch {
                 if (position == 0){
-                     var tempReadeds = api.getReadedsFromUser(userId,position)
+                     val tempReadeds = api.getReadedsFromUser(userId,position)
                     if(tempReadeds != null){
                         readeds = tempReadeds  as MutableList<Readed>
                     }
                 } else {
-                    var tempReadeds = api.getReadedsFromUser(userId,position)
+                    val tempReadeds = api.getReadedsFromUser(userId,position)
                     if(tempReadeds != null){
                         readeds!!.addAll( tempReadeds as MutableList<Readed>)
                     }
@@ -82,7 +72,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         if(readeds == null){
 
         }else if (addAdapter){
-            var gridLayout = GridLayoutManager(context, 3)
+            val gridLayout = GridLayoutManager(context, 3)
             binding.rvBookmarks.layoutManager = gridLayout
             adapter = ProfileBookMarkAdapter(readeds as ArrayList<Readed>, isProfileFragment)
             binding.rvBookmarks.adapter = adapter
@@ -96,12 +86,12 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
-        binding.refresh.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
+        binding.refresh.setOnRefreshListener {
             position = 0
-            currentPage = 0
+            lastPosition = -1
             getCommentsUser(userId, false)
-            binding.refresh.isRefreshing = false;
-        });
+            binding.refresh.isRefreshing = false
+        }
 
         binding.rvBookmarks.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -111,11 +101,13 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-                if (!isLoading && lastVisibleItem == totalItemCount - 1 && dy >= 0) {
+                if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        isLoading = true
-                        loadMoreItems()
+                        if (lastPosition != totalItemCount){
+                            loadMoreItems()
+                        }
+                        lastPosition = totalItemCount
                     }
                 }
             }
@@ -123,11 +115,9 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     private fun loadMoreItems() {
-        currentPage++
         binding.loadingComment.visibility = View.VISIBLE
         getCommentsUser(userId, false)
         binding.loadingComment.visibility = View.GONE
-        isLoading = false
     }
 
     override fun onDestroyView() {

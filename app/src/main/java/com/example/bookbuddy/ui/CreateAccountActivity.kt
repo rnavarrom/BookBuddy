@@ -2,16 +2,11 @@ package com.example.bookbuddy.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.view.ViewTreeObserver
 import android.view.WindowManager
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.bookbuddy.R
@@ -19,13 +14,9 @@ import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.Utils.Sha
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.ActivityCreateAccountBinding
-import com.example.bookbuddy.models.Response
-import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.utils.Tools
-import com.example.bookbuddy.utils.Tools.Companion.unaccent
 import com.example.bookbuddy.utils.base.ApiErrorListener
-import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.currentUserCreate
 import com.example.bookbuddy.utils.keyboardValue
 import kotlinx.coroutines.launch
@@ -36,7 +27,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     val api = CrudApi(this@CreateAccountActivity)
     var checkValues: Boolean = false
     lateinit var user: UserItem
-    var conditions = false
+    private var conditions = false
     override fun onCreate(savedInstanceState: Bundle?) {
 
         binding = ActivityCreateAccountBinding.inflate(layoutInflater)
@@ -44,30 +35,26 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         val mainLayout = binding.createAcountLayout
-        mainLayout.viewTreeObserver.addOnGlobalLayoutListener(object :
-            ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                val rect = Rect()
-                mainLayout.getWindowVisibleDisplayFrame(rect)
-                val screenHeight = mainLayout.rootView.height
-                val keyboardHeight = screenHeight - rect.bottom
-                println(keyboardHeight.toString() + "------------------")
-                // Verifica si el teclado está oculto
-                if (keyboardHeight < keyboardValue) {
-                    binding.CAImage.visibility = View.VISIBLE
-                } else {
-                    binding.CAImage.visibility = View.GONE
-                }
+        mainLayout.viewTreeObserver.addOnGlobalLayoutListener {
+            val rect = Rect()
+            mainLayout.getWindowVisibleDisplayFrame(rect)
+            val screenHeight = mainLayout.rootView.height
+            val keyboardHeight = screenHeight - rect.bottom
+            // Verifica si el teclado está oculto
+            if (keyboardHeight < keyboardValue) {
+                binding.CAImage.visibility = View.VISIBLE
+            } else {
+                binding.CAImage.visibility = View.GONE
             }
-        })
+        }
 
         binding.CAButtonRegister.setOnClickListener {
             //checkValues = CheckFields()
-            if (CheckFields()) {
+            if (checkFields()) {
                 currentUserCreate = UserItem()
                 getValues()
 
-            var success = postUser(currentUserCreate)
+            val success = postUser(currentUserCreate)
             if (success) {
                 Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_AccountCreated))
                 //Toast.makeText(this, , Toast.LENGTH_LONG).show()
@@ -90,12 +77,12 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
             Tools.tooglePasswordVisible(binding.CAEditPassword2)
         }
         binding.userConditions.setOnClickListener {
-            UserConditions()
+            userConditions()
         }
         setContentView(binding.root)
     }
 
-    fun postUser(user: UserItem): Boolean {
+    private fun postUser(user: UserItem): Boolean {
         var response : Boolean? = false
         runBlocking {
             val corrutina = launch {
@@ -103,23 +90,23 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
             }
             corrutina.join()
         }
-        if(response != null){
-            return response!!
+        return if(response != null){
+            response!!
         }else{
-            return false
+            false
         }
     }
 
-    fun getValues() {
+    private fun getValues() {
         currentUserCreate.name = binding.CAEditUser.text.toString()
         currentUserCreate.password = Sha.calculateSHA(binding.CAEditPassword.text.toString())
         currentUserCreate.email = binding.CAEditEmail.text.toString()
     }
 
     @SuppressLint("ResourceAsColor")
-    fun CheckFields(): Boolean {
+    fun checkFields(): Boolean {
 
-        ResetColors()
+        resetColors()
         //Check if all the fields are not blank
         if (binding.CAEditUser.text.isBlank() ||
             binding.CAEditPassword.text.isBlank() ||
@@ -160,21 +147,21 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
             return false
         }
         //Check if the username is not repited in the DB
-        var userNameAviable : Boolean? = isNameAviable(binding.CAEditUser.text.toString())
+        val userNameAviable : Boolean? = isNameAviable(binding.CAEditUser.text.toString())
 
         if (userNameAviable == null) {
             return false
-        }else if(!userNameAviable!!){
+        }else if(!userNameAviable){
             binding.CAEditUser.setTextColor(getColor(R.color.red_error))
             Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_UserNameInUse))
            // Toast.makeText(this, , Toast.LENGTH_LONG).show()
             return false
         }
         //Chgeck if the email is not repeated in the DB
-        var emailAviable : Boolean? = isEmailAviable(binding.CAEditEmail.text.toString())
+        val emailAviable : Boolean? = isEmailAviable(binding.CAEditEmail.text.toString())
         if (emailAviable == null) {
             return false
-        }else if(!emailAviable!!){
+        }else if(!emailAviable){
             binding.CAEditEmail.setTextColor(getColor(R.color.red_error))
             Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_EmailUsed))
            // Toast.makeText(this, , Toast.LENGTH_LONG).show()
@@ -182,7 +169,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         }
         return true
     }
-    fun isNameAviable(userName: String): Boolean? {
+    private fun isNameAviable(userName: String): Boolean? {
         var response : Boolean? = false
         runBlocking {
             val corrutina = launch {
@@ -192,7 +179,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         }
         return response
     }
-    fun isEmailAviable(email: String): Boolean? {
+    private fun isEmailAviable(email: String): Boolean? {
         var response : Boolean? = false
         runBlocking {
             val corrutina = launch {
@@ -202,23 +189,23 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         }
         return response!!
     }
-    fun UserConditions() {
+    private fun userConditions() {
         val builder = AlertDialog.Builder(this)
         val inflater = layoutInflater
         val dialogLayout = inflater.inflate(R.layout.dialog_user_conditions, null)
         builder.setView(dialogLayout)
         builder.setPositiveButton(getString(R.string.DG_Accept)) { dialogInterface, i ->
             conditions = true
-            ResetColors()
+            resetColors()
         }
         builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialogInterface, i ->
             conditions = false
-            ResetColors()
+            resetColors()
         }
         builder.show()
     }
 
-    fun ResetColors() {
+    private fun resetColors() {
         binding.CAEditUser.setTextColor(getColor(R.color.black))
         binding.CAEditEmail.setTextColor(getColor(R.color.black))
         binding.CAEditPassword.setTextColor(getColor(R.color.black))

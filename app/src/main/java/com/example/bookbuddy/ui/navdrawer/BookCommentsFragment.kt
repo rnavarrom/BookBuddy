@@ -1,30 +1,23 @@
 package com.example.bookbuddy.ui.navdrawer
 
-import android.opengl.Visibility
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.CommentAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentBookCommentsBinding
-import com.example.bookbuddy.databinding.FragmentSettingsBinding
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.utils.Tools
-import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
+import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
@@ -37,24 +30,23 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     lateinit var adapter: CommentAdapter
     val api = CrudApi(this@BookCommentsFragment)
 
-    var currentPage = 0
     private var position = 0
-    var isLoading = false
+    private var lastPosition = -1
     var comments: MutableList<Comment>? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
-            DialogFragment.STYLE_NORMAL,
+            STYLE_NORMAL,
             R.style.FullScreenDialogStyle
-        );
+        )
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentBookCommentsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
@@ -64,20 +56,18 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         bookId = bundle!!.getInt("bookid")
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
-        launch {
-            getCommentsBook(bookId, true)
-            loadingEnded()
-        }
+        getCommentsBook(bookId, true)
+        loadingEnded()
 
         return binding.root
     }
 
-    fun getCommentsBook(bookId: Int, addAdapter: Boolean){
+    private fun getCommentsBook(bookId: Int, addAdapter: Boolean){
         runBlocking {
             
             val corrutina = launch {
                 if (position == 0){
-                    comments = setCardview(api.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?
+                    comments = setCardview(api.getCommentsFromBook(bookId,position) as ArrayList<Comment>)
                 } else {
                     comments!!.addAll((setCardview(api.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?)!!)
                 }
@@ -100,17 +90,17 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         binding.addComment.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt("bookid", bookId)
-            var action = BookCommentsFragmentDirections.actionNavReadCommentToNavWriteComment(bundle)
+            val action = BookCommentsFragmentDirections.actionNavReadCommentToNavWriteComment(bundle)
             navController.navigate(action)
 
         }
 
-        binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
+        binding.mainContent.setOnRefreshListener {
             position = 0
-            currentPage = 0
+           lastPosition = -1
             getCommentsBook(bookId, false)
-            binding.mainContent.isRefreshing = false;
-        });
+            binding.mainContent.isRefreshing = false
+        }
 
         binding.rvComments.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -120,11 +110,13 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-                if (!isLoading && lastVisibleItem == totalItemCount - 1 && dy >= 0) {
+                if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        isLoading = true
-                        loadMoreItems()
+                        if (lastPosition != totalItemCount){
+                            loadMoreItems()
+                        }
+                        lastPosition = totalItemCount
                     }
                 }
             }
@@ -141,11 +133,9 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     }
 
     private fun loadMoreItems() {
-        currentPage++
         binding.loadingComment.visibility = View.VISIBLE
         getCommentsBook(bookId, false)
         binding.loadingComment.visibility = View.GONE
-        isLoading = false
     }
 
     override fun onDestroyView() {

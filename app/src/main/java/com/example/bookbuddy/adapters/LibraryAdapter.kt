@@ -2,46 +2,40 @@ package com.example.bookbuddy.adapters
 
 import android.content.Context
 import android.location.Location
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
 import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.LibraryExtended
-import com.example.bookbuddy.utils.navController
 
 
-class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var ubi: Location?) :
-    RecyclerView.Adapter<LibraryAdapter.viewholder>() {
+class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var location: Location?) :
+    RecyclerView.Adapter<LibraryAdapter.ViewHolder>() {
 
     private var selected: LibraryExtended? = null
 
-    class viewholder(val view: View) : RecyclerView.ViewHolder(view) {
-        val libraryName = view.findViewById<TextView>(R.id.lib_name)
-        val libraryZip = view.findViewById<TextView>(R.id.lib_zip)
-        val libraryDistance = view.findViewById<TextView>(R.id.lib_distance)
-        val libraryCopies = view.findViewById<TextView>(R.id.lib_copies)
+    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        val libraryName = view.findViewById<TextView>(R.id.lib_name)!!
+        val libraryZip = view.findViewById<TextView>(R.id.lib_zip)!!
+        val libraryDistance = view.findViewById<TextView>(R.id.lib_distance)!!
+        val libraryCopies = view.findViewById<TextView>(R.id.lib_copies)!!
     }
 
     private lateinit var context: Context
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewholder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(parent.context)
         context = parent.context
 
-        if (viewType == 0){
-            return viewholder(layout.inflate(R.layout.cardview_library, parent, false))
+        return if (viewType == 0){
+            ViewHolder(layout.inflate(R.layout.cardview_library, parent, false))
         } else{
-            return viewholder(layout.inflate(R.layout.cardview_library_selected, parent, false))
+            ViewHolder(layout.inflate(R.layout.cardview_library_selected, parent, false))
         }
     }
 
-    override fun onBindViewHolder(holder: viewholder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.libraryName.text = list[position].library.name
         holder.libraryZip.text = list[position].library.zipCode
 
@@ -54,7 +48,7 @@ class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var ubi: Lo
         holder.libraryCopies.text = list[position].copies.toString() + " copies"
 
         holder.view.setOnClickListener {
-            for (i in 0..list.size - 1) {
+            for (i in 0 until list.size) {
                 if (i == position)
                     if (list[i].cardview == 0)
                         list[i].cardview = 1

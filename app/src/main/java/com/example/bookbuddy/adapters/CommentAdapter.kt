@@ -15,9 +15,6 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.ui.navdrawer.BookCommentsFragmentDirections
 import com.example.bookbuddy.utils.base.ApiErrorListener
-import com.example.bookbuddy.utils.currentPicture
-import com.example.bookbuddy.utils.currentProfile
-import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import java.io.File
@@ -26,31 +23,30 @@ import kotlin.coroutines.CoroutineContext
 
 
 class CommentAdapter(var list: java.util.ArrayList<Comment>) :
-    RecyclerView.Adapter<CommentAdapter.viewholder>(), CoroutineScope, ApiErrorListener {
+    RecyclerView.Adapter<CommentAdapter.ViewHolder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
     val api = CrudApi( this@CommentAdapter)
-    class viewholder(val view: View) : RecyclerView.ViewHolder(view) {
-        val profilePicture = view.findViewById<ImageView>(R.id.profile_imageView)
-        val username = view.findViewById<TextView>(R.id.tv_name)
-        val date = view.findViewById<TextView>(R.id.tv_date)
-        val rating = view.findViewById<RatingBar>(R.id.book_rating_display)
-        val comment = view.findViewById<TextView>(R.id.tv_comment)
+    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        val profilePicture = view.findViewById<ImageView>(R.id.profile_imageView)!!
+        val username = view.findViewById<TextView>(R.id.tv_name)!!
+        val date = view.findViewById<TextView>(R.id.tv_date)!!
+        val rating = view.findViewById<RatingBar>(R.id.book_rating_display)!!
+        val comment = view.findViewById<TextView>(R.id.tv_comment)!!
         val dropmenu = view.findViewById<ImageButton>(R.id.drop_menu)
     }
 
     private lateinit var context: Context
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): viewholder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(parent.context)
         context = parent.context
-        var vh : CommentAdapter.viewholder? = null
-        when (viewType) {
-            1 -> vh = viewholder(layout.inflate(R.layout.cardview_comment_delete, parent, false))
-            else -> vh = viewholder(layout.inflate(R.layout.cardview_comment, parent, false))
+        val vh: ViewHolder = when (viewType) {
+            1 -> ViewHolder(layout.inflate(R.layout.cardview_comment_delete, parent, false))
+            else -> ViewHolder(layout.inflate(R.layout.cardview_comment, parent, false))
         }
-        return vh!!
+        return vh
     }
 
-    override fun onBindViewHolder(holder: viewholder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //holder.profilePicture.setImageResource()
 
         if(list[position].user!!.haspicture){
@@ -58,7 +54,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
 
                 val corrutina = launch {
                     if (list[position].user!!.haspicture){
-                        var commentPicture = api.getUserImage(list[position].user!!.userId)
+                        val commentPicture = api.getUserImage(list[position].user!!.userId)
                         val body = commentPicture //.body()
                         if (body != null) {
                             // Leer los bytes de la imagen
@@ -66,10 +62,11 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
 
                             // Guardar los bytes en un archivo
                             val file = File(context.cacheDir, list[position].user!!.userId.toString() + "user.jpg")
-                            val outputStream = FileOutputStream(file)
-                            outputStream.write(bytes)
-                            outputStream.close()
-
+                            withContext(Dispatchers.IO) {
+                                val outputStream = FileOutputStream(file)
+                                outputStream.write(bytes)
+                                outputStream.close()
+                            }
                             // Mostrar la imagen en un ImageView usando Glide
                             Glide.with(context)
                                 .setDefaultRequestOptions(profileRequestOptions)
@@ -98,8 +95,8 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
         if (holder.dropmenu != null){
             holder.dropmenu.setOnClickListener {
                 val popup = PopupMenu(context, holder.dropmenu)
-                popup.getMenuInflater()
-                    .inflate(com.example.bookbuddy.R.menu.comment_menu, popup.getMenu())
+                popup.menuInflater
+                    .inflate(R.menu.comment_menu, popup.menu)
                 popup.setOnDismissListener {
                     holder.dropmenu.setImageResource(R.drawable.ic_drop_down_menu)
                 }
@@ -125,11 +122,11 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
         }
     }
 
-    fun goToUserProfile(userid: Int, username: String){
+    private fun goToUserProfile(userid: Int, username: String){
         val bundle = Bundle()
         bundle.putInt("userid", userid)
         bundle.putString("username", username)
-        var action = BookCommentsFragmentDirections.actionNavReadCommentToNavProfileDialog(bundle)
+        val action = BookCommentsFragmentDirections.actionNavReadCommentToNavProfileDialog(bundle)
         navController.navigate(action)
     }
 

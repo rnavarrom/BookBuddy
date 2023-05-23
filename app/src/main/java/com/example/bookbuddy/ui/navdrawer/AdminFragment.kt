@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import com.example.bookbuddy.R
 import com.example.bookbuddy.databinding.FragmentAdminBinding
-import com.example.bookbuddy.databinding.FragmentBookCommentsBinding
 import com.example.bookbuddy.ui.navdrawer.adminnav.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,9 +19,9 @@ class AdminFragment : Fragment(), CoroutineScope, java.io.Serializable, InsertLi
     lateinit var binding: FragmentAdminBinding
     private var job: Job = Job()
 
-    var fragmentSaved = "books"
+    private var fragmentSaved = "books"
 
-    fun replaceFragment(fragment: Fragment){
+    private fun replaceFragment(fragment: Fragment){
         val bundle = Bundle()
         bundle.putSerializable("fragment", this)
         fragment.arguments = bundle
@@ -53,7 +52,7 @@ class AdminFragment : Fragment(), CoroutineScope, java.io.Serializable, InsertLi
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentAdminBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 

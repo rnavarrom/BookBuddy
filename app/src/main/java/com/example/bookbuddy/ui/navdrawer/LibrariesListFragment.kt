@@ -14,14 +14,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.LibraryAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentLibrariesListBinding
 import com.example.bookbuddy.models.LibraryExtended
-import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
@@ -40,28 +38,28 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
     val api = CrudApi(this@LibrariesListFragment)
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    val locationRequestCode = 0
-    var permissionsGranted = false
-    var ubi: Location? = null
+    private val locationRequestCode = 0
+    private var permissionsGranted = false
+    private var location: Location? = null
 
     private var position = 0
-    var isLoading = false
+    private var lastPosition = -1
     var libraries: MutableList<LibraryExtended>? = null
     private var gpsCar: Boolean = true
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
-            DialogFragment.STYLE_NORMAL,
+            STYLE_NORMAL,
             R.style.FullScreenDialogStyle
-        );
+        )
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding =  FragmentLibrariesListBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
         setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_LibraryList))
 
@@ -75,9 +73,9 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
         return binding.root
     }
 
-    fun loadFragment(){
+    private fun loadFragment(){
         launch {
-            if (!permissionsGranted || ubi == null){
+            if (!permissionsGranted || location == null){
                 binding.gpscar.visibility = View.INVISIBLE
                 binding.gpswalk.visibility = View.INVISIBLE
             }
@@ -86,18 +84,18 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
         }
     }
 
-    fun getLibrariesBook(isbn: String, addAdapter: Boolean){
+    private fun getLibrariesBook(isbn: String, addAdapter: Boolean){
         var tmpLibraries : MutableList<LibraryExtended>?
         runBlocking {            
             val corrutina = launch {
                 if (position == 0){
                     if (permissionsGranted){
-                        if (ubi != null){
-                                tmpLibraries = api.getBookLibrariesExtended(isbn, ubi!!.latitude, ubi!!.longitude) as MutableList<LibraryExtended>?
-                            if (tmpLibraries == null){
-                                libraries = mutableListOf()
+                        if (location != null){
+                                tmpLibraries = api.getBookLibrariesExtended(isbn, location!!.latitude, location!!.longitude) as MutableList<LibraryExtended>?
+                            libraries = if (tmpLibraries == null){
+                                mutableListOf()
                             } else {
-                                libraries = tmpLibraries
+                                tmpLibraries
                             }
                         } else {
                             showSnackBar(requireContext(), requireView(), getString(R.string.SB_EnableGPS))
@@ -123,7 +121,7 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
         }
         if (addAdapter){
             binding.rvLibraries.layoutManager = LinearLayoutManager(context)
-            adapter = LibraryAdapter(libraries as ArrayList<LibraryExtended>, ubi)
+            adapter = LibraryAdapter(libraries as ArrayList<LibraryExtended>, location)
             binding.rvLibraries.adapter = adapter
         } else {
             adapter.updateList(libraries as ArrayList<LibraryExtended>)
@@ -134,20 +132,20 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
         binding.gpssearch.setOnClickListener {
-            var selectedLibrary = adapter.getSelected()
+            val selectedLibrary = adapter.getSelected()
             if (selectedLibrary != null){
                 val bundle = Bundle()
                 if (permissionsGranted){
-                    if (ubi != null){
-                        bundle.putDouble("latitude", ubi!!.latitude)
-                        bundle.putDouble("longitude", ubi!!.longitude)
+                    if (location != null){
+                        bundle.putDouble("latitude", location!!.latitude)
+                        bundle.putDouble("longitude", location!!.longitude)
                         bundle.putString("method", if (gpsCar) "car" else "walking" )
                     }
                 }
 
                 bundle.putSerializable("library", selectedLibrary)
 
-                var action = LibrariesListFragmentDirections.actionNavLibrariesListToNavLibraryMap(bundle)
+                val action = LibrariesListFragmentDirections.actionNavLibrariesListToNavLibraryMap(bundle)
                 navController.navigate(action)
             } else {
                 showSnackBar(requireContext(), requireView(), getString(R.string.SB_SelectLibrary))
@@ -166,11 +164,12 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
             binding.gpswalk.background = getDrawable(requireContext(), R.drawable.bg_button_selected)
         }
 
-        binding.mainContent.setOnRefreshListener(SwipeRefreshLayout.OnRefreshListener() {
+        binding.mainContent.setOnRefreshListener {
             position = 0
+            lastPosition = -1
             getLibrariesBook(isbn, false)
-            binding.mainContent.isRefreshing = false;
-        });
+            binding.mainContent.isRefreshing = false
+        }
 
         binding.rvLibraries.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -180,11 +179,13 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-                if (!isLoading && lastVisibleItem == totalItemCount - 1 && dy >= 0) {
+                if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        isLoading = true
-                        loadMoreItems()
+                        if (lastPosition != totalItemCount){
+                            loadMoreItems()
+                        }
+                        lastPosition = totalItemCount
                     }
                 }
             }
@@ -201,7 +202,7 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
         */
     }
 
-    fun requestPermissionsMap() {
+    private fun requestPermissionsMap() {
         if (
             (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) &&
@@ -213,7 +214,7 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
             permissionsGranted = true
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location : Location? ->
-                    ubi = location
+                    this.location = location
                     loadFragment()
                 }
 
@@ -266,7 +267,7 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
         }
     }
 
-    fun checkPermissions() {
+    private fun checkPermissions() {
         if (
             (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) &&
@@ -279,7 +280,7 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
 
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location : Location? ->
-                    ubi = location
+                    this.location = location
                     loadFragment() }
         }
     }
