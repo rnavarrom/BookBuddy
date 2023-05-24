@@ -146,7 +146,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
                             searchResultList = arrayListOf()
                         }
                     }else{
-                        Tools.showSnackBar(requireContext(), requireView(), getString(R.string.SB_NothingFound))
+                        showSnackBar(requireContext(), requireView(), getString(R.string.SB_NothingFound))
                         searchResultList = arrayListOf<SimpleBook>()
                     }
                     binding.SearchReciclerView.layoutManager = GridLayoutManager(context, 3)

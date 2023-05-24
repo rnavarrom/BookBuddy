@@ -142,5 +142,12 @@
     <string name="SB_EmailSendError">Error sending email, try again</string>
     <string name="SB_PassError">Error password</string>
     <string name="LAY_CreateAcount">Create acount</string>
+    <string name="LAY_Register">Register</string>
+    <string name="LAY_HintUserName">User Name</string>
+    <string name="LAY_HintEmail">Email</string>
+    <string name="LAY_HintPassword">Password</string>
+    <string name="LAY_HintPassword2">Repeat Password</string>
+    <string name="LAY_ReadUserConditions">Read and accept user conditions</string>
+    <string name="BT_Register">Register</string>
 
 </resources>
