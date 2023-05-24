@@ -17,6 +17,7 @@ import com.example.bookbuddy.databinding.FragmentLibraryMapBinding
 import com.example.bookbuddy.models.CleanResponse
 import com.example.bookbuddy.models.LibraryExtended
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -132,6 +133,13 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
                 val endString =
                     end.longitude.toString() + ", " + end.latitude.toString()
 
+                binding.tvLibraryName.setOnClickListener {
+                    mMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(lib, 17.0f),
+                        1500, null
+                    )
+                }
+
                 resp = if (method == "car")
                     api.getCarRoute(startString, endString)
                 else
@@ -152,8 +160,8 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
                         distanceText = "Distancia: " + String.format("%.2f", distanceInKm) + " km"
                     }
 
-                    val hours = timeInSeconds / 3600
-                    val minutes = (timeInSeconds % 3600) / 60
+                    val hours = (timeInSeconds / 3600).toInt()
+                    val minutes = ((timeInSeconds % 3600) / 60).toInt()
 
                     val formattedHours = String.format("%02d", hours)
                     val formattedMinutes = String.format("%02d", minutes)
@@ -163,14 +171,7 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
                     binding.tvLibraryDistance.text = distanceText
                     binding.tvLibraryTime.text = timeText
 
-                    binding.tvLibraryName.setOnClickListener {
-                        mMap.animateCamera(
-                            CameraUpdateFactory.newLatLngZoom(lib, 17.0f),
-                            1500, null
-                        )
-                    }
-
-                    val puntmig = LatLng((latitude!!+library!!.library.lat)/2, (longitude!!+library!!.library.lon)/2)
+                    val middleLocation = LatLng((latitude!!+library!!.library.lat)/2, (longitude!!+library!!.library.lon)/2)
                     val zoom: Float?
                     zoom = if (resp!!.distance < 1000.0)
                         15.0f
@@ -182,13 +183,17 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
                         12.0f
                     else
                         11.0f
-                    print("NOCRASH3")
                     loadingEnded()
                     mMap.animateCamera(
-
-                        CameraUpdateFactory.newLatLngZoom(puntmig, zoom),
+                        CameraUpdateFactory.newLatLngZoom(middleLocation, zoom),
                         2500, null
                     )
+                } else {
+                    binding.tvLibraryTime.visibility = View.GONE
+                    binding.tvLibraryDistance.visibility = View.GONE
+
+                    loadingEnded()
+                    showSnackBar(requireContext(), requireView(), "Could not trace a route")
                 }
             }
         } else {
@@ -333,6 +338,7 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
             polyLineOptions.add(LatLng(it[1], it[0]))
         }
         polyLineOptions.color(ContextCompat.getColor(requireContext(), R.color.primary_green))
+        //polyLineOptions.color(Color.BLUE)
         polyLineOptions.endCap(RoundCap())
         polyLineOptions.width(6.0f)
 

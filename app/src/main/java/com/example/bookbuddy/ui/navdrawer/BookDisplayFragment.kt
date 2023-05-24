@@ -56,11 +56,10 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
             }
         }
     }
-    override fun onWriteCommentClose(isbn: String) {
+    override fun onWriteCommentClose() {
         val id = navController.currentDestination?.id
         navController.popBackStack(id!!,true)
-        val bundle = Bundle()
-        bundle.putString("isbn", isbn)
+        val bundle = requireArguments().getBundle("bundle")
         navController.navigate(id, bundle)
     }
 

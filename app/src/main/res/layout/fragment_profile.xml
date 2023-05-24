@@ -50,7 +50,8 @@
             android:textSize="18dp"
             app:layout_constraintStart_toEndOf="@id/profile_imageView"
             app:layout_constraintTop_toTopOf="@id/profile_imageView"
-            android:layout_width="wrap_content"
+            app:layout_constraintEnd_toStartOf="@id/language_spinner"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:visibility="visible"/>
 
@@ -77,20 +78,38 @@
 
         <Spinner
             android:id="@+id/language_spinner"
-            app:layout_constraintTop_toBottomOf="@id/profile_imageView"
-            app:layout_constraintStart_toStartOf="@id/profile_imageView"
+            app:layout_constraintTop_toTopOf="@id/profile_imageView"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
+        <View
+            android:id="@+id/divider"
+            app:layout_constraintTop_toBottomOf="@id/profile_imageView"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"/>
+
+        <ImageView
+            android:id="@+id/heart"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            android:src="@drawable/ic_heart"
+            app:tint="@color/primary_green"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <TextView
             android:id="@+id/tv_preferred_genre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/et2_prefferred_genre"
-            app:layout_constraintBottom_toBottomOf="@id/et2_prefferred_genre"
+            app:layout_constraintTop_toBottomOf="@id/heart"
             app:layout_constraintStart_toStartOf="@id/profile_imageView"
-            android:layout_marginVertical="15dp"
-            android:text="@string/profile_preferred_genre"
+            app:layout_constraintEnd_toStartOf="@id/heart"
+            android:text="Genre:"
             android:textSize="16dp"
             android:textColor="@color/primary_green"
             android:textStyle="bold"/>
@@ -101,33 +120,32 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16dp"
-            app:layout_constraintStart_toEndOf="@id/tv_preferred_genre"
             app:layout_constraintTop_toTopOf="@id/et2_prefferred_genre"
-            app:layout_constraintBottom_toBottomOf="@id/et2_prefferred_genre"/>
+            app:layout_constraintBottom_toBottomOf="@id/et2_prefferred_genre"
+            app:layout_constraintStart_toStartOf="@id/profile_imageView"
+            app:layout_constraintEnd_toStartOf="@id/heart"/>
 
         <EditText
             android:id="@+id/et2_prefferred_genre"
-            android:hint="Genre"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="16dp"
-            android:layout_marginVertical="10dp"
-            android:layout_marginStart="5dp"
-            app:layout_constraintStart_toEndOf="@id/tv_preferred_genre"
-            app:layout_constraintTop_toBottomOf="@id/language_spinner"
-            android:singleLine="true"
             android:focusable="false"
-            android:visibility="invisible"/>
+            android:hint="Genre"
+            android:singleLine="true"
+            android:textSize="16dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toStartOf="@id/heart"
+            app:layout_constraintStart_toStartOf="@id/profile_imageView"
+            app:layout_constraintTop_toBottomOf="@id/tv_preferred_genre" />
         <!-- aaa -->
         <TextView
             android:id="@+id/tv_preferred_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/et2_prefferred_author"
-            app:layout_constraintBottom_toBottomOf="@id/et2_prefferred_author"
-            app:layout_constraintStart_toStartOf="@id/profile_imageView"
-            android:layout_marginVertical="15dp"
-            android:text="Preferred Author: "
+            app:layout_constraintTop_toBottomOf="@id/heart"
+            app:layout_constraintStart_toStartOf="@id/heart"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="Author: "
             android:textSize="16dp"
             android:textColor="@color/primary_green"
             android:textStyle="bold"/>
@@ -138,20 +156,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16dp"
-            app:layout_constraintStart_toEndOf="@id/tv_preferred_author"
             app:layout_constraintTop_toTopOf="@id/et2_prefferred_author"
-            app:layout_constraintBottom_toBottomOf="@id/et2_prefferred_author"/>
+            app:layout_constraintBottom_toBottomOf="@id/et2_prefferred_author"
+            app:layout_constraintStart_toEndOf="@id/heart"
+            app:layout_constraintEnd_toEndOf="@id/et2_prefferred_author"/>
 
         <EditText
             android:id="@+id/et2_prefferred_author"
             android:hint="Author"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textSize="16dp"
-            android:layout_marginVertical="10dp"
-            android:layout_marginStart="5dp"
-            app:layout_constraintStart_toEndOf="@id/tv_preferred_author"
-            app:layout_constraintTop_toBottomOf="@id/et2_prefferred_genre"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/heart"
+            app:layout_constraintTop_toBottomOf="@id/tv_preferred_author"
             android:singleLine="true"
             android:focusable="false"
             android:visibility="invisible"/>
@@ -166,15 +185,38 @@
             android:text="Importar contactes"
             android:textColor="@android:color/white"
             android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="@id/tv_preferred_author"
-            app:layout_constraintTop_toBottomOf="@id/tv_preferred_author"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et2_prefferred_author"
             android:layout_marginVertical="10dp"/>
+
+        <Button
+            android:visibility="visible"
+            android:id="@+id/b_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:backgroundTint="@color/primary_green"
+            android:text="CHANGE PASSWORD"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/b_contacts"
+            android:layout_marginVertical="10dp"/>
+
+        <View
+            android:id="@+id/divider2"
+            app:layout_constraintTop_toTopOf="@id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#c0c0c0"/>
 
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/b_contacts"
+            app:layout_constraintTop_toBottomOf="@id/b_password"
             app:tabTextColor="@color/primary_green"
             android:layout_marginTop="15dp"
             app:tabIndicatorHeight="2.5dp">
