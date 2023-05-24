@@ -2,8 +2,10 @@ package com.example.bookbuddy.ui.navdrawer
 
 import android.app.Activity
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
 import android.content.ContentResolver
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -13,8 +15,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.MediaStore
+import android.renderscript.ScriptGroup.Input
+import android.text.InputType
 import android.view.*
 import android.widget.AdapterView
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.recreate
 import androidx.core.content.ContextCompat
@@ -51,7 +58,7 @@ import kotlin.coroutines.CoroutineContext
 class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreSearchCompleteListener, ProfileAuthorDialog.OnAuthorSearchCompleteListener, ApiErrorListener {
     lateinit var binding: FragmentProfileBinding
     private var job: Job = Job()
-    val api = CrudApi(this@ProfileFragment)
+    private val api = CrudApi(this@ProfileFragment)
     private var profileUser: Int? = 0
     private var username: String? = ""
     private var profilepicture: String? = ""
@@ -395,6 +402,50 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
         }
 
+        binding.bPassword.setOnClickListener {
+            // Obtiene las referencias de los EditText dentro del diálogo
+            val etPassword1 = EditText(requireContext())
+            val etPassword2 = EditText(requireContext())
+            etPassword1.hint = "Password"
+            etPassword2.hint = "Repeat password"
+            etPassword1.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
+            etPassword2.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
+
+            val layout = LinearLayout(requireContext())
+            layout.orientation = LinearLayout.VERTICAL
+            layout.addView(etPassword1)
+            layout.addView(etPassword2)
+
+            val dialogBuilder = AlertDialog.Builder(requireContext())
+            dialogBuilder.setTitle("Change password")
+                .setCancelable(false)
+                .setView(etPassword1)
+                .setPositiveButton("Accept", DialogInterface.OnClickListener { dialog, id ->
+                    val password1 = etPassword1.text.toString()
+                    val password2 = etPassword2.text.toString()
+
+                    if (password1.isBlank() || password2.isBlank()) {
+                        showSnackBar(requireContext(), requireView(), "Can't be blank")
+                    } else if (password1 != password2){
+                        showSnackBar(requireContext(), requireView(), "Passwords must match")
+                    } else {
+                        runBlocking {
+                            launch {
+                                // TODO: END THIS
+                                //val result = api.updateUserPassword(currentUser., shaPassword)
+                            }
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
+                    dialog.dismiss()
+                })
+
+            // Crea y muestra el diálogo
+            val alert = dialogBuilder.create()
+            alert.show()
+        }
+
         return binding.root
     }
 
@@ -563,9 +614,11 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                                     //requireContext().cacheDir.deleteRecursively()
                                     val file = File(requireContext().cacheDir, currentUser.userId.toString() + "user.jpg")
 
-                                    val outputStream = FileOutputStream(file)
-                                    outputStream.write(bytes)
-                                    outputStream.close()
+                                    withContext(Dispatchers.IO) {
+                                        val outputStream = FileOutputStream(file)
+                                        outputStream.write(bytes)
+                                        outputStream.close()
+                                    }
 
                                     currentPicture = file
 

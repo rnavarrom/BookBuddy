@@ -30,14 +30,13 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     lateinit var binding: FragmentWriteCommentBinding
     private var job: Job = Job()
     private var bookId: Int = 0
-    private var isbn: String = ""
     private var comment: Comment? = null
     private var maxCharactersComment: Int = 300
     private val api = CrudApi(this@WriteCommentFragment)
 
     private var onWriteCommentClose: OnWriteCommentClose? = null
     interface OnWriteCommentClose {
-        fun onWriteCommentClose(isbn: String)
+        fun onWriteCommentClose()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -153,7 +152,7 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         get() = Dispatchers.Main + job
 
     override fun onDestroy() {
-        onWriteCommentClose?.onWriteCommentClose(isbn)
+        onWriteCommentClose?.onWriteCommentClose()
         super.onDestroy()
         job.cancel()
     }
