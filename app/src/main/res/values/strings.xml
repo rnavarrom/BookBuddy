@@ -8,7 +8,7 @@
     <string name="nav_header_desc" translatable="false">Navigation header</string>
     <string name="action_settings" translatable="false">Settings</string>
 
-    <string name="menu_home" translatable="false">Home</string>
+    <string name="menu_home">Home</string>
     <string name="menu_gallery" translatable="false">Gallery</string>
     <string name="menu_slideshow" translatable="false">Slideshow</string>
 
@@ -77,7 +77,7 @@
     <string name="InsertLibrary">Insert library</string>
     <string name="SB_CantEmptyName">Name cannot be empty</string>
     <string name="SB_EmptyZip">Zip cannot be empty</string>
-    <string name="SB_ZipLenght">Zip of 5 chars</string>
+    <string name="SB_ZipLenght">Zip of 5 characters</string>
     <string name="SB_Latitude">Latitude cannot be empty</string>
     <string name="SB_Longitude">Longitude cannot be empty</string>
     <string name="SB_LibraryEdited">Library Edited</string>
@@ -100,7 +100,7 @@
     <string name="DG_Preferences">Preferences</string>
     <string name="DG_Remember">Remember you can change your preferences in your profile</string>
     <string name="DG_Accept">Accept</string>
-    <string name="Throw_ParentFragment">Parent fragment must implement OnSearchCompleteListener</string>
+    <string name="Throw_ParentFragment" translatable="false">Parent fragment must implement OnSearchCompleteListener</string>
     <string name="TB_Profile">Profile</string>
     <string name="BT_Following">Following</string>
     <string name="BT_Follow">Follow</string>
@@ -133,8 +133,8 @@
     <string name="SB_EmailNotCorrect">Email is not correct</string>
     <string name="SB_LogIn">Loging In</string>
     <string name="SB_IncorrectUserPass">Incorrect user or password</string>
-    <string name="AppEmail">bookbuddyinfo2023@gmail.com</string>
-    <string name="AppEmailCode">iqqvymaokpfdukci</string>
+    <string name="AppEmail" translatable="false">bookbuddyinfo2023@gmail.com</string>
+    <string name="AppEmailCode" translatable="false">iqqvymaokpfdukci</string>
     <string name="MSG_PassRecovery">BookBuddy Password recovery</string>
     <string name="MSG_NewPass">\"New password: \"</string>
     <string name="MSG_NewPassWarning">. When u enter in the app change immediately the password in profile</string>
@@ -144,10 +144,72 @@
     <string name="LAY_CreateAcount">Create acount</string>
     <string name="LAY_Register">Register</string>
     <string name="LAY_HintUserName">User Name</string>
-    <string name="LAY_HintEmail">Email</string>
+    <string name="LAY_HintEmail" translatable="false">Email</string>
     <string name="LAY_HintPassword">Password</string>
     <string name="LAY_HintPassword2">Repeat Password</string>
     <string name="LAY_ReadUserConditions">Read and accept user conditions</string>
     <string name="BT_Register">Register</string>
+    <string name="LAY_AppName" translatable="false">BookBuddy</string>
+    <string name="LAY_Login">Login</string>
+    <string name="LAY_AutoLogin" translatable="false">Auto login</string>
+    <string name="LAY_ForgotPassword">Forgot password?</string>
+    <string name="LAY_LogIn">Log In</string>
+    <string name="LAY_SignIn">Sign In</string>
+    <string name="LAY_LogOut">Log Out</string>
+    <string name="LAY_Progress">Progress</string>
+    <string name="LAY_EnterEmail">Enter email</string>
+    <string name="LAY_UserConditionsText" translatable="false">Términos de uso de BookBudy\n\n Al utilizar nuestra aplicación, aceptas cumplir con estos términos de uso. Lee detenidamente los siguientes términos antes de crear una cuenta y utilizar nuestra aplicación. Si no estás de acuerdo con estos Términos, por favor, no utilices nuestra aplicación. \n\n1. Uso de la información: No compartiremos tu información personal con terceros sin tu consentimiento previo. La información que proporcionas se utiliza únicamente para fines de autenticación y gestión de cuentas. No utilizaremos tu información personal para fines publicitarios ni para fines de recopilación de datos. \n\n2. Propiedad intelectual: Nuestra aplicación y todo su contenido, incluyendo pero no limitado a, texto, gráficos, logotipos, imágenes y software, son propiedad de BookBudy y están protegidos por las leyes de propiedad intelectual. No puedes copiar, modificar, distribuir ni reproducir nuestro contenido sin nuestro consentimiento previo por escrito. \n\n3. Modificaciones de los Términos: Nos reservamos el derecho de modificar estos Términos en cualquier momento. Te recomendamos que los revises periódicamente. Si continúas utilizando nuestra aplicación después de cualquier modificación, aceptas los Términos modificados. \n\n4. Resolución de conflictos Cualquier conflicto que surja en relación con estos Términos se resolverá mediante arbitraje de conformidad con las reglas de arbitraje comercial de [Nombre de la institución de arbitraje]. El arbitraje se llevará a cabo en [Nombre de la ciudad y país donde se encuentra la institución de arbitraje]. \n\n5. Ley aplicable Estos Términos se regirán e interpretarán de conformidad con las leyes de España sin dar efecto a ningún principio de conflicto de leyes. \n\nSi tienes alguna pregunta sobre estos Términos, por favor contáctanos a través de bookbudy@info.com</string>
+    <string name="LAY_Author">Author:</string>
+    <string name="LAY_AuthorHint">Author</string>
+    <string name="LAY_Language">Language:</string>
+    <string name="LAY_LanguageHint">Language</string>
+    <string name="LAY_Genres">Genres:</string>
+    <string name="LAY_Libraries">Libraries:</string>
+    <string name="LAY_NoReadingBooks">No reading books</string>
+    <string name="LAY_PendingBooks">Pending Books</string>
+    <string name="LAY_NoPendingBooks">No pending books</string>
+    <string name="LAY_ReadBooks">Read Books</string>
+    <string name="LAY_NoReadBooks">No read books</string>
+    <string name="LAY_Id" translatable="false">Id:</string>
+    <string name="LAY_Isbn" translatable="false">Isbn:</string>
+    <string name="LAY_Title">Title:</string>
+    <string name="LAY_Description">Description:</string>
+    <string name="LAY_Pages">Pages:</string>
+    <string name="LAY_PublishDate">Publish date:</string>
+    <string name="LAY_Cover">Cover:</string>
+    <string name="BT_References">References</string>
+    <string name="BT_Accept">ACCEPT</string>
+    <string name="LAY_Name">Name:</string>
+    <string name="LAY_LibraryZip">Library ZipCode:</string>
+    <string name="LAY_Latitude">Latitude:</string>
+    <string name="LAY_Longitude">Longitude:</string>
+    <string name="LAY_Genre">Genre:</string>
+    <string name="LAY_NotSelected">Not selected</string>
+    <string name="LAY_GenreHint">Genre</string>
+    <string name="LAY_HintAuthor">Author</string>
+    <string name="LAY_ImportContacts">import contacts</string>
+    <string name="LAY_ChangePassword">CHANGE PASSWORD</string>
+    <string name="LAY_SearchAuthors">Search authors</string>
+    <string name="LAY_SearchGenres">Search genres</string>
+    <string name="LAY_SearchLanguages">Search languages</string>
+    <string name="LAY_SearchLibraries">Search libraries</string>
+    <string name="LAY_HintBook">Book</string>
+    <string name="BT_Send">Send</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_scan">Scan</string>
+    <string name="menu_recomendations">Recommendations</string>
+    <string name="menu_contacts">Contacts</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_admin_panel">Admin Panel</string>
+    <string name="Menu_Pending">Pending</string>
+    <string name="Menu_Read">Read</string>
+    <string name="Menu_Reading">Reading</string>
+    <string name="Menu_Remove">Remove</string>
+    <string name="Menu_Delete">Delete</string>
+    <string name="Menu_Books">Books</string>
+    <string name="Menu_Genres">Genres</string>
+    <string name="Menu_Authors">Authors</string>
+    <string name="Menu_Libraries">Libraries</string>
+    <string name="Menu_Users">Users</string>
 
 </resources>

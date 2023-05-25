@@ -36,7 +36,7 @@
                 android:id="@+id/nav_log_out"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="Log Out"
+                android:text="@string/LAY_LogOut"
                 android:textColor="@color/black"
                 android:textAlignment="textStart"
                 android:textAllCaps="false"

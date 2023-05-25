@@ -3,21 +3,21 @@
     <item
         android:id="@+id/books"
         android:icon="@drawable/ic_search_book"
-        android:title="Books"  />
+        android:title="@string/Menu_Books"  />
     <item
         android:id="@+id/genre"
         android:icon="@drawable/ic_search_book"
-        android:title="Genres"  />
+        android:title="@string/Menu_Genres"  />
     <item
         android:id="@+id/Authors"
         android:icon="@drawable/ic_search_book"
-        android:title="Authors"  />
+        android:title="@string/Menu_Authors"  />
     <item
         android:id="@+id/Libraries"
         android:icon="@drawable/ic_library"
-        android:title="Libraries"  />
+        android:title="@string/Menu_Libraries"  />
     <item
         android:id="@+id/users"
         android:icon="@drawable/ic_register_user"
-        android:title="Users" />
+        android:title="@string/Menu_Users" />
 </menu>

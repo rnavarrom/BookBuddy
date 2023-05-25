@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
         <EditText
             android:id="@+id/search_things"
-            android:hint="Search genres"
+            android:hint="@string/LAY_SearchGenres"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"

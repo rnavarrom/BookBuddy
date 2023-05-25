@@ -34,7 +34,7 @@
 
             <TextView
                 android:id="@+id/tv_id"
-                android:text="Id: "
+                android:text="@string/LAY_Id"
                 android:textSize="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
 
             <TextView
                 android:id="@+id/tv_name"
-                android:text="Name: "
+                android:text="@string/LAY_Name"
                 android:textSize="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
 
             <TextView
                 android:id="@+id/tv_zip"
-                android:text="Library ZipCode: "
+                android:text="@string/LAY_LibraryZip"
                 android:textSize="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -95,7 +95,7 @@
 
             <TextView
                 android:id="@+id/tv_lat"
-                android:text="Latitude: "
+                android:text="@string/LAY_Latitude"
                 android:textSize="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
 
             <TextView
                 android:id="@+id/tv_lon"
-                android:text="Longitude: "
+                android:text="@string/LAY_Longitude"
                 android:textSize="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -163,7 +163,7 @@
 
             <Button
                 android:id="@+id/btn_cancel"
-                android:text="CANCEL"
+                android:text="@string/BT_Cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
@@ -172,7 +172,7 @@
 
             <Button
                 android:id="@+id/btn_accept"
-                android:text="ACCEPT"
+                android:text="@string/BT_Accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toEndOf="@id/btn_cancel"

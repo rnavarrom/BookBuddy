@@ -34,7 +34,7 @@
 
             <TextView
                 android:id="@+id/tv_id"
-                android:text="Id: "
+                android:text="@string/LAY_Id"
                 android:textSize="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
 
             <TextView
                 android:id="@+id/tv_isbn"
-                android:text="Isbn: "
+                android:text="@string/LAY_Isbn"
                 android:textSize="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
 
             <TextView
                 android:id="@+id/tv_title"
-                android:text="Title: "
+                android:text="@string/LAY_Title"
                 android:textSize="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
 
             <TextView
                 android:id="@+id/tv_description"
-                android:text="Description: "
+                android:text="@string/LAY_Description"
                 android:textSize="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -116,7 +116,7 @@
 
             <TextView
                 android:id="@+id/tv_pages"
-                android:text="Pages: "
+                android:text="@string/LAY_Pages"
                 android:textSize="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -138,7 +138,7 @@
 
             <TextView
                 android:id="@+id/tv_date"
-                android:text="Publish date: "
+                android:text="@string/LAY_PublishDate"
                 android:textSize="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -161,7 +161,7 @@
 
             <TextView
                 android:id="@+id/tv_cover"
-                android:text="Cover: "
+                android:text="@string/LAY_Cover"
                 android:textSize="18dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -205,7 +205,7 @@
 
             <Button
                 android:id="@+id/btn_references"
-                android:text="References"
+                android:text="@string/BT_References"
                 android:layout_marginTop="20dp"
                 app:layout_constraintTop_toBottomOf="@id/tv_cover"
                 app:layout_constraintStart_toStartOf="parent"
@@ -214,7 +214,7 @@
 
             <Button
                 android:id="@+id/btn_cancel"
-                android:text="CANCEL"
+                android:text="@string/BT_Cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
@@ -223,7 +223,7 @@
 
             <Button
                 android:id="@+id/btn_accept"
-                android:text="ACCEPT"
+                android:text="@string/BT_Accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toEndOf="@id/btn_cancel"
