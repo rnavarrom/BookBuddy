@@ -24,7 +24,9 @@ var currentLanguageChanged: Boolean = false
 
 var dummyValue = 358
 
-
+fun isProfileInitialized(): Boolean {
+    return ::currentProfile.isInitialized
+}
 
 
 

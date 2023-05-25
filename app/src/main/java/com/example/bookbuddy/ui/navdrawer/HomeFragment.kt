@@ -21,6 +21,7 @@ import com.example.bookbuddy.databinding.FragmentHomeBinding
 import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
@@ -46,11 +47,8 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
     var positionReading = 0
     val startingPosition = 0
 
-    override fun onBookDisplayClose() {
-        val id = navController.currentDestination?.id
-        navController.popBackStack(id!!, true)
-        navController.navigate(id)
-    }
+    private var isOnCreateViewExecuted = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -174,6 +172,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                 }
             }
         })
+        isOnCreateViewExecuted = true
         return binding.root
     }
     override fun onResume() {
@@ -396,6 +395,14 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
  */
 
     override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        if (isOnCreateViewExecuted){
+            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
+    }
+
+    override fun onBookDisplayClose() {
+        val id = navController.currentDestination?.id
+        navController.popBackStack(id!!, true)
+        navController.navigate(id)
     }
 }

@@ -20,14 +20,6 @@ suspend fun <T> safeApiCall(
         val response = apiCall.invoke()
         if (response.isSuccessful) {
             return response.body()
-        } else if (response.code() == 400) {
-            // La respuesta es un BadRequest (código de estado 400)
-
-            val errorBody = response.errorBody()?.string().toString()
-            errorListener.onApiError() //errorBody
-
-            // Hacer algo con el mensaje de error
-            return null
         } else {
             //val errorResponse = response.errorBody()?.string()
             //errorListener.onApiError("Error fetching data: $errorResponse")
@@ -40,6 +32,7 @@ suspend fun <T> safeApiCall(
         errorListener.onApiError() //"Cannot reach the server"
     } catch (e: Throwable) {
         //errorListener.onApiError("Error fetching data: ${e.message}")
+        e.printStackTrace()
         errorListener.onApiError() //errorMessage
     }
     return null

@@ -15,6 +15,7 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileBinding
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.google.android.material.tabs.TabLayout
@@ -38,6 +39,12 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
     var permission = false
 
+    private var onProfileDialogClose: OnProfileDialogClose? = null
+    private var isOnCreateViewExecuted = false
+    interface OnProfileDialogClose {
+        fun onProfileDialogClose()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -60,6 +67,15 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         profileUser = bundle?.getInt("userid", currentUser.userId)
         username = bundle?.getString("username",  currentUser.name)
 
+        if (bundle != null){
+            if (bundle.containsKey("fragment")){
+                val fragment = bundle.getSerializable("fragment") as? ContactsFragment?
+                if (fragment != null){
+                    onProfileDialogClose = fragment
+                }
+            }
+        }
+
         if (profileUser == null){
             profileUser = currentUser.userId
             username = currentUser.name
@@ -73,6 +89,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             println("CHECKPOINT 3")
             loadingEnded()
         }
+        isOnCreateViewExecuted = true
         return binding.root
     }
 
@@ -172,10 +189,13 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        if (isOnCreateViewExecuted){
+            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
     }
 
     override fun onDestroy() {
+        onProfileDialogClose?.onProfileDialogClose()
         super.onDestroy()
         job.cancel()
     }

@@ -17,6 +17,7 @@ import com.example.bookbuddy.databinding.FragmentBookCommentsBinding
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
@@ -34,7 +35,13 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     private var lastPosition = -1
     var comments: MutableList<Comment>? = null
 
+    private var onReadCommentClose: OnReadCommentClose? = null
 
+    private var isOnCreateViewExecuted = false
+
+    interface OnReadCommentClose {
+        fun onReadCommentClose()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -54,11 +61,19 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
 
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle!!.getInt("bookid")
+
+        if (bundle.containsKey("fragment")){
+            val fragment = bundle.getSerializable("fragment") as? BookDisplayFragment?
+            if (fragment != null){
+                onReadCommentClose = fragment
+            }
+        }
+
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         getCommentsBook(bookId, true)
         loadingEnded()
-
+        isOnCreateViewExecuted = true
         return binding.root
     }
 
@@ -139,10 +154,13 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     }
 
     override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        if (isOnCreateViewExecuted){
+            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
     }
 
     override fun onDestroy() {
+        onReadCommentClose?.onReadCommentClose()
         super.onDestroy()
         job.cancel()
     }

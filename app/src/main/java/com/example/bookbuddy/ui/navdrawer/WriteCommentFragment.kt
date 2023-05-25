@@ -20,6 +20,7 @@ import com.example.bookbuddy.databinding.FragmentWriteCommentBinding
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
@@ -33,8 +34,9 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     private var comment: Comment? = null
     private var maxCharactersComment: Int = 300
     private val api = CrudApi(this@WriteCommentFragment)
-
     private var onWriteCommentClose: OnWriteCommentClose? = null
+
+    private var isOnCreateViewExecuted = false
     interface OnWriteCommentClose {
         fun onWriteCommentClose()
     }
@@ -57,17 +59,19 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
 
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle?.getInt("bookid")!!
-        val fragment = bundle.getSerializable("fragment") as? BookDisplayFragment?
-        if (fragment != null){
-            println("YES2")
-            onWriteCommentClose = fragment
+
+        if (bundle.containsKey("fragment")){
+            val fragment = bundle.getSerializable("fragment") as? BookDisplayFragment?
+            if (fragment != null){
+                onWriteCommentClose = fragment
+            }
         }
 
         launch {
             loadComment()
             loadingEnded()
         }
-
+        isOnCreateViewExecuted = true
         return binding.root
     }
     override fun onResume() {
@@ -142,7 +146,9 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     }
 
     override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        if (isOnCreateViewExecuted) {
+            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
     }
 
     override fun onDestroy() {

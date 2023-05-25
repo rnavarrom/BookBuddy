@@ -24,7 +24,6 @@ class NavDrawerActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityNavDrawerBinding
     private lateinit var userPrefs: UserPreferences
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNavDrawerBinding.inflate(layoutInflater)
@@ -32,26 +31,29 @@ class NavDrawerActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarNavDrawer.toolbar)
 
-        if (currentProfile.authorId == null && currentProfile.genreId == null){
-            val builder = MaterialAlertDialogBuilder(this)
-            builder.setTitle("Preferences")
-                .setMessage("Remember you can change your preferences in your profile")
-                .setPositiveButton("Accept") { dialog, _ ->
+        if (isProfileInitialized()){
+            if (currentProfile.authorId == null && currentProfile.genreId == null){
+                val builder = MaterialAlertDialogBuilder(this)
+                builder.setTitle("Preferences")
+                    .setMessage("Remember you can change your preferences in your profile")
+                    .setPositiveButton("Accept") { dialog, _ ->
+                        // Acciones a realizar al hacer clic en "Aceptar"
+                        dialog.dismiss()
+                    }
+                    .show()
+                /*
+                val builder = AlertDialog.Builder(applicationContext)
+                builder.setTitle("Preferences")
+                builder.setMessage("Remember you can change your preferences in your profile")
+                builder.setPositiveButton("Accept") { dialog, _ ->
                     // Acciones a realizar al hacer clic en "Aceptar"
                     dialog.dismiss()
                 }
-                .show()
-            /*
-            val builder = AlertDialog.Builder(applicationContext)
-            builder.setTitle("Preferences")
-            builder.setMessage("Remember you can change your preferences in your profile")
-            builder.setPositiveButton("Accept") { dialog, _ ->
-                // Acciones a realizar al hacer clic en "Aceptar"
-                dialog.dismiss()
+                val dialog = builder.create()
+                dialog.show()
+                */
             }
-            val dialog = builder.create()
-            dialog.show()
-            */
+
         }
 
         val drawerLayout: DrawerLayout = binding.drawerLayout

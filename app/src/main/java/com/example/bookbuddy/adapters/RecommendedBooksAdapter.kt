@@ -12,10 +12,11 @@ import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.models.Book
+import com.example.bookbuddy.ui.navdrawer.RecommendationsFragment
 import com.example.bookbuddy.ui.navdrawer.RecommendationsFragmentDirections
 import com.example.bookbuddy.utils.navController
 
-class RecommendedBooksAdapter(var list: ArrayList<Book>) : RecyclerView.Adapter<RecommendedBooksAdapter.ViewHolder>() {
+class RecommendedBooksAdapter(var list: ArrayList<Book>) : RecyclerView.Adapter<RecommendedBooksAdapter.ViewHolder>(), java.io.Serializable {
     class ViewHolder(val vista: View) : RecyclerView.ViewHolder(vista) {
         val imatge = vista.findViewById<ImageView>(R.id.book_cover)!!
         val bookrating = vista.findViewById<TextView>(R.id.book_rating)!!

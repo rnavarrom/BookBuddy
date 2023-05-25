@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
@@ -14,6 +15,7 @@ import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.UserItem
+import com.example.bookbuddy.ui.navdrawer.ContactsFragment
 import com.example.bookbuddy.ui.navdrawer.ContactsFragmentDirections
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.base.ApiErrorListener
@@ -22,10 +24,11 @@ import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
+import java.io.Serializable
 import kotlin.coroutines.CoroutineContext
 
 
-class ContactAdapter(var list: java.util.ArrayList<UserItem>) :
+class ContactAdapter(var list: java.util.ArrayList<UserItem>, val fragment: ContactsFragment) :
     RecyclerView.Adapter<ContactAdapter.ViewHolder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
     lateinit var view : View
@@ -84,6 +87,7 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>) :
         val bundle = Bundle()
         bundle.putInt("userid", userid)
         bundle.putString("username", username)
+        bundle.putSerializable("fragment", fragment)
         val action = ContactsFragmentDirections.actionNavContactsToNavProfileDialog(bundle)
         navController.navigate(action)
     }

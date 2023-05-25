@@ -18,10 +18,12 @@ import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
+import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
+import java.io.Serializable
 import kotlin.coroutines.CoroutineContext
 
-class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
+class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDialogClose, ApiErrorListener, java.io.Serializable {
     lateinit var binding: FragmentContactsBinding
     private var job: Job = Job()
     lateinit var adapter: ContactAdapter
@@ -74,7 +76,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 if(follows != null) {
                     if (addAdapter) {
                         binding.rvContacts.layoutManager = LinearLayoutManager(context)
-                        adapter = ContactAdapter(follows as ArrayList<UserItem>)
+                        adapter = ContactAdapter(follows as ArrayList<UserItem>, this@ContactsFragment)
                         binding.rvContacts.adapter = adapter
                     } else {
                         adapter.updateList(follows as ArrayList<UserItem>)
@@ -130,6 +132,12 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 
+    override fun onProfileDialogClose() {
+        val id = navController.currentDestination?.id
+        navController.popBackStack(id!!, true)
+        navController.navigate(id)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
@@ -141,5 +149,4 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
 }
