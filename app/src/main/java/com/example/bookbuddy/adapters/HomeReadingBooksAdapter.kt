@@ -92,10 +92,7 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
 
     override fun getItemCount(): Int = list.size
 
-    private fun changeReaded(
-        context: Context,
-        layoutInf: LayoutInflater,
-        position: Int,
+    private fun changeReaded(context: Context, layoutInf: LayoutInflater, position: Int,
         holder: ViewHolder
     ) {
         val builder = AlertDialog.Builder(context)
@@ -146,7 +143,7 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
             }
             corrutina.join()
         }
-        Toast.makeText(context, "Resultat: " + result, Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Result: " + result, Toast.LENGTH_LONG).show()
     }
     private fun reloadFragment(fragment: Fragment){
         Toast.makeText(context, "Reloading fragment", Toast.LENGTH_LONG).show()

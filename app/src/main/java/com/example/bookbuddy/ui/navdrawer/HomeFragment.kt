@@ -110,10 +110,10 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
                 override fun handleOnBackPressed() {
                     AlertDialog.Builder(requireContext())
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Closing BookBuddy")
-                        .setMessage("Are you sure you want to close this activity?")
-                        .setPositiveButton("Yes") { _, _ -> requireActivity().finish() }
-                        .setNegativeButton("No", null)
+                        .setTitle(getString(R.string.ClosingAPP))
+                        .setMessage(getString(R.string.ClosingAPP2))
+                        .setPositiveButton(getString(R.string.Yes)) { _, _ -> requireActivity().finish() }
+                        .setNegativeButton(getString(R.string.No), null)
                         .show()
                 }
             })

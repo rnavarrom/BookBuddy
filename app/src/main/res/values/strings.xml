@@ -18,7 +18,7 @@
     <string name="profile_preferred_genre">Preferred Genre:</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="actual_book">Actual Book</string>
+    <string name="actual_book">Reading Book</string>
     <string name="DeleteAuthor">Author deleted</string>
     <string name="SB_AuthorHasBook">Author has books</string>
     <string name="SB_PickAuthor">Pick a Author first</string>
@@ -211,5 +211,8 @@
     <string name="Menu_Authors">Authors</string>
     <string name="Menu_Libraries">Libraries</string>
     <string name="Menu_Users">Users</string>
+    <string name="ClosingAPP">Closing BookBuddy</string>
+    <string name="ClosingAPP2">Are you sure you want to close this activity?</string>
+    <string name="No">No</string>
 
 </resources>

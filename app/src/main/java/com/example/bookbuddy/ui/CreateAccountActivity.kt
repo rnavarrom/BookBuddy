@@ -54,18 +54,26 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
                 currentUserCreate = UserItem()
                 getValues()
 
-            val success = postUser(currentUserCreate)
-            if (success) {
-                Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_AccountCreated))
-                //Toast.makeText(this, , Toast.LENGTH_LONG).show()
-                var intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("userName", currentUserCreate.name)
-                startActivity(intent)
-                finish()
-            } else {
-                Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_AccountNotCreated))
-                //Toast.makeText(this, "Acount not created!", Toast.LENGTH_LONG).show()
-            }
+                val success = postUser(currentUserCreate)
+                if (success) {
+                    Tools.showSnackBar(
+                        this,
+                        binding.createAcountLayout,
+                        getString(R.string.SB_AccountCreated)
+                    )
+                    //Toast.makeText(this, , Toast.LENGTH_LONG).show()
+                    var intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("userName", currentUserCreate.name)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    Tools.showSnackBar(
+                        this,
+                        binding.createAcountLayout,
+                        getString(R.string.SB_AccountNotCreated)
+                    )
+                    //Toast.makeText(this, "Acount not created!", Toast.LENGTH_LONG).show()
+                }
 
             }
         }
@@ -83,16 +91,16 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     private fun postUser(user: UserItem): Boolean {
-        var response : Boolean? = false
+        var response: Boolean? = false
         runBlocking {
             val corrutina = launch {
                 response = api.addUserToAPI(user)
             }
             corrutina.join()
         }
-        return if(response != null){
+        return if (response != null) {
             response!!
-        }else{
+        } else {
             false
         }
     }
@@ -113,21 +121,33 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
             binding.CAEditPassword2.text.isBlank() ||
             binding.CAEditEmail.text.isBlank()
         ) {
-            Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_NoBlankFields))
+            Tools.showSnackBar(
+                this,
+                binding.createAcountLayout,
+                getString(R.string.SB_NoBlankFields)
+            )
             //Toast.makeText(this, , Toast.LENGTH_LONG).show()
             return false
         }
         //Check if the terms and conditions are accepted
         if (!conditions) {
             binding.userConditions.setTextColor(getColor(R.color.red_error))
-            Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_UserConditions))
+            Tools.showSnackBar(
+                this,
+                binding.createAcountLayout,
+                getString(R.string.SB_UserConditions)
+            )
             //Toast.makeText(this, , Toast.LENGTH_LONG).show()
             return false
         }
         //Check if the input text is valid
         if (!Tools.isValidText(binding.CAEditUser.text.toString())) {
             binding.CAEditUser.setTextColor(getColor(R.color.red_error))
-            Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_InvalidUserName))
+            Tools.showSnackBar(
+                this,
+                binding.createAcountLayout,
+                getString(R.string.SB_InvalidUserName)
+            )
             //Toast.makeText(this, "Invalid user name!", Toast.LENGTH_LONG).show()
             return false
         }
@@ -135,7 +155,11 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         if (binding.CAEditPassword.text.toString() != binding.CAEditPassword2.text.toString()
         ) {
             binding.CAEditPassword.setTextColor(getColor(R.color.red_error))
-            Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_PasswordNoMatch))
+            Tools.showSnackBar(
+                this,
+                binding.createAcountLayout,
+                getString(R.string.SB_PasswordNoMatch)
+            )
             //Toast.makeText(this, , Toast.LENGTH_LONG).show()
             return false
         }
@@ -147,30 +171,34 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
             return false
         }
         //Check if the username is not repited in the DB
-        val userNameAviable : Boolean? = isNameAviable(binding.CAEditUser.text.toString())
+        val userNameAviable: Boolean? = isNameAviable(binding.CAEditUser.text.toString())
 
         if (userNameAviable == null) {
             return false
-        }else if(!userNameAviable){
+        } else if (!userNameAviable) {
             binding.CAEditUser.setTextColor(getColor(R.color.red_error))
-            Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_UserNameInUse))
-           // Toast.makeText(this, , Toast.LENGTH_LONG).show()
+            Tools.showSnackBar(
+                this,
+                binding.createAcountLayout,
+                getString(R.string.SB_UserNameInUse)
+            )
             return false
         }
         //Chgeck if the email is not repeated in the DB
-        val emailAviable : Boolean? = isEmailAviable(binding.CAEditEmail.text.toString())
+        val emailAviable: Boolean? = isEmailAviable(binding.CAEditEmail.text.toString())
         if (emailAviable == null) {
             return false
-        }else if(!emailAviable){
+        } else if (!emailAviable) {
             binding.CAEditEmail.setTextColor(getColor(R.color.red_error))
             Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_EmailUsed))
-           // Toast.makeText(this, , Toast.LENGTH_LONG).show()
+            // Toast.makeText(this, , Toast.LENGTH_LONG).show()
             return false
         }
         return true
     }
+
     private fun isNameAviable(userName: String): Boolean? {
-        var response : Boolean? = false
+        var response: Boolean? = false
         runBlocking {
             val corrutina = launch {
                 response = api.getUserExists(userName)
@@ -179,8 +207,9 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         }
         return response
     }
+
     private fun isEmailAviable(email: String): Boolean? {
-        var response : Boolean? = false
+        var response: Boolean? = false
         runBlocking {
             val corrutina = launch {
                 response = api.getEmailExists(email)
@@ -189,6 +218,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         }
         return response!!
     }
+
     private fun userConditions() {
         val builder = AlertDialog.Builder(this)
         val inflater = layoutInflater
@@ -214,6 +244,6 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     override fun onApiError() {
-    Tools.showSnackBar(this, binding.createAcountLayout, Constants.ErrrorMessage)
+        Tools.showSnackBar(this, binding.createAcountLayout, Constants.ErrrorMessage)
     }
 }

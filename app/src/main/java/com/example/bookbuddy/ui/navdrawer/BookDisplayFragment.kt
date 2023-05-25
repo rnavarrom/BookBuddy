@@ -114,8 +114,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
                 createRequest(isbn)
                 dismiss()
             }else{
-
-
                 readed = getReaded(book!!.bookId)
                 if (book == null) {
                     //println("book null")
@@ -450,7 +448,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         if (tts!!.isSpeaking) {
             tts!!.stop()
         } else {
-
             tts!!.defaultVoice
             textts =
                 binding.dBookTitle.text.toString() + "  " + binding.dBookDescription.text.toString()
