@@ -46,7 +46,7 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
     private var library: LibraryExtended? = null
     private lateinit var mMap: GoogleMap
 
-    val api = CrudApi()
+    private val api = CrudApi()
     private var isGpsEnabled = false
     private var resp : CleanResponse? = null
 
@@ -222,6 +222,24 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
         }
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (locationRequestCode == requestCode) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                grantResults[1] == PackageManager.PERMISSION_GRANTED
+            ) {
+                checkPermissions()
+            } else {
+                permissionsGranted = false
+                loadFragment()
+            }
+        }
+    }
+
     private fun requestPermissionsMap() {
         if (
             (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -263,23 +281,7 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
 
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (locationRequestCode == requestCode) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                grantResults[1] == PackageManager.PERMISSION_GRANTED
-            ) {
-                checkPermissions()
-            } else {
-                permissionsGranted = false
-                loadFragment()
-            }
-        }
-    }
+
 
     private fun checkPermissions() {
         if (
@@ -345,6 +347,10 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
         map.addPolyline(polyLineOptions)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -353,9 +359,4 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
 }

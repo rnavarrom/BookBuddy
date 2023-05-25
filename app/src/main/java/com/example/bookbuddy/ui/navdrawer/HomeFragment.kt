@@ -33,7 +33,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
     private lateinit var adapterPending: HomeBooksAdapter
     private lateinit var adapterReaded: HomeBooksAdapter
     private lateinit var adapterReading: HomeReadingBooksAdapter
-    val api = CrudApi(this@HomeFragment)
+    private val api = CrudApi(this@HomeFragment)
     private var pendingList: MutableList<Pending> = arrayListOf()
     private var readedList: MutableList<Pending> = arrayListOf()
     private var readingList: MutableList<ActualReading> = arrayListOf()
@@ -51,49 +51,6 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         navController.popBackStack(id!!, true)
         navController.navigate(id)
     }
-
-    override fun onResume() {
-        super.onResume()
-        pendingList = arrayListOf()
-        loadMorePending(startingPosition)
-        readedList = arrayListOf()
-        loadMoreRead(startingPosition)
-        readingList = arrayListOf()
-        loadMoreReading(startingPosition)
-
-        emptyReading()
-        emptyPending()
-        emptyReaded()
-    }
-
-    private fun emptyReading(){
-        if (readingList.isEmpty()){
-            binding.emptyReading.text = "No reading Books"
-            binding.emptyReading.visibility = View.VISIBLE
-        } else {
-            binding.emptyReading.visibility = View.GONE
-        }
-    }
-
-    private fun emptyPending(){
-        if (pendingList.isEmpty()){
-            binding.emptyPending.text = "No pending Books"
-            binding.emptyPending.visibility = View.VISIBLE
-        } else {
-            binding.emptyPending.visibility = View.GONE
-        }
-    }
-
-    private fun emptyReaded(){
-        if (readedList.isEmpty()){
-            binding.emptyReaded.text = "No readed Books"
-            binding.emptyReaded.visibility = View.VISIBLE
-        } else {
-            binding.emptyReaded.visibility = View.GONE
-        }
-    }
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -218,6 +175,46 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
             }
         })
         return binding.root
+    }
+    override fun onResume() {
+        super.onResume()
+        pendingList = arrayListOf()
+        loadMorePending(startingPosition)
+        readedList = arrayListOf()
+        loadMoreRead(startingPosition)
+        readingList = arrayListOf()
+        loadMoreReading(startingPosition)
+
+        emptyReading()
+        emptyPending()
+        emptyReaded()
+    }
+
+    private fun emptyReading(){
+        if (readingList.isEmpty()){
+            binding.emptyReading.text = "No reading Books"
+            binding.emptyReading.visibility = View.VISIBLE
+        } else {
+            binding.emptyReading.visibility = View.GONE
+        }
+    }
+
+    private fun emptyPending(){
+        if (pendingList.isEmpty()){
+            binding.emptyPending.text = "No pending Books"
+            binding.emptyPending.visibility = View.VISIBLE
+        } else {
+            binding.emptyPending.visibility = View.GONE
+        }
+    }
+
+    private fun emptyReaded(){
+        if (readedList.isEmpty()){
+            binding.emptyReaded.text = "No readed Books"
+            binding.emptyReaded.visibility = View.VISIBLE
+        } else {
+            binding.emptyReaded.visibility = View.GONE
+        }
     }
 
     fun loadMoreRead(position: Int) {

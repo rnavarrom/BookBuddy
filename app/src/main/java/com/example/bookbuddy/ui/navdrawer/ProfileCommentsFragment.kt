@@ -28,11 +28,11 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var userId: Int = currentUser.userId
     private var isProfileFragment: Boolean = false
     lateinit var adapter: ProfileCommentAdapter
-    val api = CrudApi(this@ProfileCommentsFragment)
+    private val api = CrudApi(this@ProfileCommentsFragment)
 
     private var position = 0
     private var lastPosition = -1
-    var comments: MutableList<Comment>? = null
+    private var comments: MutableList<Comment>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,7 +80,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
 
-    fun loadingEnded(){
+    private fun loadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -117,6 +117,14 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.loadingComment.visibility = View.GONE
     }
 
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -125,12 +133,4 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

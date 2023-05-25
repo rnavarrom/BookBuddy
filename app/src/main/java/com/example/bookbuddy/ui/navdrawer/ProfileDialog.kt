@@ -26,7 +26,7 @@ import kotlin.coroutines.CoroutineContext
 class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: DialogProfileBinding
     private var job: Job = Job()
-    val api = CrudApi(this@ProfileDialog)
+    private val api = CrudApi(this@ProfileDialog)
     private var profileUser: Int? = 0
     private var username: String? = ""
 
@@ -171,6 +171,14 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         })
     }
 
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -179,12 +187,4 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

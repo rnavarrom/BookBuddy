@@ -46,16 +46,6 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
             R.style.FullScreenDialogStyle
         )
     }
-
-    override fun onResume() {
-        super.onResume()
-        binding.etWriteComment.postDelayed({
-            binding.etWriteComment.requestFocus()
-            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(binding.etWriteComment, InputMethodManager.SHOW_IMPLICIT)
-        }, 200)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -80,6 +70,14 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
 
         return binding.root
     }
+    override fun onResume() {
+        super.onResume()
+        binding.etWriteComment.postDelayed({
+            binding.etWriteComment.requestFocus()
+            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.etWriteComment, InputMethodManager.SHOW_IMPLICIT)
+        }, 200)
+    }
 
     private fun loadComment(){
         runBlocking {            
@@ -96,7 +94,7 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         }
     }
 
-    fun loadingEnded(){
+    private fun loadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainContent.visibility = View.VISIBLE
         binding.etWriteComment.filters = arrayOf<InputFilter>(LengthFilter(maxCharactersComment))
@@ -143,7 +141,15 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         }
     }
 
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
 
+    override fun onDestroy() {
+        onWriteCommentClose?.onWriteCommentClose()
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -151,14 +157,4 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    override fun onDestroy() {
-        onWriteCommentClose?.onWriteCommentClose()
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

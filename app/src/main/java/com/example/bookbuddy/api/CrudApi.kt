@@ -33,8 +33,8 @@ import javax.net.ssl.X509TrustManager
 import kotlin.coroutines.CoroutineContext
 
 class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineScope {
-    val urlapi = "https://api.openrouteservice.org/"
-    val apikey = "5b3ce3597851110001cf6248a7e5128d424e4a4dbc75aaece5822482"
+    private val urlapi = "https://api.openrouteservice.org/"
+    private val apikey = "5b3ce3597851110001cf6248a7e5128d424e4a4dbc75aaece5822482"
 
     private var job: Job = Job()
 

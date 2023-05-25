@@ -33,7 +33,7 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
     RecyclerView.Adapter<HomeReadingBooksAdapter.ViewHolder>(), ApiErrorListener {
     lateinit var layout: LayoutInflater
     lateinit var view : View
-    val api = CrudApi(this@HomeReadingBooksAdapter)
+    private val api = CrudApi(this@HomeReadingBooksAdapter)
 
     class ViewHolder(val vista: View) : RecyclerView.ViewHolder(vista) {
         val imatge = vista.findViewById<ImageView>(R.id.actual_book_image)!!

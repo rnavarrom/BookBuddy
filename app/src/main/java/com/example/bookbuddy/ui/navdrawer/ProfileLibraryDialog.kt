@@ -26,7 +26,7 @@ import kotlin.coroutines.CoroutineContext
 class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentProfileSearchLibraryDialogBinding
     private var job: Job = Job()
-    val api = CrudApi(this@ProfileLibraryDialog)
+    private val api = CrudApi(this@ProfileLibraryDialog)
     private lateinit var adapter: SearchLibrariesAdapter
 
     private var position = 0
@@ -38,46 +38,6 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
         fun onLibrarySearchComplete(result: Int, name: String)
     }
 
-    override fun onResume() {
-        super.onResume()
-        binding.searchThings.postDelayed({
-            binding.searchThings.requestFocus()
-            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(binding.searchThings, InputMethodManager.SHOW_IMPLICIT)
-        }, 200)
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        requireActivity().invalidateOptionsMenu()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        val parentFragment = parentFragment
-        if (parentFragment is OnLibrarySearchCompleteListener) {
-            onLibrarySearchCompleteListener = parentFragment
-        } else {
-            throw IllegalArgumentException("Parent fragment must implement OnSearchCompleteListener")
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val dialog = dialog
-        if (dialog != null) {
-            val displayMetrics = DisplayMetrics()
-            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-            val screenWidth = displayMetrics.widthPixels
-
-            val marginInPixels = (80 * resources.displayMetrics.density).toInt()
-            val width = screenWidth - marginInPixels
-            val height = ViewGroup.LayoutParams.WRAP_CONTENT
-
-            val window = dialog.window
-            window?.setLayout(width, height)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -132,6 +92,40 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
 
         return binding.root
     }
+    override fun onStart() {
+        super.onStart()
+        val dialog = dialog
+        if (dialog != null) {
+            val displayMetrics = DisplayMetrics()
+            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+            val screenWidth = displayMetrics.widthPixels
+
+            val marginInPixels = (80 * resources.displayMetrics.density).toInt()
+            val width = screenWidth - marginInPixels
+            val height = ViewGroup.LayoutParams.WRAP_CONTENT
+
+            val window = dialog.window
+            window?.setLayout(width, height)
+        }
+    }
+    override fun onResume() {
+        super.onResume()
+        binding.searchThings.postDelayed({
+            binding.searchThings.requestFocus()
+            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.searchThings, InputMethodManager.SHOW_IMPLICIT)
+        }, 200)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val parentFragment = parentFragment
+        if (parentFragment is OnLibrarySearchCompleteListener) {
+            onLibrarySearchCompleteListener = parentFragment
+        } else {
+            throw IllegalArgumentException("Parent fragment must implement OnSearchCompleteListener")
+        }
+    }
 
     private fun loadMoreItems() {
         runBlocking {            
@@ -159,7 +153,17 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
             }
         }
     }
-
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        requireActivity().invalidateOptionsMenu()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -167,13 +171,4 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

@@ -36,20 +36,7 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private var isbn: String? = null
     private val api = CrudApi(this@AdminRequestsFragment)
-    private fun insertBookRequest(){
-        var result = false
-        if (!isbn.isNullOrEmpty()){
-            // TODO: This?
-            if (result) {
-                showSnackBar(requireContext(), requireView(), "BookRequest Inserted")
-                //adapter.updateList(BookRequests as ArrayList<BookRequest>)
-            } else {
-                showSnackBar(requireContext(), requireView(), "BookRequest already exist")
-            }
-        } else {
-            showSnackBar(requireContext(), requireView(), "Name empty")
-        }
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +58,22 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         return binding.root
     }
 
-    fun loadingEnded(){
+    private fun insertBookRequest(){
+        var result = false
+        if (!isbn.isNullOrEmpty()){
+            // TODO: This?
+            if (result) {
+                showSnackBar(requireContext(), requireView(), "BookRequest Inserted")
+                //adapter.updateList(BookRequests as ArrayList<BookRequest>)
+            } else {
+                showSnackBar(requireContext(), requireView(), "BookRequest already exist")
+            }
+        } else {
+            showSnackBar(requireContext(), requireView(), "Name empty")
+        }
+    }
+
+    private fun loadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -180,7 +182,13 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -188,13 +196,4 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

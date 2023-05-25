@@ -99,7 +99,115 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
             showSnackBar(requireContext(), requireView(), "Name empty")
         }
     }*/
+    override fun onGenreSearchComplete(result: Int, name: String) {
+        var genreExist = false
+        var resultApi: Boolean? = null
+        genres!!.forEach {
+            if (it.genreId == result){
+                genreExist = true
+            }
+        }
+        if (!genreExist){
+            runBlocking {
+                val corrutine = launch {
+                    resultApi = api.insertBookGenre(bookId, result)
+                }
+                corrutine.join()
+            }
+        } else {
+            showSnackBar(requireContext(), requireView(), "Genre already in the list")
+        }
 
+        if (resultApi != null && resultApi as Boolean){
+            val tmpGenre = Genre(result, name)
+            genres!!.add(tmpGenre)
+            genres!!.sortBy { it.name }
+            adapterGenres.updateList(genres as ArrayList<Genre>)
+            showSnackBar(requireContext(), requireView(), "Genre Added")
+        }
+    }
+
+    override fun onAuthorSearchComplete(result: Int, name: String) {
+        var authorExist = false
+        var resultApi: Boolean? = null
+
+        if (author != null && author!!.authorId == result){
+            authorExist = true
+        }
+
+        if (!authorExist){
+            runBlocking {
+                val corrutine = launch {
+                    if (author != null){
+                        api.deleteBookAuthors(bookId, author!!.authorId)
+                    }
+                    resultApi = api.insertBookAuthors(bookId, result)
+                }
+                corrutine.join()
+            }
+        }
+
+        if (resultApi != null && resultApi as Boolean){
+            author = Author(result, name)
+            binding.etAuthor.setText(author!!.name)
+            showSnackBar(requireContext(), requireView(), "Author changed")
+        }
+    }
+
+    override fun onLanguageSearchComplete(result: Int, name: String) {
+        var languageExist = false
+        var resultApi: Boolean? = null
+
+        if (lang != null && lang!!.languageId == result){
+            languageExist = true
+        }
+
+        if (!languageExist){
+            runBlocking {
+                val corrutine = launch {
+                    if (author != null){
+                        api.deleteBookLang(bookId, lang!!.languageId)
+                    }
+                    resultApi = api.insertBookLang(bookId, result)
+                }
+                corrutine.join()
+            }
+        }
+
+        if (resultApi != null && resultApi as Boolean){
+            lang = Language(result, name)
+            binding.etLanguage.setText(lang!!.name)
+            showSnackBar(requireContext(), requireView(), "Language changed")
+        }
+    }
+
+    override fun onLibrarySearchComplete(result: Int, name: String) {
+        var libraryExist = false
+        var resultApi: Boolean? = null
+        libraries!!.forEach {
+            if (it.library.libraryId == result){
+                libraryExist = true
+            }
+        }
+        if (!libraryExist){
+            runBlocking {
+                val corrutine = launch {
+                    resultApi = api.insertBookLibrary(bookId, result, 0)
+                }
+                corrutine.join()
+            }
+        } else {
+            showSnackBar(requireContext(), requireView(), "Library already in the list")
+        }
+
+        if (resultApi != null && resultApi as Boolean){
+            val tmpLibrary = LibraryExtended(library = Library(0.0, result, 0.0, name, ""), distance = null, copies = 0)
+            libraries!!.add(tmpLibrary)
+            libraries!!.sortBy { it.library.name}
+            adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)
+            showSnackBar(requireContext(), requireView(), "Library Added")
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -260,7 +368,6 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
     }
 
-
     private fun getAuthor(){
         runBlocking {
             val corrutina = launch {
@@ -317,7 +424,13 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
     }
 
-
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -326,122 +439,4 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
-
-    override fun onGenreSearchComplete(result: Int, name: String) {
-        var genreExist = false
-        var resultApi: Boolean? = null
-        genres!!.forEach {
-            if (it.genreId == result){
-                genreExist = true
-            }
-        }
-        if (!genreExist){
-            runBlocking {
-                val corrutine = launch {
-                    resultApi = api.insertBookGenre(bookId, result)
-                }
-                corrutine.join()
-            }
-        } else {
-            showSnackBar(requireContext(), requireView(), "Genre already in the list")
-        }
-
-        if (resultApi != null && resultApi as Boolean){
-            val tmpGenre = Genre(result, name)
-            genres!!.add(tmpGenre)
-            genres!!.sortBy { it.name }
-            adapterGenres.updateList(genres as ArrayList<Genre>)
-            showSnackBar(requireContext(), requireView(), "Genre Added")
-        }
-    }
-
-    override fun onAuthorSearchComplete(result: Int, name: String) {
-        var authorExist = false
-        var resultApi: Boolean? = null
-
-        if (author != null && author!!.authorId == result){
-            authorExist = true
-        }
-
-        if (!authorExist){
-            runBlocking {
-                val corrutine = launch {
-                    if (author != null){
-                        api.deleteBookAuthors(bookId, author!!.authorId)
-                    }
-                    resultApi = api.insertBookAuthors(bookId, result)
-                }
-                corrutine.join()
-            }
-        }
-
-        if (resultApi != null && resultApi as Boolean){
-            author = Author(result, name)
-            binding.etAuthor.setText(author!!.name)
-            showSnackBar(requireContext(), requireView(), "Author changed")
-        }
-    }
-
-    override fun onLanguageSearchComplete(result: Int, name: String) {
-        var languageExist = false
-        var resultApi: Boolean? = null
-
-        if (lang != null && lang!!.languageId == result){
-            languageExist = true
-        }
-
-        if (!languageExist){
-            runBlocking {
-                val corrutine = launch {
-                    if (author != null){
-                        api.deleteBookLang(bookId, lang!!.languageId)
-                    }
-                    resultApi = api.insertBookLang(bookId, result)
-                }
-                corrutine.join()
-            }
-        }
-
-        if (resultApi != null && resultApi as Boolean){
-            lang = Language(result, name)
-            binding.etLanguage.setText(lang!!.name)
-            showSnackBar(requireContext(), requireView(), "Language changed")
-        }
-    }
-
-    override fun onLibrarySearchComplete(result: Int, name: String) {
-        var libraryExist = false
-        var resultApi: Boolean? = null
-        libraries!!.forEach {
-            if (it.library.libraryId == result){
-                libraryExist = true
-            }
-        }
-        if (!libraryExist){
-            runBlocking {
-                val corrutine = launch {
-                    resultApi = api.insertBookLibrary(bookId, result, 0)
-                }
-                corrutine.join()
-            }
-        } else {
-            showSnackBar(requireContext(), requireView(), "Library already in the list")
-        }
-
-        if (resultApi != null && resultApi as Boolean){
-            val tmpLibrary = LibraryExtended(library = Library(0.0, result, 0.0, name, ""), distance = null, copies = 0)
-            libraries!!.add(tmpLibrary)
-            libraries!!.sortBy { it.library.name}
-            adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)
-            showSnackBar(requireContext(), requireView(), "Library Added")
-        }
-    }
 }

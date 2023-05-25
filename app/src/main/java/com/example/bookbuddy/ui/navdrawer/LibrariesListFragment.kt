@@ -35,7 +35,7 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
     private var job: Job = Job()
     private var isbn: String = ""
     lateinit var adapter: LibraryAdapter
-    val api = CrudApi(this@LibrariesListFragment)
+    private val api = CrudApi(this@LibrariesListFragment)
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val locationRequestCode = 0
@@ -71,6 +71,25 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
         requestPermissionsMap()
 
         return binding.root
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (locationRequestCode == requestCode) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                grantResults[1] == PackageManager.PERMISSION_GRANTED
+            ) {
+                checkPermissions()
+            } else {
+                showSnackBar(requireContext(), requireView(), "Location needed to show closest libraries")
+                permissionsGranted = false
+                loadFragment()
+            }
+        }
     }
 
     private fun loadFragment(){
@@ -128,7 +147,7 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
         }
     }
 
-    fun loadingEnded(){
+    private fun loadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
         binding.gpssearch.setOnClickListener {
@@ -250,25 +269,6 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
 
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (locationRequestCode == requestCode) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-                grantResults[1] == PackageManager.PERMISSION_GRANTED
-            ) {
-                checkPermissions()
-            } else {
-                showSnackBar(requireContext(), requireView(), "Location needed to show closest libraries")
-                permissionsGranted = false
-                loadFragment()
-            }
-        }
-    }
-
     private fun checkPermissions() {
         if (
             (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -287,6 +287,14 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
         }
     }
 
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -294,13 +302,4 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

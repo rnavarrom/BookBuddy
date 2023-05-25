@@ -29,7 +29,7 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>) :
     RecyclerView.Adapter<ContactAdapter.ViewHolder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
     lateinit var view : View
-    val api = CrudApi(this@ContactAdapter)
+    private val api = CrudApi(this@ContactAdapter)
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val profilePicture = view.findViewById<ShapeableImageView>(R.id.profile_imageView)!!
         val username = view.findViewById<TextView>(R.id.tv_name)!!

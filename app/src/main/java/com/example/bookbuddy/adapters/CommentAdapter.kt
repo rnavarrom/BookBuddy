@@ -25,7 +25,7 @@ import kotlin.coroutines.CoroutineContext
 class CommentAdapter(var list: java.util.ArrayList<Comment>) :
     RecyclerView.Adapter<CommentAdapter.ViewHolder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
-    val api = CrudApi( this@CommentAdapter)
+    private val api = CrudApi( this@CommentAdapter)
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val profilePicture = view.findViewById<ImageView>(R.id.profile_imageView)!!
         val username = view.findViewById<TextView>(R.id.tv_name)!!

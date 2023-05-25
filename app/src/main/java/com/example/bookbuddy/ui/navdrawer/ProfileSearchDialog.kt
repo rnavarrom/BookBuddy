@@ -24,7 +24,7 @@ import kotlin.coroutines.CoroutineContext
 class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
     lateinit var binding: FragmentProfileSearchDialogBinding
     private var job: Job = Job()
-    val api = CrudApi(this@ProfileSearchDialog)
+    private val api = CrudApi(this@ProfileSearchDialog)
     private lateinit var adapter: SearchGenresAdapter
 
     private var position = 0
@@ -35,46 +35,6 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
     interface OnGenreSearchCompleteListener {
         fun onGenreSearchComplete(result: Int, name: String)
     }
-
-    override fun onResume() {
-        super.onResume()
-        binding.searchThings.postDelayed({
-            binding.searchThings.requestFocus()
-            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(binding.searchThings, InputMethodManager.SHOW_IMPLICIT)
-        }, 200)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        val parentFragment = parentFragment
-        if (parentFragment is OnGenreSearchCompleteListener) {
-            onGenreSearchCompleteListener = parentFragment
-        } else {
-            throw IllegalArgumentException("Parent fragment must implement OnSearchCompleteListener")
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        /*
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-         */
-        val dialog = dialog
-        if (dialog != null) {
-            val displayMetrics = DisplayMetrics()
-            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-            val screenWidth = displayMetrics.widthPixels
-
-            val marginInPixels = (80 * resources.displayMetrics.density).toInt()
-            val width = screenWidth - marginInPixels
-            val height = ViewGroup.LayoutParams.WRAP_CONTENT
-
-            val window = dialog.window
-            window?.setLayout(width, height)
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -129,6 +89,45 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
         return binding.root
     }
 
+    override fun onStart() {
+        super.onStart()
+        /*
+        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+         */
+        val dialog = dialog
+        if (dialog != null) {
+            val displayMetrics = DisplayMetrics()
+            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+            val screenWidth = displayMetrics.widthPixels
+
+            val marginInPixels = (80 * resources.displayMetrics.density).toInt()
+            val width = screenWidth - marginInPixels
+            val height = ViewGroup.LayoutParams.WRAP_CONTENT
+
+            val window = dialog.window
+            window?.setLayout(width, height)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.searchThings.postDelayed({
+            binding.searchThings.requestFocus()
+            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.searchThings, InputMethodManager.SHOW_IMPLICIT)
+        }, 200)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val parentFragment = parentFragment
+        if (parentFragment is OnGenreSearchCompleteListener) {
+            onGenreSearchCompleteListener = parentFragment
+        } else {
+            throw IllegalArgumentException("Parent fragment must implement OnSearchCompleteListener")
+        }
+    }
+
     private fun loadMoreItems() {
         runBlocking {
             val corrutina = launch {
@@ -158,6 +157,13 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
         }
     }
 
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -165,13 +171,4 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

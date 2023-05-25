@@ -28,7 +28,7 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
     private var job: Job = Job()
     private var bookId: Int = 0
     lateinit var adapter: CommentAdapter
-    val api = CrudApi(this@BookCommentsFragment)
+    private val api = CrudApi(this@BookCommentsFragment)
 
     private var position = 0
     private var lastPosition = -1
@@ -138,6 +138,14 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         binding.loadingComment.visibility = View.GONE
     }
 
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -145,13 +153,4 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

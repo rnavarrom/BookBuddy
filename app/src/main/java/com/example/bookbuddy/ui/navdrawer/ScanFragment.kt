@@ -43,6 +43,42 @@ class ScanFragment : Fragment(), ApiErrorListener {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        val currentDestination = navController.currentDestination
+        val isDialogOpen = currentDestination?.id == R.id.nav_book_display
+
+        if (allPermissionsGranted() && !isDialogOpen) {
+            isScannerEnabled = true
+            startCamera()
+            codeScanner.startPreview()
+        } else if (isDialogOpen){
+            println("El idalogog esta abierto")
+        } else {
+            requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+        }
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<String>, grantResults:
+        IntArray) {
+        if (requestCode == REQUEST_CODE_PERMISSIONS) {
+            if (allPermissionsGranted()) {
+                isScannerEnabled = true
+                startCamera()
+            } else {
+                showSnackBar(requireContext(), requireView(),"Camera access needed to scan codes")
+                navController.popBackStack()
+            }
+        }
+    }
+    override fun onPause() {
+        if (this::codeScanner.isInitialized){
+            isScannerEnabled = false
+            codeScanner.releaseResources()
+        }
+        super.onPause()
+    }
+
     private fun bookExist(isbn: String): Boolean? {
         var exist : Boolean? = false
         runBlocking {
@@ -126,56 +162,16 @@ class ScanFragment : Fragment(), ApiErrorListener {
         codeScanner.startPreview()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults:
-        IntArray) {
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (allPermissionsGranted()) {
-                isScannerEnabled = true
-                startCamera()
-            } else {
-                showSnackBar(requireContext(), requireView(),"Camera access needed to scan codes")
-                navController.popBackStack()
-            }
-        }
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-        val currentDestination = navController.currentDestination
-        val isDialogOpen = currentDestination?.id == R.id.nav_book_display
-
-        if (allPermissionsGranted() && !isDialogOpen) {
-            isScannerEnabled = true
-            startCamera()
-            codeScanner.startPreview()
-        } else if (isDialogOpen){
-            println("El idalogog esta abierto")
-        } else {
-            requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
-        }
-    }
-
-    override fun onPause() {
-        if (this::codeScanner.isInitialized){
-            isScannerEnabled = false
-            codeScanner.releaseResources()
-        }
-        super.onPause()
-    }
-
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             requireActivity().applicationContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
     companion object{
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
-    }
-
-    override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

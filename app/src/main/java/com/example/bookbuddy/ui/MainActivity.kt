@@ -42,55 +42,6 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
     private lateinit var savedPassword: String
     private val api = CrudApi(this@MainActivity)
 
-    companion object {
-        val USERNAME = stringPreferencesKey("username")
-    }
-
-    fun setLocal(activity: Activity, langCode: String){
-        val locale = Locale(langCode)
-        Locale.setDefault(locale)
-        val resources = activity.resources
-        val config = resources.configuration
-        config.setLocale(locale)
-        resources.updateConfiguration(config, resources.displayMetrics)
-    }
-
-    private fun getCurrentLanguageCode(code: String): String {
-        var finalCode: String = code
-        if (finalCode == "null"){
-            finalCode = applicationContext.resources.configuration.locales.get(0).language.toString()
-        }
-        return when (finalCode){
-            "en" -> {
-                "american_flag"
-            }
-            "ca" -> {
-                "catalan_flag"
-            }
-            "es" -> {
-                "spanish_flag"
-            }
-            else -> {
-                "american_flag"
-            }
-        }
-    }
-
-    private fun saveLanguageCode(context: Context, languageCode: String) {
-        val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("language_code", languageCode)
-        editor.apply()
-    }
-
-    private fun getStoredLanguage(): String {
-        val sharedPreferences = applicationContext.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-        var code = sharedPreferences.getString("language_code", "") ?: ""
-        if (code.isEmpty()){
-            code = applicationContext.resources.configuration.locales.get(0).language.toString()
-        }
-        return code
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -249,6 +200,20 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        userPrefs = UserPreferences(this)
+        lifecycleScope.launch {
+            val credentials = userPrefs.userCredentialsFlow.first()
+            savedUser = credentials.first
+            savedPassword = credentials.second
+
+            if (savedUser.isBlank() && savedPassword.isBlank()) {
+                loadingEndedLogin()
+            }
+        }
+    }
+
     private fun isEmailAviable(email: String): Boolean? {
         var response : Boolean? = false
         runBlocking {
@@ -301,10 +266,6 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
         }
     }
 
-    override fun onApiError() {
-        Tools.showSnackBar(this, binding.activityMain, "Can't reach the server. Try again!")
-    }
-
     private fun getUsers(userName: String, password: String) {
         currentUser = User()
         runBlocking {            
@@ -332,6 +293,52 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
         }
     }
 
+    private fun setLocal(activity: Activity, langCode: String){
+        val locale = Locale(langCode)
+        Locale.setDefault(locale)
+        val resources = activity.resources
+        val config = resources.configuration
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
+    }
+
+    private fun getCurrentLanguageCode(code: String): String {
+        var finalCode: String = code
+        if (finalCode == "null"){
+            finalCode = applicationContext.resources.configuration.locales.get(0).language.toString()
+        }
+        return when (finalCode){
+            "en" -> {
+                "american_flag"
+            }
+            "ca" -> {
+                "catalan_flag"
+            }
+            "es" -> {
+                "spanish_flag"
+            }
+            else -> {
+                "american_flag"
+            }
+        }
+    }
+
+    private fun saveLanguageCode(context: Context, languageCode: String) {
+        val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("language_code", languageCode)
+        editor.apply()
+    }
+
+    private fun getStoredLanguage(): String {
+        val sharedPreferences = applicationContext.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        var code = sharedPreferences.getString("language_code", "") ?: ""
+        if (code.isEmpty()){
+            code = applicationContext.resources.configuration.locales.get(0).language.toString()
+        }
+        return code
+    }
+
     private fun loadingEndedHome() {
         getUsers(savedUser, savedPassword)
         val intent = Intent(this, NavDrawerActivity::class.java)
@@ -343,17 +350,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
         binding.mainContent.visibility = View.VISIBLE
     }
 
-    override fun onResume() {
-        super.onResume()
-        userPrefs = UserPreferences(this)
-        lifecycleScope.launch {
-            val credentials = userPrefs.userCredentialsFlow.first()
-            savedUser = credentials.first
-            savedPassword = credentials.second
-
-            if (savedUser.isBlank() && savedPassword.isBlank()) {
-                loadingEndedLogin()
-            }
-        }
+    override fun onApiError() {
+        Tools.showSnackBar(this, binding.activityMain, "Can't reach the server. Try again!")
     }
 }

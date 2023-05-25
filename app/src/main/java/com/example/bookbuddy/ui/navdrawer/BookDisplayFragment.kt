@@ -46,23 +46,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         fun onBookDisplayClose()
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if(book != null) {
-            val bundle = requireArguments().getBundle("bundle")
-            val fragment = bundle!!.getSerializable("fragment") as? HomeFragment?
-            if (fragment != null) {
-                onBookDisplayClose = fragment
-            }
-        }
-    }
-    override fun onWriteCommentClose() {
-        val id = navController.currentDestination?.id
-        navController.popBackStack(id!!,true)
-        val bundle = requireArguments().getBundle("bundle")
-        navController.navigate(id, bundle)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -70,18 +53,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
             R.style.FullScreenDialogStyle
         )
     }
-
-    private fun createRequest(isbn: String?) {
-        if(isbn != null){
-        runBlocking {
-            val corroutine = launch {
-                api.addRequestAPI(isbn)
-            }
-            corroutine.join()
-        }
-    }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -242,6 +213,35 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
 
         return binding.root
     }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if(book != null) {
+            val bundle = requireArguments().getBundle("bundle")
+            val fragment = bundle!!.getSerializable("fragment") as? HomeFragment?
+            if (fragment != null) {
+                onBookDisplayClose = fragment
+            }
+        }
+    }
+    override fun onWriteCommentClose() {
+        val id = navController.currentDestination?.id
+        navController.popBackStack(id!!,true)
+        val bundle = requireArguments().getBundle("bundle")
+        navController.navigate(id, bundle)
+    }
+
+    private fun createRequest(isbn: String?) {
+        if(isbn != null){
+        runBlocking {
+            val corroutine = launch {
+                api.addRequestAPI(isbn)
+            }
+            corroutine.join()
+        }
+    }
+    }
+
+
 /*
     fun setBookMark(bookId: Int, userId: Int){
         var added = false
@@ -429,23 +429,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         return response
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        job.cancel()
-    }
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-
-    override fun onDestroy() {
-        if (tts != null) {
-            tts!!.stop()
-            tts!!.shutdown()
-        }
-        onBookDisplayClose?.onBookDisplayClose()
-        super.onDestroy()
-        job.cancel()
-    }
     private fun speak() {
         if (tts!!.isSpeaking) {
             tts!!.stop()
@@ -466,8 +449,25 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
             }
         }
     }
+
     override fun onApiError() {
         dismiss()
         //showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
+    override fun onDestroy() {
+        if (tts != null) {
+            tts!!.stop()
+            tts!!.shutdown()
+        }
+        onBookDisplayClose?.onBookDisplayClose()
+        super.onDestroy()
+        job.cancel()
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        job.cancel()
+    }
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 }

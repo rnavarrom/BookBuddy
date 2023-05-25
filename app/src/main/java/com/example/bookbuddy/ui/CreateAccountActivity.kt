@@ -24,7 +24,7 @@ import kotlinx.coroutines.runBlocking
 
 class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     private lateinit var binding: ActivityCreateAccountBinding
-    val api = CrudApi(this@CreateAccountActivity)
+    private val api = CrudApi(this@CreateAccountActivity)
     var checkValues: Boolean = false
     lateinit var user: UserItem
     private var conditions = false
@@ -102,7 +102,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     @SuppressLint("ResourceAsColor")
-    fun checkFields(): Boolean {
+    private fun checkFields(): Boolean {
 
         resetColors()
         //Check if all the fields are not blank

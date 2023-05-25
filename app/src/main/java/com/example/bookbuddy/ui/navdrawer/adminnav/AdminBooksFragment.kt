@@ -41,6 +41,25 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private var search: String? = null
     private val api = CrudApi(this@AdminBooksFragment)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding =  FragmentAdminBooksBinding.inflate(layoutInflater, container, false)
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+
+        binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
+
+        getBooks(true)
+        loadingEnded()
+
+        return binding.root
+    }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)
         gMenu = menu
@@ -122,26 +141,6 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         bundle.putSerializable("book", book)
         val action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
         navController.navigate(action)*/
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding =  FragmentAdminBooksBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-
-        binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
-
-        getBooks(true)
-        loadingEnded()
-
-        return binding.root
     }
 
     fun loadingEnded(){
@@ -265,8 +264,13 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             corrutina.join()
         }
     }
-
-
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -274,13 +278,4 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

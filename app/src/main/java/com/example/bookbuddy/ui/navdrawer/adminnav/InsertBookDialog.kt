@@ -131,6 +131,37 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         return binding.root
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
+            val imageUri = data.data
+            tmpUri = imageUri!!
+
+            Glide.with(requireContext())
+                .setDefaultRequestOptions(bookRequestOptions)
+                .load(tmpUri)
+                .into(binding.ivCover)
+        }
+    }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == REQUEST_CODE_PERMISSION) {
+            // Verificar si se concedieron los permisos
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permiso concedido, abrir la galería
+                imageChooser()
+            } else {
+                // Permiso denegado, manejar el caso de denegación de permisos
+                // Puedes mostrar un mensaje al usuario o realizar alguna otra acción
+                showSnackBar(
+                    requireContext(),
+                    requireView(),
+                    "Galery access is required to pick an image"
+                )
+            }
+        }
+    }
     private fun openReferences(){
         val bundle = Bundle()
         bundle.putInt("bookid", book.bookId)
@@ -253,21 +284,6 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, REQUEST_CODE_GALLERY)
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
-            val imageUri = data.data
-            tmpUri = imageUri!!
-
-            Glide.with(requireContext())
-                .setDefaultRequestOptions(bookRequestOptions)
-                .load(tmpUri)
-                .into(binding.ivCover)
-        }
-    }
-
-
     private fun checkPermissions(){
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
             == PackageManager.PERMISSION_GRANTED){
@@ -282,31 +298,13 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (requestCode == REQUEST_CODE_PERMISSION) {
-            // Verificar si se concedieron los permisos
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permiso concedido, abrir la galería
-                imageChooser()
-            } else {
-                // Permiso denegado, manejar el caso de denegación de permisos
-                // Puedes mostrar un mensaje al usuario o realizar alguna otra acción
-                showSnackBar(
-                    requireContext(),
-                    requireView(),
-                    "Galery access is required to pick an image"
-                )
-            }
-        }
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
-
-    companion object {
-        private const val REQUEST_CODE_PERMISSION = 5
-        private const val REQUEST_CODE_GALLERY = 10
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -314,13 +312,8 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    companion object {
+        private const val REQUEST_CODE_PERMISSION = 5
+        private const val REQUEST_CODE_GALLERY = 10
     }
 }

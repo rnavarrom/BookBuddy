@@ -131,6 +131,14 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         binding.loadingBooks.visibility = View.GONE
     }
 
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -138,13 +146,4 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

@@ -21,34 +21,6 @@ class AdminFragment : Fragment(), CoroutineScope, java.io.Serializable, InsertLi
 
     private var fragmentSaved = "books"
 
-    private fun replaceFragment(fragment: Fragment){
-        val bundle = Bundle()
-        bundle.putSerializable("fragment", this)
-        fragment.arguments = bundle
-        val fragmentManager = parentFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.container, fragment)
-        fragmentTransaction.commit()
-    }
-
-    override fun onAdminDialogClose() {
-        var fragment: Fragment? = null
-        when(fragmentSaved){
-            "books" -> fragment = AdminBooksFragment()
-            "genre" -> fragment = AdminGenresFragment()
-            "authors" -> fragment = AdminAuthorsFragment()
-            "libraries" -> fragment = AdminLibrariesFragment()
-            "requests" -> fragment = AdminRequestsFragment()        }
-
-        val bundle = Bundle()
-        bundle.putSerializable("fragment", this)
-        fragment!!.arguments = bundle
-        val fragmentManager = parentFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.container, fragment)
-        fragmentTransaction.commit()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -94,6 +66,38 @@ class AdminFragment : Fragment(), CoroutineScope, java.io.Serializable, InsertLi
         return binding.root
     }
 
+    private fun replaceFragment(fragment: Fragment){
+        val bundle = Bundle()
+        bundle.putSerializable("fragment", this)
+        fragment.arguments = bundle
+        val fragmentManager = parentFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.container, fragment)
+        fragmentTransaction.commit()
+    }
+
+    override fun onAdminDialogClose() {
+        var fragment: Fragment? = null
+        when(fragmentSaved){
+            "books" -> fragment = AdminBooksFragment()
+            "genre" -> fragment = AdminGenresFragment()
+            "authors" -> fragment = AdminAuthorsFragment()
+            "libraries" -> fragment = AdminLibrariesFragment()
+            "requests" -> fragment = AdminRequestsFragment()        }
+
+        val bundle = Bundle()
+        bundle.putSerializable("fragment", this)
+        fragment!!.arguments = bundle
+        val fragmentManager = parentFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.container, fragment)
+        fragmentTransaction.commit()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -101,9 +105,4 @@ class AdminFragment : Fragment(), CoroutineScope, java.io.Serializable, InsertLi
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
 }

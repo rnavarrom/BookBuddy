@@ -83,6 +83,220 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     private var menuItemsVisibility = mutableMapOf("settings" to true, "accept" to false, "cancel" to false)
     private lateinit var menuItems: ArrayList<MenuItem>
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.profile_menu, menu)
+        gMenu = menu
+        settings = gMenu.findItem(R.id.action_settings)
+        accept = gMenu.findItem(R.id.action_accept)
+        cancel = gMenu.findItem(R.id.action_cancel)
+        menuItems = arrayListOf(settings, accept, cancel)
+
+        menuItems.forEach {
+            it.isVisible = menuItemsVisibility[it.title.toString()]!!
+        }
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding =  FragmentProfileBinding.inflate(layoutInflater, container, false)
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+
+        val currentLanguageCode = getStoredLanguage()
+        val curr = getCurrentLanguageCode(currentLanguageCode)
+        val languages = arrayOf("american_flag","catalan_flag","spanish_flag")
+        val adapter = LanguageSpinnerAdapter(requireContext(), languages)
+        binding.languageSpinner.adapter = adapter
+        var position = languages.indexOf(curr)
+        binding.languageSpinner.setSelection(position)
+        var lastSelectedPosition = position
+
+        binding.languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                if (position != lastSelectedPosition) {
+                    val selectedImageName = parent.getItemAtPosition(position).toString()
+                    println(selectedImageName)
+                    when (selectedImageName){
+                        "american_flag" -> {
+                            setLocal(requireActivity(), "en")
+                            saveLanguageCode(requireActivity().applicationContext,"en")
+                        }
+                        "catalan_flag" -> {
+                            setLocal(requireActivity(), "ca")
+                            saveLanguageCode(requireActivity().applicationContext,"ca")
+                        }
+                        else -> {
+                            setLocal(requireActivity(), "es")
+                            saveLanguageCode(requireActivity().applicationContext,"es")
+                        }
+                    }
+                    recreate(requireActivity())
+                }
+
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Acciones a realizar cuando no se selecciona ningún elemento
+            }
+        }
+
+        if (profileUser == null){
+            profileUser = currentUser.userId
+            username = currentUser.name
+        }
+
+        launch {
+            loadUser()
+            loadTabLayout()
+            loadingEnded()
+        }
+
+        binding.bContacts.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+                // Pedir permisos de acceso a los contactos
+                requestPermissions(arrayOf(android.Manifest.permission.READ_CONTACTS),
+                    REQUEST_READ_CONTACTS)
+            } else {
+                // Obtener los correos electrónicos de los contactos
+                val emails = getEmailsFromContacts()
+                // Guardar los correos electrónicos en una lista
+                val emailList = ArrayList<String>()
+                emailList.addAll(emails)
+                runBlocking {
+                    val corrutina = launch {
+                        //var a = api.getEmailsContact(currentUser.userId, listOf("email1","email2"))
+                        var addedContacts : Int? = api.getEmailsContact(currentUser.userId, emailList)
+                        var message = ""
+                        if(addedContacts == null){
+
+                        }else if (addedContacts > 0){
+                            message = "Se han agregado " + addedContacts + " contactos nuevos!"
+                        } else {
+                            message = "No se ha encontrado ningun contacto"
+                        }
+                        showSnackBar(requireContext(), requireView(),message)
+                    }
+                    corrutina.join()
+                }
+            }
+
+
+
+        }
+
+        binding.bPassword.setOnClickListener {
+            // Obtiene las referencias de los EditText dentro del diálogo
+            val etPassword1 = EditText(requireContext())
+            val etPassword2 = EditText(requireContext())
+            etPassword1.hint = "Password"
+            etPassword2.hint = "Repeat password"
+            etPassword1.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
+            etPassword2.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
+
+            val layout = LinearLayout(requireContext())
+            layout.orientation = LinearLayout.VERTICAL
+            layout.addView(etPassword1)
+            layout.addView(etPassword2)
+
+            val dialogBuilder = AlertDialog.Builder(requireContext())
+            dialogBuilder.setTitle("Change password")
+                .setCancelable(false)
+                .setView(etPassword1)
+                .setPositiveButton("Accept", DialogInterface.OnClickListener { dialog, id ->
+                    val password1 = etPassword1.text.toString()
+                    val password2 = etPassword2.text.toString()
+
+                    if (password1.isBlank() || password2.isBlank()) {
+                        showSnackBar(requireContext(), requireView(), "Can't be blank")
+                    } else if (password1 != password2){
+                        showSnackBar(requireContext(), requireView(), "Passwords must match")
+                    } else {
+                        runBlocking {
+                            launch {
+                                // TODO: END THIS
+                                //val result = api.updateUserPassword(currentUser., shaPassword)
+                            }
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
+                    dialog.dismiss()
+                })
+
+            // Crea y muestra el diálogo
+            val alert = dialogBuilder.create()
+            alert.show()
+        }
+
+        return binding.root
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
+            val imageUri = data.data
+            tmpUri = imageUri!!
+            // Hacer algo con la imagen seleccionada
+            //binding.ivPreviewImage.setImageURI(imageUri)
+            Glide.with(requireContext())
+                .setDefaultRequestOptions(profileRequestOptions)
+                .load(tmpUri)
+                .into(binding.editProfileImageView)
+            //binding.editProfileImageView.setImageURI(tmpUri)
+        }
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                // Navigate to settings screen.
+                actionSettings()
+                true
+            }
+            R.id.action_accept -> {
+                // Save profile changes.
+                actionAccept()
+                true
+            }
+            R.id.action_cancel -> {
+                // Cancel profile changes.
+                actionCancel()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>, grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_READ_EXTERNAL_STORAGE -> {
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    imageChooser()
+                } else {
+                    showSnackBar(requireContext(), requireView(),"Galery access is required to pick an image")
+                }
+                return
+            }
+            REQUEST_READ_CONTACTS -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    val emails = getEmailsFromContacts()
+                    val emailList = ArrayList<String>()
+                    emailList.addAll(emails)
+                } else {
+                    showSnackBar(requireContext(), requireView(),"Contacts access is required to import contacts")
+                }
+                return
+            }
+        }
+    }
+
     fun setLocal(activity: Activity, langCode: String){
         val locale = Locale(langCode)
         Locale.setDefault(locale)
@@ -127,46 +341,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             code = requireActivity().applicationContext.resources.configuration.locales.get(0).language.toString()
         }
         return code
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.profile_menu, menu)
-        gMenu = menu
-        settings = gMenu.findItem(R.id.action_settings)
-        accept = gMenu.findItem(R.id.action_accept)
-        cancel = gMenu.findItem(R.id.action_cancel)
-        menuItems = arrayListOf(settings, accept, cancel)
-
-        menuItems.forEach {
-            it.isVisible = menuItemsVisibility[it.title.toString()]!!
-        }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        return when (item.itemId) {
-            R.id.action_settings -> {
-                // Navigate to settings screen.
-                actionSettings()
-                true
-            }
-            R.id.action_accept -> {
-                // Save profile changes.
-                actionAccept()
-                true
-            }
-            R.id.action_cancel -> {
-                // Cancel profile changes.
-                actionCancel()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     private fun actionSettings(){
@@ -313,142 +487,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         tmpAuthorId = result
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding =  FragmentProfileBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-
-        val currentLanguageCode = getStoredLanguage()
-        val curr = getCurrentLanguageCode(currentLanguageCode)
-        val languages = arrayOf("american_flag","catalan_flag","spanish_flag")
-        val adapter = LanguageSpinnerAdapter(requireContext(), languages)
-        binding.languageSpinner.adapter = adapter
-        var position = languages.indexOf(curr)
-        binding.languageSpinner.setSelection(position)
-        var lastSelectedPosition = position
-
-        binding.languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (position != lastSelectedPosition) {
-                    val selectedImageName = parent.getItemAtPosition(position).toString()
-                    println(selectedImageName)
-                    when (selectedImageName){
-                        "american_flag" -> {
-                            setLocal(requireActivity(), "en")
-                            saveLanguageCode(requireActivity().applicationContext,"en")
-                        }
-                        "catalan_flag" -> {
-                            setLocal(requireActivity(), "ca")
-                            saveLanguageCode(requireActivity().applicationContext,"ca")
-                        }
-                        else -> {
-                            setLocal(requireActivity(), "es")
-                            saveLanguageCode(requireActivity().applicationContext,"es")
-                        }
-                    }
-                    recreate(requireActivity())
-                }
-
-            }
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // Acciones a realizar cuando no se selecciona ningún elemento
-            }
-        }
-
-        if (profileUser == null){
-            profileUser = currentUser.userId
-            username = currentUser.name
-        }
-
-        launch {
-            loadUser()
-            loadTabLayout()
-            loadingEnded()
-        }
-
-        binding.bContacts.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-                // Pedir permisos de acceso a los contactos
-                requestPermissions(arrayOf(android.Manifest.permission.READ_CONTACTS),
-                    REQUEST_READ_CONTACTS)
-            } else {
-                // Obtener los correos electrónicos de los contactos
-                val emails = getEmailsFromContacts()
-                // Guardar los correos electrónicos en una lista
-                val emailList = ArrayList<String>()
-                emailList.addAll(emails)
-                runBlocking {
-                    val corrutina = launch {
-                        //var a = api.getEmailsContact(currentUser.userId, listOf("email1","email2"))
-                        var addedContacts : Int? = api.getEmailsContact(currentUser.userId, emailList)
-                        var message = ""
-                        if(addedContacts == null){
-
-                        }else if (addedContacts > 0){
-                            message = "Se han agregado " + addedContacts + " contactos nuevos!"
-                        } else {
-                            message = "No se ha encontrado ningun contacto"
-                        }
-                        showSnackBar(requireContext(), requireView(),message)
-                    }
-                    corrutina.join()
-                }
-            }
-
-
-
-        }
-
-        binding.bPassword.setOnClickListener {
-            // Obtiene las referencias de los EditText dentro del diálogo
-            val etPassword1 = EditText(requireContext())
-            val etPassword2 = EditText(requireContext())
-            etPassword1.hint = "Password"
-            etPassword2.hint = "Repeat password"
-            etPassword1.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
-            etPassword2.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
-
-            val layout = LinearLayout(requireContext())
-            layout.orientation = LinearLayout.VERTICAL
-            layout.addView(etPassword1)
-            layout.addView(etPassword2)
-
-            val dialogBuilder = AlertDialog.Builder(requireContext())
-            dialogBuilder.setTitle("Change password")
-                .setCancelable(false)
-                .setView(etPassword1)
-                .setPositiveButton("Accept", DialogInterface.OnClickListener { dialog, id ->
-                    val password1 = etPassword1.text.toString()
-                    val password2 = etPassword2.text.toString()
-
-                    if (password1.isBlank() || password2.isBlank()) {
-                        showSnackBar(requireContext(), requireView(), "Can't be blank")
-                    } else if (password1 != password2){
-                        showSnackBar(requireContext(), requireView(), "Passwords must match")
-                    } else {
-                        runBlocking {
-                            launch {
-                                // TODO: END THIS
-                                //val result = api.updateUserPassword(currentUser., shaPassword)
-                            }
-                        }
-                    }
-                })
-                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
-                    dialog.dismiss()
-                })
-
-            // Crea y muestra el diálogo
-            val alert = dialogBuilder.create()
-            alert.show()
-        }
-
-        return binding.root
-    }
-
     private fun getEmailsFromContacts(): List<String> {
         val emails = ArrayList<String>()
         val contentResolver: ContentResolver = requireActivity().contentResolver
@@ -507,7 +545,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
     }
 
-    fun loadingEnded() {
+    private fun loadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainContent.visibility = View.VISIBLE
 
@@ -548,22 +586,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, PICK_IMAGE_REQUEST)
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
-            val imageUri = data.data
-            tmpUri = imageUri!!
-            // Hacer algo con la imagen seleccionada
-            //binding.ivPreviewImage.setImageURI(imageUri)
-            Glide.with(requireContext())
-                .setDefaultRequestOptions(profileRequestOptions)
-                .load(tmpUri)
-                .into(binding.editProfileImageView)
-            //binding.editProfileImageView.setImageURI(tmpUri)
-        }
-    }
-
 
     private fun uploadImage(imageUri: Uri) {
         /*
@@ -665,39 +687,13 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>, grantResults: IntArray
-    ) {
-        when (requestCode) {
-            REQUEST_READ_EXTERNAL_STORAGE -> {
-                if (grantResults.isNotEmpty() &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    imageChooser()
-                } else {
-                    showSnackBar(requireContext(), requireView(),"Galery access is required to pick an image")
-                }
-                return
-            }
-            REQUEST_READ_CONTACTS -> {
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    val emails = getEmailsFromContacts()
-                    val emailList = ArrayList<String>()
-                    emailList.addAll(emails)
-                } else {
-                    showSnackBar(requireContext(), requireView(),"Contacts access is required to import contacts")
-                }
-                return
-            }
-        }
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
-
-    companion object {
-        private const val PICK_IMAGE_REQUEST = 1
-        private const val REQUEST_READ_EXTERNAL_STORAGE = 2
-        private const val REQUEST_READ_CONTACTS = 3
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -705,13 +701,9 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    companion object {
+        private const val PICK_IMAGE_REQUEST = 1
+        private const val REQUEST_READ_EXTERNAL_STORAGE = 2
+        private const val REQUEST_READ_CONTACTS = 3
     }
 }

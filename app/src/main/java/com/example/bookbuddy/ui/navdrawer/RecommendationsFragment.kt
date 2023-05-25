@@ -25,7 +25,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentRecommendationsBinding
     private var job: Job = Job()
     lateinit var adapter: RecommendedBooksAdapter
-    val api = CrudApi(this@RecommendationsFragment)
+    private val api = CrudApi(this@RecommendationsFragment)
     private var position = 0
     private var lastPosition = -1
     var books: MutableList<Book>? = null
@@ -126,6 +126,13 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.loadingRecommended.visibility = View.GONE
     }
 
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -134,12 +141,5 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
 
-    override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

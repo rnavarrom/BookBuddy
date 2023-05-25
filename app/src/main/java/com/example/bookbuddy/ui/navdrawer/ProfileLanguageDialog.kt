@@ -27,7 +27,7 @@ import kotlin.coroutines.CoroutineContext
 class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentProfileSearchLanguageDialogBinding
     private var job: Job = Job()
-    val api = CrudApi(this@ProfileLanguageDialog)
+    private val api = CrudApi(this@ProfileLanguageDialog)
     private lateinit var adapter: SearchLanguagesAdapter
 
     private var position = 0
@@ -38,48 +38,6 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
     interface OnLanguageSearchCompleteListener {
         fun onLanguageSearchComplete(result: Int, name: String)
     }
-
-    override fun onResume() {
-        super.onResume()
-        binding.searchThings.postDelayed({
-            binding.searchThings.requestFocus()
-            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(binding.searchThings, InputMethodManager.SHOW_IMPLICIT)
-        }, 200)
-    }
-
-    override fun onDismiss(dialog: DialogInterface) {
-        super.onDismiss(dialog)
-        requireActivity().invalidateOptionsMenu()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        val parentFragment = parentFragment
-        if (parentFragment is OnLanguageSearchCompleteListener) {
-            onLanguageSearchCompleteListener = parentFragment
-        } else {
-            throw IllegalArgumentException("Parent fragment must implement OnSearchCompleteListener")
-        }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        val dialog = dialog
-        if (dialog != null) {
-            val displayMetrics = DisplayMetrics()
-            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-            val screenWidth = displayMetrics.widthPixels
-
-            val marginInPixels = (80 * resources.displayMetrics.density).toInt()
-            val width = screenWidth - marginInPixels
-            val height = ViewGroup.LayoutParams.WRAP_CONTENT
-
-            val window = dialog.window
-            window?.setLayout(width, height)
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -133,7 +91,39 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
 
         return binding.root
     }
+    override fun onStart() {
+        super.onStart()
+        val dialog = dialog
+        if (dialog != null) {
+            val displayMetrics = DisplayMetrics()
+            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+            val screenWidth = displayMetrics.widthPixels
 
+            val marginInPixels = (80 * resources.displayMetrics.density).toInt()
+            val width = screenWidth - marginInPixels
+            val height = ViewGroup.LayoutParams.WRAP_CONTENT
+
+            val window = dialog.window
+            window?.setLayout(width, height)
+        }
+    }
+    override fun onResume() {
+        super.onResume()
+        binding.searchThings.postDelayed({
+            binding.searchThings.requestFocus()
+            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.searchThings, InputMethodManager.SHOW_IMPLICIT)
+        }, 200)
+    }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        val parentFragment = parentFragment
+        if (parentFragment is OnLanguageSearchCompleteListener) {
+            onLanguageSearchCompleteListener = parentFragment
+        } else {
+            throw IllegalArgumentException("Parent fragment must implement OnSearchCompleteListener")
+        }
+    }
     private fun loadMoreItems() {
         runBlocking {            
             val corrutina = launch {
@@ -143,7 +133,6 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
         }
         adapter.updateList(languages as ArrayList<Language>)
     }
-
     private fun performSearch(searchValue: String) {
         // Aquí se realiza la búsqueda con el texto ingresado en el AutoCompleteTextView
         //Toast.makeText(requireContext(), "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
@@ -157,6 +146,18 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
             corrutina.join()
         }
     }
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        requireActivity().invalidateOptionsMenu()
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -166,12 +167,5 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
 
-    override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

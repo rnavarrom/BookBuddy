@@ -38,7 +38,25 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var search: String? = null
     private var genreName: String? = null
     private val api = CrudApi(this@AdminGenresFragment)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding =  FragmentAdminGenresBinding.inflate(layoutInflater, container, false)
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+
+        binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
+
+        getGenres(true)
+        loadingEnded()
+
+        return binding.root
+    }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)
         gMenu = menu
@@ -162,26 +180,6 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding =  FragmentAdminGenresBinding.inflate(layoutInflater, container, false)
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-
-        binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
-
-        getGenres(true)
-        loadingEnded()
-
-        return binding.root
-    }
-
     fun loadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
@@ -289,7 +287,14 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -298,12 +303,4 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

@@ -27,7 +27,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
     lateinit var binding: FragmentSearchBinding
     private lateinit var searchResultList: MutableList<SimpleBook>
     private lateinit var adapter: SearchResultAdapter
-    val api = CrudApi(this@SearchFragment)
+    private val api = CrudApi(this@SearchFragment)
     var searchValues = ArrayList<String>()
 
     private var position = 0

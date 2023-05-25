@@ -26,7 +26,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
     lateinit var adapter: ContactAdapter
 
-    val api = CrudApi(this@ContactsFragment)
+    private val api = CrudApi(this@ContactsFragment)
 
     private var position = 0
     private var lastPosition = -1
@@ -126,6 +126,14 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.loadingContacts.visibility = View.GONE
     }
 
+    override fun onApiError() {
+        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -134,12 +142,4 @@ class ContactsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }

@@ -196,6 +196,14 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
 
     }
 
+
+    override fun onApiError() {
+        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -204,12 +212,4 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-    }
 }
