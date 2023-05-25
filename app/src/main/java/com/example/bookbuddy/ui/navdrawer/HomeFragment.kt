@@ -94,11 +94,6 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDis
         if (readingList.isEmpty())
             loadMoreReading(startingPosition)
 
-        binding.refresh.setOnRefreshListener {
-            //getUser()
-            //reloadFragment()
-            binding.refresh.isRefreshing = false
-        }
         binding.icPendingSearch.setOnClickListener {
             filterBooks(true) //pendingList as ArrayList<Pending>,
         }

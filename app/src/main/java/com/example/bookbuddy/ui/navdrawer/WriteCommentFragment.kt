@@ -65,6 +65,11 @@ class WriteCommentFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
             if (fragment != null){
                 onWriteCommentClose = fragment
             }
+        } else if (bundle.containsKey("fragmentComments")){
+            val fragment = bundle.getSerializable("fragmentComments") as? BookCommentsFragment?
+            if (fragment != null){
+                onWriteCommentClose = fragment
+            }
         }
 
         launch {

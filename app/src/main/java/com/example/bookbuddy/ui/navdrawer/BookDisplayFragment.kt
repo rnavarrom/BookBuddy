@@ -197,11 +197,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-    }
-
     override fun onStart() {
         super.onStart()
         if (book == null){
@@ -244,7 +239,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         binding.numberLibraries.text = librariesNumber.toString()
     }
 
-    fun loadingEnded() {
+    private fun loadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.cl.visibility = View.VISIBLE
         binding.dBookDescription.movementMethod = ScrollingMovementMethod()

@@ -5,8 +5,10 @@ import android.content.Intent
 import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.bookbuddy.R
@@ -223,6 +225,8 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         val builder = AlertDialog.Builder(this)
         val inflater = layoutInflater
         val dialogLayout = inflater.inflate(R.layout.dialog_user_conditions, null)
+        val textView = dialogLayout.findViewById<TextView>(R.id.userConditionsText)
+        textView.movementMethod = ScrollingMovementMethod()
         builder.setView(dialogLayout)
         builder.setPositiveButton(getString(R.string.DG_Accept)) { dialogInterface, i ->
             conditions = true

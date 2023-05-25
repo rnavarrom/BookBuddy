@@ -131,6 +131,7 @@
                     android:id="@+id/MA_CheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:buttonTint="@color/primary_green"
                     android:text="@string/LAY_AutoLogin"
                     app:layout_constraintTop_toBottomOf="@+id/MA_Edit_Password"
                     app:layout_constraintEnd_toEndOf="@+id/MA_Edit_Password"

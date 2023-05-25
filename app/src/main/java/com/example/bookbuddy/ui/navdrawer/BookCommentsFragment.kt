@@ -24,7 +24,7 @@ import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener {
+class BookCommentsFragment : DialogFragment(), CoroutineScope, WriteCommentFragment.OnWriteCommentClose, java.io.Serializable, ApiErrorListener {
     lateinit var binding: FragmentBookCommentsBinding
     private var job: Job = Job()
     private var bookId: Int = 0
@@ -105,6 +105,7 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         binding.addComment.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt("bookid", bookId)
+            bundle.putSerializable("fragmentComments", this)
             val action = BookCommentsFragmentDirections.actionNavReadCommentToNavWriteComment(bundle)
             navController.navigate(action)
 
@@ -157,6 +158,11 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         if (isOnCreateViewExecuted){
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
+    }
+
+    override fun onWriteCommentClose() {
+        position = 0
+        getCommentsBook(bookId, false)
     }
 
     override fun onDestroy() {
