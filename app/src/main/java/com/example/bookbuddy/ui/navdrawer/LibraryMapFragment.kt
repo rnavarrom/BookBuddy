@@ -340,7 +340,6 @@ class LibraryMapFragment : DialogFragment(), OnMapReadyCallback, CoroutineScope 
             polyLineOptions.add(LatLng(it[1], it[0]))
         }
         polyLineOptions.color(ContextCompat.getColor(requireContext(), R.color.primary_green))
-        //polyLineOptions.color(Color.BLUE)
         polyLineOptions.endCap(RoundCap())
         polyLineOptions.width(6.0f)
 

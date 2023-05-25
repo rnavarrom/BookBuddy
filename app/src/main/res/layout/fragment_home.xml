@@ -36,7 +36,7 @@
 
             <TextView
                 android:id="@+id/empty_reading"
-                android:text="No reading books"
+                android:text="@string/LAY_NoReadingBooks"
                 android:textColor="@color/primary_green"
                 android:textSize="18sp"
                 android:layout_width="wrap_content"
@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="20dp"
-                android:text="Pending Books"
+                android:text="@string/LAY_PendingBooks"
                 android:textColor="@color/primary_green"
                 android:textSize="25sp"
                 android:textStyle="bold"
@@ -103,7 +103,7 @@
 
             <TextView
                 android:id="@+id/empty_pending"
-                android:text="No pending books"
+                android:text="@string/LAY_NoPendingBooks"
                 android:textColor="@color/primary_green"
                 android:textSize="18sp"
                 android:layout_width="wrap_content"
@@ -151,7 +151,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="10dp"
-                android:text="Readed Books"
+                android:text="@string/LAY_ReadBooks"
                 android:textColor="@color/primary_green"
                 android:textSize="25sp"
                 android:textStyle="bold"
@@ -173,7 +173,7 @@
 
             <TextView
                 android:id="@+id/empty_readed"
-                android:text="No readed books"
+                android:text="@string/LAY_NoReadBooks"
                 android:textColor="@color/primary_green"
                 android:textSize="18sp"
                 android:layout_width="wrap_content"

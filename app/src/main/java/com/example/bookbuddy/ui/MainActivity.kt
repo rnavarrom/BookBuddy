@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.lifecycleScope
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.Utils.Sha
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.api.CrudApi
@@ -133,10 +134,10 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
                             val shaPassword = Sha.calculateSHA(password)
                             sendEmail(inputValue, shaPassword, password)
                         } else {
-                            Tools.showSnackBar(applicationContext, binding.activityMain, "Email not exist")
+                            Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_EmailNotExist))
                         }
                     } else {
-                        Tools.showSnackBar(applicationContext, binding.activityMain, "Email is not correct")
+                        Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_EmailNotCorrect))
                     }
 
                     // Realizar acciones con el valor ingresado en el EditText
@@ -164,15 +165,17 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
                             userPrefs.saveCredentials("", "")
                         }
                     }
-                    Toast.makeText(this, "loging in", Toast.LENGTH_LONG).show()
-                    val intent = Intent(this, NavDrawerActivity::class.java)
+                    Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_LogIn))
+                    //Toast.makeText(this, "loging in", Toast.LENGTH_LONG).show()
+                    var intent = Intent(this, NavDrawerActivity::class.java)
                     startActivity(intent)
                     finish()
                     //}else{
                     //  Toast.makeText(this, "Incorrect user or password",Toast.LENGTH_LONG).show()
                     //}
                 } else {
-                    Toast.makeText(this, "Incorrect user or password", Toast.LENGTH_LONG).show()
+                    Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_IncorrectUserPass))
+                    //Toast.makeText(this, "Incorrect user or password", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -245,23 +248,23 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
 
                 val session = Session.getInstance(properties, object : Authenticator() {
                     override fun getPasswordAuthentication(): PasswordAuthentication {
-                        return PasswordAuthentication("bookbuddyinfo2023@gmail.com", "iqqvymaokpfdukci")
+                        return PasswordAuthentication(getString(R.string.AppEmail), getString(R.string.AppEmailCode))
                     }
                 })
 
                 try {
                     val message = MimeMessage(session)
-                    message.setFrom(InternetAddress("bookbuddyinfo2023@gmail.com"))
+                    message.setFrom(InternetAddress(getString(R.string.AppEmail)))
                     message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email))
-                    message.subject = "BookBuddy Password recovery"
-                    message.setText("New password: " + password + ". When u enter in the app change immediately the password in profile")
+                    message.subject = getString(R.string.MSG_PassRecovery)
+                    message.setText(getString(R.string.MSG_NewPass) + password + getString(R.string.MSG_NewPassWarning))
                     Transport.send(message)
-                    Tools.showSnackBar(applicationContext, binding.activityMain, "Email sended")
+                    Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_EmailSend))
                 } catch (e: MessagingException) {
-                    Tools.showSnackBar(applicationContext, binding.activityMain, "Error sending email, try again")
+                    Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_EmailSendError))
                 }
             } else {
-                Tools.showSnackBar(applicationContext, binding.activityMain, "Error password")
+                Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_PassError))
             }
         }
     }
@@ -351,6 +354,6 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     override fun onApiError() {
-        Tools.showSnackBar(this, binding.activityMain, "Can't reach the server. Try again!")
+        Tools.showSnackBar(this, binding.activityMain, Constants.ErrrorMessage)
     }
 }

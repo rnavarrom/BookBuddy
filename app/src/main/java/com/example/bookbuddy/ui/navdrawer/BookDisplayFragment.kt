@@ -61,7 +61,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         binding = FragmentBookDisplayBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        setToolBar(this, binding.toolbar, requireContext(), "Book Display")
+        setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_BookDisplay))
 
         tts = TextToSpeech(context, this)
 
@@ -265,7 +265,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         }
         binding.iconLibraries.setOnClickListener {
             if (binding.numberLibraries.text.toString().toInt() == 0) {
-                showSnackBar(requireContext(), requireView(), "Book not available in any library")
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_BookNotAviable))
             } else {
                 val bundle = Bundle()
                 bundle.putString("isbn", book!!.isbn)
@@ -349,7 +349,6 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
         if (tts!!.isSpeaking) {
             tts!!.stop()
         } else {
-
             tts!!.defaultVoice
             textts =
                 binding.dBookTitle.text.toString() + "  " + binding.dBookDescription.text.toString()

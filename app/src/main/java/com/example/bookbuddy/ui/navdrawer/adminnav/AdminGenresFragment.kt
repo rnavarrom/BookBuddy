@@ -82,19 +82,19 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
         when(type){
             0 -> {
-                positiveText = "Insert"
-                builder.setTitle("Insert Genre")
-                editText.hint = "Insert genre"
+                positiveText = getString(R.string.BT_Insert)
+                builder.setTitle(getString(R.string.InsertGenre))
+                editText.hint = getString(R.string.InsertGenre)
             }
             1 ->  {
-                positiveText = "Edit"
-                builder.setTitle("Edit Genre " + adapter.getSelected()!!.name)
-                editText.hint = "Edit genre"
+                positiveText = getString(R.string.BT_Edit)
+                builder.setTitle(getString(R.string.EditGenre) + adapter.getSelected()!!.name)
+                editText.hint = getString(R.string.EditGenre)
             }
             2 -> {
-                positiveText = "Search"
-                builder.setTitle("Search genre")
-                editText.hint = "Search genre"
+                positiveText = getString(R.string.BT_Search)
+                builder.setTitle(getString(R.string.SearchGenre))
+                editText.hint = getString(R.string.SearchGenre)
             }
         }
 
@@ -121,7 +121,7 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
         }
 
-        builder.setNegativeButton("Cancel") { dialog, _ ->
+        builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialog, which ->
             // Handle "Cancelar" button click here
             dialog.cancel()
         }
@@ -147,13 +147,13 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
 
             if (result) {
-                showSnackBar(requireContext(), requireView(), "Genre Inserted")
+                showSnackBar(requireContext(), requireView(), getString(R.string.GenreInserted))
                 //adapter.updateList(genres as ArrayList<Genre>)
             } else {
-                showSnackBar(requireContext(), requireView(), "Genre already exist")
+                showSnackBar(requireContext(), requireView(), getString(R.string.GenreExists))
             }
         } else {
-            showSnackBar(requireContext(), requireView(), "Name empty")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_NameEmpty))
         }
     }
 
@@ -169,14 +169,14 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
 
             if (result) {
-                showSnackBar(requireContext(), requireView(), "Genre Edited")
+                showSnackBar(requireContext(), requireView(), getString(R.string.GenreEdited))
                 selection!!.name = genreName!!
                 adapter.updateList(genres as ArrayList<Genre>)
             } else {
-                showSnackBar(requireContext(), requireView(), "Duplicated genre")
+                showSnackBar(requireContext(), requireView(), getString(R.string.GenreDuplicated))
             }
         } else {
-            showSnackBar(requireContext(), requireView(), "Name empty")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_NameEmpty))
         }
     }
 
@@ -193,7 +193,7 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             if (selection != null){
                 showCustomDialog(1)
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a Genre first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.PickGenre))
             }
 
         }
@@ -210,14 +210,14 @@ class AdminGenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 }
 
                 if (result) {
-                    showSnackBar(requireContext(), requireView(), "Genre deleted")
+                    showSnackBar(requireContext(), requireView(), getString(R.string.GenreDelete))
                     genres!!.remove(selection)
                     adapter.updateList(genres as ArrayList<Genre>)
                 } else {
-                    showSnackBar(requireContext(), requireView(), "Genre has books")
+                    showSnackBar(requireContext(), requireView(), getString(R.string.GenreHasBook))
                 }
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a Genre first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.PickGenre))
             }
         }
 

@@ -223,7 +223,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         binding =  FragmentAdminBookReferencesDialogBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        Tools.setToolBar(this, binding.toolbar, requireContext(), "Book refrences")
+        Tools.setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_BookReferences))
 
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle!!.getInt("bookid")
@@ -271,14 +271,14 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 }
 
                 if (result) {
-                    showSnackBar(requireContext(), requireView(), "Genre deleted")
+                    showSnackBar(requireContext(), requireView(), getString(R.string.GenreDelete))
                     genres!!.remove(selection)
                     adapterGenres.updateList(genres as ArrayList<Genre>)
                 } else {
-                    showSnackBar(requireContext(), requireView(), "Genre has books")
+                    showSnackBar(requireContext(), requireView(), getString(R.string.GenreHasBook))
                 }
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a Genre first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.PickGenre))
             }
         }
 
@@ -298,8 +298,8 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 builder.setTitle("Number of copies")
                 editText.hint = selection.copies.toString() + " copies"
                 builder.setView(editText)
-                builder.setPositiveButton("Edit") { _, _ ->
-                    val copiesString = editText.text.toString()
+                builder.setPositiveButton(getString(R.string.BT_Edit)) { _, _ ->
+                    var copiesString = editText.text.toString()
 
                     if (copiesString.isNotEmpty()){
                         val copies = copiesString.toInt()
@@ -312,17 +312,17 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                             }
 
                             if (result) {
-                                showSnackBar(requireContext(), requireView(), "Copies Edited")
-                                selection.copies = copies
+                                showSnackBar(requireContext(), requireView(), getString(R.string.SB_CopiesEdited))
+                                selection!!.copies = copies
                                 adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)
                             } else {
-                                showSnackBar(requireContext(), requireView(), "Duplicated genre")
+                                showSnackBar(requireContext(), requireView(), getString(R.string.GenreDuplicated))
                             }
                         } else {
-                            showSnackBar(requireContext(), requireView(), "Cannot be negatives")
+                            showSnackBar(requireContext(), requireView(), getString(R.string.SB_NoNegatives))
                         }
                     } else {
-                        showSnackBar(requireContext(), requireView(), "Not changedº")
+                        showSnackBar(requireContext(), requireView(), getString(R.string.SB_NotChanged))
                     }
                 }
 
@@ -340,7 +340,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                     imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
                 }, 200)
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a library to edit")
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_PickLibraryToEdit))
             }
         }
 
@@ -356,14 +356,14 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 }
 
                 if (result) {
-                    showSnackBar(requireContext(), requireView(), "Library deleted")
+                    showSnackBar(requireContext(), requireView(), getString(R.string.SB_LibraryEdited))
                     libraries!!.remove(selection)
                     adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)
                 } else {
-                    showSnackBar(requireContext(), requireView(), "Genre has books")
+                    showSnackBar(requireContext(), requireView(), getString(R.string.GenreHasBook))
                 }
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a Library first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.PickLibrary))
             }
         }
     }

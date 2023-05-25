@@ -66,7 +66,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
                 isScannerEnabled = true
                 startCamera()
             } else {
-                showSnackBar(requireContext(), requireView(),"Camera access needed to scan codes")
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_CammerAccessNedded))
                 navController.popBackStack()
             }
         }
@@ -128,13 +128,13 @@ class ScanFragment : Fragment(), ApiErrorListener {
                                 showSnackBar(
                                     requireContext(),
                                     requireView(),
-                                    "Added book for pending"
+                                    getString(R.string.SB_AddedBookPending)
                                 )
                             } else {
                                 showSnackBar(
                                     requireContext(),
                                     requireView(),
-                                    "Book already requested to add"
+                                    getString(R.string.SB_BookAlreadyRequested)
                                 )
                             }
                             codeScanner.startPreview()
@@ -151,7 +151,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
                     }
                 } else {
                     codeScanner.startPreview()
-                    showSnackBar(requireContext(),requireView(),"This is not a ISBN. Press again to Scan")
+                    showSnackBar(requireContext(),requireView(),getString(R.string.SB_TryAgainScan))
                 }
 
             }

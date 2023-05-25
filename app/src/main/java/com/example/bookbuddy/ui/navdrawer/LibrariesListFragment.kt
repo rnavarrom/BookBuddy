@@ -61,7 +61,7 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
         binding =  FragmentLibrariesListBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        setToolBar(this, binding.toolbar, requireContext(), "Library list")
+        setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_LibraryList))
 
         val bundle = arguments?.getBundle("bundle")
         isbn = bundle?.getString("isbn")!!
@@ -85,7 +85,7 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
             ) {
                 checkPermissions()
             } else {
-                showSnackBar(requireContext(), requireView(), "Location needed to show closest libraries")
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_LocationNeeded))
                 permissionsGranted = false
                 loadFragment()
             }
@@ -117,7 +117,7 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
                                 tmpLibraries
                             }
                         } else {
-                            showSnackBar(requireContext(), requireView(), "Enable gps to unlock all the potential")
+                            showSnackBar(requireContext(), requireView(), getString(R.string.SB_EnableGPS))
                             tmpLibraries = api.getBookLibraries(isbn) as MutableList<LibraryExtended>?
                             if(tmpLibraries != null){
                                 libraries = tmpLibraries
@@ -167,9 +167,8 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
                 val action = LibrariesListFragmentDirections.actionNavLibrariesListToNavLibraryMap(bundle)
                 navController.navigate(action)
             } else {
-                Toast.makeText(requireContext(), "Select a library to go to", Toast.LENGTH_SHORT).show()
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_SelectLibrary))
             }
-
         }
 
         binding.gpscar.setOnClickListener{
@@ -266,7 +265,6 @@ class LibrariesListFragment : DialogFragment(), CoroutineScope, ApiErrorListener
                 }
             }
         }
-
     }
 
     private fun checkPermissions() {

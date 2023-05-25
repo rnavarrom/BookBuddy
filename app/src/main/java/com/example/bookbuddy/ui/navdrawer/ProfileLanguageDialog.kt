@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.SearchAuthorsAdapter
 import com.example.bookbuddy.adapters.SearchLanguagesAdapter
@@ -121,7 +122,7 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
         if (parentFragment is OnLanguageSearchCompleteListener) {
             onLanguageSearchCompleteListener = parentFragment
         } else {
-            throw IllegalArgumentException("Parent fragment must implement OnSearchCompleteListener")
+            throw IllegalArgumentException(getString(R.string.Throw_ParentFragment))
         }
     }
     private fun loadMoreItems() {

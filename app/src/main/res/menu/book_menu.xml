@@ -2,14 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/pending_book"
-        android:title="Pending"/>
+        android:title="@string/Menu_Pending"/>
     <item
         android:id="@+id/read_book"
-        android:title="Read"/>
+        android:title="@string/Menu_Read"/>
     <item
         android:id="@+id/reading_book"
-        android:title="Reading"/>
+        android:title="@string/Menu_Reading"/>
     <item
         android:id="@+id/remove_book"
-        android:title="Remove"/>
+        android:title="@string/Menu_Remove"/>
 </menu>

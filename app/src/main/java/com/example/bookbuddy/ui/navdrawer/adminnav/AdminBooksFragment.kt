@@ -67,7 +67,6 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         return when (item.itemId) {
             R.id.action_search -> {
                 showCustomDialog()
@@ -82,9 +81,9 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         val builder = AlertDialog.Builder(requireContext())
         val editText = EditText(requireContext())
         editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
-        val positiveText = "Search"
-        builder.setTitle("Search book")
-        editText.hint = "Search book"
+        val positiveText = getString(R.string.BT_Search)
+        builder.setTitle(getString(R.string.SearchBook))
+        editText.hint = getString(R.string.SearchBook)
 
         builder.setView(editText)
 
@@ -96,7 +95,7 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             getBooks(false)
         }
 
-        builder.setNegativeButton("Cancel") { dialog, _ ->
+        builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialog, which ->
             // Handle "Cancelar" button click here
             dialog.cancel()
         }
@@ -113,10 +112,6 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private fun insertBook(){
         val fra = requireArguments().getSerializable("fragment") as? AdminFragment?
-
-        if (fra != null){
-            println("OKS")
-        }
 
         val bundle = Bundle()
         //bundle.putSerializable("fragment", arguments?.getSerializable("fragment") as? AdminFragment?)
@@ -156,7 +151,7 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             if (selection != null){
                 editBook(selection)
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a Book first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_PickABook))
             }
 
         }
@@ -166,14 +161,14 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             if (selection != null){
                 val builder = AlertDialog.Builder(requireContext())
 
-                builder.setTitle("Do you want to delete this book?")
-                builder.setMessage("Are you sure you want to delete book with isbn = " + selection.isbn + "?")
-                builder.setPositiveButton("Yes") { dialogInterface: DialogInterface, _: Int ->
+                builder.setTitle(getString(R.string.DeleteBookQuestion))
+                builder.setMessage(getString(R.string.DeleteBookQuestion2) + selection.isbn + "?")
+                builder.setPositiveButton(getString(R.string.Yes)) { dialogInterface: DialogInterface, _: Int ->
                     // Acciones a realizar si el usuario selecciona "Sí"
                     deleteBook(selection)
                     dialogInterface.dismiss()
                 }
-                builder.setNegativeButton("Cancel") { dialogInterface: DialogInterface, _: Int ->
+                builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialogInterface: DialogInterface, _: Int ->
                     // Acciones a realizar si el usuario selecciona "No"
                     dialogInterface.dismiss()
                 }
@@ -181,7 +176,7 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 val dialog = builder.create()
                 dialog.show()
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a Book first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_PickABook))
             }
         }
 
@@ -226,7 +221,7 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
 
         if (result) {
-            showSnackBar(requireContext(), requireView(), "Book deleted")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_BookDelete))
             books!!.remove(book)
             adapter.updateList(books as ArrayList<Book>)
         }
@@ -238,19 +233,19 @@ class AdminBooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private fun getBooks(addAdapter: Boolean){
         runBlocking {
-            val crudApi = CrudApi(this@AdminBooksFragment)
+
             val corrutina = launch {
                 if (position == 0){
                     books = if (search.isNullOrEmpty()){
-                        crudApi.getAllBooksSearch("null", false, position) as MutableList<Book>?
+                        api.getAllBooksSearch("null", false, position) as MutableList<Book>?
                     } else {
-                        crudApi.getAllBooksSearch(search!!, true, position) as MutableList<Book>?
+                        api.getAllBooksSearch(search!!, true, position) as MutableList<Book>?
                     }
                 } else {
                     if (search.isNullOrEmpty()){
-                        books!!.addAll((crudApi.getAllBooksSearch("null", false, position) as MutableList<Book>?)!!)
+                        books!!.addAll((api.getAllBooksSearch("null", false, position) as MutableList<Book>?)!!)
                     } else {
-                        books!!.addAll((crudApi.getAllBooksSearch(search!!, true, position) as MutableList<Book>?)!!)
+                        books!!.addAll((api.getAllBooksSearch(search!!, true, position) as MutableList<Book>?)!!)
                     }
                 }
                 if (addAdapter){

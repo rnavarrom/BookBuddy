@@ -35,17 +35,14 @@ class Tools {
             val regex = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
             return regex.matches(email)
         }
-
         fun isPasswordValid(password: String): Boolean {
             val regex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$")
             return regex.matches(password)
         }
-
         fun isValidText(text: String): Boolean {
             val regex = Regex("[^a-zA-Z0-9]")
             return !regex.containsMatchIn(text)
         }
-
         fun tooglePasswordVisible(editText: EditText){
             if (editText.transformationMethod == PasswordTransformationMethod.getInstance()) {
                 editText.transformationMethod = HideReturnsTransformationMethod.getInstance()

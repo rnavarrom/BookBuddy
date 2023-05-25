@@ -80,7 +80,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private fun emptyBooks(){
         if (books == null || books!!.isEmpty()){
-            binding.emptyActivity.text = "No recommended books"
+            binding.emptyActivity.text = getString(R.string.MSG_NoRecommendedBooks)
             binding.emptyActivity.visibility = View.VISIBLE
         } else {
             binding.emptyActivity.visibility = View.GONE

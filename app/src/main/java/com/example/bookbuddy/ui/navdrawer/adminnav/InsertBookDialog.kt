@@ -69,7 +69,6 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
         val bundle = arguments?.getBundle("bundle")
         var toolbarMessage = ""
-        println("CRR")
         if (bundle != null && bundle.containsKey("fragment")){
             fragment = bundle.getSerializable("fragment") as? AdminFragment?
             if (fragment != null){
@@ -89,7 +88,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             }
 
             if (mode == "edit"){
-                toolbarMessage = "Edit book"
+                toolbarMessage = getString(R.string.EditBook)
                 binding.etId.text = book.bookId.toString()
                 binding.etIsbn.setText(book.isbn)
                 binding.etTitle.setText(book.title)
@@ -98,7 +97,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 binding.etDate.setText(book.publicationDate)
                 binding.etCover.setText(book.cover)
             } else {
-                toolbarMessage = "Insert book"
+                toolbarMessage = getString(R.string.InsertBook)
                 binding.tvId.visibility = View.GONE
                 binding.etId.visibility = View.GONE
                 binding.btnReferences.visibility = View.GONE
@@ -157,7 +156,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 showSnackBar(
                     requireContext(),
                     requireView(),
-                    "Galery access is required to pick an image"
+                    getString(R.string.SB_GaleryAccesRequired)
                 )
             }
         }
@@ -216,10 +215,10 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         val cover = binding.etCover.text.toString().trim()
 
         if (isbn.isEmpty()){
-            showSnackBar(requireContext(), requireView(), "Isbn cannot be empty")
+            showSnackBar(requireContext(), requireView(), getString(R.string.ISBNEmptyWarning))
         }
         if (isbn.length < 13){
-            showSnackBar(requireContext(), requireView(), "Isbn minimum 13 characters")
+            showSnackBar(requireContext(), requireView(), getString(R.string.ISBNMaxLenght))
         }
         if (book.isbn != isbn){
             var isbnExist = false
@@ -231,20 +230,20 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 coroutine.join()
             }
             if (isbnExist){
-                showSnackBar(requireContext(), requireView(), "Isbn cannot be duplicated")
+                showSnackBar(requireContext(), requireView(), getString(R.string.ISBNDuplicateWarning))
                 return
             }
         }
         if (title.isEmpty()){
-            showSnackBar(requireContext(), requireView(), "Title cannot be empty")
+            showSnackBar(requireContext(), requireView(), getString(R.string.TitleEmptyWarning))
             return
         }
         if (pages == null){
-            showSnackBar(requireContext(), requireView(), "Pages cannot be empty")
+            showSnackBar(requireContext(), requireView(), getString(R.string.PagesEmptyWarning))
             return
         }
         if (date.isEmpty()){
-            showSnackBar(requireContext(), requireView(), "Publish date cannot be empty")
+            showSnackBar(requireContext(), requireView(), getString(R.string.PublishEmptyWarning))
             return
         }
         if (cover.isEmpty()){
@@ -269,14 +268,16 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
         if (result != null) {
             onAdminDialogClose!!.onAdminDialogClose()
-            showSnackBar(requireActivity().applicationContext, requireParentFragment().requireView(), "Book added")
+            showSnackBar(requireActivity().applicationContext, requireParentFragment().requireView(), getString(
+                            R.string.BookAdded))
             dismiss()
         } else if (editResult != null && editResult as Boolean){
             onAdminDialogClose!!.onAdminDialogClose()
-            showSnackBar(requireActivity().applicationContext, requireParentFragment().requireView(), "Book edited")
+            showSnackBar(requireActivity().applicationContext, requireParentFragment().requireView(), getString(
+                            R.string.BookEdited))
             dismiss()
         } else {
-            showSnackBar(requireContext(), requireView(), "Duplicated library name")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_DuplicateLibraryName))
         }
     }
 
@@ -292,7 +293,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE_PERMISSION)
 
             if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                showSnackBar(requireContext(), requireView(),"Galery acces not available")
+                showSnackBar(requireContext(), requireView(),getString(R.string.SB_GaleryNotAviable))
             }
 
         }
@@ -305,6 +306,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

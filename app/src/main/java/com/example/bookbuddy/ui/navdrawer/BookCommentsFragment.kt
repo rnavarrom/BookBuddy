@@ -57,7 +57,7 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, ApiErrorListener 
         binding =  FragmentBookCommentsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        setToolBar(this, binding.toolbar, requireContext(), "Write Comment")
+        setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_WriteComment))
 
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle!!.getInt("bookid")

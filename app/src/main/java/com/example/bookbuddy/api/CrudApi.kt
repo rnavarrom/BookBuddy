@@ -661,11 +661,10 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         )
     }
 
-    suspend fun getSearchLibraries(name: String, position: Int, errorMessage: String): List<LibraryExtended>? {
+    suspend fun getSearchLibraries(name: String, position: Int): List<LibraryExtended>? {
         return safeApiCall(
             apiCall = { getRetrofit().create(ProfileAPI::class.java).getSearchLibraries(name, position) },
-            errorListener = errorListener!!,
-            errorMessage = errorMessage
+            errorListener = errorListener!!
         )
     }
 

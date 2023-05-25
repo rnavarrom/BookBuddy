@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/book_rating"
-        android:text="qwer"
+        android:text="sam"
         app:layout_constraintTop_toBottomOf="@id/book_cover"
         app:layout_constraintStart_toStartOf="@id/book_cover"
         app:layout_constraintEnd_toEndOf="@id/book_cover"

@@ -85,7 +85,6 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
             }
             corrutina.join()
         }
-
     }
 
     fun loadingEnded(){

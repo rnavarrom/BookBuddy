@@ -146,8 +146,8 @@ class SearchFragment : Fragment(), ApiErrorListener{
                             searchResultList = arrayListOf()
                         }
                     }else{
-                        Toast.makeText(context, "Nothing found!", Toast.LENGTH_LONG).show()
-                        searchResultList = arrayListOf()
+                        showSnackBar(requireContext(), requireView(), getString(R.string.SB_NothingFound))
+                        searchResultList = arrayListOf<SimpleBook>()
                     }
                     binding.SearchReciclerView.layoutManager = GridLayoutManager(context, 3)
                     adapter =

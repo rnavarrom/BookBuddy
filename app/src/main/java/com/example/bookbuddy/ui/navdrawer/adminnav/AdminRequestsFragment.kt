@@ -63,13 +63,13 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         if (!isbn.isNullOrEmpty()){
             // TODO: This?
             if (result) {
-                showSnackBar(requireContext(), requireView(), "BookRequest Inserted")
+                showSnackBar(requireContext(), requireView(), getString(R.string.BookRequestInserted))
                 //adapter.updateList(BookRequests as ArrayList<BookRequest>)
             } else {
-                showSnackBar(requireContext(), requireView(), "BookRequest already exist")
+                showSnackBar(requireContext(), requireView(), getString(R.string.BookRequestExists))
             }
         } else {
-            showSnackBar(requireContext(), requireView(), "Name empty")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_NameEmpty))
         }
     }
 
@@ -90,7 +90,7 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 val action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
                 navController.navigate(action)
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a BookRequest first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.PickBookFirst))
             }
         }
 
@@ -100,9 +100,9 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             if (selection != null){
                 val builder = AlertDialog.Builder(requireContext())
 
-                builder.setTitle("Delete request")
-                builder.setMessage("Are you sure you want to delete this request?")
-                builder.setPositiveButton("Yes") { dialogInterface: DialogInterface, _: Int ->
+                builder.setTitle(getString(R.string.DeleteRequest))
+                builder.setMessage(getString(R.string.DeleteRequestQuestion))
+                builder.setPositiveButton(getString(R.string.Yes)) { dialogInterface: DialogInterface, _: Int ->
                     // Acciones a realizar si el usuario selecciona "Sí"
                     runBlocking {
                         val coroutine = launch {
@@ -112,21 +112,21 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                     }
 
                     if (result) {
-                        showSnackBar(requireContext(), requireView(), "BookRequest deleted")
+                        showSnackBar(requireContext(), requireView(), getString(R.string.SB_BookRequestDeleted))
                         bookRequests!!.remove(selection)
                         adapter.updateList(bookRequests as ArrayList<BookRequest>)
                     }
 
                     dialogInterface.dismiss()
                 }
-                builder.setNegativeButton("Cancel") { dialogInterface: DialogInterface, _: Int ->
+                builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialogInterface: DialogInterface, _: Int ->
                     dialogInterface.dismiss()
                 }
 
                 val dialog = builder.create()
                 dialog.show()
             } else {
-                showSnackBar(requireContext(), requireView(), "Pick a BookRequest first")
+                showSnackBar(requireContext(), requireView(), getString(R.string.PickBookFirst))
             }
         }
 

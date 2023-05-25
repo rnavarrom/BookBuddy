@@ -22,7 +22,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create acount"
+        android:text="@string/LAY_CreateAcount"
         android:textColor="@color/white"
         android:id="@+id/CA_Text1"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,13 +58,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/CA_Edit_User"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:text="Register"
+                android:text="@string/LAY_Register"
                 android:textSize="16sp"
                 android:textColor="#4CAF50"
                 android:layout_marginBottom="20dp"
                 />
             <EditText
-                android:hint="User Name"
+                android:hint="@string/LAY_HintUserName"
                 android:inputType="textPersonName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -81,7 +81,7 @@
                 />
             <EditText
                 android:inputType="textEmailAddress"
-                android:hint="Email"
+                android:hint="@string/LAY_HintEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/CA_Edit_Email"
@@ -98,7 +98,7 @@
 
             <EditText
                 android:inputType="textPassword"
-                android:hint="Password"
+                android:hint="@string/LAY_HintPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/CA_Edit_Password"
@@ -114,7 +114,7 @@
                 />
             <EditText
                 android:inputType="textPassword"
-                android:hint="Repeat Password"
+                android:hint="@string/LAY_HintPassword2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/CA_Edit_Password2"
@@ -151,7 +151,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/userConditions"
-                android:text="Read and accept user conditions"
+                android:text="@string/LAY_ReadUserConditions"
                 android:textSize="16sp"
                 app:layout_constraintTop_toBottomOf="@+id/CA_Edit_Password2"
                 app:layout_constraintStart_toStartOf="parent"
@@ -163,7 +163,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/CA_Button_Register"
                 android:textColor="@color/white"
-                android:text="Register"
+                android:text="@string/BT_Register"
                 android:textStyle="bold"
                 app:layout_constraintTop_toBottomOf="@id/userConditions"
                 app:layout_constraintStart_toStartOf="parent"

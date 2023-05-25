@@ -70,14 +70,14 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
         }
 
         if (mode == "edit"){
-            toolbarMessage = "Edit library"
+            toolbarMessage = getString(R.string.EditLibrary)
             binding.etId.text = library.libraryId.toString()
             binding.etName.setText(library.name)
             binding.etZip.setText(library.zipCode)
             binding.etLat.setText(library.lat.toString())
             binding.etLon.setText(library.lon.toString())
         } else {
-            toolbarMessage = "Insert library"
+            toolbarMessage = getString(R.string.InsertLibrary)
             binding.tvId.visibility = View.GONE
             binding.etId.visibility = View.GONE
         }
@@ -107,25 +107,25 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
         val lat = binding.etLat.text.toString().toDoubleOrNull()
         val lon = binding.etLon.text.toString().toDoubleOrNull()
         println(binding.etLon.text.toString())
-        if (name.isEmpty()){
-            showSnackBar(requireContext(), requireView(), "Name cannot be empty")
+        if (name.isNullOrEmpty()){
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_CantEmptyName))
             return
         }
-        if (zip.isEmpty()){
-            showSnackBar(requireContext(), requireView(), "Zip cannot be empty")
+        if (zip.isNullOrEmpty()){
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_EmptyZip))
             return
         } else {
             if (zip.length < 5){
-                showSnackBar(requireContext(), requireView(), "Zip of 5 chars")
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_ZipLenght))
                 return
             }
         }
         if (lat == null){
-            showSnackBar(requireContext(), requireView(), "Latitude cannot be empty")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_Latitude))
             return
         }
         if (lon == null){
-            showSnackBar(requireContext(), requireView(), "Latitude cannot be empty")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_Longitude))
             return
         }
 
@@ -142,10 +142,12 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
 
         if (result) {
             onAdminDialogClose!!.onAdminDialogClose()
-            showSnackBar(requireActivity().applicationContext, requireParentFragment().requireView(), "Library Edited")
+            showSnackBar(requireActivity().applicationContext, requireParentFragment().requireView(), getString(
+                            R.string.SB_LibraryEdited))
             dismiss()
         } else {
-            showSnackBar(requireContext(), requireView(), "Duplicated library name")
+            showSnackBar(requireContext(), requireView(), getString(
+                R.string.SB_DuplicateLibraryName))
         }
     }
 
@@ -162,7 +164,6 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
 
             val zoom = 17.0f
             mMap.animateCamera(
-
                 CameraUpdateFactory.newLatLngZoom(lib, zoom),
                 2500, null
             )

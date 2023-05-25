@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="menu_home">Inicio</string>
     <string name="welcome_message">Bienvenido</string>
     <string name="profile_preferred_genre">Genero preferido:</string>
     <string name="actual_book">Libro actual</string>
+    <string name="DeleteAuthor">Autor eliminado</string>
+    <string name="SB_AuthorHasBook">El autor tiene libros</string>
+    <string name="SB_PickAuthor">Selecciona un autor</string>
+    <string name="SB_AuthorEdited">Autor editado</string>
+    <string name="SB_AuthorDuplicated">Autor duplicado</string>
+    <string name="SB_NameEmpty">Nombre vacio</string>
+    <string name="SB_AuthorExists">El autor ya existe</string>
+    <string name="SB_AuthorInserted">Autor insertado</string>
+    <string name="BT_Cancel">Cancelar</string>
+    <string name="Yes">Si</string>
 </resources>
