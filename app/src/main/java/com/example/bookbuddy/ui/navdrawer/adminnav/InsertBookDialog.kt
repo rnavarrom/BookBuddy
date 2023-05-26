@@ -220,7 +220,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         if (isbn.length < 13){
             showSnackBar(requireContext(), requireView(), getString(R.string.ISBNMaxLenght))
         }
-        if (book.isbn != isbn){
+        if (this::book.isInitialized && (book.isbn != isbn || !binding.etIsbn.isFocusable)){
             var isbnExist = false
             runBlocking {
 

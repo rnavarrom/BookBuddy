@@ -29,7 +29,10 @@ interface BookAPI {
     suspend fun updateProfilePic(@Path("id") userId: Int): Response<Boolean>
 
     @PUT("/api/user/password/{email}/{password}")
-    suspend fun updateUserPassword(@Path("email") email: String, @Path("password") password: String): Response<Boolean>
+    suspend fun updateUserPasswordMail(@Path("email") email: String, @Path("password") password: String): Response<Boolean>
+
+    @PUT("/api/user/password/{id}/{password}")
+    suspend fun updateUserPasswordId(@Path("id") userId: Int, @Path("password") password: String): Response<Boolean>
 
     @GET("/api/user/requests/{position}")
     suspend fun getRequests(@Path("position") position: Int): Response<List<BookRequest>>

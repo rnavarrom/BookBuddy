@@ -26,6 +26,7 @@ import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
+import com.example.bookbuddy.utils.navView
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -83,10 +84,7 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
 
             //launch {
             book = getBook(isbn)
-            if (book == null) {
-                //createRequest(isbn)
-                dismiss()
-            }else{
+            if (book != null) {
                 readed = getReaded(book!!.bookId)
                 //readed = null
                 setBook(book)
@@ -190,7 +188,8 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
                     }
                 }
                 loadingEnded()
-
+                //createRequest(isbn)
+                //dismiss()
             }
         }
         isOnCreateViewExecuted = true
@@ -200,7 +199,10 @@ class BookDisplayFragment : DialogFragment(), CoroutineScope, TextToSpeech.OnIni
     override fun onStart() {
         super.onStart()
         if (book == null){
-            dismiss()
+            // TODO trye
+            showSnackBar(requireActivity().applicationContext, navView, getString(R.string.SB_CammerAccessNedded))
+            navController.popBackStack()
+            showSnackBar(requireActivity().applicationContext, requireView().parent as View, getString(R.string.SB_CammerAccessNedded))
         }
     }
 

@@ -138,6 +138,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
     }
 
     override fun onDestroy() {
+        Tools.clearCache(requireContext())
         super.onDestroy()
         job.cancel()
     }

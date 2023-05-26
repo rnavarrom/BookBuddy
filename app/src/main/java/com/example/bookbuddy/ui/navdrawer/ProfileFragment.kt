@@ -33,6 +33,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
+import com.example.bookbuddy.Utils.Sha
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
@@ -205,7 +206,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             val dialogBuilder = AlertDialog.Builder(requireContext())
             dialogBuilder.setTitle("Change password")
                 .setCancelable(false)
-                .setView(etPassword1)
+                .setView(layout)
                 .setPositiveButton("Accept", DialogInterface.OnClickListener { dialog, id ->
                     val password1 = etPassword1.text.toString()
                     val password2 = etPassword2.text.toString()
@@ -215,11 +216,18 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     } else if (password1 != password2){
                         showSnackBar(requireContext(), requireView(), "Passwords must match")
                     } else {
+                        var result: Boolean? = null
+                        var passwordSha = Sha.calculateSHA(password1)
                         runBlocking {
                             launch {
                                 // TODO: END THIS
-                                //val result = api.updateUserPassword(currentUser., shaPassword)
+                                result = api.updateUserPasswordId(currentUser.userId, passwordSha)
                             }
+                        }
+                        if (result != null && result as Boolean){
+                            showSnackBar(requireContext(), requireView(), "Password changed!")
+                        } else {
+                            showSnackBar(requireContext(), requireView(), "New password can't be the same")
                         }
                     }
                 })
@@ -527,11 +535,11 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
         binding.tvFollowers.text = followers.toString() + " seguidores"
 
-        if (currentProfile.genre != null){
+        if (currentProfile.genre != null && !currentProfile.genre!!.name.isNullOrBlank()){
             binding.et1PrefferredGenre.text = currentProfile.genre!!.name
         }
 
-        if (currentProfile.author != null){
+        if (currentProfile.author != null && !currentProfile.author!!.name.isNullOrBlank()){
             binding.et1PrefferredAuthor.text = currentProfile.author!!.name
         }
 
@@ -628,33 +636,32 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                         val ru = launch {
                             val response = api.uploadImageToAPI(false, image)
                             if (response != null) {
+                                val response2 = api.updateProfilePic(currentUser.userId)
                                 currentUser.haspicture = true
                                 val body = response //.body()
-                                if (body != null) {
-                                    // Leer los bytes de la imagen
-                                    val bytes = body.bytes()
-                                    //requireContext().cacheDir.deleteRecursively()
-                                    val file = File(requireContext().cacheDir, currentUser.userId.toString() + "user.jpg")
+                                // Leer los bytes de la imagen
+                                val bytes = body.bytes()
+                                //requireContext().cacheDir.deleteRecursively()
+                                val file = File(requireContext().cacheDir, currentUser.userId.toString() + "user.jpg")
 
-                                    withContext(Dispatchers.IO) {
-                                        val outputStream = FileOutputStream(file)
-                                        outputStream.write(bytes)
-                                        outputStream.close()
-                                    }
-
-                                    currentPicture = file
-
-                                    Glide.with(requireContext())
-                                        .setDefaultRequestOptions(profileRequestOptions)
-                                        .load(BitmapFactory.decodeFile(file.absolutePath))
-                                        .into(binding.profileImageView)
-
-                                    Tools.setNavigationProfile(requireContext(), file, null)
+                                withContext(Dispatchers.IO) {
+                                    val outputStream = FileOutputStream(file)
+                                    outputStream.write(bytes)
+                                    outputStream.close()
                                 }
+
+                                currentPicture = file
+
+                                Glide.with(requireContext())
+                                    .setDefaultRequestOptions(profileRequestOptions)
+                                    .load(BitmapFactory.decodeFile(file.absolutePath))
+                                    .into(binding.profileImageView)
+
+                                Tools.setNavigationProfile(requireContext(), file, null)
                             } else {
                                 // TODO: NOSE
                                 // Manejar la respuesta de error
-                                // ...
+                                showSnackBar(requireContext(), requireView(), "Image not uploaded, please try again.")
                             }
                         }
                         ru.join()

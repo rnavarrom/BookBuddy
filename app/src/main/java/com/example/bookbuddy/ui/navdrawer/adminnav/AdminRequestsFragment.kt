@@ -57,7 +57,7 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         return binding.root
     }
-
+    /*
     private fun insertBookRequest(){
         var result = false
         if (!isbn.isNullOrEmpty()){
@@ -72,7 +72,7 @@ class AdminRequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_NameEmpty))
         }
     }
-
+    */
     private fun loadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE

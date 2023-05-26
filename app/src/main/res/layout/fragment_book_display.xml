@@ -29,7 +29,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginHorizontal="20dp"
             android:layout_marginBottom="20dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             >
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -48,6 +48,7 @@
                     android:scaleType="centerCrop"/>
                 <ImageView
                     android:id="@+id/book_mark"
+                    android:tooltipText="BookMark"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/primary_green"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -59,6 +60,7 @@
 
             <TextView
                 android:id="@+id/d_book_title"
+                android:tooltipText="Title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -70,6 +72,7 @@
 
             <TextView
                 android:id="@+id/d_book_author"
+                android:tooltipText="Author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
@@ -78,6 +81,7 @@
 
             <TextView
                 android:id="@+id/d_book_language"
+                android:tooltipText="Language"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
@@ -86,6 +90,7 @@
 
             <TextView
                 android:id="@+id/d_book_publishdate"
+                android:tooltipText="Publish Date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
@@ -165,11 +170,14 @@
                 android:text="Long DescriptionLong DescriptionLong DescriptionLong DLong DescriptionLong DescriptionLong DescriptionLong DesescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong Description"
                 android:justificationMode="inter_word"
                 android:scrollbars="vertical"
+                android:fadeScrollbars="false"
+                android:ellipsize="end"
                 app:layout_constraintStart_toStartOf="@id/d_book_description_t"
                 app:layout_constraintTop_toBottomOf="@id/d_book_description_t" />
 
             <ImageView
                 android:id="@+id/icon_libraries"
+                android:tooltipText="Libraries"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_marginEnd="20dp"
@@ -188,6 +196,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
             <ImageView
+                android:tooltipText="Add comment"
                 android:id="@+id/icon_add_comments"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
@@ -197,6 +206,7 @@
                 app:layout_constraintTop_toTopOf="@id/icon_comments"/>
 
             <ImageView
+                android:tooltipText="Comments"
                 android:id="@+id/icon_comments"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
@@ -207,6 +217,7 @@
                 app:layout_constraintBottom_toTopOf="@id/number_comments"/>
 
             <ImageView
+                android:tooltipText="Text to speech"
                 android:id="@+id/icon_text_to_speach"
                 android:layout_width="35dp"
                 android:layout_height="35dp"

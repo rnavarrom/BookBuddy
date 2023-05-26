@@ -16,13 +16,14 @@
             android:src="@drawable/ic_home_menubook"
             app:layout_constraintBottom_toBottomOf="@id/tv_actualbook"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_actualbook"
             app:tint="@color/primary_green" />
         <TextView
             android:id="@+id/tv_actualbook"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="15dp"
             android:text="@string/actual_book"
             android:textColor="@color/primary_green"
             android:textSize="25sp"
@@ -39,36 +40,28 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/refresh1"
-            app:layout_constraintBottom_toBottomOf="@id/refresh1"
+            app:layout_constraintTop_toTopOf="@id/home_rv"
+            app:layout_constraintBottom_toBottomOf="@id/home_rv"
             android:visibility="gone"/>
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/refresh1"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/home_rv"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:minHeight="160dp"
             app:layout_constraintStart_toStartOf="@id/ic_actual"
-            app:layout_constraintTop_toBottomOf="@id/tv_actualbook">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/home_rv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="160dp"
-                app:layout_constraintStart_toStartOf="@id/ic_actual"
-                app:layout_constraintTop_toBottomOf="@id/tv_actualbook" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            app:layout_constraintTop_toBottomOf="@id/tv_actualbook" />
 
         <ImageView
             android:id="@+id/ic_pending"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="20dp"
             android:src="@drawable/ic_home_pendingbooks"
             app:layout_constraintBottom_toBottomOf="@id/tv_pendingbooks"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/refresh1"
+            app:layout_constraintTop_toTopOf="@id/tv_pendingbooks"
             app:tint="@color/primary_green" />
 
         <TextView
@@ -82,7 +75,7 @@
             android:textSize="25sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/ic_pending"
-            app:layout_constraintTop_toBottomOf="@id/refresh1" />
+            app:layout_constraintTop_toBottomOf="@id/home_rv" />
 
         <ImageView
             android:id="@+id/ic_pending_search"
@@ -94,7 +87,7 @@
             android:src="@drawable/ic_search_icon"
             app:layout_constraintBottom_toBottomOf="@id/tv_pendingbooks"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/refresh1"
+            app:layout_constraintTop_toBottomOf="@id/home_rv"
             app:tint="@color/primary_green" />
 
         <TextView
@@ -106,39 +99,29 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/refresh2"
-            app:layout_constraintBottom_toBottomOf="@id/refresh2"
+            app:layout_constraintTop_toTopOf="@id/rv_pendingbooks"
+            app:layout_constraintBottom_toBottomOf="@id/rv_pendingbooks"
             android:visibility="gone"/>
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/refresh2"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_pendingbooks"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_marginTop="16dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@color/primary_green_20"
+            android:minHeight="150dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_pendingbooks">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_pendingbooks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@color/primary_green_20"
-                android:minHeight="150dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_pendingbooks" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            app:layout_constraintTop_toBottomOf="@id/tv_pendingbooks" />
         <!-- Readed books -->
         <ImageView
             android:id="@+id/ic_readed"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="10dp"
             android:src="@drawable/ic_home_readedbooks"
+            app:layout_constraintTop_toTopOf="@id/tv_readedbooks"
             app:layout_constraintBottom_toBottomOf="@id/tv_readedbooks"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/refresh2"
             app:tint="@color/primary_green" />
 
         <TextView
@@ -146,13 +129,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:text="@string/LAY_ReadBooks"
             android:textColor="@color/primary_green"
             android:textSize="25sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/ic_readed"
-            app:layout_constraintTop_toBottomOf="@id/refresh2" />
+            app:layout_constraintTop_toBottomOf="@id/rv_pendingbooks" />
 
         <ImageView
             android:id="@+id/ic_readed_search"
@@ -164,7 +147,7 @@
             android:src="@drawable/ic_search_icon"
             app:layout_constraintBottom_toBottomOf="@id/tv_readedbooks"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/refresh2"
+            app:layout_constraintTop_toBottomOf="@id/rv_pendingbooks"
             app:tint="@color/primary_green" />
 
         <TextView
@@ -176,27 +159,18 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/refresh3"
-            app:layout_constraintBottom_toBottomOf="@id/refresh3"
+            app:layout_constraintTop_toTopOf="@id/rv_readedbooks"
+            app:layout_constraintBottom_toBottomOf="@id/rv_readedbooks"
             android:visibility="gone"/>
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/refresh3"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_readedbooks"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/primary_green_20"
+            android:minHeight="150dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_readedbooks">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_readedbooks"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_marginTop="10dp"
-                android:background="@color/primary_green_20"
-                android:minHeight="150dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_readedbooks" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            app:layout_constraintTop_toBottomOf="@id/tv_readedbooks" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

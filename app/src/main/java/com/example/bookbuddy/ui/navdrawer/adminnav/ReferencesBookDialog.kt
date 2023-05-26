@@ -46,59 +46,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
 
     private var bookId: Int = 0
     private val api = CrudApi(this@ReferencesBookDialog)
-    /*
-    editText.postDelayed({
-            editText.requestFocus()
-            val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
-        }, 200)*/
-    /*
-    fun insertGenre(){
-        var result = false
-        if (!genreName.isNullOrEmpty()){
-            runBlocking {
-                var api = CrudApi(this@ReferencesBookDialog)
-                var coroutine = launch {
-                    result = api.insertGenre(genreName!!, "Insert failed")!!
-                }
-                coroutine.join()
-            }
 
-            if (result) {
-                showSnackBar(requireContext(), requireView(), "Genre Inserted")
-                //adapter.updateList(genres as ArrayList<Genre>)
-            } else {
-                showSnackBar(requireContext(), requireView(), "Genre already exist")
-            }
-        } else {
-            showSnackBar(requireContext(), requireView(), "Name empty")
-        }
-    }
-    */
-    /*
-    fun editGenre(){
-        val selection = adapter.getSelected()
-        var result = false
-        if (!genreName.isNullOrEmpty()){
-            runBlocking {
-                var api = CrudApi(this@ReferencesBookDialog)
-                var coroutine = launch {
-                    result = api.updateGenre(selection!!.genreId, genreName!!, "Action failes")!!
-                }
-                coroutine.join()
-            }
-
-            if (result) {
-                showSnackBar(requireContext(), requireView(), "Genre Edited")
-                selection!!.name = genreName!!
-                adapter.updateList(genres as ArrayList<Genre>)
-            } else {
-                showSnackBar(requireContext(), requireView(), "Duplicated genre")
-            }
-        } else {
-            showSnackBar(requireContext(), requireView(), "Name empty")
-        }
-    }*/
     override fun onGenreSearchComplete(result: Int, name: String) {
         var genreExist = false
         var resultApi: Boolean? = null

@@ -27,30 +27,37 @@
             android:layout_width="wrap_content"
             android:background="@null"
             android:layout_height="wrap_content"/>
-        <ImageView
-            android:layout_marginTop="20dp"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:id="@+id/MA_Image"
+        <androidx.constraintlayout.widget.ConstraintLayout
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:src="@drawable/logonobg"
-            />
+            app:layout_constraintBottom_toTopOf="@id/guideLine"
+            android:id="@+id/pruebas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_marginTop="20dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:id="@+id/MA_Image"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:src="@drawable/logonobg"
+                />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/LAY_AppName"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:layout_marginTop="10dp"
-            android:id="@+id/MA_Text1"
-            app:layout_constraintTop_toBottomOf="@+id/MA_Image"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:textSize="20sp"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/LAY_AppName"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:layout_marginTop="10dp"
+                android:id="@+id/MA_Text1"
+                app:layout_constraintTop_toBottomOf="@+id/MA_Image"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textSize="20sp"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideLine"

@@ -104,12 +104,10 @@ class ScanFragment : Fragment(), ApiErrorListener {
     private fun startCamera(){
         val scannerView = binding.scannerView
         val activity = requireActivity()
-        // TODO: FIX THIS
         if (!this::codeScanner.isInitialized){
             codeScanner = CodeScanner(activity, scannerView)
         }
 
-        //codeScanner.formats = listOf(BarcodeFormat.QR_CODE, BarcodeFormat.CODE_128)
         codeScanner.decodeCallback = DecodeCallback {
             activity.runOnUiThread {
                 // Vibrate

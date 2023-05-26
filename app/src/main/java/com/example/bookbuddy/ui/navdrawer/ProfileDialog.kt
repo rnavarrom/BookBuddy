@@ -188,6 +188,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onDestroy() {
+        Tools.clearCache(requireContext())
         onProfileDialogClose?.onProfileDialogClose()
         super.onDestroy()
         job.cancel()

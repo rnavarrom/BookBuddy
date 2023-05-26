@@ -16,6 +16,7 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentBookCommentsBinding
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.Tools.Companion.clearCache
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
@@ -166,6 +167,7 @@ class BookCommentsFragment : DialogFragment(), CoroutineScope, WriteCommentFragm
     }
 
     override fun onDestroy() {
+        clearCache(requireContext())
         onReadCommentClose?.onReadCommentClose()
         super.onDestroy()
         job.cancel()

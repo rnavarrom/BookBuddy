@@ -196,9 +196,13 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
             val keyboardHeight = screenHeight - rect.bottom
             // Verifica si el teclado está oculto
             if (keyboardHeight < keyboardValue) {
-                binding.MAImage.visibility = View.VISIBLE
+                //binding.MAImage.visibility = View.VISIBLE
+                binding.pruebas.visibility = View.VISIBLE
+                binding.guideLine.visibility = View.VISIBLE
             } else {
-                binding.MAImage.visibility = View.GONE
+                //binding.MAImage.visibility = View.GONE
+                binding.pruebas.visibility = View.GONE
+                binding.guideLine.visibility = View.GONE
             }
         }
     }
@@ -237,7 +241,7 @@ class MainActivity : AppCompatActivity(), ApiErrorListener {
 
     private fun sendEmail(email: String, shaPassword: String, password: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val result = api.updateUserPassword(email, shaPassword)
+            val result = api.updateUserPasswordMail(email, shaPassword)
 
             if (result != null && result){
                 val properties = Properties()
