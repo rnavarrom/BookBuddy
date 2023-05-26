@@ -118,10 +118,10 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
         binding.passwordForgor.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(this)
             val editText = EditText(applicationContext)
-            editText.hint = "Enter you account email"
-            builder.setTitle("Recover password")
+            editText.hint = getString(R.string.LAY_HintEnterAcountEmail)
+            builder.setTitle(getString(R.string.MSG_RecoverPassword))
                 .setView(editText) // Aquí asignamos el diseño personalizado del diálogo que contiene el EditText
-                .setPositiveButton("Accept") { _, _ ->
+                .setPositiveButton(getString(R.string.BT_Accept)) { _, _ ->
                     // Acciones a realizar al hacer clic en "Aceptar"
                     val inputValue = editText.text.toString()
                     if (Tools.isEmailValid(inputValue)){

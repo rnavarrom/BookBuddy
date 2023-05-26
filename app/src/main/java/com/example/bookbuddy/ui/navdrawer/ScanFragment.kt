@@ -53,7 +53,8 @@ class ScanFragment : Fragment(), ApiErrorListener {
             startCamera()
             codeScanner.startPreview()
         } else if (isDialogOpen){
-            println("El idalogog esta abierto")
+            //TODO : ????
+            //println("El idalogog esta abierto")
         } else {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }

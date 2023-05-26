@@ -69,7 +69,7 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
         val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
-        setToolBar(this, binding.toolbar, requireContext(), "Map")
+        setToolBar(this, binding.toolbar, requireContext(), getString(R.string.BT_Map))
 
         bundle = arguments?.getBundle("bundle")!!
         if (bundle.containsKey("latitude") && bundle.containsKey("longitude") && bundle.containsKey("method")){
@@ -101,7 +101,8 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
             library = bundle.getSerializable("library") as? LibraryExtended
             if (library != null) {
                 loadLibraryBasicInformation(library!!)
-                println("CRASH")
+                //TODO : prints
+                //println("CRASH")
             }
         }
 
@@ -154,10 +155,10 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
                     var timeText: String?
 
                     if (distance < 1000) {
-                        distanceText = "Distancia: " + distance.toString() + " m"
+                        distanceText = getString(R.string.MAP_Distance) + distance.toString() + " m"
                     } else {
                         val distanceInKm = distance / 1000.0
-                        distanceText = "Distancia: " + String.format("%.2f", distanceInKm) + " km"
+                        distanceText = getString(R.string.MAP_Distance) + String.format("%.2f", distanceInKm) + " km"
                     }
 
                     val hours = (timeInSeconds / 3600).toInt()
@@ -166,7 +167,7 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
                     val formattedHours = String.format("%02d", hours)
                     val formattedMinutes = String.format("%02d", minutes)
 
-                    timeText = "Tiempo: ${formattedHours}:${formattedMinutes} " + "h"
+                    timeText = getString(R.string.MAP_Time) + "${formattedHours}:${formattedMinutes} " + "h"
 
                     binding.tvLibraryDistance.text = distanceText
                     binding.tvLibraryTime.text = timeText
@@ -193,7 +194,7 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
                     binding.tvLibraryDistance.visibility = View.GONE
 
                     loadingEnded()
-                    showSnackBar(requireContext(), requireView(), "Could not trace a route")
+                    showSnackBar(requireContext(), requireView(), getString(R.string.MSG_CouldNotTrace))
                 }
             }
         } else {

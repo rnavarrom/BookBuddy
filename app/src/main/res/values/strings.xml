@@ -17,7 +17,7 @@
     <string name="welcome_message">Welcome</string>
     <string name="profile_preferred_genre">Preferred Genre:</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="actual_book">Reading Book</string>
     <string name="DeleteAuthor">Author deleted</string>
     <string name="SB_AuthorHasBook">Author has books</string>
@@ -32,16 +32,16 @@
     <string name="SearchBook">Search book</string>
     <string name="SB_PickABook">Pick a Book first</string>
     <string name="DeleteBookQuestion">Do you want to delete this book?</string>
-    <string name="DeleteBookQuestion2">\"Are you sure you want to delete book with isbn = \"</string>
+    <string name="DeleteBookQuestion2">"Are you sure you want to delete book with isbn = "</string>
     <string name="Yes">Yes</string>
     <string name="SB_BookDelete">Book deleted</string>
     <string name="BT_Insert">Insert</string>
     <string name="InsertAuthor">Insert Author</string>
     <string name="BT_Edit">Edit</string>
-    <string name="EditAuthor">\"Edit Author \"</string>
+    <string name="EditAuthor">Edit Author</string>
     <string name="SearchAuthor">Search author</string>
     <string name="InsertGenre">Insert Genre</string>
-    <string name="EditGenre">\"Edit Genre \"</string>
+    <string name="EditGenre">Edit Genre</string>
     <string name="SearchGenre">Search genre</string>
     <string name="GenreInserted">Genre Inserted</string>
     <string name="GenreExists">Genre already exist</string>
@@ -86,17 +86,17 @@
     <string name="SB_NoNegatives">Cannot be negatives</string>
     <string name="SB_NotChanged">Not changed</string>
     <string name="SB_PickLibraryToEdit">Pick a library to edit</string>
-    <string name="TB_WriteComment">Write Comment</string>
+    <string name="TB_WriteComment">Write Review</string>
     <string name="TB_BookDisplay">Book Display</string>
     <string name="SB_BookNotAviable">Book not available in any library</string>
     <string name="TB_LibraryList">Library list</string>
     <string name="SB_EnableGPS">Enable gps to unlock all the potential</string>
     <string name="SB_SelectLibrary">Select a library to go to</string>
     <string name="SB_LocationNeeded">Location needed to show closest libraries</string>
-    <string name="MAP_Distance">Distance:</string>
-    <string name="MAP_Time">\"Time: \"</string>
-    <string name="MAP_Meters">\" meters\"</string>
-    <string name="MAP_Minutes">\" minutes\"</string>
+    <string name="MAP_Distance">Distance: </string>
+    <string name="MAP_Time">"Time: "</string>
+    <string name="MAP_Meters">" meters"</string>
+    <string name="MAP_Minutes">" minutes"</string>
     <string name="DG_Preferences">Preferences</string>
     <string name="DG_Remember">Remember you can change your preferences in your profile</string>
     <string name="DG_Accept">Accept</string>
@@ -107,7 +107,7 @@
     <string name="MSG_WantUnfollow">Do you want to unfollow</string>
     <string name="MSG_WantUnfollow2">You will stop receibing notifications from this user</string>
     <string name="BT_Unfollow">Unfollow</string>
-    <string name="TB_Comments">COMMENTS</string>
+    <string name="TB_Comments">REVIEWS</string>
     <string name="TB_Reads">READS</string>
     <string name="MSG_Added">Added </string>
     <string name="MSG_NewContacts"> new contacts!</string>
@@ -158,7 +158,14 @@
     <string name="LAY_LogOut">Log Out</string>
     <string name="LAY_Progress">Progress</string>
     <string name="LAY_EnterEmail">Enter email</string>
-    <string name="LAY_UserConditionsText" translatable="false">Términos de uso de BookBudy\n\n Al utilizar nuestra aplicación, aceptas cumplir con estos términos de uso. Lee detenidamente los siguientes términos antes de crear una cuenta y utilizar nuestra aplicación. Si no estás de acuerdo con estos Términos, por favor, no utilices nuestra aplicación. \n\n1. Uso de la información: No compartiremos tu información personal con terceros sin tu consentimiento previo. La información que proporcionas se utiliza únicamente para fines de autenticación y gestión de cuentas. No utilizaremos tu información personal para fines publicitarios ni para fines de recopilación de datos. \n\n2. Propiedad intelectual: Nuestra aplicación y todo su contenido, incluyendo pero no limitado a, texto, gráficos, logotipos, imágenes y software, son propiedad de BookBudy y están protegidos por las leyes de propiedad intelectual. No puedes copiar, modificar, distribuir ni reproducir nuestro contenido sin nuestro consentimiento previo por escrito. \n\n3. Modificaciones de los Términos: Nos reservamos el derecho de modificar estos Términos en cualquier momento. Te recomendamos que los revises periódicamente. Si continúas utilizando nuestra aplicación después de cualquier modificación, aceptas los Términos modificados. \n\n4. Resolución de conflictos Cualquier conflicto que surja en relación con estos Términos se resolverá mediante arbitraje de conformidad con las reglas de arbitraje comercial de [Nombre de la institución de arbitraje]. El arbitraje se llevará a cabo en [Nombre de la ciudad y país donde se encuentra la institución de arbitraje]. \n\n5. Ley aplicable Estos Términos se regirán e interpretarán de conformidad con las leyes de España sin dar efecto a ningún principio de conflicto de leyes. \n\nSi tienes alguna pregunta sobre estos Términos, por favor contáctanos a través de bookbudy@info.com</string>
+    <string name="LAY_UserConditionsText">By using our application, you agree to comply with these terms of use. Please read the following terms carefully before creating an account and using our application. If you do not agree with these terms, please do not use our application.
+    Use of Information: We will not share your personal information with third parties without your prior consent. The information you provide is solely used for authentication and account management purposes. We will not use your personal information for advertising or data collection purposes.
+    Intellectual Property: Our application and all its content, including but not limited to text, graphics, logos, images, and software, are the property of BookBudy and are protected by intellectual property laws. You may not copy, modify, distribute, or reproduce our content without our prior written consent.
+    Modifications to the Terms: We reserve the right to modify these terms at any time. We recommend that you review them periodically. By continuing to use our application after any modifications, you agree to the modified terms.
+    Dispute Resolution: Any disputes arising in connection with these terms shall be resolved through arbitration in accordance with the commercial arbitration rules of [Name of Arbitration Institution]. The arbitration shall take place in [Name of City and Country where the Arbitration Institution is located].
+    Applicable Law: These terms shall be governed and interpreted in accordance with the laws of Spain, without giving effect to any principles of conflicts of laws.
+    If you have any questions about these terms, please contact us at bookbudy@info.com.
+    </string>
     <string name="LAY_Author">Author:</string>
     <string name="LAY_AuthorHint">Author</string>
     <string name="LAY_Language">Language:</string>
@@ -184,7 +191,7 @@
     <string name="LAY_Latitude">Latitude:</string>
     <string name="LAY_Longitude">Longitude:</string>
     <string name="LAY_Genre">Genre:</string>
-    <string name="LAY_NotSelected">Not selected</string>
+    <string name="LAY_NotSelected" translatable="false">Not selected</string>
     <string name="LAY_GenreHint">Genre</string>
     <string name="LAY_HintAuthor">Author</string>
     <string name="LAY_ImportContacts">import contacts</string>
@@ -212,7 +219,21 @@
     <string name="Menu_Libraries">Libraries</string>
     <string name="Menu_Users">Users</string>
     <string name="ClosingAPP">Closing BookBuddy</string>
-    <string name="ClosingAPP2">Are you sure you want to close this activity?</string>
+    <string name="ClosingAPP2">Are you sure you want to close this screen?</string>
     <string name="No">No</string>
+    <string name="BT_Filter">Filter</string>
+    <string name="MSG_ContactsAccesRequired">Contacts access is required to import contacts</string>
+    <string name="MSG_GaleryAccesRequired">Galery access is required to pick an image</string>
+    <string name="MSG_PasswordChanged">Password changed!</string>
+    <string name="MSG_NewPassword">New password can\'t be the same</string>
+    <string name="MSG_PasswordMatch">Passwords must match</string>
+    <string name="MSG_PasswordBlank">Can\'t be blank</string>
+    <string name="BT_ChangePassword">Change password</string>
+    <string name="LAY_HintEnterAcountEmail">Enter you account email</string>
+    <string name="MSG_CouldNotTrace">Could not trace a route</string>
+    <string name="BT_Map">Map</string>
+    <string name="MSG_ReladingFragment">Reloading fragment</string>
+    <string name="MSG_Result">\"Result: \"</string>
+    <string name="LAY_genre">GENRE</string>
 
 </resources>

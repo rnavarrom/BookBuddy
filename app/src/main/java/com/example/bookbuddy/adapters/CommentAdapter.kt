@@ -10,10 +10,12 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
+import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.User.Comment
 import com.example.bookbuddy.ui.navdrawer.bookdisplay.CommentsListDialogDirections
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
@@ -25,6 +27,7 @@ import kotlin.coroutines.CoroutineContext
 class CommentAdapter(var list: java.util.ArrayList<Comment>) :
     RecyclerView.Adapter<CommentAdapter.ViewHolder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
+    lateinit var view : View
     private val api = CrudApi( this@CommentAdapter)
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val profilePicture = view.findViewById<ImageView>(R.id.profile_imageView)!!
@@ -37,6 +40,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
 
     private lateinit var context: Context
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        view = parent
         val layout = LayoutInflater.from(parent.context)
         context = parent.context
         val vh: ViewHolder = when (viewType) {
@@ -145,6 +149,6 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
         get() = Dispatchers.Main + job
 
     override fun onApiError() {
-        Toast.makeText(context,"Aviso error", Toast.LENGTH_LONG).show()
+        Tools.showSnackBar(context, view, Constants.ErrrorMessage)
     }
 }

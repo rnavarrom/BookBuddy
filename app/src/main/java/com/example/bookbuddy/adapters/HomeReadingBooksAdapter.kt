@@ -81,7 +81,7 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
             bundle.putString("isbn", list[position].isbn)
             bundle.putSerializable("fragment", fragment)
             val action = HomeFragmentDirections.actionNavHomeToNavBookDisplay(bundle)
-            navController.navigate(action)
+            navController.navigate(action)            
         }
     }
 
@@ -104,8 +104,8 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
         total.text = list[position].pages.toString()
         // editText.setText(llista[position].pagesReaded)
         builder.setView(dialogLayout)
-        builder.setNegativeButton("Cancel") { _, _ -> }
-        builder.setPositiveButton("Save") { _, _ ->
+        builder.setNegativeButton(context.getString(R.string.BT_Cancel)) { _, _ -> }
+        builder.setPositiveButton(context.getString(R.string.BT_Accept)) { _, _ ->
                 val valueint = Integer.parseInt(editText.text.toString())
             if(valueint == list[position].pages){
                 list[position].pagesReaded = Integer.parseInt(editText.text.toString())
@@ -143,10 +143,10 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
             }
             corrutina.join()
         }
-        Toast.makeText(context, "Result: " + result, Toast.LENGTH_LONG).show()
+        Toast.makeText(context, context.getString(R.string.MSG_Result) + result, Toast.LENGTH_LONG).show()
     }
     private fun reloadFragment(fragment: Fragment){
-        Toast.makeText(context, "Reloading fragment", Toast.LENGTH_LONG).show()
+        //Toast.makeText(context, context.getString(R.string.MSG_ReladingFragment), Toast.LENGTH_LONG).show()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             fragment.parentFragmentManager.beginTransaction().detach(fragment).commitNow()
