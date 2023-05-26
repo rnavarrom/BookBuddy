@@ -1,6 +1,6 @@
-package com.example.bookbuddy.models.User
+package com.example.bookbuddy.models.UserComments
 
-data class User(
+data class UserComment(
     val bannedUsers: List<Any>,
     val comments: List<Any>,
     val creationDate: Any,

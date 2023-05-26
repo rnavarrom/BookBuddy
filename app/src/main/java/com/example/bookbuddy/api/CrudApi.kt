@@ -4,11 +4,11 @@ import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.models.SimpleBook
-import com.example.bookbuddy.models.Test.User
+import com.example.bookbuddy.models.User
 import com.example.bookbuddy.models.*
 import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
-import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.base.safeApiCall
@@ -23,8 +23,6 @@ import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.Path
-import retrofit2.http.Query
 import java.security.SecureRandom
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext

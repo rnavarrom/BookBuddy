@@ -5,7 +5,6 @@ import com.example.bookbuddy.models.LibraryExtended
 import com.example.bookbuddy.models.Profile
 import com.example.bookbuddy.models.Test.Author
 import com.example.bookbuddy.models.Test.Genre
-import com.example.bookbuddy.models.User.Comment
 import retrofit2.Response
 import retrofit2.http.*
 

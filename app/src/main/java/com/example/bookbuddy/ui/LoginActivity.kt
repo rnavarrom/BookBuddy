@@ -19,7 +19,7 @@ import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.api.logging
 import com.example.bookbuddy.databinding.ActivityMainBinding
-import com.example.bookbuddy.models.Test.User
+import com.example.bookbuddy.models.User
 import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.generateRandomPassword
 import com.example.bookbuddy.utils.Tools.Companion.responseToFile

@@ -13,7 +13,7 @@ import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.api.CrudApi
-import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.ui.navdrawer.bookdisplay.CommentsListDialogDirections
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.base.ApiErrorListener

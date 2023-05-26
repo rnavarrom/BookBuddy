@@ -323,7 +323,6 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             binding.dBookDescription.justificationMode = LineBreaker.JUSTIFICATION_MODE_INTER_WORD
         }
-
     }
 
     private fun getBook(isbn: String?): Book? {

@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.navigation.NavDirections
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.ui.navdrawer.ProfileFragmentDirections
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileDialogDirections
 import com.example.bookbuddy.utils.navController
