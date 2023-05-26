@@ -1,11 +1,13 @@
 package com.example.bookbuddy.ui.navdrawer.adminnav
 
-import android.content.Context
-import android.content.DialogInterface
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.media.ThumbnailUtils
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.text.InputType
 import android.view.*
 import android.view.inputmethod.InputMethodManager
@@ -33,6 +35,7 @@ import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import kotlinx.coroutines.*
+import java.io.*
 import kotlin.coroutines.CoroutineContext
 
 class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
@@ -190,7 +193,13 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
 
         binding.btnPrint.setOnClickListener {
-
+            val selection = adapter.getSelected()
+            if (selection != null){
+                //saveBarcodeToStorage(requireActivity().applicationContext, selection.isbn)
+                saveBarcodeToGallery(requireContext(), selection.isbn)
+            } else {
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_PickABook))
+            }
         }
 
         binding.mainContent.setOnRefreshListener {
@@ -246,7 +255,50 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         return bitmap
     }
 
-/*
+    private fun saveBarcodeToGallery(context: Context, isbn: String) {
+        saveBarcodeToStorage(requireContext(), isbn)
+        val barcodeBitmap: Bitmap = generateBarcode(isbn)
+        // Create the file path for the image in the Pictures directory
+        val currentTime = System.currentTimeMillis().toString()
+        val fileName = "${isbn}_${currentTime}.png"
+        //val fileName = "${isbn}.png"
+        val picturesDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+        if (!picturesDirectory.exists()) {
+            picturesDirectory.mkdirs()
+        }
+        val imageFile = File(picturesDirectory, fileName)
+        imageFile.setReadable(true)
+        imageFile.setWritable(true)
+        if (imageFile.exists()) {
+            imageFile.delete()
+        }
+
+        // Save the bitmap to the image file
+        var outputStream: OutputStream? = null
+        try {
+            outputStream = FileOutputStream(imageFile, false )
+            barcodeBitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            outputStream.flush()
+            outputStream.close()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            outputStream?.close()
+        }
+
+        // Add the image file to the gallery using MediaStore
+        val imageUri = ContentValues().apply {
+            put(MediaStore.Images.Media.TITLE, "Barcode $isbn")
+            put(MediaStore.Images.Media.DESCRIPTION, "Generated barcode for ISBN: $isbn")
+            put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis())
+            put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+            put(MediaStore.Images.Media.DATA, imageFile.absolutePath)
+        }
+
+        context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageUri)
+    }
+
     private fun saveBarcodeToStorage(context: Context, isbn: String) {
         if (ContextCompat.checkSelfPermission(
                 context,
@@ -276,7 +328,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         } finally {
             fileOutputStream?.close()
         }
-    }*/
+    }
 
     private fun deleteBook(book: Book){
         var result = false
@@ -343,4 +395,8 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
+
+    companion object {
+        private const val PERMISSION_REQUEST_WRITE_STORAGE = 1
+    }
 }
