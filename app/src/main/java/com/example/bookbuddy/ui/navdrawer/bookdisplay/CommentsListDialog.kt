@@ -14,7 +14,7 @@ import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.CommentAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogBookdisplayCommentsBinding
-import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.utils.Tools.Companion.clearCache
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar

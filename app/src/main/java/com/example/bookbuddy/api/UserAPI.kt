@@ -1,7 +1,7 @@
 package com.example.bookbuddy.api
 
 import com.example.bookbuddy.models.*
-import com.example.bookbuddy.models.Test.User
+import com.example.bookbuddy.models.User
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*

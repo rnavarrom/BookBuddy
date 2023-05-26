@@ -186,7 +186,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDispl
 
     private fun emptyReading(){
         if (readingList.isEmpty()){
-            binding.emptyReading.text = "No reading Books"
+            binding.emptyReading.text = getString(R.string.LAY_NoReadingBooks)
             binding.emptyReading.visibility = View.VISIBLE
         } else {
             binding.emptyReading.visibility = View.GONE
@@ -195,7 +195,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDispl
 
     private fun emptyPending(){
         if (pendingList.isEmpty()){
-            binding.emptyPending.text = "No pending Books"
+            binding.emptyPending.text = getString(R.string.LAY_NoPendingBooks)
             binding.emptyPending.visibility = View.VISIBLE
         } else {
             binding.emptyPending.visibility = View.GONE
@@ -204,7 +204,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDispl
 
     private fun emptyReaded(){
         if (readedList.isEmpty()){
-            binding.emptyReaded.text = "No readed Books"
+            binding.emptyReaded.text = getString(R.string.LAY_NoReadBooks)
             binding.emptyReaded.visibility = View.VISIBLE
         } else {
             binding.emptyReaded.visibility = View.GONE
@@ -264,7 +264,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDispl
         val dialogLayout = inflater.inflate(R.layout.dialog_filter_books, null)
         val editText = dialogLayout.findViewById<EditText>(R.id.filter_et)
         builder.setView(dialogLayout)
-        builder.setPositiveButton("Filter") { _, _ ->
+        builder.setPositiveButton(getString(R.string.BT_Filter)) { _, _ ->
 
             activeFilterText = editText.text.toString()
             val position = startingPosition

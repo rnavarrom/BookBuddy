@@ -1,5 +1,6 @@
 package com.example.bookbuddy.ui.navdrawer.bookdisplay
 
+import android.content.Context
 import android.graphics.text.LineBreaker
 import android.os.Build
 import android.os.Bundle
@@ -215,6 +216,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
     }
 
     override fun onReadCommentClose() {
+        // TODO : prints
         println("PROBANDO")
         if (book != null){
             getCommentsNumber(book!!.bookId)
@@ -321,7 +323,6 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             binding.dBookDescription.justificationMode = LineBreaker.JUSTIFICATION_MODE_INTER_WORD
         }
-
     }
 
     private fun getBook(isbn: String?): Book? {
@@ -357,14 +358,22 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         }
     }
     override fun onInit(p0: Int) {
+        var lang = getStoredLanguage()
+        var country = getStoredLanguage()
+        if(lang == "en"){
+            country = "us"
+        }else if(lang == "ca"){
+            country = "es"
+        }
         if (p0 == TextToSpeech.SUCCESS) {
             val output =
-                tts!!.setLanguage(Locale("es", "ES")) // tts!!.getDefaultVoice().getLocale()
+                tts!!.setLanguage(Locale(lang, country))
             if (output == TextToSpeech.LANG_MISSING_DATA || output == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "The language is not supported")
             }
         }
     }
+
 
     override fun onApiError() {
         if (isOnCreateViewExecuted){
@@ -389,4 +398,14 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
+
+    //TODO : this go here?
+    private fun getStoredLanguage(): String {
+        val sharedPreferences = context?.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        var code = sharedPreferences?.getString("language_code", "") ?: ""
+        if (code.isEmpty()){
+            code = context?.resources?.configuration?.locales?.get(0)?.language.toString()
+        }
+        return code
+    }
 }

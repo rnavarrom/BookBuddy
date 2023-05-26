@@ -14,7 +14,7 @@ import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.ProfileCommentAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileCommentsBinding
-import com.example.bookbuddy.models.User.Comment
+import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser

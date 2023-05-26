@@ -184,17 +184,14 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     corrutina.join()
                 }
             }
-
-
-
         }
 
         binding.bPassword.setOnClickListener {
             // Obtiene las referencias de los EditText dentro del diálogo
             val etPassword1 = EditText(requireContext())
             val etPassword2 = EditText(requireContext())
-            etPassword1.hint = "Password"
-            etPassword2.hint = "Repeat password"
+            etPassword1.hint = getString(R.string.LAY_HintPassword)
+            etPassword2.hint = getString(R.string.LAY_HintPassword2)
             etPassword1.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
             etPassword2.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
 
@@ -204,17 +201,17 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             layout.addView(etPassword2)
 
             val dialogBuilder = AlertDialog.Builder(requireContext())
-            dialogBuilder.setTitle("Change password")
+            dialogBuilder.setTitle(getString(R.string.BT_ChangePassword))
                 .setCancelable(false)
                 .setView(layout)
-                .setPositiveButton("Accept", DialogInterface.OnClickListener { dialog, id ->
+                .setPositiveButton(getString(R.string.BT_Accept), DialogInterface.OnClickListener { dialog, id ->
                     val password1 = etPassword1.text.toString()
                     val password2 = etPassword2.text.toString()
 
                     if (password1.isBlank() || password2.isBlank()) {
-                        showSnackBar(requireContext(), requireView(), "Can't be blank")
+                        showSnackBar(requireContext(), requireView(), getString(R.string.MSG_PasswordBlank))
                     } else if (password1 != password2){
-                        showSnackBar(requireContext(), requireView(), "Passwords must match")
+                        showSnackBar(requireContext(), requireView(), getString(R.string.MSG_PasswordMatch))
                     } else {
                         var result: Boolean? = null
                         var passwordSha = Sha.calculateSHA(password1)
@@ -225,13 +222,13 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                             }
                         }
                         if (result != null && result as Boolean){
-                            showSnackBar(requireContext(), requireView(), "Password changed!")
+                            showSnackBar(requireContext(), requireView(), getString(R.string.MSG_PasswordChanged))
                         } else {
-                            showSnackBar(requireContext(), requireView(), "New password can't be the same")
+                            showSnackBar(requireContext(), requireView(), getString(R.string.MSG_NewPassword))
                         }
                     }
                 })
-                .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
+                .setNegativeButton(getString(R.string.BT_Cancel), DialogInterface.OnClickListener { dialog, id ->
                     dialog.dismiss()
                 })
 
@@ -288,7 +285,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     imageChooser()
                 } else {
-                    showSnackBar(requireContext(), requireView(),"Galery access is required to pick an image")
+                    showSnackBar(requireContext(), requireView(),getString(R.string.MSG_GaleryAccesRequired))
                 }
                 return
             }
@@ -298,7 +295,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     val emailList = ArrayList<String>()
                     emailList.addAll(emails)
                 } else {
-                    showSnackBar(requireContext(), requireView(),"Contacts access is required to import contacts")
+                    showSnackBar(requireContext(), requireView(),getString(R.string.MSG_ContactsAccesRequired))
                 }
                 return
             }
