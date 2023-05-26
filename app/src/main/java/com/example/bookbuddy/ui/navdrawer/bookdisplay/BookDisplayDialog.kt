@@ -45,6 +45,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
     private var onBookDisplayClose: OnBookDisplayClose? = null
     private val api = CrudApi(this@BookDisplayDialog)
     private var isOnCreateViewExecuted = false
+
     interface OnBookDisplayClose {
         fun onBookDisplayClose()
     }
@@ -71,16 +72,15 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         val isbn: String?
         if (bundle != null){
             isbn = bundle.getString("isbn")!!
-
+            println("AAAAAAAAAaa")
+            println(isbn)
             binding.iconTextToSpeach.setOnClickListener {
                 speak()
             }
 
             if (bundle.containsKey("fragment")){
-                val fragment = bundle.getSerializable("fragment") as? HomeFragment?
-                if (fragment != null){
-                    onBookDisplayClose = fragment
-                }
+                val fragment = bundle.getSerializable("fragment") as HomeFragment
+                onBookDisplayClose = fragment
             }
 
             //launch {
@@ -199,6 +199,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
 
     override fun onStart() {
         super.onStart()
+        println("MARCHANDO")
         if (book == null){
             // TODO trye
             showSnackBar(requireActivity().applicationContext, navView, getString(R.string.SB_CammerAccessNedded))
@@ -371,12 +372,12 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         }
     }
     override fun onDestroy() {
+        if (onBookDisplayClose != null){
+            onBookDisplayClose?.onBookDisplayClose()
+        }
         if (tts != null) {
             tts!!.stop()
             tts!!.shutdown()
-        }
-        if (onBookDisplayClose != null){
-            onBookDisplayClose?.onBookDisplayClose()
         }
         super.onDestroy()
         job.cancel()

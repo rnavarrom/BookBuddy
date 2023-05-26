@@ -127,6 +127,6 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.39.1'
 
     implementation 'com.google.zxing:core:3.4.1'
-    implementation 'com.google.zxing:android-core:3.4.1'
-    implementation 'com.google.zxing:android-integration:3.4.1'
+    //implementation 'com.google.zxing:android-core:3.4.1'
+    //implementation 'com.google.zxing:android-integration:3.4.1'
 }

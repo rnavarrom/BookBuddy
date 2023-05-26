@@ -115,37 +115,34 @@ class ScanFragment : Fragment(), ApiErrorListener {
                 vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
                 if (it.text.length == 13 && it.text.matches(Regex("\\d+"))){
                     codeScanner.releaseResources()
-                    if (!bookExist(it.text)!!) {
-                        var a: Boolean? = bookExist(it.text)
+                    var bookExists: Boolean? = bookExist(it.text)
 
-                        if (a == null) {
-
-                        } else if (a == false) {  //!bookExist(it.text)!!
-                            val created: Boolean? = createRequest(it.text)
-                            if (created == true) {
-                                showSnackBar(
-                                    requireContext(),
-                                    requireView(),
-                                    getString(R.string.SB_AddedBookPending)
-                                )
-                            } else {
-                                showSnackBar(
-                                    requireContext(),
-                                    requireView(),
-                                    getString(R.string.SB_BookAlreadyRequested)
-                                )
-                            }
-                            codeScanner.startPreview()
+                    if (bookExists == null) {
+                        showSnackBar(requireContext(), requireView(), "Failed to c")
+                    } else if (!bookExists) {  //!bookExist(it.text)!!
+                        val created: Boolean? = createRequest(it.text)
+                        if (created == true) {
+                            showSnackBar(
+                                requireContext(),
+                                requireView(),
+                                getString(R.string.SB_AddedBookPending)
+                            )
                         } else {
-                            val bundle = Bundle()
-                            bundle.putString("isbn", it.text)
-                            val action =
-                                ScanFragmentDirections.actionNavScanToNavBookDisplay(bundle)
-                            navController.navigate(action)
-                            isDialogOpen = true
-                            isScannerEnabled = false
-                            codeScanner.releaseResources()
+                            showSnackBar(
+                                requireContext(),
+                                requireView(),
+                                getString(R.string.SB_BookAlreadyRequested)
+                            )
                         }
+                        codeScanner.startPreview()
+                    } else {
+                        val bundle = Bundle()
+                        bundle.putString("isbn", it.text)
+                        val action = ScanFragmentDirections.actionNavScanToNavBookDisplay(bundle)
+                        navController.navigate(action)
+                        isDialogOpen = true
+                        isScannerEnabled = false
+                        codeScanner.releaseResources()
                     }
                 } else {
                     codeScanner.startPreview()
