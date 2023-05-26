@@ -25,7 +25,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     lateinit var binding: FragmentProfileCommentsBinding
     private var job: Job = Job()
-    private var userId: Int = currentUser.userId
+    private var userId: Int = currentUser!!.userId
     private var isProfileFragment: Boolean = false
     lateinit var adapter: ProfileCommentAdapter
     private val api = CrudApi(this@ProfileCommentsFragment)

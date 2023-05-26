@@ -141,7 +141,7 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
 
     private fun setCardview(coms: ArrayList<Comment>): ArrayList<Comment>{
         coms.forEach { c ->
-            if (c.user!!.userId == currentUser.userId){
+            if (c.user!!.userId == currentUser!!.userId){
                 c.typeCardview = 1
             }
         }

@@ -70,7 +70,7 @@ class NavDrawerActivity : AppCompatActivity() {
             }
         }
 
-        setNavigationProfile(applicationContext, currentPicture, currentUser.name)
+        setNavigationProfile(applicationContext, currentPicture, currentUser?.name)
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -87,7 +87,7 @@ class NavDrawerActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        if (currentUser.isadmin){
+        if (currentUser?.isadmin!!){
             navView.menu.findItem(R.id.nav_admin).isVisible = true
             navView.menu.findItem(R.id.nav_admin).isChecked = false
             navView.menu.findItem(R.id.nav_home).isChecked = true

@@ -20,7 +20,7 @@ import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.api.CrudApi
-import com.example.bookbuddy.models.Test.ActualReading
+import com.example.bookbuddy.models.ActualReading
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
 import com.example.bookbuddy.ui.navdrawer.HomeFragmentDirections
 import com.example.bookbuddy.utils.*
@@ -158,7 +158,7 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
     private fun getUser(){
         runBlocking {
             val corrutina = launch {
-                currentUser = api.getUserId(currentUser.userId)!!
+                currentUser = api.getUserId(currentUser?.userId!!)
             }
             corrutina.join()
         }

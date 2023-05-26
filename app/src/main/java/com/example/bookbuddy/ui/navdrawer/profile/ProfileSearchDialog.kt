@@ -16,7 +16,7 @@ import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.SearchGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileSearchBinding
-import com.example.bookbuddy.models.Test.Genre
+import com.example.bookbuddy.models.Extra.Genre
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import kotlinx.coroutines.*

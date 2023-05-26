@@ -1,4 +1,4 @@
-package com.example.bookbuddy.models.Test
+package com.example.bookbuddy.models.Extra
 
 data class Genre(
     val genreId: Int,

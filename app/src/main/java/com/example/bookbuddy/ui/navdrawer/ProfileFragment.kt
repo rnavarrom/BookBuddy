@@ -145,8 +145,8 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
 
         if (profileUser == null){
-            profileUser = currentUser.userId
-            username = currentUser.name
+            profileUser = currentUser!!.userId
+            username = currentUser!!.name
         }
 
         launch {
@@ -170,7 +170,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                 runBlocking {
                     val corrutina = launch {
                         //var a = api.getEmailsContact(currentUser.userId, listOf("email1","email2"))
-                        var addedContacts : Int? = api.getEmailsContact(currentUser.userId, emailList)
+                        var addedContacts : Int? = api.getEmailsContact(currentUser!!.userId, emailList)
                         var message = ""
                         if(addedContacts == null){
 
@@ -218,7 +218,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                         runBlocking {
                             launch {
                                 // TODO: END THIS
-                                result = api.updateUserPasswordId(currentUser.userId, passwordSha)
+                                result = api.updateUserPasswordId(currentUser!!.userId, passwordSha)
                             }
                         }
                         if (result != null && result as Boolean){
@@ -451,7 +451,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                 runBlocking {
                     val corroutine = launch {
                         if (!api.getUserExists(userName)!!){
-                            api.updateUserName(currentUser.userId, userName)
+                            api.updateUserName(currentUser!!.userId, userName)
                             Tools.setNavigationProfile(requireContext(), null, userName)
                             binding.tvUsername.text = binding.etUsername.text.toString()
                         }
@@ -520,10 +520,10 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     }
 
     private fun loadUser(){
-        binding.tvUsername.text = currentUser.name
+        binding.tvUsername.text = currentUser!!.name
         runBlocking {
             val corrutina = launch {
-                val tempFollowers = api.getFollowerCount(currentUser.userId)
+                val tempFollowers = api.getFollowerCount(currentUser!!.userId)
                 if(tempFollowers != null){
                     followers = tempFollowers
                 }
@@ -574,7 +574,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         tabLayout.addTab(tabLayout.newTab().setText("READS"))
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         val adapter = ProfileAdapter(activity?.applicationContext, childFragmentManager,
-            tabLayout.tabCount, currentUser.userId, true
+            tabLayout.tabCount, currentUser!!.userId, true
         )
         viewPager.adapter = adapter
         viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
@@ -626,20 +626,20 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     val byteArray = outputStream.toByteArray()
 
                     val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
-                    val image = MultipartBody.Part.createFormData("image", currentUser.userId.toString() + "user.jpg", requestFile)
+                    val image = MultipartBody.Part.createFormData("image", currentUser!!.userId.toString() + "user.jpg", requestFile)
 
 
                     runBlocking {
                         val ru = launch {
                             val response = api.uploadImageToAPI(false, image)
                             if (response != null) {
-                                val response2 = api.updateProfilePic(currentUser.userId)
-                                currentUser.haspicture = true
+                                val response2 = api.updateProfilePic(currentUser!!.userId)
+                                currentUser!!.haspicture = true
                                 val body = response //.body()
                                 // Leer los bytes de la imagen
                                 val bytes = body.bytes()
                                 //requireContext().cacheDir.deleteRecursively()
-                                val file = File(requireContext().cacheDir, currentUser.userId.toString() + "user.jpg")
+                                val file = File(requireContext().cacheDir, currentUser!!.userId.toString() + "user.jpg")
 
                                 withContext(Dispatchers.IO) {
                                     val outputStream = FileOutputStream(file)

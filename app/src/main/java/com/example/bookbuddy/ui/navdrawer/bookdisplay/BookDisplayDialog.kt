@@ -109,7 +109,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                         val corroutine = launch {
                                             result = api.setBookReading(
                                                 book!!.bookId,
-                                                currentUser.userId
+                                                currentUser!!.userId
                                             )
                                             if(result == true ){
                                                 readed = getReaded(book!!.bookId)
@@ -127,7 +127,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                         val corroutine = launch {
                                             result = api.setBookPending(
                                                 book!!.bookId,
-                                                currentUser.userId
+                                                currentUser!!.userId
                                             )
                                             if(result == true) {
                                                 readed = getReaded(book!!.bookId)
@@ -145,7 +145,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                         val corroutine = launch {
                                             result = api.setBookRead(
                                                 book!!.bookId,
-                                                currentUser.userId
+                                                currentUser!!.userId
                                             )
                                             if(result == true) {
                                                 readed = getReaded(book!!.bookId)
@@ -163,7 +163,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                     val corroutine = launch {
                                         result = api.removeBookReading(
                                             book!!.bookId,
-                                            currentUser.userId
+                                            currentUser!!.userId
                                         )
                                         if(result == true){
                                             readed = null
@@ -329,7 +329,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         var response: Book? = null
         runBlocking {
             val corrutina = launch {
-                response = api.getBook(isbn!!, currentUser.userId)
+                response = api.getBook(isbn!!, currentUser!!.userId)
             }
             corrutina.join()
         }
@@ -340,7 +340,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         var response: Readed? = null
         runBlocking {
             val corrutine = launch {
-                response = api.getReadedsFromBook(bookId, currentUser.userId)
+                response = api.getReadedsFromBook(bookId, currentUser!!.userId)
             }
             corrutine.join()
         }

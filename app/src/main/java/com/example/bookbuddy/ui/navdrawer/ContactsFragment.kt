@@ -63,12 +63,12 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
 
             val corrutina = launch {
                 if (position == 0){
-                    val tempFollows = api.getFollowersProfile(currentUser.userId, position) as MutableList<UserItem>?
+                    val tempFollows = api.getFollowersProfile(currentUser!!.userId, position) as MutableList<UserItem>?
                     if (tempFollows != null){
                         follows = tempFollows
                     }
                 } else {
-                    val tempFollows = api.getFollowersProfile(currentUser.userId, position)
+                    val tempFollows = api.getFollowersProfile(currentUser!!.userId, position)
                     if(tempFollows != null){
                         follows!!.addAll(tempFollows as MutableList<UserItem>)
                     }

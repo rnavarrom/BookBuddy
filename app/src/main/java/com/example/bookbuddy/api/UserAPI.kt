@@ -9,8 +9,8 @@ import retrofit2.http.Query
 
 interface UserAPI {
 
-    @GET("/users/")
-    suspend fun getUsers(): Response<UserList>
+    //@GET("/users/")
+    //suspend fun getUsers(): Response<UserList>
     @GET("/api/user/name/{userName}")
     suspend fun getUserExists(@Path("userName") userName: String): Response<Boolean>
 

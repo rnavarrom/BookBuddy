@@ -14,7 +14,7 @@ import java.io.File
 
 lateinit var navView: NavigationView
 lateinit var navController : NavController
-lateinit var currentUser : User
+var currentUser : User? = null
 lateinit var currentProfile: Profile
 var currentPicture: File? = null
 lateinit var currentUserCreate : UserItem
@@ -22,13 +22,7 @@ var dialogValue: String = "125"
 val keyboardValue : Int = 250
 var currentLanguageChanged: Boolean = false
 
-var dummyValue = 358
 
 fun isProfileInitialized(): Boolean {
     return ::currentProfile.isInitialized
 }
-
-
-
-
-//assert("áéíóů".unaccent() == "aeiou")

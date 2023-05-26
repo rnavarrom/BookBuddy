@@ -1,4 +1,4 @@
-package com.example.bookbuddy.models.Test
+package com.example.bookbuddy.models
 
 data class ActualReading(
     val authors: Any,

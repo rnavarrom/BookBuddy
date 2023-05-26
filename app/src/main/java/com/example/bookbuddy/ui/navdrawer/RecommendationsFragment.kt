@@ -51,14 +51,14 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             val corrutina = launch {
                 if (position == 0) {
                     val tempBooks = api.getRecommendedBooks(
-                        currentUser.userId,
+                        currentUser!!.userId,
                         position
                     ) as MutableList<Book>?
                     if (tempBooks != null) {
                         books = tempBooks
                     }
                 } else {
-                    val tempBooks = api.getRecommendedBooks(currentUser.userId, position)
+                    val tempBooks = api.getRecommendedBooks(currentUser!!.userId, position)
                     if (tempBooks != null) {
                         books!!.addAll(tempBooks as MutableList<Book>)
                     }
