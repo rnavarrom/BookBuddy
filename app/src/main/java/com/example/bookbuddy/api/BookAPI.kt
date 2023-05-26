@@ -8,12 +8,14 @@ import retrofit2.http.*
 import retrofit2.http.Query
 
 interface BookAPI {
+    /*
     @GET("/users/")
     suspend fun getUsers(): Response<UserList>
     @GET("/api/user/name/{userName}")
-    suspend fun getUserExists(@Path("userName") userName: String): Response<Boolean>
+    suspend fun getUserExists(@Path("userName") userName: String): Response<Boolean>*/
     @GET("/api/books/recommended/{userid}/{position}")
     suspend fun getRecommendedBooks(@Path("userid") userid: Int, @Path("position") position: Int): Response<List<Book>>
+    /*
     @GET("/api/user/email/{email}")
     suspend fun getEmailExists(@Path("email") email: String): Response<Boolean>
     @GET("/api/user/{userName}/{password}")
@@ -24,7 +26,8 @@ interface BookAPI {
     //suspend fun getSimpleSearch(@Path("book") book: String, @Path("author") author: String, @Path("genre") genre: String): Response<ArrayList<SimpleBook>>
     @POST("/api/user/{name}/{password}/{email}")
     suspend fun insertUser(@Path("name") name: String, @Path("password") password: String, @Path("email") email: String): Response<Boolean>
-    // TODO
+
+
     @PUT("/api/user/pic/{id}")
     suspend fun updateProfilePic(@Path("id") userId: Int): Response<Boolean>
 
@@ -34,11 +37,14 @@ interface BookAPI {
     @PUT("/api/user/password/{id}/{password}")
     suspend fun updateUserPasswordId(@Path("id") userId: Int, @Path("password") password: String): Response<Boolean>
 
+    @PUT("/api/user/name/{id}/{name}")
+    suspend fun updateUserName(@Path("id") id: Int, @Path("name") name: String): Response<Boolean>
+
     @GET("/api/user/requests/{position}")
     suspend fun getRequests(@Path("position") position: Int): Response<List<BookRequest>>
     @DELETE("/api/user/request/{id}")
     suspend fun deleteRequest(@Path("id") id: Int): Response<Boolean>
-
+*/
 
     @GET("/api/book/exist/{isbn}")
     suspend fun getBookExist(@Path("isbn") isbn: String): Response<Boolean>//Response<ResponseBody>
@@ -61,8 +67,7 @@ interface BookAPI {
   @PUT("/api/readed/reading/{readedId}")
   suspend fun setBookReading(@Path("readedId") readedId: Int): Response<Boolean>
 
-    @PUT("/api/user/name/{id}/{name}")
-    suspend fun updateUserName(@Path("id") id: Int, @Path("name") name: String): Response<Boolean>
+
   //@POST("/api/readed/postnew/{}")
 
     // TODO: Implement this un crudapi
@@ -125,25 +130,4 @@ interface BookAPI {
     suspend fun updateBookLibrary(@Path("bookid") bookId: Int, @Path("libraryid") libraryId: Int, @Path("copies") copies: Int): Response<Boolean>
     @DELETE("/api/booklibrary/{bookid}/{libraryid}")
     suspend fun deleteBookLibrary(@Path("bookid") bookId: Int, @Path("libraryid") libraryId: Int): Response<Boolean>
-
-/*
-    @GET("/productes/?llistat")
-    suspend fun getProductes():Response<Productes>
-
-    @GET("/productes/")
-    suspend fun getProducte(@Query("codi") codi: Int): Response<Productes>
-
-    @GET("/productes/")
-    suspend fun getTipus(@Query("tipus") tipus: Int): Response<Productes>
-
-    @POST("/productes/")
-    suspend fun insertProducte(@Body producte: Producte): Response<ResponseModel>
-
-    @PUT("/productes/")
-    suspend fun updateProducte(@Body producte: Producte): Response<ResponseModel>
-
-    @DELETE("/productes/")
-    suspend fun deleteProducte(@Query("codi") codi: Int): Response<ResponseModel>
-
-     */
 }

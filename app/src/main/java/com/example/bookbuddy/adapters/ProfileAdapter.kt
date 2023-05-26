@@ -5,8 +5,8 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.example.bookbuddy.ui.navdrawer.ProfileBookMarksFragment
-import com.example.bookbuddy.ui.navdrawer.ProfileCommentsFragment
+import com.example.bookbuddy.ui.navdrawer.profile.ProfileBookMarksFragment
+import com.example.bookbuddy.ui.navdrawer.profile.ProfileCommentsFragment
 
 @Suppress("DEPRECATION")
 internal class ProfileAdapter(

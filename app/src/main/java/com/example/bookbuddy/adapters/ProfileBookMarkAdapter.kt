@@ -12,8 +12,8 @@ import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.models.Readed
-import com.example.bookbuddy.ui.navdrawer.ProfileDialogDirections
 import com.example.bookbuddy.ui.navdrawer.ProfileFragmentDirections
+import com.example.bookbuddy.ui.navdrawer.profile.ProfileDialogDirections
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

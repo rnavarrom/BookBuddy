@@ -19,7 +19,7 @@ import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.api.CrudApi
-import com.example.bookbuddy.databinding.FragmentInsertBookDialogBinding
+import com.example.bookbuddy.databinding.DialogAdminInsertBookBinding
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
@@ -32,7 +32,7 @@ import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
-    lateinit var binding: FragmentInsertBookDialogBinding
+    lateinit var binding: DialogAdminInsertBookBinding
     private var job: Job = Job()
 
     private var mode = "insert"
@@ -63,7 +63,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  FragmentInsertBookDialogBinding.inflate(layoutInflater, container, false)
+        binding =  DialogAdminInsertBookBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
 

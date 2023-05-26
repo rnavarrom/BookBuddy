@@ -13,8 +13,7 @@ import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.User.Comment
-import com.example.bookbuddy.ui.navdrawer.BookCommentsFragment
-import com.example.bookbuddy.ui.navdrawer.BookCommentsFragmentDirections
+import com.example.bookbuddy.ui.navdrawer.bookdisplay.CommentsListDialogDirections
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
@@ -127,7 +126,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
         val bundle = Bundle()
         bundle.putInt("userid", userid)
         bundle.putString("username", username)
-        val action = BookCommentsFragmentDirections.actionNavReadCommentToNavProfileDialog(bundle)
+        val action = CommentsListDialogDirections.actionNavReadCommentToNavProfileDialog(bundle)
         navController.navigate(action)
     }
 

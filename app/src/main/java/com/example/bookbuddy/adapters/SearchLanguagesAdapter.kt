@@ -9,7 +9,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.Language
-import com.example.bookbuddy.ui.navdrawer.ProfileLanguageDialog
+import com.example.bookbuddy.ui.navdrawer.profile.ProfileLanguageDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

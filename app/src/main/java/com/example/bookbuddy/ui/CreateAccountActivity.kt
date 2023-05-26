@@ -9,7 +9,6 @@ import android.text.method.ScrollingMovementMethod
 import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
@@ -64,7 +63,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
                         getString(R.string.SB_AccountCreated)
                     )
                     //Toast.makeText(this, , Toast.LENGTH_LONG).show()
-                    var intent = Intent(this, MainActivity::class.java)
+                    var intent = Intent(this, LoginActivity::class.java)
                     intent.putExtra("userName", currentUserCreate.name)
                     startActivity(intent)
                     finish()

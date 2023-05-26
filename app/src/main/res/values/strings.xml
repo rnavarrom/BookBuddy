@@ -104,13 +104,13 @@
     <string name="TB_Profile">Profile</string>
     <string name="BT_Following">Following</string>
     <string name="BT_Follow">Follow</string>
-    <string name="MSG_WantUnfollow">\"Do you want to unfollow \"</string>
+    <string name="MSG_WantUnfollow">Do you want to unfollow</string>
     <string name="MSG_WantUnfollow2">You will stop receibing notifications from this user</string>
     <string name="BT_Unfollow">Unfollow</string>
     <string name="TB_Comments">COMMENTS</string>
     <string name="TB_Reads">READS</string>
-    <string name="MSG_Added">\"Added \"</string>
-    <string name="MSG_NewContacts">\" new contacts!\"</string>
+    <string name="MSG_Added">Added </string>
+    <string name="MSG_NewContacts"> new contacts!</string>
     <string name="MSG_NoContactsFound">No contacts found!</string>
     <string name="MSG_NoRecommendedBooks">No recommended books</string>
     <string name="SB_AddedBookPending">Added book for pending</string>
@@ -136,7 +136,7 @@
     <string name="AppEmail" translatable="false">bookbuddyinfo2023@gmail.com</string>
     <string name="AppEmailCode" translatable="false">iqqvymaokpfdukci</string>
     <string name="MSG_PassRecovery">BookBuddy Password recovery</string>
-    <string name="MSG_NewPass">\"New password: \"</string>
+    <string name="MSG_NewPass">New password: </string>
     <string name="MSG_NewPassWarning">. When u enter in the app change immediately the password in profile</string>
     <string name="SB_EmailSend">Email sended</string>
     <string name="SB_EmailSendError">Error sending email, try again</string>

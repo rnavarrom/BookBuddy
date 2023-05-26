@@ -77,14 +77,14 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
 
     suspend fun getUserLogin(userName: String, password: String): User? {
         return safeApiCall(
-            apiCall = { getRetrofit().create(BookAPI::class.java).getUserLogin(userName, password) },
+            apiCall = { getRetrofit().create(UserAPI::class.java).getUserLogin(userName, password) },
             errorListener = errorListener!!
         )
     }
 
     suspend fun getUserId(userId: Int): User? {
         return safeApiCall(
-            apiCall = { getRetrofit().create(BookAPI::class.java).getUserId(userId) },
+            apiCall = { getRetrofit().create(UserAPI::class.java).getUserId(userId) },
             errorListener = errorListener!!
         )
         //val response = getRetrofit().create(BookAPI::class.java).getUserId(userId).body()
@@ -92,13 +92,13 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
     }
     suspend fun getUserExists(userName: String): Boolean? {
         return safeApiCall(
-            apiCall = { getRetrofit().create(BookAPI::class.java).getUserExists(userName) },
+            apiCall = { getRetrofit().create(UserAPI::class.java).getUserExists(userName) },
             errorListener = errorListener!!
         )
     }
     suspend fun getEmailExists(email: String): Boolean? {
         return safeApiCall(
-            apiCall = { getRetrofit().create(BookAPI::class.java).getEmailExists(email) },
+            apiCall = { getRetrofit().create(UserAPI::class.java).getEmailExists(email) },
             errorListener = errorListener!!
         )
     }
@@ -114,35 +114,35 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
 
     suspend fun addUserToAPI(user: UserItem): Boolean? {
         return safeApiCall(
-            apiCall = { getRetrofit().create(BookAPI::class.java).insertUser(user.name, user.password, user.email) },
+            apiCall = { getRetrofit().create(UserAPI::class.java).insertUser(user.name, user.password, user.email) },
             errorListener = errorListener!!
         )
     }
 
     suspend fun updateProfilePic(id: Int): Boolean? {
         return safeApiCall(
-            apiCall = { getRetrofit().create(BookAPI::class.java).updateProfilePic(id) },
+            apiCall = { getRetrofit().create(UserAPI::class.java).updateProfilePic(id) },
             errorListener = errorListener!!
         )
     }
 
     suspend fun updateUserPasswordMail(email: String, password: String): Boolean? {
         return safeApiCall(
-            apiCall = { getRetrofit().create(BookAPI::class.java).updateUserPasswordMail(email, password) },
+            apiCall = { getRetrofit().create(UserAPI::class.java).updateUserPasswordMail(email, password) },
             errorListener = errorListener!!
         )
     }
 
     suspend fun updateUserPasswordId(id: Int, password: String): Boolean? {
         return safeApiCall(
-            apiCall = { getRetrofit().create(BookAPI::class.java).updateUserPasswordId(id, password) },
+            apiCall = { getRetrofit().create(UserAPI::class.java).updateUserPasswordId(id, password) },
             errorListener = errorListener!!
         )
     }
 
     suspend fun updateUserName(id: Int, name: String): Boolean? {
         return safeApiCall(
-            apiCall = { getRetrofit().create(BookAPI::class.java).updateUserName(id, name) },
+            apiCall = { getRetrofit().create(UserAPI::class.java).updateUserName(id, name) },
             errorListener = errorListener!!
         )
         //val call = getRetrofit().create(BookAPI::class.java).updateUserName(id, name)
@@ -616,14 +616,14 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
 
     suspend fun getRequests(position: Int): List<BookRequest>? {
         return safeApiCall(
-            apiCall = { getRetrofit().create(BookAPI::class.java).getRequests(position) },
+            apiCall = { getRetrofit().create(UserAPI::class.java).getRequests(position) },
             errorListener = errorListener!!
         )
     }
 
     suspend fun deleteRequest(id: Int): Boolean? {
         return safeApiCall(
-            apiCall = { getRetrofit().create(BookAPI::class.java).deleteRequest(id) },
+            apiCall = { getRetrofit().create(UserAPI::class.java).deleteRequest(id) },
             errorListener = errorListener!!
         )
     }

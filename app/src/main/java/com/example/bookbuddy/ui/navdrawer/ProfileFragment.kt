@@ -15,13 +15,11 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.provider.MediaStore
-import android.renderscript.ScriptGroup.Input
 import android.text.InputType
 import android.view.*
 import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.recreate
 import androidx.core.content.ContextCompat
@@ -38,6 +36,8 @@ import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileBinding
+import com.example.bookbuddy.ui.navdrawer.profile.ProfileAuthorDialog
+import com.example.bookbuddy.ui.navdrawer.profile.ProfileSearchDialog
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener

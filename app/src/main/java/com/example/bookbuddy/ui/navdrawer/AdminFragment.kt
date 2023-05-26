@@ -28,33 +28,33 @@ class AdminFragment : Fragment(), CoroutineScope, java.io.Serializable, InsertLi
         binding =  FragmentAdminBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        replaceFragment(AdminBooksFragment())
+        replaceFragment(BooksFragment())
 
         binding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.books -> {
                     fragmentSaved = "books"
-                    replaceFragment(AdminBooksFragment())
+                    replaceFragment(BooksFragment())
                     true
                 }
                 R.id.genre -> {
                     fragmentSaved = "genre"
-                    replaceFragment(AdminGenresFragment())
+                    replaceFragment(GenresFragment())
                     true
                 }
                 R.id.Authors -> {
                     fragmentSaved = "authors"
-                    replaceFragment(AdminAuthorsFragment())
+                    replaceFragment(AuthorsFragment())
                     true
                 }
                 R.id.Libraries -> {
                     fragmentSaved = "libraries"
-                    replaceFragment(AdminLibrariesFragment())
+                    replaceFragment(LibrariesFragment())
                     true
                 }
                 R.id.users -> {
                     fragmentSaved = "requests"
-                    replaceFragment(AdminRequestsFragment())
+                    replaceFragment(RequestsFragment())
                     true
                 }
                 else -> {
@@ -79,11 +79,11 @@ class AdminFragment : Fragment(), CoroutineScope, java.io.Serializable, InsertLi
     override fun onAdminDialogClose() {
         var fragment: Fragment? = null
         when(fragmentSaved){
-            "books" -> fragment = AdminBooksFragment()
-            "genre" -> fragment = AdminGenresFragment()
-            "authors" -> fragment = AdminAuthorsFragment()
-            "libraries" -> fragment = AdminLibrariesFragment()
-            "requests" -> fragment = AdminRequestsFragment()        }
+            "books" -> fragment = BooksFragment()
+            "genre" -> fragment = GenresFragment()
+            "authors" -> fragment = AuthorsFragment()
+            "libraries" -> fragment = LibrariesFragment()
+            "requests" -> fragment = RequestsFragment()        }
 
         val bundle = Bundle()
         bundle.putSerializable("fragment", this)

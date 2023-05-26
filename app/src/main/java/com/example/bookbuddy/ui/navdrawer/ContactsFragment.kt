@@ -15,12 +15,12 @@ import com.example.bookbuddy.adapters.ContactAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentContactsBinding
 import com.example.bookbuddy.models.UserItem
+import com.example.bookbuddy.ui.navdrawer.profile.ProfileDialog
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
-import java.io.Serializable
 import kotlin.coroutines.CoroutineContext
 
 class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDialogClose, ApiErrorListener, java.io.Serializable {

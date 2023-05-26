@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.models.Book
-import com.example.bookbuddy.ui.navdrawer.AuthorBookDialogDirections
+import com.example.bookbuddy.ui.navdrawer.bookdisplay.AuthorBookDialogDirections
 import com.example.bookbuddy.utils.navController
 
 class AuthorBooksAdapter(var list: ArrayList<Book>) : RecyclerView.Adapter<AuthorBooksAdapter.ViewHolder>() {

@@ -19,10 +19,10 @@ import com.example.bookbuddy.adapters.AdminGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminBookReferencesDialogBinding
 import com.example.bookbuddy.models.*
-import com.example.bookbuddy.ui.navdrawer.ProfileAuthorDialog
-import com.example.bookbuddy.ui.navdrawer.ProfileLanguageDialog
-import com.example.bookbuddy.ui.navdrawer.ProfileLibraryDialog
-import com.example.bookbuddy.ui.navdrawer.ProfileSearchDialog
+import com.example.bookbuddy.ui.navdrawer.profile.ProfileAuthorDialog
+import com.example.bookbuddy.ui.navdrawer.profile.ProfileLanguageDialog
+import com.example.bookbuddy.ui.navdrawer.profile.ProfileLibraryDialog
+import com.example.bookbuddy.ui.navdrawer.profile.ProfileSearchDialog
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener

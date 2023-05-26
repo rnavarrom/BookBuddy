@@ -40,6 +40,20 @@ class Tools {
             val regex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$")
             return regex.matches(password)
         }
+
+        fun generateRandomPassword(length: Int): String {
+            val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
+            while (true) {
+                val password = (1..length)
+                    .map { allowedChars.random() }
+                    .joinToString("")
+
+                if (isPasswordValid(password)) {
+                    return password
+                }
+            }
+        }
+
         fun isValidText(text: String): Boolean {
             val regex = Regex("[^a-zA-Z0-9]")
             return !regex.containsMatchIn(text)

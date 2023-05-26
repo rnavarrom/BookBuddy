@@ -20,7 +20,7 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentHomeBinding
 import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
-import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.ui.navdrawer.bookdisplay.BookDisplayDialog
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.base.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
@@ -28,7 +28,7 @@ import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-class HomeFragment : Fragment(), ApiErrorListener, BookDisplayFragment.OnBookDisplayClose,
+class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDisplayClose,
     java.io.Serializable {
     lateinit var binding: FragmentHomeBinding
     private lateinit var adapterPending: HomeBooksAdapter

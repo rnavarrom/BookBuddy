@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- For profile picture -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -38,7 +39,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".ui.navdrawer.NavDrawerActivity"
+            android:name=".ui.NavDrawerActivity"
             android:exported="false"
             android:label="@string/title_activity_nav_drawer"
             android:theme="@style/Theme.BookBuddy.NoActionBar"
@@ -49,7 +50,7 @@
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.LoginActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

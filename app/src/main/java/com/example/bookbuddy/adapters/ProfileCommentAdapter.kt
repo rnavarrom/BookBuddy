@@ -11,8 +11,8 @@ import androidx.navigation.NavDirections
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.User.Comment
-import com.example.bookbuddy.ui.navdrawer.ProfileDialogDirections
 import com.example.bookbuddy.ui.navdrawer.ProfileFragmentDirections
+import com.example.bookbuddy.ui.navdrawer.profile.ProfileDialogDirections
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

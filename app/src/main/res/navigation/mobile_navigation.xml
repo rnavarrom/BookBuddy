@@ -84,12 +84,6 @@
             app:destination="@id/nav_insert_book" />
     </fragment>
 
-    <fragment
-        android:id="@+id/nav_settings"
-        android:name="com.example.bookbuddy.ui.navdrawer.SettingsFragment"
-        android:label="Settings"
-        tools:layout="@layout/fragment_settings" />
-
     <dialog
         android:id="@+id/nav_insert_library"
         android:name="com.example.bookbuddy.ui.navdrawer.adminnav.InsertLibraryDialog"
@@ -102,7 +96,7 @@
     <dialog
         android:id="@+id/nav_insert_book"
         android:name="com.example.bookbuddy.ui.navdrawer.adminnav.InsertBookDialog"
-        tools:layout="@layout/fragment_insert_book_dialog" >
+        tools:layout="@layout/dialog_admin_insert_book" >
         <argument
             android:name="bundle"
             app:argType="android.os.Bundle" />
@@ -124,15 +118,15 @@
     <dialog
         android:id="@+id/nav_insert_book2"
         android:name="com.example.bookbuddy.ui.navdrawer.adminnav.InsertBookDialog"
-        tools:layout="@layout/fragment_insert_book_dialog">
+        tools:layout="@layout/dialog_admin_insert_book">
         <argument
             android:name="bundle"
             app:argType="android.os.Bundle" />
     </dialog>
     <dialog
         android:id="@+id/nav_book_display"
-        android:name="com.example.bookbuddy.ui.navdrawer.BookDisplayFragment"
-        tools:layout="@layout/fragment_book_display" >
+        android:name="com.example.bookbuddy.ui.navdrawer.bookdisplay.BookDisplayDialog"
+        tools:layout="@layout/dialog_bookdisplay" >
         <argument
             android:name="bundle"
             app:argType="android.os.Bundle" />
@@ -155,7 +149,7 @@
 
     <dialog
         android:id="@+id/nav_profile_dialog"
-        android:name="com.example.bookbuddy.ui.navdrawer.ProfileDialog"
+        android:name="com.example.bookbuddy.ui.navdrawer.profile.ProfileDialog"
         tools:layout="@layout/dialog_profile" >
         <argument
             android:name="bundle"
@@ -167,8 +161,8 @@
 
     <dialog
         android:id="@+id/nav_write_comment"
-        android:name="com.example.bookbuddy.ui.navdrawer.WriteCommentFragment"
-        tools:layout="@layout/fragment_write_comment" >
+        android:name="com.example.bookbuddy.ui.navdrawer.bookdisplay.CommentWriteDialog"
+        tools:layout="@layout/dialog_bookdisplay_write_comment" >
         <argument
             android:name="bundle"
             app:argType="android.os.Bundle" />
@@ -176,8 +170,8 @@
 
     <dialog
         android:id="@+id/nav_read_comment"
-        android:name="com.example.bookbuddy.ui.navdrawer.BookCommentsFragment"
-        tools:layout="@layout/fragment_book_comments" >
+        android:name="com.example.bookbuddy.ui.navdrawer.bookdisplay.CommentsListDialog"
+        tools:layout="@layout/dialog_bookdisplay_comments" >
         <argument
             android:name="bundle"
             app:argType="android.os.Bundle" />
@@ -191,8 +185,8 @@
 
     <dialog
         android:id="@+id/nav_libraries_list"
-        android:name="com.example.bookbuddy.ui.navdrawer.LibrariesListFragment"
-        tools:layout="@layout/fragment_libraries_list" >
+        android:name="com.example.bookbuddy.ui.navdrawer.bookdisplay.LibrariesListDialog"
+        tools:layout="@layout/dialog_bookdisplay_libraries_list" >
         <argument
             android:name="bundle"
             app:argType="android.os.Bundle" />
@@ -203,8 +197,8 @@
 
     <dialog
         android:id="@+id/nav_library_map"
-        android:name="com.example.bookbuddy.ui.navdrawer.LibraryMapFragment"
-        tools:layout="@layout/fragment_library_map" >
+        android:name="com.example.bookbuddy.ui.navdrawer.bookdisplay.LibraryMapDialog"
+        tools:layout="@layout/dialog_bookdisplay_library_map" >
         <argument
             android:name="bundle"
             app:argType="android.os.Bundle" />
@@ -212,8 +206,8 @@
 
     <dialog
         android:id="@+id/nav_profile_search"
-        android:name="com.example.bookbuddy.ui.navdrawer.ProfileSearchDialog"
-        tools:layout="@layout/fragment_profile_search_dialog" >
+        android:name="com.example.bookbuddy.ui.navdrawer.profile.ProfileSearchDialog"
+        tools:layout="@layout/dialog_profile_search" >
         <argument
             android:name="bundle"
             app:argType="android.os.Bundle" />
@@ -221,8 +215,8 @@
 
     <dialog
         android:id="@+id/nav_author_book_dialog"
-        android:name="com.example.bookbuddy.ui.navdrawer.AuthorBookDialog"
-        tools:layout="@layout/fragment_author_book_dialog" >
+        android:name="com.example.bookbuddy.ui.navdrawer.bookdisplay.AuthorBookDialog"
+        tools:layout="@layout/dialog_bookdisplay_authorbooks" >
         <argument
             android:name="bundle"
             app:argType="android.os.Bundle" />
