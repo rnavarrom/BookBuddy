@@ -20,7 +20,7 @@ import com.example.bookbuddy.models.BookRequest
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.ui.navdrawer.AdminFragmentDirections
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -36,8 +36,7 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private var isbn: String? = null
     private val api = CrudApi(this@RequestsFragment)
-
-
+    private var isOnCreateViewExecuted = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -54,7 +53,7 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         getRequests(true)
         loadingEnded()
-
+        isOnCreateViewExecuted = true
         return binding.root
     }
     /*
@@ -81,11 +80,11 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             val selection = adapter.getSelected()
             var result = false
             if (selection != null){
-                val fra = requireArguments().getSerializable("fragment") as? AdminFragment?
+                val fra = requireArguments().getParcelable("fragment") as? AdminFragment?
                 val bundle = Bundle()
                 bundle.putInt("id", selection.bookRequest1)
                 bundle.putString("isbn", selection.bookIsbn)
-                bundle.putSerializable("fragment", fra)
+                bundle.putParcelable("fragment", fra)
                 //val action = AdminLibrariesFragmentDirections.actionNavBookToNavInsertBook(bundle)
                 val action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
                 navController.navigate(action)
@@ -183,7 +182,9 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        if (isOnCreateViewExecuted){
+            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
     }
     override fun onDestroy() {
         super.onDestroy()

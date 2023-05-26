@@ -18,7 +18,7 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminGenresBinding
 import com.example.bookbuddy.models.Genre
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -38,6 +38,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var search: String? = null
     private var genreName: String? = null
     private val api = CrudApi(this@GenresFragment)
+    private var isOnCreateViewExecuted = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -54,7 +55,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         getGenres(true)
         loadingEnded()
-
+        isOnCreateViewExecuted = true
         return binding.root
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -270,17 +271,14 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
                         genres!!.addAll((crudApi.getGenres(search!!, true, position) as MutableList<Genre>?)!!)
                     }
                 }
-                if (addAdapter){
-                    binding.rvGenres.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                    genres!!.forEach {
-                        println(it.genreId)
-                        println(it.name)
-                        println(it.cardview)
+                if (genres != null){
+                    if (addAdapter){
+                        binding.rvGenres.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                        adapter = AdminGenresAdapter(genres as ArrayList<Genre>)
+                        binding.rvGenres.adapter = adapter
+                    } else {
+                        adapter.updateList(genres as ArrayList<Genre>)
                     }
-                    adapter = AdminGenresAdapter(genres as ArrayList<Genre>)
-                    binding.rvGenres.adapter = adapter
-                } else {
-                    adapter.updateList(genres as ArrayList<Genre>)
                 }
             }
             corrutina.join()
@@ -288,7 +286,9 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        if (isOnCreateViewExecuted){
+            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
     }
 
     override fun onDestroy() {

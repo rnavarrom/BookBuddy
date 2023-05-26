@@ -1,4 +1,4 @@
-package com.example.bookbuddy.utils.base
+package com.example.bookbuddy.utils
 
 import org.json.JSONObject
 import retrofit2.Response

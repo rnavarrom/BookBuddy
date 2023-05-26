@@ -18,7 +18,7 @@ import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.ContactsFragment
 import com.example.bookbuddy.ui.navdrawer.ContactsFragmentDirections
 import com.example.bookbuddy.utils.Tools
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.navController
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.*

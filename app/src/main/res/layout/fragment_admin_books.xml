@@ -10,7 +10,7 @@
         android:id="@+id/main_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/main_content"
@@ -72,7 +72,7 @@
             android:layout_marginHorizontal="20dp"
             android:padding="10dp"
             app:layout_constraintStart_toEndOf="@id/btn_edit"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_print"
             app:layout_constraintTop_toBottomOf="@id/view2"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
@@ -81,10 +81,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_scan"
-            app:tint="@color/red_error"
+            app:tint="@color/light_blue"
             android:layout_marginVertical="20dp"
             android:layout_marginHorizontal="20dp"
             android:padding="10dp"
+            app:layout_constraintStart_toEndOf="@id/btn_delete"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

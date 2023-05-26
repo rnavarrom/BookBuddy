@@ -9,12 +9,12 @@ import androidx.fragment.app.DialogFragment
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.api.CrudApi
-import com.example.bookbuddy.databinding.FragmentInsertLibraryDialogBinding
+import com.example.bookbuddy.databinding.DialogInsertLibraryBinding
 import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -26,7 +26,7 @@ import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback, ApiErrorListener {
-    lateinit var binding: FragmentInsertLibraryDialogBinding
+    lateinit var binding: DialogInsertLibraryBinding
     private var job: Job = Job()
 
     private var mode = "insert"
@@ -53,7 +53,7 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  FragmentInsertLibraryDialogBinding.inflate(layoutInflater, container, false)
+        binding =  DialogInsertLibraryBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
 

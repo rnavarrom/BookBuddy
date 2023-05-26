@@ -18,12 +18,12 @@ import com.example.bookbuddy.Utils.Sha
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.api.logging
-import com.example.bookbuddy.databinding.ActivityMainBinding
+import com.example.bookbuddy.databinding.ActivityLoginBinding
 import com.example.bookbuddy.models.User
 import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.generateRandomPassword
 import com.example.bookbuddy.utils.Tools.Companion.responseToFile
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
@@ -34,7 +34,7 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
 class LoginActivity : AppCompatActivity(), ApiErrorListener {
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityLoginBinding
     private lateinit var userPrefs: UserPreferences
     private lateinit var savedUser: String
     private lateinit var savedPassword: String
@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         setContentView(binding.root)
 

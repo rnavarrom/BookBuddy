@@ -16,7 +16,7 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentRecommendationsBinding
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.utils.Tools
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -30,7 +30,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var lastPosition = -1
     var books: MutableList<Book>? = null
 
-
+    private var isOnCreateViewExecuted = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,7 +42,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         getUserRecommended(true)
         loadingEnded()
-
+        isOnCreateViewExecuted = true
         return binding.root
     }
 
@@ -63,7 +63,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                         books!!.addAll(tempBooks as MutableList<Book>)
                     }
                 }
-                if (books != null) { //addAdapter == null ||
+                if (books != null) {
                     if (addAdapter) {
                     binding.rvRecommended.layoutManager = GridLayoutManager(context, 3)
                     adapter = RecommendedBooksAdapter(books as ArrayList<Book>)
@@ -127,7 +127,9 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        if (isOnCreateViewExecuted){
+            Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
     }
     override fun onDestroy() {
         super.onDestroy()

@@ -1,6 +1,8 @@
 package com.example.bookbuddy.ui.navdrawer
 
 import android.os.Bundle
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-class AdminFragment : Fragment(), CoroutineScope, java.io.Serializable, InsertLibraryDialog.OnAdminDialogClose,
+class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialog.OnAdminDialogClose,
     InsertBookDialog.OnAdminDialogClose {
     lateinit var binding: FragmentAdminBinding
     private var job: Job = Job()
@@ -68,7 +70,7 @@ class AdminFragment : Fragment(), CoroutineScope, java.io.Serializable, InsertLi
 
     private fun replaceFragment(fragment: Fragment){
         val bundle = Bundle()
-        bundle.putSerializable("fragment", this)
+        bundle.putParcelable("fragment", this)
         fragment.arguments = bundle
         val fragmentManager = parentFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
@@ -83,10 +85,11 @@ class AdminFragment : Fragment(), CoroutineScope, java.io.Serializable, InsertLi
             "genre" -> fragment = GenresFragment()
             "authors" -> fragment = AuthorsFragment()
             "libraries" -> fragment = LibrariesFragment()
-            "requests" -> fragment = RequestsFragment()        }
+            "requests" -> fragment = RequestsFragment()
+        }
 
         val bundle = Bundle()
-        bundle.putSerializable("fragment", this)
+        bundle.putParcelable("fragment", this)
         fragment!!.arguments = bundle
         val fragmentManager = parentFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
@@ -105,4 +108,26 @@ class AdminFragment : Fragment(), CoroutineScope, java.io.Serializable, InsertLi
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
+
+    constructor(parcel: Parcel) : this() {
+        fragmentSaved = parcel.readString().toString()
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(fragmentSaved)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<AdminFragment> {
+        override fun createFromParcel(parcel: Parcel): AdminFragment {
+            return AdminFragment(parcel)
+        }
+
+        override fun newArray(size: Int): Array<AdminFragment?> {
+            return arrayOfNulls(size)
+        }
+    }
 }

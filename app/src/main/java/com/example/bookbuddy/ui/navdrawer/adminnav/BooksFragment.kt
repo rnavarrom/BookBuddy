@@ -4,7 +4,9 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.media.MediaScannerConnection
 import android.media.ThumbnailUtils
+import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -27,13 +29,14 @@ import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.ui.navdrawer.AdminFragmentDirections
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.navController
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
+import com.google.zxing.oned.Code128Writer
 import kotlinx.coroutines.*
 import java.io.*
 import kotlin.coroutines.CoroutineContext
@@ -53,6 +56,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private var search: String? = null
     private val api = CrudApi(this@BooksFragment)
+    private var isOnCreateViewExecuted = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -69,7 +73,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         getBooks(true)
         loadingEnded()
-
+        isOnCreateViewExecuted = true
         return binding.root
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -123,22 +127,22 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     private fun insertBook(){
-        val fra = requireArguments().getSerializable("fragment") as? AdminFragment?
+        val fra = requireArguments().getParcelable("fragment") as? AdminFragment?
 
         val bundle = Bundle()
         //bundle.putSerializable("fragment", arguments?.getSerializable("fragment") as? AdminFragment?)
-        bundle.putSerializable("fragment", fra)
+        bundle.putParcelable("fragment", fra)
         //val action = AdminLibrariesFragmentDirections.actionNavBookToNavInsertBook(bundle)
         val action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
         navController.navigate(action)
     }
 
     private fun editBook(book: Book){
-        val fra = requireArguments().getSerializable("fragment") as? AdminFragment?
+        val fra = requireArguments().getParcelable("fragment") as? AdminFragment?
 
         val bundle = Bundle()
         bundle.putSerializable("book", book)
-        bundle.putSerializable("fragment", fra)
+        bundle.putParcelable("fragment", fra)
         //val action = AdminLibrariesFragmentDirections.actionNavBookToNavInsertBook(bundle)
         val action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
         navController.navigate(action)
@@ -196,7 +200,9 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             val selection = adapter.getSelected()
             if (selection != null){
                 //saveBarcodeToStorage(requireActivity().applicationContext, selection.isbn)
-                saveBarcodeToGallery(requireContext(), selection.isbn)
+                //saveBarcodeToGallery(requireContext(), selection.isbn)
+                var a = generateBarcode(selection.isbn)
+                saveImageToGallery(a)
             } else {
                 showSnackBar(requireContext(), requireView(), getString(R.string.SB_PickABook))
             }
@@ -229,7 +235,90 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
         })
     }
+/*
+    private fun isStoragePermissionGranted(): Boolean {
+        val permission = android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        val granted = PackageManager.PERMISSION_GRANTED
+        return ContextCompat.checkSelfPermission(requireContext(), permission) == granted
+    }
 
+    private fun requestStoragePermission() {
+        val permission = android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ActivityCompat.requestPermissions(requireActivity(), arrayOf(permission), PERMISSION_REQUEST_WRITE_STORAGE)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == PERMISSION_REQUEST_WRITE_STORAGE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, proceed with your code
+                val selection = adapter.getSelected()
+                var a = generateBarcode(selection!!.isbn)
+                saveImageToGallery(a)
+            } else {
+                // Permission denied, handle accordingly (e.g., show a message)
+            }
+        }
+    }
+*/
+    private fun generateBarcode(content: String): Bitmap? {
+        val hints = mutableMapOf<EncodeHintType, Any>()
+        hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
+
+        try {
+            val writer = Code128Writer()
+            val bitMatrix: BitMatrix = writer.encode(content, BarcodeFormat.CODE_128, 512, 256, hints)
+            val width = bitMatrix.width
+            val height = bitMatrix.height
+            val pixels = IntArray(width * height)
+
+            for (y in 0 until height) {
+                val offset = y * width
+                for (x in 0 until width) {
+                    pixels[offset + x] = if (bitMatrix[x, y]) Color.BLACK else Color.WHITE
+                }
+            }
+
+            val barcodeBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+            barcodeBitmap.setPixels(pixels, 0, width, 0, 0, width, height)
+            return barcodeBitmap
+        } catch (e: WriterException) {
+            e.printStackTrace()
+        }
+
+        return null
+    }
+
+    private fun saveImageToGallery(bitmap: Bitmap?) {
+        bitmap?.let {
+            val contentResolver: ContentResolver = requireActivity().applicationContext.contentResolver
+            val contentValues = ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, "barcode_image")
+                put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+                put(MediaStore.Images.Media.WIDTH, it.width)
+                put(MediaStore.Images.Media.HEIGHT, it.height)
+            }
+
+            val uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            uri?.let { imageUri ->
+                contentResolver.openOutputStream(imageUri)?.use { outputStream ->
+                    it.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                }
+
+                // Notify the media scanner about the new image
+                MediaScannerConnection.scanFile(
+                    requireActivity().applicationContext,
+                    arrayOf(imageUri.path),
+                    arrayOf("image/png")
+                ) { _: String?, _: Uri? -> }
+            }
+        }
+    }
+
+    /*
     @Throws(WriterException::class)
     private fun generateBarcode(isbn: String): Bitmap {
         val hints = HashMap<EncodeHintType, Any>()
@@ -329,7 +418,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             fileOutputStream?.close()
         }
     }
-
+*/
     private fun deleteBook(book: Book){
         var result = false
         runBlocking {
@@ -370,19 +459,23 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
                         books!!.addAll((api.getAllBooksSearch(search!!, true, position) as MutableList<Book>?)!!)
                     }
                 }
-                if (addAdapter){
-                    binding.rvBooks.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                    adapter = AdminBooksAdapter(books as ArrayList<Book>)
-                    binding.rvBooks.adapter = adapter
-                } else {
-                    adapter.updateList(books as ArrayList<Book>)
+                if (books != null){
+                    if (addAdapter){
+                        binding.rvBooks.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                        adapter = AdminBooksAdapter(books as ArrayList<Book>)
+                        binding.rvBooks.adapter = adapter
+                    } else {
+                        adapter.updateList(books as ArrayList<Book>)
+                    }
                 }
             }
             corrutina.join()
         }
     }
     override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        if (isOnCreateViewExecuted){
+            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
     }
     override fun onDestroy() {
         super.onDestroy()

@@ -17,7 +17,7 @@ import com.example.bookbuddy.databinding.FragmentContactsBinding
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileDialog
 import com.example.bookbuddy.utils.Tools
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
@@ -33,7 +33,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
     private var position = 0
     private var lastPosition = -1
     private var follows: MutableList<UserItem>? = null
-
+    private var isOnCreateViewExecuted = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -45,7 +45,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
 
         getUserFollows(true)
         loadingEnded()
-
+        isOnCreateViewExecuted = true
         return binding.root
     }
 
@@ -128,7 +128,9 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
     }
 
     override fun onApiError() {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        if (isOnCreateViewExecuted){
+            Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
     }
 
     override fun onProfileDialogClose() {

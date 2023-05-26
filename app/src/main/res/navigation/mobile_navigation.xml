@@ -87,7 +87,7 @@
     <dialog
         android:id="@+id/nav_insert_library"
         android:name="com.example.bookbuddy.ui.navdrawer.adminnav.InsertLibraryDialog"
-        tools:layout="@layout/fragment_insert_library_dialog" >
+        tools:layout="@layout/dialog_insert_library" >
         <argument
             android:name="bundle"
             app:argType="android.os.Bundle" />
@@ -108,7 +108,7 @@
     <dialog
         android:id="@+id/nav_references_book"
         android:name="com.example.bookbuddy.ui.navdrawer.adminnav.ReferencesBookDialog"
-        tools:layout="@layout/fragment_admin_book_references_dialog" >
+        tools:layout="@layout/dialog_admin_book_references" >
         <argument
             android:name="bundle"
             app:argType="android.os.Bundle" />

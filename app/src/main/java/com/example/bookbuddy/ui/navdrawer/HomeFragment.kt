@@ -22,15 +22,16 @@ import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.ui.navdrawer.bookdisplay.BookDisplayDialog
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
-class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDisplayClose,
+class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDialog.OnBookDisplayClose,
     java.io.Serializable {
     lateinit var binding: FragmentHomeBinding
+    private var job: Job = Job()
     private lateinit var adapterPending: HomeBooksAdapter
     private lateinit var adapterReaded: HomeBooksAdapter
     private lateinit var adapterReading: HomeReadingBooksAdapter
@@ -213,7 +214,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDispl
 
     fun loadMoreRead(position: Int) {
         runBlocking {
-            val corrutina = launch {
+            val corroutine = launch {
                    val tempRead = api.getReadBooksFromUser(
                         currentUser.userId,
                         position)
@@ -221,14 +222,14 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDispl
                     readedList.addAll(tempRead as MutableList<Pending>)
                 }
             }
-            corrutina.join()
+            corroutine.join()
         }
         adapterReaded.updateList(readedList as ArrayList<Pending>)
     }
 
     fun loadMorePending(position: Int) {
         runBlocking {
-            val corrutina = launch {
+            val corroutine = launch {
                 val tempList = api.getPendingBooksFromUser(
                     currentUser.userId,
                     position
@@ -237,14 +238,15 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDispl
                     pendingList.addAll(tempList as MutableList<Pending>)
                 }
             }
-            corrutina.join()
+            corroutine.join()
         }
+
         adapterPending.updateList(pendingList as ArrayList<Pending>)
     }
 
     private fun loadMoreReading(position: Int) {
         runBlocking {
-            val corrutina = launch {
+            val corroutine = launch {
                 val tempList = api.getReadingBooksFromUser(
                     currentUser.userId,
                     position
@@ -253,7 +255,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDispl
                     readingList.addAll(tempList as MutableList<ActualReading>)
                 }
             }
-            corrutina.join()
+            corroutine.join()
         }
         adapterReading.updateList(readingList as ArrayList<ActualReading>)
     }
@@ -317,16 +319,16 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDispl
 
     private fun getUser() {
         runBlocking {
-            val corrutina = launch {
+            val corroutine = launch {
                 currentUser = api.getUserId(currentUser.userId)!!
             }
-            corrutina.join()
+            corroutine.join()
         }
     }
 
     private fun filterPendingBooks(filter: String, position: Int) {
         runBlocking {
-            val corrutina = launch {
+            val corroutine = launch {
                 if (position == startingPosition) {
                     val tempList = api.filterPendingBook(
                         currentUser.userId,
@@ -348,13 +350,13 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDispl
                     }
                 }
             }
-            corrutina.join()
+            corroutine.join()
         }
     }
 
     fun filterReadBooks(filter: String, position: Int) {
         runBlocking {
-            val corrutina = launch {
+            val corroutine = launch {
                 if (position == startingPosition) {
                     val tempList =
                         api.filterReadBook(
@@ -372,7 +374,7 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDispl
                     readedList.addAll(tempList as MutableList<Pending>)
                 }
             }
-            corrutina.join()
+            corroutine.join()
         }
     }
 /*
@@ -400,4 +402,16 @@ class HomeFragment : Fragment(), ApiErrorListener, BookDisplayDialog.OnBookDispl
         navController.popBackStack(id!!, true)
         navController.navigate(id)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        job.cancel()
+    }
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 }

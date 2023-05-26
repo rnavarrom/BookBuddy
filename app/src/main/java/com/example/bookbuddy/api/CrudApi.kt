@@ -10,8 +10,8 @@ import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.models.Test.Pending
 import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.models.UserItem
-import com.example.bookbuddy.utils.base.ApiErrorListener
-import com.example.bookbuddy.utils.base.safeApiCall
+import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.safeApiCall
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

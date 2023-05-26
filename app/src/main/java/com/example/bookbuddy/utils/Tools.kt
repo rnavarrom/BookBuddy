@@ -18,7 +18,7 @@ import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.api.CrudApi
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch

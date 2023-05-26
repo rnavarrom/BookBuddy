@@ -40,7 +40,7 @@ import com.example.bookbuddy.ui.navdrawer.profile.ProfileAuthorDialog
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileSearchDialog
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.currentPicture
 import com.example.bookbuddy.utils.currentProfile
 import com.example.bookbuddy.utils.currentUser

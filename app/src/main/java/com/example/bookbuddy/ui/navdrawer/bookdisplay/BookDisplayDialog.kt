@@ -24,7 +24,7 @@ import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import com.example.bookbuddy.utils.navView
@@ -87,12 +87,9 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
             //launch {
             book = getBook(isbn)
             if (book != null) {
-                readed = getReaded(book!!.bookId)
                 //readed = null
-                setBook(book)
                 //getBookMark(book!!.bookId, currentUser.userId)
-                getCommentsNumber(book!!.bookId)
-                getLibraries(isbn)
+                loadBook(book!!, isbn)
                 binding.bookMark.setOnClickListener {
                     popup = PopupMenu(context, binding.bookMark)
                     popup!!.menuInflater
@@ -112,7 +109,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                                 currentUser.userId
                                             )
                                             if(result == true ){
-                                                readed = getReaded(book!!.bookId)
+                                                getReaded(book!!.bookId)
                                                 readed!!.curreading = 3
                                             }
                                         }
@@ -130,7 +127,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                                 currentUser.userId
                                             )
                                             if(result == true) {
-                                                readed = getReaded(book!!.bookId)
+                                                getReaded(book!!.bookId)
                                                 readed!!.curreading = 1
                                             }
                                         }
@@ -148,7 +145,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                                 currentUser.userId
                                             )
                                             if(result == true) {
-                                                readed = getReaded(book!!.bookId)
+                                                getReaded(book!!.bookId)
                                                 readed!!.curreading = 2
                                             }
                                         }
@@ -198,14 +195,24 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         return binding.root
     }
 
+    fun loadBook(book: Book, isbn: String){
+        var corroutine = launch {
+            println("Starting")
+            getReaded(book.bookId)
+            setBook(book)
+            getCommentsNumber(book.bookId)
+            getLibraries(isbn)
+        }
+        corroutine.invokeOnCompletion {
+            println("completed")
+            loadingEnded()
+        }
+    }
+
     override fun onStart() {
         super.onStart()
-        println("MARCHANDO")
         if (book == null){
-            // TODO trye
-            showSnackBar(requireActivity().applicationContext, navView, getString(R.string.SB_CammerAccessNedded))
             navController.popBackStack()
-            showSnackBar(requireActivity().applicationContext, requireView().parent as View, getString(R.string.SB_CammerAccessNedded))
         }
     }
 
@@ -225,24 +232,18 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
 
     private fun getCommentsNumber(bookId: Int) {
         var commentsNumber: Int? = 0
-        runBlocking {
-            val corrutina = launch {
-                commentsNumber = api.getCommentsCounter(bookId)
-            }
-            corrutina.join()
+        val corrutina = launch {
+            commentsNumber = api.getCommentsCounter(bookId)
+            binding.numberComments.text = commentsNumber.toString()
         }
-        binding.numberComments.text = commentsNumber.toString()
     }
 
     private fun getLibraries(isbn: String?) {
         var librariesNumber: Int? = 0
-        runBlocking {
-            val corrutina = launch {
-                librariesNumber = api.getBookLibrariesCount(isbn!!)
-            }
-            corrutina.join()
+        val corrutina = launch {
+            librariesNumber = api.getBookLibrariesCount(isbn!!)
+            binding.numberLibraries.text = librariesNumber.toString()
         }
-        binding.numberLibraries.text = librariesNumber.toString()
     }
 
     private fun loadingEnded() {
@@ -296,7 +297,6 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
             navController.navigate(action)
         }
 
-
         for (i in book.languages.indices) {
             binding.dBookLanguage.text =
                 binding.dBookLanguage.text.toString() + book.languages[i].name
@@ -307,7 +307,6 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         binding.dBookPublishdate.text = book.publicationDate
         binding.dBookPages.text = "Pages: " + book.pages
         binding.dBookIsbn.text = "Isbn: " + book.isbn
-
 
         if (book.genres.size > 10) {
             binding.rvGenres.layoutManager = GridLayoutManager(context, 3)
@@ -336,15 +335,12 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         return response
     }
 
-    private fun getReaded(bookId: Int): Readed? {
+    private fun getReaded(bookId: Int) {
         var response: Readed? = null
-        runBlocking {
-            val corrutine = launch {
-                response = api.getReadedsFromBook(bookId, currentUser.userId)
-            }
-            corrutine.join()
+        val corrutine = launch {
+            response = api.getReadedsFromBook(bookId, currentUser.userId)
+            readed = response
         }
-        return response
     }
 
     private fun speak() {
