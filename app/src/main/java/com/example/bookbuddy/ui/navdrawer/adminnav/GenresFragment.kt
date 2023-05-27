@@ -7,8 +7,8 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
@@ -17,8 +17,8 @@ import com.example.bookbuddy.adapters.AdminGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminGenresBinding
 import com.example.bookbuddy.models.Genre
-import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 

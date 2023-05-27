@@ -19,9 +19,9 @@ import com.example.bookbuddy.adapters.LibraryAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogBookdisplayLibrariesListBinding
 import com.example.bookbuddy.models.LibraryExtended
-import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Tools.Companion.setToolBar
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.navController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -161,7 +161,7 @@ class LibrariesListDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                     }
                 }
 
-                bundle.putSerializable("library", selectedLibrary)
+                bundle.putParcelable("library", selectedLibrary)
 
                 val action = LibrariesListDialogDirections.actionNavLibrariesListToNavLibraryMap(bundle)
                 navController.navigate(action)

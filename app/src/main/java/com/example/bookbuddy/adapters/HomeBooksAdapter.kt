@@ -40,7 +40,7 @@ class HomeBooksAdapter(private var list: ArrayList<Pending>, val fragment: HomeF
             //navController.navigate(R.id.nav_book_display, bundle)
             val bundle = Bundle()
             bundle.putString("isbn", list[position].isbn)
-            bundle.putSerializable("fragment", fragment)
+            bundle.putParcelable("fragment", fragment)
             val action = HomeFragmentDirections.actionNavHomeToNavBookDisplay(bundle)
             navController.navigate(action)
         }

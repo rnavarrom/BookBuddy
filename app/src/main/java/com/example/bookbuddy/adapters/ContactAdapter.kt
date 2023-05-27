@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
@@ -17,14 +16,13 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.ContactsFragment
 import com.example.bookbuddy.ui.navdrawer.ContactsFragmentDirections
-import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.navController
 import com.google.android.material.imageview.ShapeableImageView
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
-import java.io.Serializable
 import kotlin.coroutines.CoroutineContext
 
 
@@ -87,7 +85,7 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>, val fragment: Cont
         val bundle = Bundle()
         bundle.putInt("userid", userid)
         bundle.putString("username", username)
-        bundle.putSerializable("fragment", fragment)
+        bundle.putParcelable("fragment", fragment)
         val action = ContactsFragmentDirections.actionNavContactsToNavProfileDialog(bundle)
         navController.navigate(action)
     }

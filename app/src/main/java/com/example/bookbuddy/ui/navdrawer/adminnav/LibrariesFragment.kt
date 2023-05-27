@@ -19,8 +19,8 @@ import com.example.bookbuddy.databinding.FragmentAdminLibrariesBinding
 import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.ui.navdrawer.AdminFragmentDirections
-import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -128,7 +128,7 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun editLibrary(library: Library){
         val bundle = Bundle()
         bundle.putParcelable("fragment", arguments?.getParcelable("fragment") as? AdminFragment?)
-        bundle.putSerializable("library", library)
+        bundle.putParcelable("library", library)
         val action = AdminFragmentDirections.actionNavAdminToNavInsertLibrary(bundle)
         navController.navigate(action)
     }

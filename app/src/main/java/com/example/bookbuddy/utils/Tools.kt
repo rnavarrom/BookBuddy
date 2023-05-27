@@ -11,23 +11,17 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
-import com.example.bookbuddy.api.CrudApi
-import com.example.bookbuddy.utils.ApiErrorListener
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.text.Normalizer
 import okhttp3.ResponseBody
-import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
+import java.text.Normalizer
 
 
 class Tools {

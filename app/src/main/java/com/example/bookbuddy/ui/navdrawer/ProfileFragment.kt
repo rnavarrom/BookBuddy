@@ -38,12 +38,8 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileBinding
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileAuthorDialog
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileSearchDialog
-import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.ApiErrorListener
-import com.example.bookbuddy.utils.currentPicture
-import com.example.bookbuddy.utils.currentProfile
-import com.example.bookbuddy.utils.currentUser
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull

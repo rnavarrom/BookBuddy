@@ -1,23 +1,23 @@
 package com.example.bookbuddy.ui.navdrawer.adminnav
 
-import android.content.*
-import android.content.pm.PackageManager
+import android.content.ContentResolver
+import android.content.ContentValues
+import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.media.MediaScannerConnection
-import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.text.InputType
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
-import androidx.fragment.app.Fragment
 import androidx.core.content.ContextCompat
+import androidx.core.view.removeItemAt
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
@@ -28,17 +28,15 @@ import com.example.bookbuddy.databinding.FragmentAdminBooksBinding
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.ui.navdrawer.AdminFragmentDirections
-import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.navController
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
-import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import com.google.zxing.common.BitMatrix
 import com.google.zxing.oned.Code128Writer
 import kotlinx.coroutines.*
-import java.io.*
 import kotlin.coroutines.CoroutineContext
 
 class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
@@ -141,7 +139,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         val fra = requireArguments().getParcelable("fragment") as? AdminFragment?
 
         val bundle = Bundle()
-        bundle.putSerializable("book", book)
+        bundle.putParcelable("book", book)
         bundle.putParcelable("fragment", fra)
         //val action = AdminLibrariesFragmentDirections.actionNavBookToNavInsertBook(bundle)
         val action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
@@ -202,7 +200,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 //saveBarcodeToStorage(requireActivity().applicationContext, selection.isbn)
                 //saveBarcodeToGallery(requireContext(), selection.isbn)
                 var a = generateBarcode(selection.isbn)
-                saveImageToGallery(a)
+                saveImageToGallery(a, selection.isbn)
             } else {
                 showSnackBar(requireContext(), requireView(), getString(R.string.SB_PickABook))
             }
@@ -292,11 +290,12 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         return null
     }
 
-    private fun saveImageToGallery(bitmap: Bitmap?) {
+    private fun saveImageToGallery(bitmap: Bitmap?, isbn: String) {
         bitmap?.let {
+            val currentTimeMillis = System.currentTimeMillis()
             val contentResolver: ContentResolver = requireActivity().applicationContext.contentResolver
             val contentValues = ContentValues().apply {
-                put(MediaStore.Images.Media.DISPLAY_NAME, "barcode_image")
+                put(MediaStore.Images.Media.DISPLAY_NAME, isbn + "_" + currentTimeMillis.toString())
                 put(MediaStore.Images.Media.MIME_TYPE, "image/png")
                 put(MediaStore.Images.Media.WIDTH, it.width)
                 put(MediaStore.Images.Media.HEIGHT, it.height)
@@ -477,13 +476,12 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
     }
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        job.cancel()
+
+    override fun onDetach() {
+        println("HOLA")
+        setHasOptionsMenu(false)
+        gMenu?.removeItem(R.id.action_search)
+        super.onDetach()
     }
 
     override val coroutineContext: CoroutineContext

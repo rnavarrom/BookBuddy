@@ -18,8 +18,8 @@ import com.example.bookbuddy.adapters.SearchLibrariesAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileSearchLibraryBinding
 import com.example.bookbuddy.models.LibraryExtended
-import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Tools
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 

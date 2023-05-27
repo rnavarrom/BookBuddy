@@ -6,26 +6,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.Test.ActualReading
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
 import com.example.bookbuddy.ui.navdrawer.HomeFragmentDirections
-import com.example.bookbuddy.utils.*
-import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
+import com.example.bookbuddy.utils.currentUser
+import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -79,7 +75,7 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
         holder.imatge.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("isbn", list[position].isbn)
-            bundle.putSerializable("fragment", fragment)
+            bundle.putParcelable("fragment", fragment)
             val action = HomeFragmentDirections.actionNavHomeToNavBookDisplay(bundle)
             navController.navigate(action)            
         }

@@ -1,6 +1,5 @@
 package com.example.bookbuddy.api
 
-import android.media.Image
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Response
