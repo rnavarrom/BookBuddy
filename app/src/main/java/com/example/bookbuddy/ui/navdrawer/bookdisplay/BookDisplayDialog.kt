@@ -371,16 +371,16 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
     override fun onInit(p0: Int) {
         var lang = getStoredLanguage()
         var country = getStoredLanguage()
-        if(lang == "en"){
+        if (lang == "en"){
             country = "us"
-        }else if(lang == "ca"){
+        }else if (lang == "ca"){
             country = "es"
         }
         if (p0 == TextToSpeech.SUCCESS) {
-            val output =
-                tts!!.setLanguage(Locale(lang, country))
-            if (output == TextToSpeech.LANG_MISSING_DATA || output == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("TTS", "The language is not supported")
+            val output = tts!!.setLanguage(Locale(lang, country))
+            if (output == TextToSpeech.LANG_MISSING_DATA ||
+                output == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", getString(R.string.MSG_LangNotSuported))
             }
         }
     }

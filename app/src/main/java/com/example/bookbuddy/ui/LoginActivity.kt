@@ -37,11 +37,11 @@ import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
 
 class LoginActivity : AppCompatActivity(), ApiErrorListener {
+    private val api = CrudApi(this@LoginActivity)
     private lateinit var binding: ActivityLoginBinding
     private lateinit var userPrefs: UserPreferences
     private lateinit var savedUser: String
     private lateinit var savedPassword: String
-    private val api = CrudApi(this@LoginActivity)
     private val guideLineMin = 0.23F
     private val guideLineMax = 0.35F
 
@@ -125,9 +125,8 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
             val editText = EditText(applicationContext)
             editText.hint = getString(R.string.LAY_HintEnterAcountEmail)
             builder.setTitle(getString(R.string.MSG_RecoverPassword))
-                .setView(editText) // Aquí asignamos el diseño personalizado del diálogo que contiene el EditText
+                .setView(editText)
                 .setPositiveButton(getString(R.string.BT_Accept)) { _, _ ->
-                    // Acciones a realizar al hacer clic en "Aceptar"
                     val inputValue = editText.text.toString()
                     if (Tools.isEmailValid(inputValue)){
                         val emailAviable : Boolean? = isEmailAviable(inputValue)
@@ -142,8 +141,6 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
                         Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_EmailNotCorrect))
                     }
 
-                    // Realizar acciones con el valor ingresado en el EditText
-                    //dialog.dismiss()
                 }
                 .show()
         }
@@ -234,20 +231,17 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
     private fun sendEmail(email: String, shaPassword: String, password: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val result = api.updateUserPasswordMail(email, shaPassword)
-
             if (result != null && result){
                 val properties = Properties()
                 properties["mail.smtp.host"] = "smtp.gmail.com"
                 properties["mail.smtp.port"] = "587"
                 properties["mail.smtp.auth"] = "true"
                 properties["mail.smtp.starttls.enable"] = "true"
-
                 val session = Session.getInstance(properties, object : Authenticator() {
                     override fun getPasswordAuthentication(): PasswordAuthentication {
                         return PasswordAuthentication(getString(R.string.AppEmail), getString(R.string.AppEmailCode))
                     }
                 })
-
                 try {
                     val message = MimeMessage(session)
                     message.setFrom(InternetAddress(getString(R.string.AppEmail)))

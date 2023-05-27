@@ -235,5 +235,6 @@
     <string name="MSG_ReladingFragment">Reloading fragment</string>
     <string name="MSG_Result">\"Result: \"</string>
     <string name="LAY_genre">GENRE</string>
+    <string name="MSG_LangNotSuported">The language is not supported</string>
 
 </resources>

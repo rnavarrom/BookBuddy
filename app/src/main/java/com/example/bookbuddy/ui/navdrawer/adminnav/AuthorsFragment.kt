@@ -29,11 +29,8 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var position = 0
     private var lastPosition = -1
     private var authors: MutableList<Author>? = null
-
     private lateinit var gMenu: Menu
-
     private lateinit var searchItem: MenuItem
-
     private var search: String? = null
     private var authorName: String? = null
     private val api = CrudApi(this@AuthorsFragment)
