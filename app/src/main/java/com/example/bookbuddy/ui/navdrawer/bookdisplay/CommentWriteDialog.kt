@@ -20,7 +20,7 @@ import com.example.bookbuddy.databinding.DialogBookdisplayWriteCommentBinding
 import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext

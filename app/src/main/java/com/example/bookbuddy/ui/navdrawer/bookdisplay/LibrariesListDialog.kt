@@ -21,7 +21,7 @@ import com.example.bookbuddy.databinding.DialogBookdisplayLibrariesListBinding
 import com.example.bookbuddy.models.LibraryExtended
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.navController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices

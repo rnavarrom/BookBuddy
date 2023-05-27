@@ -17,7 +17,7 @@ import com.example.bookbuddy.ui.navdrawer.ContactsFragment
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*

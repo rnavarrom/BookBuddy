@@ -16,7 +16,7 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileBookmarksBinding
 import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.utils.Tools
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext

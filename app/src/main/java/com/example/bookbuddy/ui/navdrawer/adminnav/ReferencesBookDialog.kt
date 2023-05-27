@@ -17,7 +17,7 @@ import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.adapters.AdminBookLibraryAdapter
 import com.example.bookbuddy.adapters.AdminGenresAdapter
 import com.example.bookbuddy.api.CrudApi
-import com.example.bookbuddy.databinding.FragmentAdminBookReferencesDialogBinding
+import com.example.bookbuddy.databinding.DialogAdminBookReferencesBinding
 import com.example.bookbuddy.models.*
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileAuthorDialog
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileLanguageDialog
@@ -25,7 +25,7 @@ import com.example.bookbuddy.ui.navdrawer.profile.ProfileLibraryDialog
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileSearchDialog
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -34,7 +34,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
     ProfileAuthorDialog.OnAuthorSearchCompleteListener,
     ProfileLanguageDialog.OnLanguageSearchCompleteListener,
     ProfileLibraryDialog.OnLibrarySearchCompleteListener {
-    lateinit var binding: FragmentAdminBookReferencesDialogBinding
+    lateinit var binding: DialogAdminBookReferencesBinding
     private var job: Job = Job()
     private lateinit var adapterGenres: AdminGenresAdapter
     private lateinit var adapterLibraries: AdminBookLibraryAdapter
@@ -168,7 +168,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  FragmentAdminBookReferencesDialogBinding.inflate(layoutInflater, container, false)
+        binding =  DialogAdminBookReferencesBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
         Tools.setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_BookReferences))

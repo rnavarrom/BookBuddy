@@ -16,7 +16,7 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.ui.navdrawer.bookdisplay.CommentsListDialogDirections
 import com.example.bookbuddy.utils.Tools
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import java.io.File

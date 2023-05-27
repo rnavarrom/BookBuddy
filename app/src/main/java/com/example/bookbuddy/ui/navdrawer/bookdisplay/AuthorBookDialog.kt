@@ -18,7 +18,7 @@ import com.example.bookbuddy.databinding.DialogBookdisplayAuthorbooksBinding
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 

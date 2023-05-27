@@ -20,7 +20,7 @@ import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.ui.navdrawer.AdminFragmentDirections
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -40,6 +40,7 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private var search: String? = null
     private val api = CrudApi(this@LibrariesFragment)
+    private var isOnCreateViewExecuted = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -56,7 +57,7 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         getLibraries(true)
         loadingEnded()
-
+        isOnCreateViewExecuted = true
         return binding.root
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -111,14 +112,14 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     private fun insertLibrary(){
-        val fra = requireArguments().getSerializable("fragment") as? AdminFragment?
+        val fra = requireArguments().getParcelable("fragment") as? AdminFragment?
 
         if (fra != null){
             println("OKS")
         }
 
         val bundle = Bundle()
-        bundle.putSerializable("fragment", arguments?.getSerializable("fragment") as? AdminFragment?)
+        bundle.putParcelable("fragment", arguments?.getParcelable("fragment") as? AdminFragment?)
         //val action = AdminLibrariesFragmentDirections.actionNavLibraryToNavInsertLibrary(bundle)
         val action = AdminFragmentDirections.actionNavAdminToNavInsertLibrary(bundle)
         navController.navigate(action)
@@ -126,7 +127,7 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private fun editLibrary(library: Library){
         val bundle = Bundle()
-        bundle.putSerializable("fragment", arguments?.getSerializable("fragment") as? AdminFragment?)
+        bundle.putParcelable("fragment", arguments?.getParcelable("fragment") as? AdminFragment?)
         bundle.putSerializable("library", library)
         val action = AdminFragmentDirections.actionNavAdminToNavInsertLibrary(bundle)
         navController.navigate(action)
@@ -222,12 +223,14 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
                         libraries!!.addAll((api.getLibraries(search!!, true, position) as MutableList<Library>?)!!)
                     }
                 }
-                if (addAdapter){
-                    binding.rvLibraries.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                    adapter = AdminLibraryAdapter(libraries as ArrayList<Library>)
-                    binding.rvLibraries.adapter = adapter
-                } else {
-                    adapter.updateList(libraries as ArrayList<Library>)
+                if (libraries != null){
+                    if (addAdapter){
+                        binding.rvLibraries.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                        adapter = AdminLibraryAdapter(libraries as ArrayList<Library>)
+                        binding.rvLibraries.adapter = adapter
+                    } else {
+                        adapter.updateList(libraries as ArrayList<Library>)
+                    }
                 }
             }
             corrutina.join()
@@ -235,7 +238,9 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        if (isOnCreateViewExecuted){
+            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
     }
 
     override fun onDestroy() {

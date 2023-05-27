@@ -18,7 +18,7 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminAuthorsBinding
 import com.example.bookbuddy.models.Author
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -37,6 +37,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var search: String? = null
     private var authorName: String? = null
     private val api = CrudApi(this@AuthorsFragment)
+    private var isOnCreateViewExecuted = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -58,7 +59,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         getAuthors(true)
         loadingEnded()
-
+        isOnCreateViewExecuted = true
         return binding.root
     }
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -285,25 +286,23 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                         )
                     }
                 }
-                if (addAdapter) {
-                    binding.rvAuthors.layoutManager =
-                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                    authors!!.forEach {
-                        println(it.authorId)
-                        println(it.name)
-                        println(it.cardview)
+                if (authors != null){
+                    if (addAdapter) {
+                        binding.rvAuthors.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                        adapter = AdminAuthorsAdapter(authors as ArrayList<Author>)
+                        binding.rvAuthors.adapter = adapter
+                    } else {
+                        adapter.updateList(authors as ArrayList<Author>)
                     }
-                    adapter = AdminAuthorsAdapter(authors as ArrayList<Author>)
-                    binding.rvAuthors.adapter = adapter
-                } else {
-                    adapter.updateList(authors as ArrayList<Author>)
                 }
             }
             corrutine.join()
         }
     }
     override fun onApiError() {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        if (isOnCreateViewExecuted){
+            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
     }
     override fun onDestroy() {
         super.onDestroy()

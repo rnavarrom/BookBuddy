@@ -19,7 +19,7 @@ import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentScanBinding
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.base.ApiErrorListener
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
