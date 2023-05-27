@@ -48,7 +48,7 @@
                     android:scaleType="centerCrop"/>
                 <ImageView
                     android:id="@+id/book_mark"
-                    android:tooltipText="BookMark"
+                    android:tooltipText="@string/TT_BookMark"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@color/primary_green"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +60,7 @@
 
             <TextView
                 android:id="@+id/d_book_title"
-                android:tooltipText="Title"
+                android:tooltipText="@string/TT_Title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
@@ -72,7 +72,7 @@
 
             <TextView
                 android:id="@+id/d_book_author"
-                android:tooltipText="Author"
+                android:tooltipText="@string/TT_Author"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
@@ -81,7 +81,7 @@
 
             <TextView
                 android:id="@+id/d_book_language"
-                android:tooltipText="Language"
+                android:tooltipText="@string/TT_Language"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
@@ -90,7 +90,7 @@
 
             <TextView
                 android:id="@+id/d_book_publishdate"
-                android:tooltipText="Publish Date"
+                android:tooltipText="@string/TT_PublishDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
@@ -134,7 +134,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="Genres"
+                android:text="@string/LT_Genres"
                 android:textColor="@color/primary_green"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -154,7 +154,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="Description"
+                android:text="@string/LT_Description"
                 android:textColor="@color/primary_green"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -167,7 +167,6 @@
                 android:layout_height="wrap_content"
                 android:maxLines="12"
                 android:lines="12"
-                android:text="Long DescriptionLong DescriptionLong DescriptionLong DLong DescriptionLong DescriptionLong DescriptionLong DesescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLonLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong DescriptionLong Description"
                 android:justificationMode="inter_word"
                 android:scrollbars="vertical"
                 android:fadeScrollbars="false"
@@ -177,7 +176,7 @@
 
             <ImageView
                 android:id="@+id/icon_libraries"
-                android:tooltipText="Libraries"
+                android:tooltipText="@string/TT_Libraries"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_marginEnd="20dp"
@@ -188,7 +187,7 @@
 
             <TextView
                 android:id="@+id/number_libraries"
-                android:text="4"
+                android:text="0"
                 android:textColor="@color/primary_green"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -196,7 +195,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
             <ImageView
-                android:tooltipText="Add comment"
+                android:tooltipText="@string/TT_AddComment"
                 android:id="@+id/icon_add_comments"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
@@ -206,7 +205,7 @@
                 app:layout_constraintTop_toTopOf="@id/icon_comments"/>
 
             <ImageView
-                android:tooltipText="Comments"
+                android:tooltipText="@string/TT_Comments"
                 android:id="@+id/icon_comments"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
@@ -217,7 +216,7 @@
                 app:layout_constraintBottom_toTopOf="@id/number_comments"/>
 
             <ImageView
-                android:tooltipText="Text to speech"
+                android:tooltipText="@string/TT_TextToSpeech"
                 android:id="@+id/icon_text_to_speach"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
@@ -229,7 +228,7 @@
 
             <TextView
                 android:id="@+id/number_comments"
-                android:text="500"
+                android:text="0"
                 android:textColor="@color/primary_green"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

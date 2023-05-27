@@ -34,12 +34,12 @@ class SearchLibrariesAdapter(private var dialogFragment: DialogFragment, var dia
         holder.name.text = list[position].library.name
 
         holder.view.setOnClickListener {
-            addLibraryToFavourite(list[position].library.libraryId, list[position].library.name)
+            addLibraryToFavourite(list[position].library.libraryId, list[position].library.name, list[position].library.zipCode)
         }
     }
 
-    private fun addLibraryToFavourite(id: Int, name: String){
-        dialog?.onLibrarySearchComplete(id, name)
+    private fun addLibraryToFavourite(id: Int, name: String, zipCode: String){
+        dialog?.onLibrarySearchComplete(id, name, zipCode)
         dialogFragment.dismiss()
     }
 

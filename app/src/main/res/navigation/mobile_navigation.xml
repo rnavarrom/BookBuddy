@@ -18,7 +18,7 @@
     <fragment
         android:id="@+id/nav_search"
         android:name="com.example.bookbuddy.ui.navdrawer.SearchFragment"
-        android:label="Search"
+        android:label="@string/TB_Search"
         tools:layout="@layout/fragment_search" >
         <action
             android:id="@+id/action_nav_search_to_nav_book_display"
@@ -28,7 +28,7 @@
     <fragment
         android:id="@+id/nav_scan"
         android:name="com.example.bookbuddy.ui.navdrawer.ScanFragment"
-        android:label="Scan"
+        android:label="@string/TB_Scan"
         tools:layout="@layout/fragment_scan" >
         <action
             android:id="@+id/action_nav_scan_to_nav_book_display"
@@ -38,7 +38,7 @@
     <fragment
         android:id="@+id/nav_recommendations"
         android:name="com.example.bookbuddy.ui.navdrawer.RecommendationsFragment"
-        android:label="Recommendations"
+        android:label="@string/TB_Recommendations"
         tools:layout="@layout/fragment_recommendations" >
         <action
             android:id="@+id/action_nav_recommendations_to_nav_book_display"
@@ -48,7 +48,7 @@
     <fragment
         android:id="@+id/nav_contacts"
         android:name="com.example.bookbuddy.ui.navdrawer.ContactsFragment"
-        android:label="Contacts"
+        android:label="@string/TB_Contacts"
         tools:layout="@layout/fragment_contacts" >
         <action
             android:id="@+id/action_nav_contacts_to_nav_profile_dialog"
@@ -58,7 +58,7 @@
     <fragment
         android:id="@+id/nav_profile"
         android:name="com.example.bookbuddy.ui.navdrawer.ProfileFragment"
-        android:label="Profile"
+        android:label="@string/TB_Profile"
         tools:layout="@layout/fragment_profile" >
         <argument
             android:name="bundle"
@@ -74,7 +74,7 @@
     <fragment
         android:id="@+id/nav_admin"
         android:name="com.example.bookbuddy.ui.navdrawer.AdminFragment"
-        android:label="Admin"
+        android:label="@string/TB_Admin"
         tools:layout="@layout/fragment_admin" >
         <action
             android:id="@+id/action_nav_admin_to_nav_insert_library"

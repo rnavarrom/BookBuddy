@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -119,6 +120,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
         binding.passwordForgor.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(this)
             val editText = EditText(applicationContext)
+            editText.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
             editText.hint = getString(R.string.LAY_HintEnterAcountEmail)
             builder.setTitle(getString(R.string.MSG_RecoverPassword))
                 .setView(editText) // Aquí asignamos el diseño personalizado del diálogo que contiene el EditText

@@ -144,14 +144,14 @@
     <string name="LAY_CreateAcount">Create acount</string>
     <string name="LAY_Register">Register</string>
     <string name="LAY_HintUserName">User Name</string>
-    <string name="LAY_HintEmail" translatable="false">Email</string>
+    <string name="LAY_HintEmail">Email</string>
     <string name="LAY_HintPassword">Password</string>
     <string name="LAY_HintPassword2">Repeat Password</string>
     <string name="LAY_ReadUserConditions">Read and accept user conditions</string>
     <string name="BT_Register">Register</string>
     <string name="LAY_AppName" translatable="false">BookBuddy</string>
     <string name="LAY_Login">Login</string>
-    <string name="LAY_AutoLogin" translatable="false">Auto login</string>
+    <string name="LAY_AutoLogin">Auto login</string>
     <string name="LAY_ForgotPassword">Forgot password?</string>
     <string name="LAY_LogIn">Log In</string>
     <string name="LAY_SignIn">Sign In</string>
@@ -217,7 +217,7 @@
     <string name="Menu_Genres">Genres</string>
     <string name="Menu_Authors">Authors</string>
     <string name="Menu_Libraries">Libraries</string>
-    <string name="Menu_Users">Users</string>
+    <string name="Menu_Users">Requests</string>
     <string name="ClosingAPP">Closing BookBuddy</string>
     <string name="ClosingAPP2">Are you sure you want to close this screen?</string>
     <string name="No">No</string>
@@ -229,11 +229,43 @@
     <string name="MSG_PasswordMatch">Passwords must match</string>
     <string name="MSG_PasswordBlank">Can\'t be blank</string>
     <string name="BT_ChangePassword">Change password</string>
-    <string name="LAY_HintEnterAcountEmail">Enter you account email</string>
+    <string name="LAY_HintEnterAcountEmail">Enter your account email</string>
     <string name="MSG_CouldNotTrace">Could not trace a route</string>
     <string name="BT_Map">Map</string>
     <string name="MSG_ReladingFragment">Reloading fragment</string>
-    <string name="MSG_Result">\"Result: \"</string>
+    <string name="MSG_Result">"Result: "</string>
     <string name="LAY_genre">GENRE</string>
+    <string name="MSG_NotSelected">Not selected</string>
+    <string name="MSG_Followers">" followers"</string>
+    <string name="MSG_Comments">COMMENTS</string>
+    <string name="MSG_Reads">READS</string>
+    <string name="SB_ImageNotUploaded">Image not uploaded, please try again.</string>
+    <string name="CoverWarningMessage">Cover cannot be empty</string>
+    <string name="TT_BookMark">BookMark</string>
+    <string name="TT_Title">Title</string>
+    <string name="TT_Author">Author</string>
+    <string name="TT_Language">Language</string>
+    <string name="TT_PublishDate">Publish Date</string>
+    <string name="LT_Genres">Genres</string>
+    <string name="LT_Description">Description</string>
+    <string name="TT_Comments">Comments</string>
+    <string name="TT_TextToSpeech">Text to speech</string>
+    <string name="TT_AddComment">Add comment</string>
+    <string name="TT_Libraries">Libraries</string>
+    <string name="MSG_result">Result</string>
+    <string name="TB_Search">Search</string>
+    <string name="TB_Scan">Scan</string>
+    <string name="TB_Recommendations">Recommendations</string>
+    <string name="TB_Contacts">Contacts</string>
+    <string name="TB_Admin">Admin</string>
+    <string name="SB_GenreAdded">Genre Added</string>
+    <string name="SB_GenreInList">Genre already in the list</string>
+    <string name="SB_AuthorChanged">Author changed</string>
+    <string name="SB_LanguageChanged">Language changed</string>
+    <string name="SB_LibraryAlreadyInList">Library already in the list</string>
+    <string name="SB_LibraryAdded">Library Added</string>
+    <string name="SB_TitleNumberCopies">Number of copies</string>
+    <string name="MSG_Copies">\" copies\"</string>
+    <string name="SB_GenresLimit">Limit of 10 genres</string>
 
 </resources>

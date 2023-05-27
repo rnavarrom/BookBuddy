@@ -27,7 +27,6 @@
 
         <TextView
             android:id="@+id/tv_name"
-            android:text="AAAAAAAAAAAAA"
             android:textStyle="bold"
             android:layout_marginStart="10dp"
             android:layout_width="wrap_content"
@@ -37,7 +36,6 @@
 
         <TextView
             android:id="@+id/tv_date"
-            android:text="datteeee"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/tv_name"
@@ -77,7 +75,6 @@
 
         <TextView
             android:id="@+id/tv_comment"
-            android:text="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
             app:layout_constraintTop_toBottomOf="@id/profile_imageView"
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"

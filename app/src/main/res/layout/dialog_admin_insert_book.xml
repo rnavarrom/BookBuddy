@@ -199,7 +199,7 @@
                 android:layout_height="150dp"
                 android:background="@color/black"
                 app:layout_constraintTop_toBottomOf="@id/tv_cover"
-                app:layout_constraintBottom_toTopOf="@id/btn_cancel"
+                app:layout_constraintBottom_toTopOf="@id/btn_references"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 android:scaleType="centerCrop"
@@ -210,9 +210,10 @@
                 android:text="@string/BT_References"
                 android:layout_marginTop="20dp"
                 android:backgroundTint="@color/primary_green"
+                app:layout_constraintTop_toBottomOf="@id/iv_cover"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/btn_cancel"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/btn_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
@@ -222,7 +223,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/primary_green"
-                app:layout_constraintStart_toEndOf="@id/btn_references"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/btn_accept"/>
 

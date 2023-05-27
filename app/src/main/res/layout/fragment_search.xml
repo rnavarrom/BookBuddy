@@ -7,16 +7,6 @@
     tools:context=".ui.navdrawer.SearchFragment"
     android:id="@+id/container"
     >
-<!--
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/fake_button"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/Search_view"
-        android:layout_marginLeft="20dp"
-        />
--->
     <EditText
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -105,8 +95,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/Text_Result"
-        android:text="Result"
-        android:textSize="20dp"
+        android:text="@string/MSG_result"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@color/primary_green"
         android:drawableStart="@drawable/ic_search_book"
