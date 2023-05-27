@@ -192,7 +192,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
             )
             return false
         }
-        //Chgeck if the email is not repeated in the DB
+        //Check if the email is not repeated in the DB
         val emailAviable: Boolean? = isEmailAviable(binding.CAEditEmail.text.toString())
         if (emailAviable == null) {
             return false
