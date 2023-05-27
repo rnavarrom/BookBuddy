@@ -229,4 +229,19 @@
     <string name="TB_Recommendations">Recomanacions</string>
     <string name="TB_Contacts">Contactes</string>
     <string name="TB_Admin">Administrador</string>
+    <string name="SB_GenreAdded">Gènere afegit</string>
+    <string name="SB_GenreInList">Gènere ja a la llista</string>
+    <string name="SB_AuthorChanged">Autor canviat</string>
+    <string name="SB_LanguageChanged">L\'idioma ha canviat</string>
+    <string name="SB_LibraryAlreadyInList">La biblioteca ja és a la llista</string>
+    <string name="SB_LibraryAdded">S\'ha afegit la biblioteca</string>
+    <string name="SB_TitleNumberCopies">Nombre de còpies</string>
+    <string name="MSG_Copies">" còpies"</string>
+    <string name="SB_GenresLimit">Límit de 10 gèneres</string>
+    <string name="MSG_ShareTitle">Comparteix la ressenya</string>
+    <string name="MSG_ShareReviewOf">"Revisió de "</string>
+    <string name="MSG_ShareRating">"(Puntuació: "</string>
+    <string name="MSG_ShareStars">" estrelles:"</string>
+    <string name="MSG_ShareText">Doneu un cop d\'ull a la ressenya de BookBuddy!</string>
+    <string name="SB_ScanFailed">Ha fallat l\'escaneig</string>
 </resources>

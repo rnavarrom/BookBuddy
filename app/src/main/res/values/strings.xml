@@ -265,7 +265,13 @@
     <string name="SB_LibraryAlreadyInList">Library already in the list</string>
     <string name="SB_LibraryAdded">Library Added</string>
     <string name="SB_TitleNumberCopies">Number of copies</string>
-    <string name="MSG_Copies">\" copies\"</string>
+    <string name="MSG_Copies"> copies</string>
     <string name="SB_GenresLimit">Limit of 10 genres</string>
+    <string name="MSG_ShareTitle">Share review</string>
+    <string name="MSG_ShareReviewOf">Review of </string>
+    <string name="MSG_ShareRating">(Rating: </string>
+    <string name="MSG_ShareStars"> stars): </string>
+    <string name="MSG_ShareText">Take a look at the review on BookBuddy!</string>
+    <string name="SB_ScanFailed">Scan failed</string>
 
 </resources>

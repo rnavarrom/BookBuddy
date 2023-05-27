@@ -148,13 +148,10 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         binding.bContacts.setOnClickListener {
             if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED) {
-                // Pedir permisos de acceso a los contactos
                 requestPermissions(arrayOf(android.Manifest.permission.READ_CONTACTS),
                     REQUEST_READ_CONTACTS)
             } else {
-                // Obtener los correos electrónicos de los contactos
                 val emails = getEmailsFromContacts()
-                // Guardar los correos electrónicos en una lista
                 val emailList = ArrayList<String>()
                 emailList.addAll(emails)
                 runBlocking {

@@ -105,13 +105,16 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
         holder.share.setOnClickListener {
             val title = title
             val rating = list[position].rating.toString()
-            val review = "Review of " + title + "\n(Rating: " + rating + " stars):\n Take a look at the review on BookBuddy!"
+            val review = context.getString(R.string.MSG_ShareReviewOf) + title + "\n" +
+                    context.getString(R.string.MSG_ShareRating) +  rating +
+                    context.getString(R.string.MSG_ShareStars) + "\n" +
+                    context.getString(R.string.MSG_ShareText)
             val shareIntent = Intent().apply {
                 action = Intent.ACTION_SEND
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, review)
             }
-            activity.startActivity(Intent.createChooser(shareIntent, "Share review"))
+            activity.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.MSG_ShareTitle)))
         }
 
         holder.username.setOnClickListener{
