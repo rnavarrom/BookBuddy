@@ -56,10 +56,20 @@
             app:layout_constraintBottom_toBottomOf="@id/profile_imageView"
             app:layout_constraintStart_toStartOf="@id/tv_name" />
 
-        <ImageButton
-            android:id="@+id/drop_menu"
+        <ImageView
+            android:id="@+id/iv_share"
+            android:src="@drawable/ic_share"
+            app:tint="@color/primary_green"
+            android:padding="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageButton
+            android:id="@+id/drop_menu"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/iv_share"
             android:backgroundTint="@color/white"
             android:src="@drawable/ic_drop_down_menu"
             android:layout_width="wrap_content"

@@ -1,7 +1,5 @@
 package com.example.bookbuddy.models
 
-import java.time.LocalDate
-
 data class UserItem(
     val bannedUsers: List<Any> = emptyList(),
     val comments: List<Any> = emptyList(),

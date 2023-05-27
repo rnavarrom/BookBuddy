@@ -23,9 +23,9 @@ import com.example.bookbuddy.ui.navdrawer.profile.ProfileAuthorDialog
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileLanguageDialog
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileLibraryDialog
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileSearchDialog
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.ApiErrorListener
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -113,7 +113,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         if (!languageExist){
             runBlocking {
                 val corrutine = launch {
-                    if (author != null){
+                    if (lang != null){
                         api.deleteBookLang(bookId, lang!!.languageId)
                     }
                     resultApi = api.insertBookLang(bookId, result)

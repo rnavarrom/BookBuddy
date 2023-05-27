@@ -5,6 +5,9 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -15,18 +18,26 @@ import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.bookbuddy.R
 import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.Utils.Constants.Companion.BASE_URL
 import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogAdminInsertBookBinding
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
+import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.ApiErrorListener
-import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -70,13 +81,13 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         val bundle = arguments?.getBundle("bundle")
         var toolbarMessage = ""
         if (bundle != null && bundle.containsKey("fragment")){
-            fragment = bundle.getSerializable("fragment") as? AdminFragment?
+            fragment = bundle.getParcelable("fragment") as? AdminFragment?
             if (fragment != null){
                 onAdminDialogClose = fragment
             }
             if (bundle.containsKey("book")){
                 mode = "edit"
-                book = bundle.getSerializable("book") as Book
+                book = bundle.getParcelable("book")!!
             }
 
             if (bundle.containsKey("isbn")){
@@ -212,7 +223,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         val description = binding.etDescription.text.toString().trim()
         val pages = binding.etPages.text.toString().toIntOrNull()
         val date = binding.etDate.text.toString()
-        val cover = binding.etCover.text.toString().trim()
+        var cover = binding.etCover.text.toString().trim()
 
         if (isbn.isEmpty()){
             showSnackBar(requireContext(), requireView(), getString(R.string.ISBNEmptyWarning))
@@ -247,7 +258,59 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             return
         }
         if (cover.isEmpty()){
-            return
+            if (this::tmpUri.isInitialized){
+                var bitmap: Bitmap?
+                Glide.with(this)
+                    .asBitmap()
+                    .load(tmpUri)
+                    .into(object : CustomTarget<Bitmap>() {
+                        override fun onResourceReady(
+                            resource: Bitmap,
+                            transition: Transition<in Bitmap>?
+                        ) {
+                            bitmap = resource
+                            val outputStream = ByteArrayOutputStream()
+                            val targetWidth = 120
+                            val targetHeight = 180
+                            val scaleFactor = Math.min(
+                                bitmap!!.width.toDouble() / targetWidth,
+                                bitmap!!.height.toDouble() / targetHeight
+                            )
+                            val scaledBitmap = Bitmap.createScaledBitmap(
+                                bitmap!!,
+                                (bitmap!!.width / scaleFactor).toInt(),
+                                (bitmap!!.height / scaleFactor).toInt(),
+                                false
+                            )
+                            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                            val byteArray = outputStream.toByteArray()
+
+                            val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
+                            val image = MultipartBody.Part.createFormData("image", isbn + "book.jpg", requestFile)
+                            cover = BASE_URL + "api/book/cover/" + isbn + "book.jpg"
+
+                            runBlocking {
+                                val ru = launch {
+                                    val response = api.uploadImageToAPI(true, image)
+                                    if (response != null) {
+                                        val response2 = api.updateProfilePic(currentUser.userId)
+                                    } else {
+                                        // TODO: NOSE
+                                        // Manejar la respuesta de error
+                                        showSnackBar(requireContext(), requireView(), "Image not uploaded, please try again.")
+                                    }
+                                }
+                                ru.join()
+                            }
+                        }
+
+                        override fun onLoadCleared(placeholder: Drawable?) {
+                            // Opcionalmente, puedes hacer algo aquí cuando se borra la carga
+                        }
+                    })
+            } else {
+                return
+            }
         }
 
         runBlocking {

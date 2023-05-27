@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.text.LineBreaker
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.speech.tts.TextToSpeech
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
@@ -22,20 +23,20 @@ import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Genre
 import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
-import com.example.bookbuddy.utils.navView
 import kotlinx.coroutines.*
+import kotlinx.parcelize.Parcelize
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
-
+@Parcelize
 class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitListener,
     ApiErrorListener, CommentWriteDialog.OnWriteCommentClose,
-    CommentsListDialog.OnReadCommentClose, java.io.Serializable {
+    CommentsListDialog.OnReadCommentClose, Parcelable {
     lateinit var binding: DialogBookdisplayBinding
     private var job: Job = Job()
     private var book: Book? = null
@@ -82,7 +83,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
             }
 
             if (bundle.containsKey("fragment")){
-                val fragment = bundle.getSerializable("fragment") as HomeFragment
+                val fragment = bundle.getParcelable("fragment") as? HomeFragment?
                 onBookDisplayClose = fragment
             }
 
@@ -256,14 +257,15 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
             val bundle = Bundle()
             bundle.putInt("bookid", book!!.bookId)
             bundle.putString("isbn", book!!.isbn)
-            bundle.putSerializable("fragment", this)
+            bundle.putParcelable("fragment", this)
             val action = BookDisplayDialogDirections.actionNavBookDisplayToNavWriteComment(bundle)
             navController.navigate(action)
         }
         binding.iconComments.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt("bookid", book!!.bookId)
-            bundle.putSerializable("fragment", this)
+            bundle.putString("title", book!!.title)
+            bundle.putParcelable("fragment", this)
             val action = BookDisplayDialogDirections.actionNavBookDisplayToNavReadComment(bundle)
             navController.navigate(action)
         }
@@ -341,9 +343,12 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
 
     private fun getReaded(bookId: Int): Readed? {
         var response: Readed? = null
-        val corrutine = launch {
-            response = api.getReadedsFromBook(bookId, currentUser!!.userId)
-            readed = response
+        runBlocking {
+            val coroutine = launch {
+                response = api.getReadedsFromBook(bookId, currentUser!!.userId)
+                readed = response
+            }
+            coroutine.join()
         }
         return response
     }

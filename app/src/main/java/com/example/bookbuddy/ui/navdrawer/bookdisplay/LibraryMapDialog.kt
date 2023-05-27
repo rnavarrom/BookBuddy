@@ -79,7 +79,7 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
         }
 
         if (bundle != null) {
-            library = bundle.getSerializable("library") as? LibraryExtended
+            library = bundle.getParcelable("library") as? LibraryExtended
             if (library != null) {
                 loadLibraryBasicInformation(library!!)
             }
@@ -98,7 +98,7 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (arguments != null) {
-            library = bundle.getSerializable("library") as? LibraryExtended
+            library = bundle.getParcelable("library") as? LibraryExtended
             if (library != null) {
                 loadLibraryBasicInformation(library!!)
                 //TODO : prints

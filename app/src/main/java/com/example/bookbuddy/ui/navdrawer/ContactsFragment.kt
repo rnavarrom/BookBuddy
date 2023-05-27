@@ -1,6 +1,7 @@
 package com.example.bookbuddy.ui.navdrawer
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,14 +17,16 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentContactsBinding
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileDialog
-import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
+import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
 
-class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDialogClose, ApiErrorListener, java.io.Serializable {
+@Parcelize
+class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDialogClose, ApiErrorListener, Parcelable {
     lateinit var binding: FragmentContactsBinding
     private var job: Job = Job()
     lateinit var adapter: ContactAdapter
@@ -34,6 +37,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
     private var lastPosition = -1
     private var follows: MutableList<UserItem>? = null
     private var isOnCreateViewExecuted = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

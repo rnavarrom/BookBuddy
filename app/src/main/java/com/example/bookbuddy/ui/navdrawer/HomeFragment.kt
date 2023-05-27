@@ -1,6 +1,7 @@
 package com.example.bookbuddy.ui.navdrawer
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,15 +22,16 @@ import com.example.bookbuddy.databinding.FragmentHomeBinding
 import com.example.bookbuddy.models.ActualReading
 import com.example.bookbuddy.models.Pending
 import com.example.bookbuddy.ui.navdrawer.bookdisplay.BookDisplayDialog
-import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
+import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
 
-class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDialog.OnBookDisplayClose,
-    java.io.Serializable {
+@Parcelize
+class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDialog.OnBookDisplayClose, Parcelable {
     lateinit var binding: FragmentHomeBinding
     private var job: Job = Job()
     private lateinit var adapterPending: HomeBooksAdapter

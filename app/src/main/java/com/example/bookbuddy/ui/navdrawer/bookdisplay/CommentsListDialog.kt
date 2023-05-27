@@ -1,6 +1,7 @@
 package com.example.bookbuddy.ui.navdrawer.bookdisplay
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,19 +16,22 @@ import com.example.bookbuddy.adapters.CommentAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogBookdisplayCommentsBinding
 import com.example.bookbuddy.models.UserComments.Comment
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Tools.Companion.clearCache
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
+import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
 
-class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.OnWriteCommentClose, java.io.Serializable, ApiErrorListener {
+@Parcelize
+class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.OnWriteCommentClose, Parcelable, ApiErrorListener {
     lateinit var binding: DialogBookdisplayCommentsBinding
     private var job: Job = Job()
     private var bookId: Int = 0
+    private var title: String = ""
     lateinit var adapter: CommentAdapter
     private val api = CrudApi(this@CommentsListDialog)
 
@@ -61,9 +65,9 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
 
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle!!.getInt("bookid")
-
+        title = bundle.getString("title").toString()
         if (bundle.containsKey("fragment")){
-            val fragment = bundle.getSerializable("fragment") as? BookDisplayDialog?
+            val fragment = bundle.getParcelable("fragment") as? BookDisplayDialog?
             if (fragment != null){
                 onReadCommentClose = fragment
             }
@@ -91,7 +95,7 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
         }
         if (addAdapter){
             binding.rvComments.layoutManager = LinearLayoutManager(context)
-            adapter = CommentAdapter(comments as ArrayList<Comment>)
+            adapter = CommentAdapter(comments as ArrayList<Comment>, requireActivity(), title)
             binding.rvComments.adapter = adapter
         } else {
             adapter.updateList(comments as ArrayList<Comment>)
@@ -105,7 +109,7 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
         binding.addComment.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt("bookid", bookId)
-            bundle.putSerializable("fragmentComments", this)
+            bundle.putParcelable("fragmentComments", this)
             val action = CommentsListDialogDirections.actionNavReadCommentToNavWriteComment(bundle)
             navController.navigate(action)
 

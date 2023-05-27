@@ -18,9 +18,9 @@ import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogBookdisplayWriteCommentBinding
 import com.example.bookbuddy.models.UserComments.Comment
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -60,12 +60,12 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         bookId = bundle?.getInt("bookid")!!
 
         if (bundle.containsKey("fragment")){
-            val fragment = bundle.getSerializable("fragment") as? BookDisplayDialog?
+            val fragment = bundle.getParcelable("fragment") as? BookDisplayDialog?
             if (fragment != null){
                 onWriteCommentClose = fragment
             }
         } else if (bundle.containsKey("fragmentComments")){
-            val fragment = bundle.getSerializable("fragmentComments") as? CommentsListDialog?
+            val fragment = bundle.getParcelable("fragmentComments") as? CommentsListDialog?
             if (fragment != null){
                 onWriteCommentClose = fragment
             }

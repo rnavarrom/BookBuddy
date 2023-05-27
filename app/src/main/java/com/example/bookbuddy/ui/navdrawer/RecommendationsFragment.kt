@@ -15,8 +15,8 @@ import com.example.bookbuddy.adapters.RecommendedBooksAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentRecommendationsBinding
 import com.example.bookbuddy.models.Book
-import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext

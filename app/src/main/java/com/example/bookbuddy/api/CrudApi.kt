@@ -1,15 +1,10 @@
 package com.example.bookbuddy.api
 
 import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.models.Book
-import com.example.bookbuddy.models.Readed
-import com.example.bookbuddy.models.SimpleBook
-import com.example.bookbuddy.models.User
 import com.example.bookbuddy.models.*
 import com.example.bookbuddy.models.ActualReading
 import com.example.bookbuddy.models.Pending
 import com.example.bookbuddy.models.UserComments.Comment
-import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.safeApiCall
 import com.google.gson.GsonBuilder

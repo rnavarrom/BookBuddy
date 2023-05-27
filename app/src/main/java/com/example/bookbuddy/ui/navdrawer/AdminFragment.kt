@@ -3,19 +3,22 @@ package com.example.bookbuddy.ui.navdrawer
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.view.removeItemAt
+import androidx.fragment.app.Fragment
 import com.example.bookbuddy.R
 import com.example.bookbuddy.databinding.FragmentAdminBinding
 import com.example.bookbuddy.ui.navdrawer.adminnav.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
 
+@Parcelize
 class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialog.OnAdminDialogClose,
     InsertBookDialog.OnAdminDialogClose {
     lateinit var binding: FragmentAdminBinding
@@ -108,26 +111,4 @@ class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDia
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    constructor(parcel: Parcel) : this() {
-        fragmentSaved = parcel.readString().toString()
-    }
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(fragmentSaved)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<AdminFragment> {
-        override fun createFromParcel(parcel: Parcel): AdminFragment {
-            return AdminFragment(parcel)
-        }
-
-        override fun newArray(size: Int): Array<AdminFragment?> {
-            return arrayOfNulls(size)
-        }
-    }
 }

@@ -12,9 +12,9 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogInsertLibraryBinding
 import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.ApiErrorListener
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -59,14 +59,14 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
 
         val bundle = arguments?.getBundle("bundle")
         val toolbarMessage: String
-        val fragment = bundle!!.getSerializable("fragment") as? AdminFragment?
+        val fragment = bundle!!.getParcelable("fragment") as? AdminFragment?
         if (fragment != null){
             onAdminDialogClose = fragment
         }
 
         if (bundle.containsKey("library")){
             mode = "edit"
-            library = bundle.getSerializable("library") as Library
+            library = bundle.getParcelable("library")!!
         }
 
         if (mode == "edit"){

@@ -1,6 +1,8 @@
 package com.example.bookbuddy.adapters
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,16 +17,19 @@ import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.ui.navdrawer.bookdisplay.CommentsListDialogDirections
-import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.coroutines.CoroutineContext
 
 
-class CommentAdapter(var list: java.util.ArrayList<Comment>) :
+class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activity, val title: String) :
     RecyclerView.Adapter<CommentAdapter.ViewHolder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
     lateinit var view : View
@@ -35,6 +40,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
         val date = view.findViewById<TextView>(R.id.tv_date)!!
         val rating = view.findViewById<RatingBar>(R.id.book_rating_display)!!
         val comment = view.findViewById<TextView>(R.id.tv_comment)!!
+        val share = view.findViewById<ImageView>(R.id.iv_share)!!
         val dropmenu = view.findViewById<ImageButton>(R.id.drop_menu)
     }
 
@@ -84,12 +90,28 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>) :
         }
 
         holder.username.text = list[position].user!!.name
-        holder.date.text = list[position].fecha.toString()
+        val inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+        val outputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        val dateString = list[position].fecha.toString()
+        val dateTime = LocalDateTime.parse(dateString, inputFormat)
+        holder.date.text = dateTime.format(outputFormat)//list[position].fecha.toString()
         holder.rating.rating = list[position].rating.toFloat()
         holder.comment.text = list[position].comentText
 
         holder.profilePicture.setOnClickListener {
             goToUserProfile(list[position].user!!.userId, list[position].user!!.name)
+        }
+
+        holder.share.setOnClickListener {
+            val title = title
+            val rating = list[position].rating.toString()
+            val review = "Review of " + title + "\n(Rating: " + rating + "stars):\n Take a look at the review on BookBuddy!"
+            val shareIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, review)
+            }
+            activity.startActivity(Intent.createChooser(shareIntent, "Share review"))
         }
 
         holder.username.setOnClickListener{
