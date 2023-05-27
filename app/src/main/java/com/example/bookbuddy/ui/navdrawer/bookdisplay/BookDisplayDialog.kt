@@ -46,6 +46,8 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
     private var onBookDisplayClose: OnBookDisplayClose? = null
     private val api = CrudApi(this@BookDisplayDialog)
     private var isOnCreateViewExecuted = false
+    private var isPlaying = false
+
 
     interface OnBookDisplayClose {
         fun onBookDisplayClose()
@@ -337,7 +339,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         return response
     }
 
-    private fun getReaded(bookId: Int) {
+    private fun getReaded(bookId: Int): Readed? {
         var response: Readed? = null
         val corrutine = launch {
             response = api.getReadedsFromBook(bookId, currentUser!!.userId)
@@ -349,11 +351,16 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
     private fun speak() {
         if (tts!!.isSpeaking) {
             tts!!.stop()
+            isPlaying = false
         } else {
-            tts!!.defaultVoice
-            textts =
-                binding.dBookTitle.text.toString() + "  " + binding.dBookDescription.text.toString()
-            tts!!.speak(textts, TextToSpeech.QUEUE_FLUSH, null, null)
+            if(!isPlaying){
+                tts!!.defaultVoice
+                textts =
+                    binding.dBookTitle.text.toString() + "  " + binding.dBookDescription.text.toString()
+                tts!!.speak(textts, TextToSpeech.QUEUE_FLUSH, null, null)
+                isPlaying = true
+            }
+
         }
     }
     override fun onInit(p0: Int) {
