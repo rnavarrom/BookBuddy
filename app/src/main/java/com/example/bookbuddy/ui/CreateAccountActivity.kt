@@ -156,12 +156,19 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         if (binding.CAEditPassword.text.toString() != binding.CAEditPassword2.text.toString()
         ) {
             binding.CAEditPassword.setTextColor(getColor(R.color.red_error))
+            binding.CAEditPassword2.setTextColor(getColor(R.color.red_error))
             Tools.showSnackBar(
                 this,
                 binding.createAcountLayout,
                 getString(R.string.SB_PasswordNoMatch)
             )
             //Toast.makeText(this, , Toast.LENGTH_LONG).show()
+            return false
+        }
+        if (!Tools.isPasswordValid(binding.CAEditPassword.text.toString())) {
+            binding.CAEditPassword.setTextColor(getColor(R.color.red_error))
+            binding.CAEditPassword2.setTextColor(getColor(R.color.red_error))
+            Tools.showSnackBar(this, binding.createAcountLayout, "Password needs to be at least one letter lowercase, one uppsercase, one number and 8 characters long")
             return false
         }
         //check if the email has a valid formation
@@ -185,7 +192,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
             )
             return false
         }
-        //Chgeck if the email is not repeated in the DB
+        //Check if the email is not repeated in the DB
         val emailAviable: Boolean? = isEmailAviable(binding.CAEditEmail.text.toString())
         if (emailAviable == null) {
             return false

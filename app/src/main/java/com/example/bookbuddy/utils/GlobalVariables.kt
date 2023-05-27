@@ -26,7 +26,7 @@ import javax.net.ssl.*
 
 lateinit var navView: NavigationView
 lateinit var navController : NavController
-lateinit var currentUser : User
+var currentUser : User? = null
 lateinit var currentProfile: Profile
 var currentPicture: File? = null
 lateinit var currentUserCreate : UserItem

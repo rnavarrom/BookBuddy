@@ -293,7 +293,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                                 val ru = launch {
                                     val response = api.uploadImageToAPI(true, image)
                                     if (response != null) {
-                                        val response2 = api.updateProfilePic(currentUser.userId)
+                                        val response2 = api.updateProfilePic(currentUser!!.userId)
                                     } else {
                                         // TODO: NOSE
                                         // Manejar la respuesta de error

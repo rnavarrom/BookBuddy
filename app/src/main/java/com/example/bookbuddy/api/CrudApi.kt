@@ -2,8 +2,8 @@ package com.example.bookbuddy.api
 
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.models.*
-import com.example.bookbuddy.models.Test.ActualReading
-import com.example.bookbuddy.models.Test.Pending
+import com.example.bookbuddy.models.ActualReading
+import com.example.bookbuddy.models.Pending
 import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.safeApiCall
@@ -630,7 +630,7 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         )
     }
 
-    suspend fun getSearchGenres(name: String, position: Int): List<com.example.bookbuddy.models.Test.Genre>? {
+    suspend fun getSearchGenres(name: String, position: Int): List<com.example.bookbuddy.models.Extra.Genre>? {
         return safeApiCall(
             apiCall = { getRetrofit().create(ProfileAPI::class.java).getSearchGenres(name, position) },
             errorListener = errorListener!!
@@ -642,7 +642,7 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         //return null
     }
 
-    suspend fun getSearchAuthors(name: String, position: Int): List<com.example.bookbuddy.models.Test.Author>? {
+    suspend fun getSearchAuthors(name: String, position: Int): List<com.example.bookbuddy.models.Extra.Author>? {
         return safeApiCall(
             apiCall = { getRetrofit().create(ProfileAPI::class.java).getSearchAuthors(name, position) },
             errorListener = errorListener!!

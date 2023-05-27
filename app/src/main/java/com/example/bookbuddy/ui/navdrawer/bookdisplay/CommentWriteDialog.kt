@@ -90,7 +90,7 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private fun loadComment(){
         runBlocking {            
             val corrutina = launch {
-                comment = api.getCommentsFromUser(currentUser.userId, bookId)
+                comment = api.getCommentsFromUser(currentUser!!.userId, bookId)
             }
             corrutina.join()
         }
@@ -135,11 +135,11 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             runBlocking {                
                 val corrutina = launch {
                     if (comment != null){
-                        api.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser.userId,
+                        api.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser!!.userId,
                             bookId
                         )
                     } else {
-                        api.addCommentToAPI(text, stars, currentUser.userId, bookId)
+                        api.addCommentToAPI(text, stars, currentUser!!.userId, bookId)
                     }
                 }
                 corrutina.join()

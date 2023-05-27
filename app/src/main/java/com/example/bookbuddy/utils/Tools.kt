@@ -89,7 +89,7 @@ class Tools {
             }
 
             if (image != null){
-                if (currentUser.haspicture){
+                if (currentUser!!.haspicture){
                     var profileImg: ShapeableImageView = hView.findViewById(R.id.profile_imageView)
 
                     Glide.with(context)
@@ -105,7 +105,7 @@ class Tools {
             // Leer los bytes de la imagen
             val bytes = body!!.bytes()
             context.cacheDir.deleteRecursively()
-            val file = File(context.cacheDir, currentUser.userId.toString() + "user.jpg")
+            val file = File(context.cacheDir, currentUser!!.userId.toString() + "user.jpg")
             val outputStream = FileOutputStream(file)
             outputStream.write(bytes)
             outputStream.close()

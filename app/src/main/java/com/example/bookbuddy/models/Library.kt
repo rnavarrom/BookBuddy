@@ -3,15 +3,6 @@ package com.example.bookbuddy.models
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-/*
-data class Library(
-    val lat: Double,
-    val libraryId: Int,
-    val lon: Double,
-    val name: String,
-    val zipCode: String
-) : java.io.Serializable
-*/
 @Parcelize
 data class Library(
     val lat: Double,

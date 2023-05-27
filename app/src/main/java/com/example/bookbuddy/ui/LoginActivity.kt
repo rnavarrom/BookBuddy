@@ -42,6 +42,8 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
     private lateinit var savedUser: String
     private lateinit var savedPassword: String
     private val api = CrudApi(this@LoginActivity)
+    private val guideLineMin = 0.23F
+    private val guideLineMax = 0.35F
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -151,7 +153,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
             val userPassword = binding.MAEditPassword.text.toString()
             if (userName.isNotBlank() && userPassword.isNotBlank()) {
                 getUsers(userName, Sha.calculateSHA(userPassword))
-                if (currentUser.userId != -1) {
+                if (currentUser != null) {
                     if (binding.MACheckBox.isChecked) {
                         lifecycleScope.launch {
                             userPrefs.saveCredentials(userName, Sha.calculateSHA(userPassword))
@@ -162,16 +164,12 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
                         }
                     }
                     Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_LogIn))
-                    //Toast.makeText(this, "loging in", Toast.LENGTH_LONG).show()
+
                     var intent = Intent(this, NavDrawerActivity::class.java)
                     startActivity(intent)
                     finish()
-                    //}else{
-                    //  Toast.makeText(this, "Incorrect user or password",Toast.LENGTH_LONG).show()
-                    //}
                 } else {
                     Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_IncorrectUserPass))
-                    //Toast.makeText(this, "Incorrect user or password", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -190,15 +188,15 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
             mainLayout.getWindowVisibleDisplayFrame(rect)
             val screenHeight = mainLayout.rootView.height
             val keyboardHeight = screenHeight - rect.bottom
-            // Verifica si el teclado está oculto
+            // Checks if the keyboard is hidden
             if (keyboardHeight < keyboardValue) {
-                //binding.MAImage.visibility = View.VISIBLE
-                binding.pruebas.visibility = View.VISIBLE
+                binding.MAImage.visibility = View.VISIBLE
                 binding.guideLine.visibility = View.VISIBLE
+                binding.guideLine.setGuidelinePercent(guideLineMax)
             } else {
-                //binding.MAImage.visibility = View.GONE
-                binding.pruebas.visibility = View.GONE
+                binding.MAImage.visibility = View.GONE
                 binding.guideLine.visibility = View.GONE
+                binding.guideLine.setGuidelinePercent(guideLineMin)
             }
         }
     }
@@ -264,7 +262,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     private fun getUsers(userName: String, password: String) {
-        currentUser = User()
+        //currentUser = User()
         runBlocking {            
             val corrutina = launch {                
                 val tempData = api.getUserLogin(userName, password)
@@ -274,15 +272,15 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
             }
             corrutina.join()
         }
-        if (currentUser.userId > 0) {
+        if (currentUser != null) {
             runBlocking {                
                 val corrutina = launch {
-                    val tempData = api.getProfileUser(currentUser.userId)
+                    val tempData = api.getProfileUser(currentUser!!.userId)
                     if(tempData != null){
                         currentProfile = tempData
                     }
-                    if (currentUser.haspicture) {
-                        responseToFile(applicationContext, api.getUserImage(currentUser.userId))
+                    if (currentUser?.haspicture == true) {
+                        responseToFile(applicationContext, api.getUserImage(currentUser!!.userId))
                     }
                 }
                 corrutina.join()
@@ -338,8 +336,11 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
 
     private fun loadingEndedHome() {
         getUsers(savedUser, savedPassword)
-        val intent = Intent(this, NavDrawerActivity::class.java)
-        startActivity(intent)
+        if(currentUser != null){
+            val intent = Intent(this, NavDrawerActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun loadingEndedLogin() {

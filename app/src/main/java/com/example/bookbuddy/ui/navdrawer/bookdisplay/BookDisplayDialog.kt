@@ -47,6 +47,8 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
     private var onBookDisplayClose: OnBookDisplayClose? = null
     private val api = CrudApi(this@BookDisplayDialog)
     private var isOnCreateViewExecuted = false
+    private var isPlaying = false
+
 
     interface OnBookDisplayClose {
         fun onBookDisplayClose()
@@ -107,7 +109,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                         val corroutine = launch {
                                             result = api.setBookReading(
                                                 book!!.bookId,
-                                                currentUser.userId
+                                                currentUser!!.userId
                                             )
                                             if(result == true ){
                                                 getReaded(book!!.bookId)
@@ -125,7 +127,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                         val corroutine = launch {
                                             result = api.setBookPending(
                                                 book!!.bookId,
-                                                currentUser.userId
+                                                currentUser!!.userId
                                             )
                                             if(result == true) {
                                                 getReaded(book!!.bookId)
@@ -143,7 +145,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                         val corroutine = launch {
                                             result = api.setBookRead(
                                                 book!!.bookId,
-                                                currentUser.userId
+                                                currentUser!!.userId
                                             )
                                             if(result == true) {
                                                 getReaded(book!!.bookId)
@@ -161,7 +163,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                     val corroutine = launch {
                                         result = api.removeBookReading(
                                             book!!.bookId,
-                                            currentUser.userId
+                                            currentUser!!.userId
                                         )
                                         if(result == true){
                                             readed = null
@@ -299,6 +301,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
             navController.navigate(action)
         }
 
+
         for (i in book.languages.indices) {
             binding.dBookLanguage.text =
                 binding.dBookLanguage.text.toString() + book.languages[i].name
@@ -309,6 +312,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         binding.dBookPublishdate.text = book.publicationDate
         binding.dBookPages.text = "Pages: " + book.pages
         binding.dBookIsbn.text = "Isbn: " + book.isbn
+
 
         if (book.genres.size > 10) {
             binding.rvGenres.layoutManager = GridLayoutManager(context, 3)
@@ -330,32 +334,38 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         var response: Book? = null
         runBlocking {
             val corrutina = launch {
-                response = api.getBook(isbn!!, currentUser.userId)
+                response = api.getBook(isbn!!, currentUser!!.userId)
             }
             corrutina.join()
         }
         return response
     }
 
-    private fun getReaded(bookId: Int) {
+    private fun getReaded(bookId: Int): Readed? {
         var response: Readed? = null
         runBlocking {
             val coroutine = launch {
-                response = api.getReadedsFromBook(bookId, currentUser.userId)
+                response = api.getReadedsFromBook(bookId, currentUser!!.userId)
                 readed = response
             }
             coroutine.join()
         }
+        return response
     }
 
     private fun speak() {
         if (tts!!.isSpeaking) {
             tts!!.stop()
+            isPlaying = false
         } else {
-            tts!!.defaultVoice
-            textts =
-                binding.dBookTitle.text.toString() + "  " + binding.dBookDescription.text.toString()
-            tts!!.speak(textts, TextToSpeech.QUEUE_FLUSH, null, null)
+            if(!isPlaying){
+                tts!!.defaultVoice
+                textts =
+                    binding.dBookTitle.text.toString() + "  " + binding.dBookDescription.text.toString()
+                tts!!.speak(textts, TextToSpeech.QUEUE_FLUSH, null, null)
+                isPlaying = true
+            }
+
         }
     }
     override fun onInit(p0: Int) {

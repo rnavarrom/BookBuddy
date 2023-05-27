@@ -65,8 +65,8 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_Profile))
 
         val bundle = arguments?.getBundle("bundle")
-        profileUser = bundle?.getInt("userid", currentUser.userId)
-        username = bundle?.getString("username",  currentUser.name)
+        profileUser = bundle?.getInt("userid", currentUser!!.userId)
+        username = bundle?.getString("username",  currentUser!!.name)
 
         if (bundle != null){
             if (bundle.containsKey("fragment")){
@@ -78,8 +78,8 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
 
         if (profileUser == null){
-            profileUser = currentUser.userId
-            username = currentUser.name
+            profileUser = currentUser!!.userId
+            username = currentUser!!.name
         }
 
         launch {
@@ -100,7 +100,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 if(tempFollowers != null){
                     followers = tempFollowers
                 }
-                val tempFollowing = api.getIsFollowing(currentUser.userId,profileUser!!)
+                val tempFollowing = api.getIsFollowing(currentUser!!.userId,profileUser!!)
                 if(tempFollowing != null){
                     following = tempFollowing
                 }
@@ -127,7 +127,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 var followed : Boolean? = false
                 runBlocking {                    
                     val corrutina = launch {
-                        followed = api.addFollowToAPI(currentUser.userId, profileUser!!)
+                        followed = api.addFollowToAPI(currentUser!!.userId, profileUser!!)
                     }
                     corrutina.join()
                 }
@@ -144,7 +144,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                     .setPositiveButton(getString(R.string.BT_Unfollow)) { _, _ ->
                         runBlocking {
                             val corrutina = launch {
-                                var result = api.deleteFollowAPI(currentUser.userId, profileUser!!)
+                                var result = api.deleteFollowAPI(currentUser!!.userId, profileUser!!)
                             }
                             corrutina.join()
                         }

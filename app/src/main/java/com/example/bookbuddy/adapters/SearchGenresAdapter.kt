@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.models.Test.Genre
+import com.example.bookbuddy.models.Extra.Genre
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileSearchDialog
 import com.example.bookbuddy.utils.currentProfile
 import kotlinx.coroutines.CoroutineScope

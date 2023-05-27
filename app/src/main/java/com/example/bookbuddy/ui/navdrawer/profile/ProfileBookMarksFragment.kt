@@ -25,7 +25,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     lateinit var binding: FragmentProfileBookmarksBinding
     private var job: Job = Job()
-    private var userId: Int = currentUser.userId
+    private var userId: Int = currentUser!!.userId
     private var isProfileFragment: Boolean = false
     lateinit var adapter: ProfileBookMarkAdapter
     private val api = CrudApi(this@ProfileBookMarksFragment)
