@@ -105,7 +105,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
         val currentLanguageCode = getStoredLanguage()
         val curr = getCurrentLanguageCode(currentLanguageCode)
-        val languages = arrayOf("american_flag","catalan_flag","spanish_flag")
+        val languages = arrayOf("american_flag","catalan_flag")
         val adapter = LanguageSpinnerAdapter(requireContext(), languages)
         binding.languageSpinner.adapter = adapter
         var position = languages.indexOf(curr)
@@ -126,10 +126,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                             setLocal(requireActivity(), "ca")
                             saveLanguageCode(requireActivity().applicationContext,"ca")
                         }
-                        else -> {
-                            setLocal(requireActivity(), "es")
-                            saveLanguageCode(requireActivity().applicationContext,"es")
-                        }
                     }
                     recreate(requireActivity())
                 }
@@ -145,11 +141,9 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             username = currentUser.name
         }
 
-        launch {
-            loadUser()
-            loadTabLayout()
-            loadingEnded()
-        }
+        loadUser()
+        loadTabLayout()
+        loadingEnded()
 
         binding.bContacts.setOnClickListener {
             if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_CONTACTS)

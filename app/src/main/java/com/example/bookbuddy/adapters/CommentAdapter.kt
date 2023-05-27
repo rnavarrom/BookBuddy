@@ -105,7 +105,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
         holder.share.setOnClickListener {
             val title = title
             val rating = list[position].rating.toString()
-            val review = "Review of " + title + "\n(Rating: " + rating + "stars):\n Take a look at the review on BookBuddy!"
+            val review = "Review of " + title + "\n(Rating: " + rating + " stars):\n Take a look at the review on BookBuddy!"
             val shareIntent = Intent().apply {
                 action = Intent.ACTION_SEND
                 type = "text/plain"

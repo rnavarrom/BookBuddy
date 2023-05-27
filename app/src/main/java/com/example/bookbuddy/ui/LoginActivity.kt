@@ -54,7 +54,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
 
         val currentLanguageCode = getStoredLanguage()
         val curr = getCurrentLanguageCode(currentLanguageCode)
-        val languages = arrayOf("american_flag","catalan_flag","spanish_flag")
+        val languages = arrayOf("american_flag","catalan_flag")
         val adapter = LanguageSpinnerAdapter(this, languages)
         binding.languageSpinner.adapter = adapter
         val position = languages.indexOf(curr)
@@ -74,10 +74,6 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
                         "catalan_flag" -> {
                             setLocal(this@LoginActivity, "ca")
                             saveLanguageCode(applicationContext,"ca")
-                        }
-                        else -> {
-                            setLocal(this@LoginActivity, "es")
-                            saveLanguageCode(applicationContext,"es")
                         }
                     }
                     //recreate()
