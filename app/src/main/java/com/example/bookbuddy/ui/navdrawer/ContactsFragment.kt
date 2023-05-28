@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.ContactAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentContactsBinding
@@ -67,7 +67,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
     private fun getUserFollows(addAdapter: Boolean){
         runBlocking {
 
-            val corrutina = launch {
+            val coroutine = launch {
                 if (position == 0){
                     val tempFollows = api.getFollowersProfile(currentUser!!.userId, position) as MutableList<UserItem>?
                     if (tempFollows != null){
@@ -89,7 +89,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
                     }
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
     }
 

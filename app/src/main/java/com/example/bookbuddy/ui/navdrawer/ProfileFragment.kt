@@ -29,9 +29,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
-import com.example.bookbuddy.Utils.Sha
+import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.Constants.Companion.profileRequestOptions
+import com.example.bookbuddy.utils.Sha
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
@@ -154,7 +154,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                 val emailList = ArrayList<String>()
                 emailList.addAll(emails)
                 runBlocking {
-                    val corrutina = launch {
+                    val coroutine = launch {
                         var addedContacts : Int? = api.getEmailsContact(currentUser!!.userId, emailList)
                         var message = ""
                         if(addedContacts == null){
@@ -166,7 +166,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                         }
                         showSnackBar(requireContext(), requireView(),message)
                     }
-                    corrutina.join()
+                    coroutine.join()
                 }
             }
         }
@@ -398,10 +398,10 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         var result: Boolean? = false
         if (binding.et1PrefferredGenre.text.toString() != binding.et2PrefferredGenre.text.toString()){
             runBlocking {
-                val corrutina = launch {
+                val coroutine = launch {
                     result = api.updateProfileGenreToAPI(currentProfile.profileId, tmpGenreId)
                 }
-                corrutina.join()
+                coroutine.join()
             }
             if (result != null) {
                 currentProfile.genre!!.name = binding.et2PrefferredGenre.text.toString()
@@ -414,10 +414,10 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         var result: Boolean? = false
         if (binding.et1PrefferredAuthor.text.toString() != binding.et2PrefferredAuthor.text.toString()){
             runBlocking {
-                val corrutina = launch {
+                val coroutine = launch {
                     result = api.updateProfileAuthorToAPI(currentProfile.profileId, tmpAuthorId)
                 }
-                corrutina.join()
+                coroutine.join()
             }
             if (result != null){
                 currentProfile.author!!.name = binding.et2PrefferredAuthor.text.toString()
@@ -503,13 +503,13 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     private fun loadUser(){
         binding.tvUsername.text = currentUser!!.name
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 val tempFollowers = api.getFollowerCount(currentUser!!.userId)
                 if(tempFollowers != null){
                     followers = tempFollowers
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
         binding.tvFollowers.text = followers.toString() + getString(R.string.MSG_Followers)
 
@@ -607,8 +607,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                     val byteArray = outputStream.toByteArray()
 
-                    val requestFile =
-                        byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, content.size)
+                    val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
                     val image = MultipartBody.Part.createFormData("image", currentUser!!.userId.toString() + "user.jpg", requestFile)
 
 
@@ -618,10 +617,8 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                             if (response != null) {
                                 val response2 = api.updateProfilePic(currentUser!!.userId)
                                 currentUser!!.haspicture = true
-                                val body = response //.body()
-                                // Leer los bytes de la imagen
+                                val body = response
                                 val bytes = body.bytes()
-                                //requireContext().cacheDir.deleteRecursively()
                                 val file = File(requireContext().cacheDir, currentUser!!.userId.toString() + "user.jpg")
 
                                 withContext(Dispatchers.IO) {

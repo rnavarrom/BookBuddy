@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.AdminGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminGenresBinding
@@ -247,7 +247,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun getGenres(addAdapter: Boolean){
         runBlocking {
             val crudApi = CrudApi(this@GenresFragment)
-            val corrutina = launch {
+            val coroutine = launch {
                 if (position == 0){
                     genres = if (search.isNullOrEmpty()){
                         crudApi.getGenres("null", false, position) as MutableList<Genre>?
@@ -271,7 +271,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
                     }
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
     }
 

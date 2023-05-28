@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.RecommendedBooksAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentRecommendationsBinding
@@ -48,7 +48,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private fun getUserRecommended(addAdapter: Boolean){
         runBlocking {            
-            val corrutina = launch {
+            val coroutine = launch {
                 if (position == 0) {
                     val tempBooks = api.getRecommendedBooks(
                         currentUser!!.userId,
@@ -73,7 +73,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 }
             }
             }
-            corrutina.join()
+            coroutine.join()
         }
 
     }

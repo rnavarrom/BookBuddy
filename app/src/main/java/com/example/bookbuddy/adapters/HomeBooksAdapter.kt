@@ -9,7 +9,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
+import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.models.Pending
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
 import com.example.bookbuddy.ui.navdrawer.HomeFragmentDirections
@@ -18,7 +18,7 @@ import com.example.bookbuddy.utils.navController
 //Adapter for the home fragment, pending and read lists
 class HomeBooksAdapter(private var list: ArrayList<Pending>, val fragment: HomeFragment) : RecyclerView.Adapter<HomeBooksAdapter.ViewHolder>() {
     class ViewHolder(val vista: View) : RecyclerView.ViewHolder(vista) {
-        val imatge = vista.findViewById<ImageView>(R.id.book_cover)
+        val imatge: ImageView = vista.findViewById(R.id.book_cover)
        // val text = vista.findViewById<TextView>(R.id.book_rating)
     }
 

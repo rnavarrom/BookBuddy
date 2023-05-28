@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.AdminBooksAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminBooksBinding
@@ -294,7 +294,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     //Load or add more books
     private fun getBooks(addAdapter: Boolean){
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 if (position == 0){
                     books = if (search.isNullOrEmpty()){
                         api.getAllBooksSearch("null", false, position) as MutableList<Book>?
@@ -318,7 +318,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
                     }
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
     }
     override fun onApiError(connectionFailed: Boolean) {

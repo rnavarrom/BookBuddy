@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogInsertLibraryBinding
 import com.example.bookbuddy.models.Library

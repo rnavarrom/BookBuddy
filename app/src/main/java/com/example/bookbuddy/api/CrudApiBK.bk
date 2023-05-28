@@ -1,6 +1,6 @@
 package com.example.bookbuddy.api
 
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.models.SimpleBook
@@ -375,12 +375,12 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
     suspend fun getWalkingRoute(start: String, end: String): CleanResponse? {
         var response: Response<com.example.bookbuddy.models.Response>? = null
 
-        val corrutina = launch {
+        val coroutine = launch {
             response =
                 getRetrofitRoute().create(RouteAPI::class.java)
                     .getWalkingRoute(apikey, start, end)
         }
-        corrutina.join()
+        coroutine.join()
 
         if (response!!.isSuccessful) {
             val resposta = CleanResponse(
@@ -398,12 +398,12 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
     suspend fun getCarRoute(start: String, end: String): CleanResponse? {
         var response: Response<com.example.bookbuddy.models.Response>? = null
 
-        val corrutina = launch {
+        val coroutine = launch {
             response =
                 getRetrofitRoute().create(RouteAPI::class.java)
                     .getCarRoute(apikey, start, end)
         }
-        corrutina.join()
+        coroutine.join()
 
         if (response!!.isSuccessful) {
             if (response!!.isSuccessful) {

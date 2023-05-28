@@ -1,15 +1,12 @@
 package com.example.bookbuddy.api
 
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.models.*
 import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.safeApiCall
 import com.google.gson.GsonBuilder
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -17,7 +14,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.security.SecureRandom
-import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
@@ -37,11 +33,8 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
 
     private fun getRetrofit(): Retrofit {
         val gson = GsonBuilder()
-            //reformateja json
             .setLenient()
             .create()
-
-        //okHttpClient = okHttpClient.newBuilder().addInterceptor(logging).build()
 
         return Retrofit.Builder().baseUrl(Constants.BASE_URL).client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson)).build()
@@ -51,20 +44,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         return Retrofit.Builder().baseUrl(urlapi)
             .addConverterFactory(GsonConverterFactory.create()).build()
     }
-
-    private fun getClient(): OkHttpClient =
-        OkHttpClient.Builder()
-            .addInterceptor(HeaderInterceptor())
-            .addInterceptor(logging)
-            .build()
-/*
-    suspend fun getUserLogin(userName: String, password: String): User? {
-        val response = getRetrofit().create(BookAPI::class.java).getUserLogin(userName, password).body()
-        return response!!
-    }
-
- */
-
 
     suspend fun getUserLogin(userName: String, password: String): User? {
         return safeApiCall(
@@ -894,23 +873,25 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         try {
             var response: Response<com.example.bookbuddy.models.Response>? = null
 
-            val corrutina = launch {
-                response =
-                    getRetrofitRoute().create(RouteAPI::class.java)
-                        .getWalkingRoute(apikey, start, end)
-            }
-            corrutina.join()
+            val result = runBlocking {
+                val coroutine = launch {
+                    response =
+                        getRetrofitRoute().create(RouteAPI::class.java)
+                            .getWalkingRoute(apikey, start, end)
+                }
+                coroutine.join()
 
-            if (response!!.isSuccessful) {
-                val resposta = CleanResponse(
-                    response!!.body()!!.features[0].geometry.coordinates,
-                    response!!.body()!!.features[0].properties.summary.distance,
-                    response!!.body()!!.features[0].properties.summary.duration
-                )
-                return resposta
-            } else {
-                return null
+                if (response!!.isSuccessful) {
+                    return@runBlocking CleanResponse(
+                        response!!.body()!!.features[0].geometry.coordinates,
+                        response!!.body()!!.features[0].properties.summary.distance,
+                        response!!.body()!!.features[0].properties.summary.duration
+                    )
+                } else {
+                    return@runBlocking null
+                }
             }
+            return result
         }catch(ex: java.lang.Exception){
             return null
         }
@@ -920,28 +901,24 @@ class CrudApi(private val errorListener: ApiErrorListener? = null): CoroutineSco
         try {
             var response: Response<com.example.bookbuddy.models.Response>? = null
 
-            val corrutina = launch {
-                response =
-                    getRetrofitRoute().create(RouteAPI::class.java)
-                        .getCarRoute(apikey, start, end)
-            }
-            corrutina.join()
+            val result = runBlocking {
+                val coroutine = launch {
+                    response = getRetrofitRoute().create(RouteAPI::class.java)
+                            .getCarRoute(apikey, start, end)
+                }
+                coroutine.join()
 
-            if (response!!.isSuccessful) {
                 if (response!!.isSuccessful) {
-                    val resposta = CleanResponse(
+                    return@runBlocking CleanResponse(
                         response!!.body()!!.features[0].geometry.coordinates,
                         response!!.body()!!.features[0].properties.summary.distance,
                         response!!.body()!!.features[0].properties.summary.duration
                     )
-
-                    return resposta
                 } else {
-                    return null
+                    return@runBlocking null
                 }
-            } else {
-                return null
             }
+            return result
         }catch(ex: java.lang.Exception){
             return null
         }
@@ -971,6 +948,6 @@ fun OkHttpClient.Builder.ignoreAllSSLErrors(): OkHttpClient.Builder {
     }.socketFactory
 
     sslSocketFactory(insecureSocketFactory, naiveTrustManager)
-    hostnameVerifier(HostnameVerifier { _, _ -> true })
+    hostnameVerifier { _, _ -> true }
     return this
 }

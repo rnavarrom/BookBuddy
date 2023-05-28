@@ -10,7 +10,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.AuthorBooksAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogBookdisplayAuthorbooksBinding
@@ -72,7 +72,7 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         var tempBooks : List<Book>?
         runBlocking {
 
-            val corrutina = launch {
+            val coroutine = launch {
                 if (position == 0){
                     tempBooks = api.getAuthorsBooks(authorId, position)
                     if(tempBooks !=  null){
@@ -92,7 +92,7 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                     adapter.updateList(books as ArrayList<Book>)
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
 
     }

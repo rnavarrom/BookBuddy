@@ -12,7 +12,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.SearchGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileSearchBinding
@@ -130,13 +130,13 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
 
     private fun loadMoreItems() {
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 val tempGenres = api.getSearchGenres(binding.searchThings.text.toString(), position)
                 if(tempGenres != null){
                     genres!!.addAll( tempGenres as MutableList<Genre>)
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
         adapter.updateList(genres as ArrayList<Genre>)
     }
@@ -144,13 +144,13 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
     private fun performSearch(searchValue: String) {
         genres = mutableListOf()
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 val tempGenres = api.getSearchGenres(searchValue, position)
                 if(tempGenres != null){
                     genres = tempGenres as MutableList<Genre>
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
     }
 

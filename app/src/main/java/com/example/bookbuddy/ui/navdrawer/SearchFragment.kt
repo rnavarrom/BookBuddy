@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.SearchResultAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentSearchBinding
@@ -182,7 +182,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
 
     private fun loadMoreSearch(position : Int, searchValues: ArrayList<String>) {
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 val tempSearchList =
                     api.getSimpleSearch(
                         position,
@@ -191,7 +191,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
                 if (tempSearchList != null)
                     searchResultList.addAll(tempSearchList as MutableList<SimpleBook>)
             }
-            corrutina.join()
+            coroutine.join()
         }
         adapter.updateList(searchResultList as ArrayList<SimpleBook>)
     }
@@ -201,10 +201,10 @@ class SearchFragment : Fragment(), ApiErrorListener{
         position = 0
         lastPosition = -1
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 searchResultList = api.getSimpleSearch(position, searchValues as List<String>)
             }
-            corrutina.join()
+            coroutine.join()
         }
         return searchResultList
     }

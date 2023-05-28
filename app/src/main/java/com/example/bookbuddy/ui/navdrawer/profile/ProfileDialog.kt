@@ -9,7 +9,7 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.viewpager.widget.ViewPager
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileBinding
@@ -95,7 +95,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         binding.tvUsername.text = username
         var profileImage: File? = null
         runBlocking {            
-            val corrutina = launch {
+            val coroutine = launch {
                 val tempFollowers = api.getFollowerCount(profileUser!!)
                 if(tempFollowers != null){
                     followers = tempFollowers
@@ -106,7 +106,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 }
                 // TODO: LOAD IMAGE if ()
             }
-            corrutina.join()
+            coroutine.join()
         }
         binding.tvFollowers.text = followers.toString() + " seguidores"
         followButton()
@@ -126,10 +126,10 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             if (binding.btFollow.tag.equals("Follow")){
                 var followed : Boolean? = false
                 runBlocking {                    
-                    val corrutina = launch {
+                    val coroutine = launch {
                         followed = api.addFollowToAPI(currentUser!!.userId, profileUser!!)
                     }
-                    corrutina.join()
+                    coroutine.join()
                 }
                 if(followed != null){
                 if(followed == true){
@@ -143,10 +143,10 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 builder.setMessage(getString(R.string.MSG_WantUnfollow2))
                     .setPositiveButton(getString(R.string.BT_Unfollow)) { _, _ ->
                         runBlocking {
-                            val corrutina = launch {
+                            val coroutine = launch {
                                 var result = api.deleteFollowAPI(currentUser!!.userId, profileUser!!)
                             }
-                            corrutina.join()
+                            coroutine.join()
                         }
                         binding.btFollow.text = getString(R.string.BT_Follow)
                         binding.btFollow.tag = "Follow"

@@ -13,7 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.AdminBookLibraryAdapter
 import com.example.bookbuddy.adapters.AdminGenresAdapter
 import com.example.bookbuddy.api.CrudApi
@@ -333,10 +333,10 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
 
     private fun getAuthor(){
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 author = api.getBookAuthors(bookId)
             }
-            corrutina.join()
+            coroutine.join()
         }
         if (author != null){
             binding.etAuthor.setText(author!!.name)
@@ -345,10 +345,10 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
 
     private fun getLang(){
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 lang = api.getBookLang(bookId)
             }
-            corrutina.join()
+            coroutine.join()
         }
         if (lang != null){
             binding.etLanguage.setText(lang!!.name)
@@ -357,7 +357,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
 
     private fun getGenres(addAdapter: Boolean){
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 genres = api.getBookGenres(bookId) as MutableList<Genre>?
                 if (addAdapter){
                     binding.rvGenres.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -367,13 +367,13 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                     adapterGenres.updateList(genres as ArrayList<Genre>)
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
     }
 
     private fun getLibraries(addAdapter: Boolean){
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 libraries = api.getBookLibraries(bookId) as MutableList<LibraryExtended>?
                 if (addAdapter){
                     binding.rvLibraries.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -383,7 +383,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                     adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
     }
 

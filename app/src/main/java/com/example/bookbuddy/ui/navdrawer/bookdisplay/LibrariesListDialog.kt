@@ -14,7 +14,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.LibraryAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogBookdisplayLibrariesListBinding
@@ -109,7 +109,7 @@ class LibrariesListDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private fun getLibrariesBook(isbn: String, addAdapter: Boolean){
         var tmpLibraries : MutableList<LibraryExtended>?
         runBlocking {            
-            val corrutina = launch {
+            val coroutine = launch {
                 if (position == 0){
                     if (permissionsGranted){
                         if (location != null){
@@ -139,7 +139,7 @@ class LibrariesListDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 }
 
             }
-            corrutina.join()
+            coroutine.join()
         }
         if (addAdapter){
             binding.rvLibraries.layoutManager = LinearLayoutManager(context)

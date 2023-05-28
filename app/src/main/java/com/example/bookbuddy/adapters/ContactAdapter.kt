@@ -10,8 +10,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
+import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.ContactsFragment
@@ -52,7 +52,7 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>, val fragment: Cont
 
         if(list[position].haspicture){
             runBlocking {
-                val corrutina = launch {
+                val coroutine = launch {
                     if (list[position].haspicture){
                         val commentPicture = api.getUserImage(list[position].userId)
                         val body = commentPicture //.body()
@@ -76,7 +76,7 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>, val fragment: Cont
                         }
                     }
                 }
-                corrutina.join()
+                coroutine.join()
             }
         }
     }

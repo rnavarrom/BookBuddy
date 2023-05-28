@@ -14,7 +14,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogBookdisplayWriteCommentBinding
 import com.example.bookbuddy.models.UserComments.Comment
@@ -91,10 +91,10 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
     private fun loadComment(){
         runBlocking {            
-            val corrutina = launch {
+            val coroutine = launch {
                 comment = api.getCommentsFromUser(currentUser!!.userId, bookId)
             }
-            corrutina.join()
+            coroutine.join()
         }
 
         if (!checkConnectionFailed()) {
@@ -138,7 +138,7 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         val stars = binding.ratingWrite.rating.toInt()
         if (text.isNotEmpty()){
             runBlocking {                
-                val corrutina = launch {
+                val coroutine = launch {
                     if (comment != null){
                         api.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser!!.userId,
                             bookId
@@ -147,7 +147,7 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                         api.addCommentToAPI(text, stars, currentUser!!.userId, bookId)
                     }
                 }
-                corrutina.join()
+                coroutine.join()
             }
             // Close
             dismiss()

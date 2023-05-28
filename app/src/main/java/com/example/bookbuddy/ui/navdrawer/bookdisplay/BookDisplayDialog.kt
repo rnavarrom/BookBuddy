@@ -14,8 +14,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
+import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.adapters.GenreAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogBookdisplayBinding
@@ -339,10 +339,10 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
     private fun getBook(isbn: String?): Book? {
         var response: Book? = null
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 response = api.getBook(isbn!!, currentUser!!.userId)
             }
-            corrutina.join()
+            coroutine.join()
         }
         return response
     }

@@ -15,7 +15,7 @@ class AdminAuthorsAdapter(var list: ArrayList<Author>) : RecyclerView.Adapter<Ad
 
     //Link values to the view
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val name = view.findViewById<TextView>(R.id.genre_name)
+        val name: TextView = view.findViewById<TextView>(R.id.genre_name)
     }
 
     lateinit var context: Context

@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.ProfileCommentAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileCommentsBinding
@@ -53,7 +53,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private fun getCommentsUser(userId: Int, addAdapter: Boolean){
         runBlocking {            
-            val corrutina = launch {
+            val coroutine = launch {
                 if (position == 0){
                     val tempComments = api.getUserComments(userId,position) as MutableList<Comment>?
                     if(tempComments != null){
@@ -66,7 +66,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                     }
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
         if(comments == null){
 

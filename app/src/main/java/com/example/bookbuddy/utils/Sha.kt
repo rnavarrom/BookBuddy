@@ -1,4 +1,4 @@
-package com.example.bookbuddy.Utils
+package com.example.bookbuddy.utils
 
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest

@@ -1,4 +1,4 @@
-package com.example.bookbuddy.Utils
+package com.example.bookbuddy.utils
 
 import com.bumptech.glide.request.RequestOptions
 import com.example.bookbuddy.R

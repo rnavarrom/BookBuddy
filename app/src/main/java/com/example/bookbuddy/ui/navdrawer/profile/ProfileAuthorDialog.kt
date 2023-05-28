@@ -13,7 +13,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.SearchAuthorsAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileSearchAuthorBinding
@@ -135,13 +135,13 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private fun loadMoreItems() {
         runBlocking {
             
-            val corrutina = launch {
+            val coroutine = launch {
                 val tempAuthors= api.getSearchAuthors(binding.searchThings.text.toString(), position)
                 if(tempAuthors != null){
                     authors!!.addAll(tempAuthors as MutableList<Author>)
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
         adapter.updateList(authors as ArrayList<Author>)
     }
@@ -149,13 +149,13 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private fun performSearch(searchValue: String) {
         authors = mutableListOf()
         runBlocking {            
-            val corrutina = launch {
+            val coroutine = launch {
                 val tempAuthors = api.getSearchAuthors(searchValue, position)
                 if(tempAuthors != null){
                     authors = tempAuthors as MutableList<Author>
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
     }
 

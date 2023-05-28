@@ -13,7 +13,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.SearchLanguagesAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileSearchLanguageBinding
@@ -127,20 +127,20 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
     }
     private fun loadMoreItems() {
         runBlocking {            
-            val corrutina = launch {
+            val coroutine = launch {
                 languages!!.addAll(api.getSearchLanguages(binding.searchThings.text.toString(), position) as MutableList<Language>)
             }
-            corrutina.join()
+            coroutine.join()
         }
         adapter.updateList(languages as ArrayList<Language>)
     }
     private fun performSearch(searchValue: String) {
         languages = mutableListOf()
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 languages = api.getSearchLanguages(searchValue, position) as MutableList<Language>
             }
-            corrutina.join()
+            coroutine.join()
         }
     }
     override fun onApiError(connectionFailed: Boolean) {

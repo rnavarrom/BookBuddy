@@ -12,8 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
+import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.ActualReading
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
@@ -122,10 +122,10 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
     private fun putBook(readedId: Int, pagesReaded: Int){
         var result : Boolean? = false
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 result = api.updateReadedToAPI(readedId, pagesReaded)
             }
-            corrutina.join()
+            coroutine.join()
         }
         showSnackBar(context, fragment.requireView(), context.getString(R.string.MSG_Result) + result)
     }
@@ -139,10 +139,10 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
     }
     private fun getUser(){
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 currentUser = api.getUserId(currentUser?.userId!!)
             }
-            corrutina.join()
+            coroutine.join()
         }
     }
 

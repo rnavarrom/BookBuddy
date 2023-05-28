@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.AdminRequestsAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminRequestsBinding
@@ -149,7 +149,7 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private fun getRequests(addAdapter: Boolean){
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 if (position == 0){
                     bookRequests = api.getRequests(position) as MutableList<BookRequest>?
                 } else {
@@ -163,7 +163,7 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                     adapter.updateList(bookRequests as ArrayList<BookRequest>)
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
     }
 

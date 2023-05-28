@@ -12,8 +12,8 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.Utils.Constants.Companion.profileRequestOptions
+import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.ui.navdrawer.bookdisplay.CommentsListDialogDirections
@@ -40,7 +40,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
         val rating = view.findViewById<RatingBar>(R.id.book_rating_display)!!
         val comment = view.findViewById<TextView>(R.id.tv_comment)!!
         val share = view.findViewById<ImageView>(R.id.iv_share)!!
-        val dropmenu = view.findViewById<ImageButton>(R.id.drop_menu)
+        val dropmenu: ImageButton = view.findViewById<ImageButton>(R.id.drop_menu)
     }
 
     private lateinit var context: Context
@@ -61,7 +61,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
         if(list[position].user!!.haspicture){
             runBlocking {
 
-                val corrutina = launch {
+                val coroutine = launch {
                     if (list[position].user!!.haspicture){
                         val commentPicture = api.getUserImage(list[position].user!!.userId)
                         val body = commentPicture //.body()
@@ -84,7 +84,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
                         }
                     }
                 }
-                corrutina.join()
+                coroutine.join()
             }
         }
 

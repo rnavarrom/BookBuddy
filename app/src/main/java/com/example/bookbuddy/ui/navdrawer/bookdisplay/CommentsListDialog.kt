@@ -11,7 +11,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.CommentAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogBookdisplayCommentsBinding
@@ -90,14 +90,14 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
     private fun getCommentsBook(bookId: Int, addAdapter: Boolean){
         runBlocking {
             
-            val corrutina = launch {
+            val coroutine = launch {
                 if (position == 0){
                     comments = setCardview(api.getCommentsFromBook(bookId,position) as ArrayList<Comment>)
                 } else {
                     comments!!.addAll((setCardview(api.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?)!!)
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
         if (addAdapter){
             binding.rvComments.layoutManager = LinearLayoutManager(context)

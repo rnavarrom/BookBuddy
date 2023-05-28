@@ -14,8 +14,8 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.Utils.Sha
+import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.Sha
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.api.logging
@@ -215,10 +215,10 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
     private fun isEmailAviable(email: String): Boolean? {
         var response : Boolean? = false
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 response = api.getEmailExists(email)
             }
-            corrutina.join()
+            coroutine.join()
         }
         return response!!
     }
@@ -258,17 +258,17 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
     private fun getUsers(userName: String, password: String) {
         //currentUser = User()
         runBlocking {            
-            val corrutina = launch {                
+            val coroutine = launch {                
                 val tempData = api.getUserLogin(userName, password)
                 if (tempData != null){
                     currentUser = tempData
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
         if (currentUser != null) {
             runBlocking {                
-                val corrutina = launch {
+                val coroutine = launch {
                     val tempData = api.getProfileUser(currentUser!!.userId)
                     if(tempData != null){
                         currentProfile = tempData
@@ -277,7 +277,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
                         responseToFile(applicationContext, api.getUserImage(currentUser!!.userId))
                     }
                 }
-                corrutina.join()
+                coroutine.join()
             }
         }
     }

@@ -20,14 +20,14 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.Utils.Constants.Companion.BASE_URL
-import com.example.bookbuddy.Utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogAdminInsertBookBinding
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.Constants.Companion.BASE_URL
+import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.navController
@@ -35,7 +35,6 @@ import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
@@ -290,11 +289,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                         scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                         val byteArray = outputStream.toByteArray()
 
-                        val requestFile = byteArray.toRequestBody(
-                            "image/jpeg".toMediaTypeOrNull(),
-                            0,
-                            content.size
-                        )
+                        val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
                         val image = MultipartBody.Part.createFormData("image", isbn + "book.jpg", requestFile)
                         cover = BASE_URL + "api/book/cover/" + isbn + "book.jpg"
 

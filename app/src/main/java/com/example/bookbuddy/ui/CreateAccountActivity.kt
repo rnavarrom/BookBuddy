@@ -11,8 +11,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
-import com.example.bookbuddy.Utils.Sha
+import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.Sha
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.ActivityCreateAccountBinding
 import com.example.bookbuddy.models.UserItem
@@ -90,10 +90,10 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     private fun postUser(user: UserItem): Boolean {
         var response: Boolean? = false
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 response = api.addUserToAPI(user)
             }
-            corrutina.join()
+            coroutine.join()
         }
         return if (response != null) {
             response!!
@@ -198,10 +198,10 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     private fun isNameAviable(userName: String): Boolean? {
         var response: Boolean? = false
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 response = api.getUserExists(userName)
             }
-            corrutina.join()
+            coroutine.join()
         }
         return response
     }
@@ -209,10 +209,10 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     private fun isEmailAviable(email: String): Boolean? {
         var response: Boolean? = false
         runBlocking {
-            val corrutina = launch {
+            val coroutine = launch {
                 response = api.getEmailExists(email)
             }
-            corrutina.join()
+            coroutine.join()
         }
         return response!!
     }

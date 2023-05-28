@@ -13,7 +13,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.SearchLibrariesAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileSearchLibraryBinding
@@ -131,10 +131,10 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
 
     private fun loadMoreItems() {
         runBlocking {            
-            val corrutina = launch {
+            val coroutine = launch {
                 libraries!!.addAll(api.getSearchLibraries(binding.searchThings.text.toString(), position) as MutableList<LibraryExtended>)
             }
-            corrutina.join()
+            coroutine.join()
         }
         adapter.updateList(libraries as ArrayList<LibraryExtended>)
     }
@@ -146,10 +146,10 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
 
         if (searchValue.isNotEmpty()){
             runBlocking {                
-                val corrutina = launch {
+                val coroutine = launch {
                     libraries = api.getSearchLibraries(searchValue, position) as MutableList<LibraryExtended>
                 }
-                corrutina.join()
+                coroutine.join()
             }
         }
     }

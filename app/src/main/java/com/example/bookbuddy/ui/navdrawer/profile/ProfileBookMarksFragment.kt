@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.Utils.Constants
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.ProfileBookMarkAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileBookmarksBinding
@@ -54,7 +54,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private fun getCommentsUser(userId: Int, addAdapter: Boolean){
         runBlocking {            
-            val corrutina = launch {
+            val coroutine = launch {
                 if (position == 0){
                      val tempReadeds = api.getReadedsFromUser(userId,position)
                     if(tempReadeds != null){
@@ -67,7 +67,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
                     }
                 }
             }
-            corrutina.join()
+            coroutine.join()
         }
         if(readeds == null){
 
