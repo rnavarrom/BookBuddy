@@ -8,7 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.Library
-//Adapter for the admin library fragment
+/**
+ * Adapter for displaying libraries in a recycler view
+ * @param list The list of search results to display.
+ */
 class AdminLibraryAdapter(var list: ArrayList<Library>) : RecyclerView.Adapter<AdminLibraryAdapter.ViewHolder>() {
     private var selected: Library? = null
 

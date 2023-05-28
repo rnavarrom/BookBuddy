@@ -51,33 +51,25 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 import kotlin.coroutines.CoroutineContext
-
-
+/**
+ * Profile fragment from the navMenu
+ */
 class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreSearchCompleteListener, ProfileAuthorDialog.OnAuthorSearchCompleteListener, ApiErrorListener {
     lateinit var binding: FragmentProfileBinding
     private var job: Job = Job()
     private val api = CrudApi(this@ProfileFragment)
     private var profileUser: Int? = 0
     private var username: String? = ""
-    private var profilepicture: String? = ""
-
     private var followers: Int = 0
-    private var following: Boolean = false
-
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
-
     private lateinit var gMenu: Menu
-
     private lateinit var settings: MenuItem
     private lateinit var accept: MenuItem
     private lateinit var cancel: MenuItem
-
     private lateinit var tmpUri: Uri
     private var tmpGenreId: Int = 0
     private var tmpAuthorId: Int = 0
-
-    var permission = false
     private var menuItemsVisibility = mutableMapOf("settings" to true, "accept" to false, "cancel" to false)
     private lateinit var menuItems: ArrayList<MenuItem>
 
@@ -113,6 +105,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         binding.languageSpinner.setSelection(position)
         var lastSelectedPosition = position
 
+        //Change and store the active language on the app
         binding.languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 if (position != lastSelectedPosition) {
@@ -170,9 +163,8 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                 }
             }
         }
-
+        //Change password
         binding.bPassword.setOnClickListener {
-            // Obtiene las referencias de los EditText dentro del diálogo
             val etPassword1 = EditText(requireContext())
             val etPassword2 = EditText(requireContext())
             etPassword1.hint = getString(R.string.LAY_HintPassword)
@@ -202,7 +194,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                         var passwordSha = Sha.calculateSHA(password1)
                         runBlocking {
                             launch {
-                                // TODO: END THIS
                                 result = api.updateUserPasswordId(currentUser!!.userId, passwordSha)
                             }
                         }
@@ -217,7 +208,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     dialog.dismiss()
                 })
 
-            // Crea y muestra el diálogo
             val alert = dialogBuilder.create()
             alert.show()
         }
@@ -229,20 +219,15 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
             val imageUri = data.data
             tmpUri = imageUri!!
-            // Hacer algo con la imagen seleccionada
-            //binding.ivPreviewImage.setImageURI(imageUri)
             Glide.with(requireContext())
                 .setDefaultRequestOptions(profileRequestOptions)
                 .load(tmpUri)
                 .into(binding.editProfileImageView)
-            //binding.editProfileImageView.setImageURI(tmpUri)
         }
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         return when (item.itemId) {
             R.id.action_settings -> {
-                // Navigate to settings screen.
                 actionSettings()
                 true
             }
@@ -295,7 +280,10 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
     }
-
+    /**
+     * Get the language code from the selected value
+     * @param code the selected value
+     */
     private fun getCurrentLanguageCode(code: String): String {
         var finalCode: String = code
         if (finalCode == "null"){
@@ -313,14 +301,20 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             }
         }
     }
-
+    /**
+     * Save the language code on sharedPreferences
+     * @param languageCode the language code to be stored
+     */
     private fun saveLanguageCode(context: Context, languageCode: String) {
         val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putString("language_code", languageCode)
         editor.apply()
     }
-
+    /**
+     * Get the language code stored on sharedPreferences
+     * return the stored language code
+     */
     private fun getStoredLanguage(): String {
         val sharedPreferences = requireActivity().applicationContext.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
         var code = sharedPreferences.getString("language_code", "") ?: ""
@@ -345,7 +339,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             .setDefaultRequestOptions(profileRequestOptions)
             .load(binding.profileImageView.drawable)
             .into(binding.editProfileImageView)
-        //binding.editProfileImageView.setImageDrawable()
 
         binding.editProfileImageView.setOnClickListener {
             checkPermissions()
@@ -573,13 +566,11 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, PICK_IMAGE_REQUEST)
     }
-
+    /**
+     * Upload the profile image to the server
+     * @param imageUri The url from the image
+     */
     private fun uploadImage(imageUri: Uri) {
-        /*
-        val contentResolver = requireContext().contentResolver
-        val inputStream: InputStream? = contentResolver.openInputStream(imageUri)
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        */
         var bitmap: Bitmap?
         Glide.with(this)
             .asBitmap()
@@ -589,7 +580,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     resource: Bitmap,
                     transition: Transition<in Bitmap>?
                 ) {
-                    // Asigna el bitmap a la variable definida fuera del callback
                     bitmap = resource
                     val outputStream = ByteArrayOutputStream()
                     val targetWidth = 320
@@ -636,8 +626,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
                                 Tools.setNavigationProfile(requireContext(), file, null)
                             } else {
-                                // TODO: NOSE
-                                // Manejar la respuesta de error
                                 showSnackBar(requireContext(), requireView(), getString(R.string.SB_ImageNotUploaded))
                             }
                         }
@@ -646,12 +634,9 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                 }
 
                 override fun onLoadCleared(placeholder: Drawable?) {
-                    // Opcionalmente, puedes hacer algo aquí cuando se borra la carga
                 }
             })
-
     }
-
 
     private fun checkPermissions(){
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE)

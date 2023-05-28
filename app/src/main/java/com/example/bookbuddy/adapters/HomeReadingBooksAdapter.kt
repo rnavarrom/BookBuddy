@@ -24,9 +24,11 @@ import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-
-//Adapter for the home fragment, reading list
-class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: HomeFragment) : //, context: Context, layoutInf: LayoutInflater
+/**
+ * Adapter for displaying ActualReading books in a recycler view
+ * @param list The list of search results to display.
+ */
+class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: HomeFragment) :
     RecyclerView.Adapter<HomeReadingBooksAdapter.ViewHolder>(), ApiErrorListener {
     lateinit var layout: LayoutInflater
     lateinit var view : View
@@ -79,6 +81,10 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
 
     override fun getItemCount(): Int = list.size
 
+    /**
+     * Function to change the read pages of a reading book
+     * @param position The position of the item in the list.
+     */
     private fun changeReaded(context: Context, layoutInf: LayoutInflater, position: Int,
         holder: ViewHolder
     ) {

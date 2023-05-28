@@ -23,6 +23,9 @@ import com.example.bookbuddy.utils.keyboardValue
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
+/**
+ * Activity to create user acounts
+ */
 class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     private lateinit var binding: ActivityCreateAccountBinding
     private val api = CrudApi(this@CreateAccountActivity)
@@ -40,7 +43,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
             mainLayout.getWindowVisibleDisplayFrame(rect)
             val screenHeight = mainLayout.rootView.height
             val keyboardHeight = screenHeight - rect.bottom
-
+            // Check if the keyboard is hidden
             if (keyboardHeight < keyboardValue) {
                 binding.CAImage.visibility = View.VISIBLE
             } else {
@@ -52,7 +55,6 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
             if (checkFields()) {
                 currentUserCreate = UserItem()
                 getValues()
-
                 val success = postUser(currentUserCreate)
                 if (success) {
                     Tools.showSnackBar(
@@ -60,7 +62,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
                         binding.createAcountLayout,
                         getString(R.string.SB_AccountCreated)
                     )
-                    val intent = Intent(this, LoginActivity::class.java)
+                    var intent = Intent(this, LoginActivity::class.java)
                     intent.putExtra("userName", currentUserCreate.name)
                     startActivity(intent)
                     finish()
@@ -71,7 +73,6 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
                         getString(R.string.SB_AccountNotCreated)
                     )
                 }
-
             }
         }
 
@@ -107,7 +108,10 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         currentUserCreate.password = Sha.calculateSHA(binding.CAEditPassword.text.toString())
         currentUserCreate.email = binding.CAEditEmail.text.toString()
     }
-
+    /**
+     * Check if the values are right
+     * returns true if all values are correct
+     */
     @SuppressLint("ResourceAsColor")
     private fun checkFields(): Boolean {
 
@@ -160,7 +164,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         if (!Tools.isPasswordValid(binding.CAEditPassword.text.toString())) {
             binding.CAEditPassword.setTextColor(getColor(R.color.red_error))
             binding.CAEditPassword2.setTextColor(getColor(R.color.red_error))
-            Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_PasswordMatch))
+            Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.MSG_PasswordError))
             return false
         }
         //check if the email has a valid formation
@@ -171,7 +175,6 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         }
         //Check if the username is not repited in the DB
         val userNameAviable: Boolean? = isNameAviable(binding.CAEditUser.text.toString())
-
         if (userNameAviable == null) {
             return false
         } else if (!userNameAviable) {

@@ -20,16 +20,16 @@ import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-
+/**
+ * Fragment to display the books list on profile.
+ */
 class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
-
     lateinit var binding: FragmentProfileBookmarksBinding
     private var job: Job = Job()
     private var userId: Int = currentUser!!.userId
     private var isProfileFragment: Boolean = false
     lateinit var adapter: ProfileBookMarkAdapter
     private val api = CrudApi(this@ProfileBookMarksFragment)
-
     private var position = 0
     private var lastPosition = -1
     private var readeds: MutableList<Readed>? = null
@@ -45,14 +45,19 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         isProfileFragment = requireArguments().getBoolean("isfragment")
         binding.refresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
+        //Initial call to get values
         launch {
-            getCommentsUser(userId, true)
+            getBooksUser(userId, true)
             onLoadingEnded()
         }
         return binding.root
     }
-
-    private fun getCommentsUser(userId: Int, addAdapter: Boolean){
+    /**
+     * Get the Books from an user and show them on the recycler view.
+     * @param userId The id from the user to get the books
+     * @param addAdapter Chech if the adapter is already running.
+     */
+    private fun getBooksUser(userId: Int, addAdapter: Boolean){
         runBlocking {            
             val coroutine = launch {
                 if (position == 0){
@@ -80,20 +85,20 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             adapter.updateList(readeds as ArrayList<Readed>)
         }
     }
-
-    // Change visible layouts and add bindings
-    private fun onLoadingEnded(){
+    /**
+     * Load the configuration upon ending the loading animation
+     */
+    fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
         binding.refresh.setOnRefreshListener {
             position = 0
             lastPosition = -1
-            getCommentsUser(userId, false)
+            getBooksUser(userId, false)
             binding.refresh.isRefreshing = false
         }
 
-        // Load more items when scrolling the recycler view
         binding.rvBookmarks.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -117,10 +122,9 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private fun loadMoreItems() {
         binding.loadingComment.visibility = View.VISIBLE
-        getCommentsUser(userId, false)
+        getBooksUser(userId, false)
         binding.loadingComment.visibility = View.GONE
     }
-
 
     override fun onApiError(connectionFailed: Boolean) {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)

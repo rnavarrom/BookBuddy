@@ -8,7 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.BookRequest
-//Adapter for the admin request fragment
+/**
+ * Adapter for displaying book requests in a recycler view
+ * @param list The list of search results to display.
+ */
 class AdminRequestsAdapter(var list: ArrayList<BookRequest>) : RecyclerView.Adapter<AdminRequestsAdapter.ViewHolder>() {
     private var selected: BookRequest? = null
 

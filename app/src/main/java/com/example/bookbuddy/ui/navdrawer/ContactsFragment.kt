@@ -25,6 +25,9 @@ import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Contacts ragment from the navMenu.
+ */
 @Parcelize
 class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDialogClose, ApiErrorListener, Parcelable {
     lateinit var binding: FragmentContactsBinding
@@ -53,8 +56,9 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
         return binding.root
     }
 
-
-
+    /**
+     * What to do if there are no contacts
+     */
     private fun emptyContacts(){
         if (follows == null || follows!!.isEmpty()){
             binding.emptyActivity.text = "No contacts"
@@ -64,6 +68,10 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
         }
     }
 
+    /**
+     * Get the users an user is following and show them on the recycler view.
+     * @param addAdapter Chech if the adapter is already running.
+     */
     private fun getUserFollows(addAdapter: Boolean){
         runBlocking {
 
@@ -93,7 +101,9 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
         }
     }
 
-    // Change visible layouts and add bindings
+    /**
+     * Load the configuration upon ending the loading animation
+     */
     fun onLoadingEnded(){
         emptyContacts()
         binding.loadingView.visibility = View.GONE

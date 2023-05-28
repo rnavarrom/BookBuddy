@@ -13,7 +13,10 @@ import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.ui.navdrawer.bookdisplay.AuthorBookDialogDirections
 import com.example.bookbuddy.utils.navController
-//adapter for the admi author books fragment
+/**
+ * Adapter for displaying books in a recycler view
+ * @param list The list of search results to display.
+ */
 class AuthorBooksAdapter(var list: ArrayList<Book>) : RecyclerView.Adapter<AuthorBooksAdapter.ViewHolder>() {
     class ViewHolder(val vista: View) : RecyclerView.ViewHolder(vista) {
         val bookCover = vista.findViewById<ImageView>(R.id.book_cover)!!

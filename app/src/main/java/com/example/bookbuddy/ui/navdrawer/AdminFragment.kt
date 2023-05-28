@@ -12,13 +12,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
-
+/**
+ * Fragment to display Admin navMenu.
+ */
 @Parcelize
 class AdminFragment : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialog.OnAdminDialogClose,
     InsertBookDialog.OnAdminDialogClose {
     lateinit var binding: FragmentAdminBinding
     private var job: Job = Job()
-
     private var fragmentSaved = "books"
     var gMenu: Menu? = null
     private var isFragmentReplaced = false
@@ -33,7 +34,6 @@ class AdminFragment : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialo
         if (!isFragmentReplaced) {
             menu.clear()
             inflater.inflate(R.menu.search_menu, menu)
-            //menu.findItem(R.id.action_search).isVisible =false
             gMenu = menu
             replaceFragment(BooksFragment())
             isFragmentReplaced = true
@@ -80,7 +80,6 @@ class AdminFragment : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialo
                 }
             }
         }
-
         return binding.root
     }
 
@@ -94,6 +93,9 @@ class AdminFragment : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialo
         fragmentTransaction.commit()
     }
 
+    /**
+     * Reload fragments on close
+     */
     override fun onAdminDialogClose() {
         var fragment: Fragment? = null
         when(fragmentSaved){

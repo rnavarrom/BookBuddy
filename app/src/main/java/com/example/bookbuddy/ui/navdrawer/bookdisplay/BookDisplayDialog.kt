@@ -367,8 +367,11 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         } else {
             if(!isPlaying){
                 tts!!.defaultVoice
-                textts =
-                    binding.dBookTitle.text.toString() + "  " + binding.dBookDescription.text.toString()
+                textts = getString(R.string.TTS_Title) +
+                    binding.dBookTitle.text.toString() +
+                    " \n " +
+                    getString(R.string.TTS_Description) +
+                    binding.dBookDescription.text.toString()
                 tts!!.speak(textts, TextToSpeech.QUEUE_FLUSH, null, null)
                 isPlaying = true
             }
@@ -391,6 +394,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         if (lang == "en"){
             country = "us"
         }else if (lang == "ca"){
+            lang = "es"
             country = "es"
         }
         if (p0 == TextToSpeech.SUCCESS) {

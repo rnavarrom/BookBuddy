@@ -24,7 +24,9 @@ import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-
+/**
+ * Fragment to display the libraries list crud.
+ */
 class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentAdminLibrariesBinding
     private var job: Job = Job()
@@ -58,7 +60,6 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         return when (item.itemId) {
             R.id.action_search -> {
                 showCustomDialog()
@@ -67,7 +68,10 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
+    /**
+     * Function to select what dialog needs to be loaded and aply the correct filter to the search
+     * @param type What type of dialog to be loaded.
+     */
     private fun showCustomDialog() {
         //type 0 -> insert, 1 -> edit, 2 -> search
         val builder = AlertDialog.Builder(requireContext())
@@ -80,7 +84,6 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
         builder.setView(editText)
 
         builder.setPositiveButton(positiveText) { _, _ ->
-            // Handle "Buscar" button click here
             search = editText.text.toString().trim()
             position = 0
             lastPosition = -1
@@ -88,7 +91,6 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
 
         builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialog, which ->
-            // Handle "Cancelar" button click here
             dialog.cancel()
         }
 
@@ -116,8 +118,9 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
         val action = AdminFragmentDirections.actionNavAdminToNavInsertLibrary(bundle)
         navController.navigate(action)
     }
-
-    // Change visible layouts and add bindings
+    /**
+     * Load the configuration upon ending the loading animation
+     */
     private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
@@ -133,7 +136,6 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
             } else {
                 showSnackBar(requireContext(), requireView(), getString(R.string.PickLibrary))
             }
-
         }
 
         binding.btnDelete.setOnClickListener {
@@ -191,7 +193,10 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun loadMoreItems() {
         getLibraries(false)
     }
-
+    /**
+     * Function to load or add more values to a list
+     * @param addAdapter To check if the adapter is active
+     */
     private fun getLibraries(addAdapter: Boolean){
         runBlocking {
 

@@ -21,7 +21,9 @@ import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-
+/**
+ * Fragment to display the genres list crud.
+ */
 class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentAdminGenresBinding
     private var job: Job = Job()
@@ -169,8 +171,10 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    // Change visible layouts and add bindings
-    private fun onLoadingEnded(){
+    /**
+     * Load the configuration upon ending the loading animation
+     */
+    fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -243,7 +247,10 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun loadMoreItems() {
         getGenres(false)
     }
-
+    /**
+     * Function to load or add more values to a list
+     * @param addAdapter To check if the adapter is active
+     */
     private fun getGenres(addAdapter: Boolean){
         runBlocking {
             val crudApi = CrudApi(this@GenresFragment)

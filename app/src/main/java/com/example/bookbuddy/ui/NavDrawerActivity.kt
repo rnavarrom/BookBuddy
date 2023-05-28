@@ -17,7 +17,9 @@ import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.setNavigationProfile
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
-
+/**
+ * Main nav meno for the application
+ */
 class NavDrawerActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -36,21 +38,9 @@ class NavDrawerActivity : AppCompatActivity() {
                 builder.setTitle(getString(R.string.DG_Preferences))
                     .setMessage(getString(R.string.DG_Remember))
                     .setPositiveButton(getString(R.string.DG_Accept)) { dialog, _ ->
-                        // Acciones a realizar al hacer clic en "Aceptar"
                         dialog.dismiss()
                     }
                     .show()
-                /*
-                val builder = AlertDialog.Builder(applicationContext)
-                builder.setTitle("Preferences")
-                builder.setMessage("Remember you can change your preferences in your profile")
-                builder.setPositiveButton("Accept") { dialog, _ ->
-                    // Acciones a realizar al hacer clic en "Aceptar"
-                    dialog.dismiss()
-                }
-                val dialog = builder.create()
-                dialog.show()
-                */
             }
 
         }

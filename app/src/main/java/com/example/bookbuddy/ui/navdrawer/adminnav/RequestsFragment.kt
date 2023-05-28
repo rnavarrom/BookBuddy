@@ -21,12 +21,13 @@ import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-
+/**
+ * Fragment to display the requests list crud.
+ */
 class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentAdminRequestsBinding
     private var job: Job = Job()
     lateinit var adapter: AdminRequestsAdapter
-
     private var position = 0
     private var lastPosition = -1
     private var bookRequests: MutableList<BookRequest>? = null
@@ -55,8 +56,9 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         isOnCreateViewExecuted = true
         return binding.root
     }
-
-    // // Change visible layouts and add bindings
+    /**
+     * Load the configuration upon ending the loading animation
+     */
     private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
@@ -70,7 +72,6 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 bundle.putInt("id", selection.bookRequest1)
                 bundle.putString("isbn", selection.bookIsbn)
                 bundle.putParcelable("fragment", fra)
-                //val action = AdminLibrariesFragmentDirections.actionNavBookToNavInsertBook(bundle)
                 val action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
                 navController.navigate(action)
             } else {
@@ -87,20 +88,17 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 builder.setTitle(getString(R.string.DeleteRequest))
                 builder.setMessage(getString(R.string.DeleteRequestQuestion))
                 builder.setPositiveButton(getString(R.string.Yes)) { dialogInterface: DialogInterface, _: Int ->
-                    // Acciones a realizar si el usuario selecciona "Sí"
                     runBlocking {
                         val coroutine = launch {
                             result = api.deleteRequest(selection.bookRequest1)!!
                         }
                         coroutine.join()
                     }
-
                     if (result) {
                         showSnackBar(requireContext(), requireView(), getString(R.string.SB_BookRequestDeleted))
                         bookRequests!!.remove(selection)
                         adapter.updateList(bookRequests as ArrayList<BookRequest>)
                     }
-
                     dialogInterface.dismiss()
                 }
                 builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialogInterface: DialogInterface, _: Int ->
@@ -113,15 +111,12 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 showSnackBar(requireContext(), requireView(), getString(R.string.PickBookFirst))
             }
         }
-
         binding.mainContent.setOnRefreshListener {
             position = 0
             lastPosition = -1
             getRequests(false)
             binding.mainContent.isRefreshing = false
         }
-
-        // Load more items when scrolling the recycler view
         binding.rvRequests.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -129,7 +124,6 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
@@ -146,7 +140,10 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun loadMoreItems() {
         getRequests(false)
     }
-
+    /**
+     * Function to load or add more values to a list
+     * @param addAdapter To check if the adapter is active
+     */
     private fun getRequests(addAdapter: Boolean){
         runBlocking {
             val coroutine = launch {

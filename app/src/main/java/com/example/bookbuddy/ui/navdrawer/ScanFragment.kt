@@ -23,12 +23,12 @@ import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-
-
+/**
+ * Load the Scan fragment from navMenu
+ */
 class ScanFragment : Fragment(), ApiErrorListener {
     private lateinit var codeScanner: CodeScanner
     lateinit var binding: FragmentScanBinding
-
     private var isScannerEnabled = false
     private var isDialogOpen = false
     private val api = CrudApi(this@ScanFragment)
@@ -53,6 +53,9 @@ class ScanFragment : Fragment(), ApiErrorListener {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
     }
+    /**
+     * Check the results from request permisions
+     */
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults:
         IntArray) {
@@ -84,7 +87,9 @@ class ScanFragment : Fragment(), ApiErrorListener {
         }
         return exist
     }
-
+    /**
+     * Create request if scaned code does not exists
+     */
     private fun createRequest(isbn: String): Boolean? {
         var succes: Boolean? = false
         runBlocking {
@@ -95,7 +100,9 @@ class ScanFragment : Fragment(), ApiErrorListener {
         }
         return succes
     }
-
+    /**
+     * Start the camera
+     */
     private fun startCamera(){
         val scannerView = binding.scannerView
         val activity = requireActivity()

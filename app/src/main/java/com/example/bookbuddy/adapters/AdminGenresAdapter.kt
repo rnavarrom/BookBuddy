@@ -8,7 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.Genre
-//Adapter for the admin genres fragment
+/**
+ * Adapter for displaying genres in a recycler view
+ * @param list The list of search results to display.
+ */
 class AdminGenresAdapter(var list: ArrayList<Genre>) : RecyclerView.Adapter<AdminGenresAdapter.ViewHolder>() {
     private var selected: Genre? = null
 

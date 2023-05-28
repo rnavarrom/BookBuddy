@@ -14,12 +14,13 @@ import com.example.bookbuddy.models.Pending
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
 import com.example.bookbuddy.ui.navdrawer.HomeFragmentDirections
 import com.example.bookbuddy.utils.navController
-
-//Adapter for the home fragment, pending and read lists
+/**
+ * Adapter for displaying book in a recycler view
+ * @param list The list of search results to display.
+ */
 class HomeBooksAdapter(private var list: ArrayList<Pending>, val fragment: HomeFragment) : RecyclerView.Adapter<HomeBooksAdapter.ViewHolder>() {
     class ViewHolder(val vista: View) : RecyclerView.ViewHolder(vista) {
         val imatge: ImageView = vista.findViewById(R.id.book_cover)
-       // val text = vista.findViewById<TextView>(R.id.book_rating)
     }
 
     lateinit var context: Context
@@ -29,16 +30,12 @@ class HomeBooksAdapter(private var list: ArrayList<Pending>, val fragment: HomeF
         return ViewHolder(layout.inflate(R.layout.cardview_book_only_cover, parent, false))
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
-        //holder.text.setText(llista[position].rating.toString())
         Glide.with(holder.vista.context)
             .setDefaultRequestOptions(bookRequestOptions)
             .load(list[position].cover)
             .into(holder.imatge)
 
         holder.vista.setOnClickListener {
-            //bundle.putString("isbn", llista[position].isbn)
-            //navController.navigate(R.id.nav_book_display, bundle)
             val bundle = Bundle()
             bundle.putString("isbn", list[position].isbn)
             bundle.putParcelable("fragment", fragment)

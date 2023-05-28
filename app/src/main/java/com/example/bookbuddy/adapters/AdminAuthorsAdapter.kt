@@ -8,8 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.Author
-
-//Adapter for the admin authors fragment
+/**
+ * Adapter for displaying authors in a recycler view
+ * @param list The list of search results to display.
+ */
 class AdminAuthorsAdapter(var list: ArrayList<Author>) : RecyclerView.Adapter<AdminAuthorsAdapter.ViewHolder>() {
     private var selected: Author? = null
 
