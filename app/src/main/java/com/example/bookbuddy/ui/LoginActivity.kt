@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -56,7 +57,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
 
         val currentLanguageCode = getStoredLanguage()
         val curr = getCurrentLanguageCode(currentLanguageCode)
-        val languages = arrayOf("american_flag","catalan_flag","spanish_flag")
+        val languages = arrayOf("american_flag","catalan_flag")
         val adapter = LanguageSpinnerAdapter(this, languages)
         binding.languageSpinner.adapter = adapter
         val position = languages.indexOf(curr)
@@ -77,12 +78,8 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
                             setLocal(this@LoginActivity, "ca")
                             saveLanguageCode(applicationContext,"ca")
                         }
-                        else -> {
-                            setLocal(this@LoginActivity, "es")
-                            saveLanguageCode(applicationContext,"es")
-                        }
                     }
-                    //recreate()
+
                     val intent = Intent(applicationContext, LoginActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
@@ -123,6 +120,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
         binding.passwordForgor.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(this)
             val editText = EditText(applicationContext)
+            editText.inputType = InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
             editText.hint = getString(R.string.LAY_HintEnterAcountEmail)
             builder.setTitle(getString(R.string.MSG_RecoverPassword))
                 .setView(editText)

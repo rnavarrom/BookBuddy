@@ -226,8 +226,6 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
     }
 
     override fun onReadCommentClose() {
-        // TODO : prints
-        println("PROBANDO")
         if (book != null){
             getCommentsNumber(book!!.bookId)
         }

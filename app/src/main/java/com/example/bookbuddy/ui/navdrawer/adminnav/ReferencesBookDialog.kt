@@ -63,7 +63,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 corrutine.join()
             }
         } else {
-            showSnackBar(requireContext(), requireView(), "Genre already in the list")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_GenreInList))
         }
 
         if (resultApi != null && resultApi as Boolean){
@@ -71,7 +71,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
             genres!!.add(tmpGenre)
             genres!!.sortBy { it.name }
             adapterGenres.updateList(genres as ArrayList<Genre>)
-            showSnackBar(requireContext(), requireView(), "Genre Added")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_GenreAdded))
         }
     }
 
@@ -98,7 +98,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         if (resultApi != null && resultApi as Boolean){
             author = Author(result, name)
             binding.etAuthor.setText(author!!.name)
-            showSnackBar(requireContext(), requireView(), "Author changed")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_AuthorChanged))
         }
     }
 
@@ -125,11 +125,11 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         if (resultApi != null && resultApi as Boolean){
             lang = Language(result, name)
             binding.etLanguage.setText(lang!!.name)
-            showSnackBar(requireContext(), requireView(), "Language changed")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_LanguageChanged))
         }
     }
 
-    override fun onLibrarySearchComplete(result: Int, name: String) {
+    override fun onLibrarySearchComplete(result: Int, name: String, zipCode: String) {
         var libraryExist = false
         var resultApi: Boolean? = null
         libraries!!.forEach {
@@ -145,15 +145,15 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 corrutine.join()
             }
         } else {
-            showSnackBar(requireContext(), requireView(), "Library already in the list")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_LibraryAlreadyInList))
         }
 
         if (resultApi != null && resultApi as Boolean){
-            val tmpLibrary = LibraryExtended(library = Library(0.0, result, 0.0, name, ""), distance = null, copies = 0)
+            val tmpLibrary = LibraryExtended(library = Library(0.0, result, 0.0, name, zipCode), distance = null, copies = 0)
             libraries!!.add(tmpLibrary)
             libraries!!.sortBy { it.library.name}
             adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)
-            showSnackBar(requireContext(), requireView(), "Library Added")
+            showSnackBar(requireContext(), requireView(), getString(R.string.SB_LibraryAdded))
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -192,19 +192,23 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         binding.etAuthor.setOnClickListener {
             val dialog = ProfileAuthorDialog()
             dialog.onAuthorSearchCompleteListener = this //Changed
-            dialog.show(childFragmentManager, "Date Picker")
+            dialog.show(childFragmentManager, "")
         }
 
         binding.etLanguage.setOnClickListener {
             val dialog = ProfileLanguageDialog()
             dialog.onLanguageSearchCompleteListener = this //Changed
-            dialog.show(childFragmentManager, "Date Picker")
+            dialog.show(childFragmentManager, "")
         }
 
         binding.btnAdd.setOnClickListener {
-            val dialog = ProfileSearchDialog()
-            dialog.onGenreSearchCompleteListener = this //Changed
-            dialog.show(childFragmentManager, "Date Picker")
+            if (genres == null || genres!!.size <= 10){
+                val dialog = ProfileSearchDialog()
+                dialog.onGenreSearchCompleteListener = this //Changed
+                dialog.show(childFragmentManager, "")
+            } else {
+                showSnackBar(requireContext(), requireView(), getString(R.string.SB_GenresLimit))
+            }
         }
 
         binding.btnDelete.setOnClickListener {
@@ -233,7 +237,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         binding.btnAddLibrary.setOnClickListener {
             val dialog = ProfileLibraryDialog()
             dialog.onLibrarySearchCompleteListener = this //Changed
-            dialog.show(childFragmentManager, "Date Picker")
+            dialog.show(childFragmentManager, "")
         }
 
         binding.btnEditLibrary.setOnClickListener {
@@ -243,8 +247,8 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 val builder = AlertDialog.Builder(requireContext())
                 val editText = EditText(requireContext())
                 editText.inputType = InputType.TYPE_CLASS_NUMBER
-                builder.setTitle("Number of copies")
-                editText.hint = selection.copies.toString() + " copies"
+                val title = builder.setTitle(getString(R.string.SB_TitleNumberCopies))
+                editText.hint = selection.copies.toString() + getString(R.string.MSG_Copies)
                 builder.setView(editText)
                 builder.setPositiveButton(getString(R.string.BT_Edit)) { _, _ ->
                     var copiesString = editText.text.toString()
@@ -274,7 +278,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                     }
                 }
 
-                builder.setNegativeButton("Cancel") { dialog, _ ->
+                builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialog, _ ->
                     // Handle "Cancelar" button click here
                     dialog.cancel()
                 }

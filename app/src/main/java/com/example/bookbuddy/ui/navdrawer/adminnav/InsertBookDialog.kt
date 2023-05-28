@@ -107,6 +107,10 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 binding.etPages.setText(book.pages.toString())
                 binding.etDate.setText(book.publicationDate)
                 binding.etCover.setText(book.cover)
+                Glide.with(requireActivity().applicationContext)
+                    .setDefaultRequestOptions(bookRequestOptions)
+                    .load(book.cover)
+                    .into(binding.ivCover)
             } else {
                 toolbarMessage = getString(R.string.InsertBook)
                 binding.tvId.visibility = View.GONE
@@ -257,61 +261,64 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             showSnackBar(requireContext(), requireView(), getString(R.string.PublishEmptyWarning))
             return
         }
-        if (cover.isEmpty()){
-            if (this::tmpUri.isInitialized){
-                var bitmap: Bitmap?
-                Glide.with(this)
-                    .asBitmap()
-                    .load(tmpUri)
-                    .into(object : CustomTarget<Bitmap>() {
-                        override fun onResourceReady(
-                            resource: Bitmap,
-                            transition: Transition<in Bitmap>?
-                        ) {
-                            bitmap = resource
-                            val outputStream = ByteArrayOutputStream()
-                            val targetWidth = 120
-                            val targetHeight = 180
-                            val scaleFactor = Math.min(
-                                bitmap!!.width.toDouble() / targetWidth,
-                                bitmap!!.height.toDouble() / targetHeight
-                            )
-                            val scaledBitmap = Bitmap.createScaledBitmap(
-                                bitmap!!,
-                                (bitmap!!.width / scaleFactor).toInt(),
-                                (bitmap!!.height / scaleFactor).toInt(),
-                                false
-                            )
-                            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-                            val byteArray = outputStream.toByteArray()
+        if (this::tmpUri.isInitialized){
+            var bitmap: Bitmap?
+            Glide.with(this)
+                .asBitmap()
+                .load(tmpUri)
+                .into(object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap>?
+                    ) {
+                        bitmap = resource
+                        val outputStream = ByteArrayOutputStream()
+                        val targetWidth = 120
+                        val targetHeight = 180
+                        val scaleFactor = Math.min(
+                            bitmap!!.width.toDouble() / targetWidth,
+                            bitmap!!.height.toDouble() / targetHeight
+                        )
+                        val scaledBitmap = Bitmap.createScaledBitmap(
+                            bitmap!!,
+                            (bitmap!!.width / scaleFactor).toInt(),
+                            (bitmap!!.height / scaleFactor).toInt(),
+                            false
+                        )
+                        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                        val byteArray = outputStream.toByteArray()
 
-                            val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
-                            val image = MultipartBody.Part.createFormData("image", isbn + "book.jpg", requestFile)
-                            cover = BASE_URL + "api/book/cover/" + isbn + "book.jpg"
+                        val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
+                        val image = MultipartBody.Part.createFormData("image", isbn + "book.jpg", requestFile)
+                        cover = BASE_URL + "api/book/cover/" + isbn + "book.jpg"
 
-                            runBlocking {
-                                val ru = launch {
-                                    val response = api.uploadImageToAPI(true, image)
-                                    if (response != null) {
-                                        val response2 = api.updateProfilePic(currentUser!!.userId)
-                                    } else {
-                                        // TODO: NOSE
-                                        // Manejar la respuesta de error
-                                        showSnackBar(requireContext(), requireView(), "Image not uploaded, please try again.")
-                                    }
+                        runBlocking {
+                            val ru = launch {
+                                val response = api.uploadImageToAPI(true, image)
+                                if (response != null) {
+                                    val response2 = api.updateProfilePic(currentUser!!.userId)
+                                } else {
+                                    // TODO: NOSE
+                                    // Manejar la respuesta de error
+                                    showSnackBar(requireContext(), requireView(), "Image not uploaded, please try again.")
                                 }
-                                ru.join()
                             }
+                            ru.join()
                         }
+                    }
 
-                        override fun onLoadCleared(placeholder: Drawable?) {
-                            // Opcionalmente, puedes hacer algo aquí cuando se borra la carga
-                        }
-                    })
-            } else {
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        // Opcionalmente, puedes hacer algo aquí cuando se borra la carga
+                    }
+                })
+        } else {
+            if (cover.isEmpty()){
+                showSnackBar(requireContext(), requireView(), getString(R.string.CoverWarningMessage))
                 return
             }
         }
+
+
 
         runBlocking {
             val coroutine = launch {

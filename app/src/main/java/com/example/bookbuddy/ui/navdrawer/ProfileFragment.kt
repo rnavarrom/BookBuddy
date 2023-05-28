@@ -105,7 +105,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
         val currentLanguageCode = getStoredLanguage()
         val curr = getCurrentLanguageCode(currentLanguageCode)
-        val languages = arrayOf("american_flag","catalan_flag","spanish_flag")
+        val languages = arrayOf("american_flag","catalan_flag")
         val adapter = LanguageSpinnerAdapter(requireContext(), languages)
         binding.languageSpinner.adapter = adapter
         var position = languages.indexOf(curr)
@@ -126,10 +126,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                             setLocal(requireActivity(), "ca")
                             saveLanguageCode(requireActivity().applicationContext,"ca")
                         }
-                        else -> {
-                            setLocal(requireActivity(), "es")
-                            saveLanguageCode(requireActivity().applicationContext,"es")
-                        }
                     }
                     recreate(requireActivity())
                 }
@@ -145,22 +141,17 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             username = currentUser!!.name
         }
 
-        launch {
-            loadUser()
-            loadTabLayout()
-            loadingEnded()
-        }
+        loadUser()
+        loadTabLayout()
+        loadingEnded()
 
         binding.bContacts.setOnClickListener {
             if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_CONTACTS)
                 != PackageManager.PERMISSION_GRANTED) {
-                // Pedir permisos de acceso a los contactos
                 requestPermissions(arrayOf(android.Manifest.permission.READ_CONTACTS),
                     REQUEST_READ_CONTACTS)
             } else {
-                // Obtener los correos electrónicos de los contactos
                 val emails = getEmailsFromContacts()
-                // Guardar los correos electrónicos en una lista
                 val emailList = ArrayList<String>()
                 emailList.addAll(emails)
                 runBlocking {
@@ -319,9 +310,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             "ca" -> {
                 "catalan_flag"
             }
-            "es" -> {
-                "spanish_flag"
-            }
             else -> {
                 "american_flag"
             }
@@ -371,13 +359,13 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
         binding.et1PrefferredGenre.visibility = View.INVISIBLE
         binding.et2PrefferredGenre.visibility = View.VISIBLE
-        if (!binding.et1PrefferredGenre.visibility.equals("Not selected")){
+        if (!binding.et1PrefferredGenre.visibility.equals(getString(R.string.MSG_NotSelected))){
             binding.et2PrefferredGenre.setText(binding.et1PrefferredGenre.text.toString())
         }
 
         binding.et1PrefferredAuthor.visibility = View.INVISIBLE
         binding.et2PrefferredAuthor.visibility = View.VISIBLE
-        if (!binding.et1PrefferredAuthor.visibility.equals("Not selected")){
+        if (!binding.et1PrefferredAuthor.visibility.equals(getString(R.string.MSG_NotSelected))){
             binding.et2PrefferredAuthor.setText(binding.et1PrefferredAuthor.text.toString())
         }
     }
@@ -526,7 +514,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             }
             corrutina.join()
         }
-        binding.tvFollowers.text = followers.toString() + " seguidores"
+        binding.tvFollowers.text = followers.toString() + getString(R.string.MSG_Followers)
 
         if (currentProfile.genre != null && !currentProfile.genre!!.name.isNullOrBlank()){
             binding.et1PrefferredGenre.text = currentProfile.genre!!.name
@@ -553,21 +541,21 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         binding.et2PrefferredGenre.setOnClickListener {
             val dialog = ProfileSearchDialog()
             dialog.onGenreSearchCompleteListener = this //Changed
-            dialog.show(childFragmentManager, "Date Picker")
+            dialog.show(childFragmentManager, "")
         }
 
         binding.et2PrefferredAuthor.setOnClickListener {
             val dialog = ProfileAuthorDialog()
             dialog.onAuthorSearchCompleteListener = this //Changed
-            dialog.show(childFragmentManager, "Date Picker")
+            dialog.show(childFragmentManager, "")
         }
     }
 
     private fun loadTabLayout(){
         tabLayout = binding.tabLayout
         viewPager = binding.viewPager
-        tabLayout.addTab(tabLayout.newTab().setText("COMMENTS"))
-        tabLayout.addTab(tabLayout.newTab().setText("READS"))
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.MSG_Comments)))
+        tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.MSG_Reads)))
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         val adapter = ProfileAdapter(activity?.applicationContext, childFragmentManager,
             tabLayout.tabCount, currentUser!!.userId, true
@@ -654,7 +642,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                             } else {
                                 // TODO: NOSE
                                 // Manejar la respuesta de error
-                                showSnackBar(requireContext(), requireView(), "Image not uploaded, please try again.")
+                                showSnackBar(requireContext(), requireView(), getString(R.string.SB_ImageNotUploaded))
                             }
                         }
                         ru.join()
@@ -675,7 +663,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             imageChooser()
         }else{
             if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                showSnackBar(requireContext(), requireView(),"Galery acces not available")
+                showSnackBar(requireContext(), requireView(),getString(R.string.SB_GaleryNotAviable))
             }else{
                 requestPermissions(
                     arrayOf(

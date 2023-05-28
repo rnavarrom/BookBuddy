@@ -36,7 +36,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
 
     var onLibrarySearchCompleteListener: OnLibrarySearchCompleteListener? = null
     interface OnLibrarySearchCompleteListener {
-        fun onLibrarySearchComplete(result: Int, name: String)
+        fun onLibrarySearchComplete(result: Int, name: String, zipCode: String)
     }
 
 

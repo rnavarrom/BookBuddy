@@ -45,9 +45,17 @@ class ScanFragment : Fragment(), ApiErrorListener {
 
     override fun onResume() {
         super.onResume()
+        if (allPermissionsGranted() && !isDialogOpen) {
+            isScannerEnabled = true
+            startCamera()
+            codeScanner.startPreview()
+        } else if (!isDialogOpen){
+            requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
+        }
+
+        /*
         val currentDestination = navController.currentDestination
         val isDialogOpen = currentDestination?.id == R.id.nav_book_display
-
         if (allPermissionsGranted() && !isDialogOpen) {
             isScannerEnabled = true
             startCamera()
@@ -57,7 +65,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
             //println("El idalogog esta abierto")
         } else {
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
-        }
+        }*/
     }
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults:
@@ -108,32 +116,23 @@ class ScanFragment : Fragment(), ApiErrorListener {
         if (!this::codeScanner.isInitialized){
             codeScanner = CodeScanner(activity, scannerView)
         }
-
         codeScanner.decodeCallback = DecodeCallback {
             activity.runOnUiThread {
                 // Vibrate
+                val isbnLength = 13
                 val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                 vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
-                if (it.text.length == 13 && it.text.matches(Regex("\\d+"))){
+                if (it.text.length == isbnLength && it.text.matches(Regex("\\d+"))){
                     codeScanner.releaseResources()
-                    var bookExists: Boolean? = bookExist(it.text)
-
+                    val bookExists: Boolean? = bookExist(it.text)
                     if (bookExists == null) {
-                        showSnackBar(requireContext(), requireView(), "Failed to c")
+                        showSnackBar(requireContext(), requireView(), getString(R.string.SB_ScanFailed))
                     } else if (!bookExists) {  //!bookExist(it.text)!!
                         val created: Boolean? = createRequest(it.text)
                         if (created == true) {
-                            showSnackBar(
-                                requireContext(),
-                                requireView(),
-                                getString(R.string.SB_AddedBookPending)
-                            )
+                            showSnackBar(requireContext(), requireView(), getString(R.string.SB_AddedBookPending))
                         } else {
-                            showSnackBar(
-                                requireContext(),
-                                requireView(),
-                                getString(R.string.SB_BookAlreadyRequested)
-                            )
+                            showSnackBar(requireContext(), requireView(), getString(R.string.SB_BookAlreadyRequested))
                         }
                         codeScanner.startPreview()
                     } else {
@@ -149,7 +148,6 @@ class ScanFragment : Fragment(), ApiErrorListener {
                     codeScanner.startPreview()
                     showSnackBar(requireContext(),requireView(),getString(R.string.SB_TryAgainScan))
                 }
-
             }
         }
         scannerView.setOnClickListener {
