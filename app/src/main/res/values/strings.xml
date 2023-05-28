@@ -280,5 +280,6 @@
     <string name="MSG_PasswordVisualize">Password visualize</string>
     <string name="MSG_AuthorCannotBeEmpty">Author cannot be empty</string>
     <string name="MSG_GenreCannotBeEmpty">Genre cannot be empty</string>
+    <string name="DL_ReadPages">Read pages</string>
 
 </resources>

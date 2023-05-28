@@ -3,6 +3,7 @@ package com.example.bookbuddy.adapters
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.text.InputFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -95,12 +96,17 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
         val dialogLayout = inflater.inflate(R.layout.dialog_readed_pages, null)
         val editText = dialogLayout.findViewById<EditText>(R.id.dialog_readed_pages)
         val total = dialogLayout.findViewById<TextView>(R.id.dialog_total_pages)
+
         total.text = list[position].pages.toString()
+        val filterArray = arrayOfNulls<InputFilter>(1)
+        filterArray[0] = InputFilter.LengthFilter(total.text.length)
+        editText.filters = filterArray
         builder.setView(dialogLayout)
         builder.setNegativeButton(context.getString(R.string.BT_Cancel)) { _, _ -> }
         builder.setPositiveButton(context.getString(R.string.BT_Accept)) { _, _ ->
             val valueint = Integer.parseInt(editText.text.toString())
             if (valueint == list[position].pages) {
+
                 list[position].pagesReaded = Integer.parseInt(editText.text.toString())
                 holder.pagesReaded.text = list[position].pagesReaded.toString()
                 val percent =

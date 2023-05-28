@@ -1,5 +1,6 @@
 package com.example.bookbuddy.adapters
 
+import android.content.Context
 import android.location.Location
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +18,7 @@ class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var locatio
     RecyclerView.Adapter<LibraryAdapter.ViewHolder>() {
 
     private var selected: LibraryExtended? = null
-
+    private lateinit var context: Context
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val libraryName = view.findViewById<TextView>(R.id.lib_name)!!
         val libraryZip = view.findViewById<TextView>(R.id.lib_zip)!!
@@ -27,6 +28,7 @@ class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var locatio
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(parent.context)
+        context = parent.context
         return if (viewType == 0) {
             ViewHolder(layout.inflate(R.layout.cardview_library, parent, false))
         } else {
@@ -44,7 +46,7 @@ class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var locatio
             holder.libraryDistance.visibility = View.GONE
         }
 
-        holder.libraryCopies.text = list[position].copies.toString() + " copies"
+        holder.libraryCopies.text = list[position].copies.toString() + context.getString(R.string.MSG_Copies)
 
         holder.view.setOnClickListener {
             for (i in 0 until list.size) {

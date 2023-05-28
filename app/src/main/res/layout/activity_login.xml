@@ -108,7 +108,7 @@
                     android:id="@+id/MA_Edit_Password"
                     android:inputType="textPassword"
                     android:layout_marginHorizontal="20dp"
-                    android:layout_marginBottom="50dp"
+                    android:layout_marginBottom="70dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/MA_Edit_User"
@@ -152,7 +152,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:paddingHorizontal="10dp"
-                    android:paddingVertical="20dp"
+                    android:paddingVertical="15dp"
                     />
 
                 <Button

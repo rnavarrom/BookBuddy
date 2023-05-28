@@ -38,16 +38,15 @@ class AdminRequestsAdapter(var list: ArrayList<BookRequest>) :
         holder.view.setOnClickListener {
             for (i in 0 until list.size) {
                 if (i == position)
-                    if (list[i].cardview == 0) {
+                    if (list[i].cardview == 0)
                         list[i].cardview = 1
-                        selected = list[position]
-                    } else {
+                    else {
                         list[i].cardview = 0
-                        selected = null
                     }
                 else
                     list[i].cardview = 0
             }
+            selected = list[position]
             notifyDataSetChanged()
         }
     }
@@ -64,4 +63,8 @@ class AdminRequestsAdapter(var list: ArrayList<BookRequest>) :
     override fun getItemViewType(position: Int) = list[position].cardview
 
     fun getSelected() = selected
+
+    fun setSelectedNull(){
+        selected = null
+    }
 }

@@ -160,7 +160,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
                 applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(binding.MAButtonLogin.windowToken, 0)
 
-            val userName = binding.MAEditUser.text.toString()
+            val userName = binding.MAEditUser.text.toString().trim()
             val userPassword = binding.MAEditPassword.text.toString()
             if (userName.isNotBlank() && userPassword.isNotBlank()) {
                 getUsers(userName, Sha.calculateSHA(userPassword))

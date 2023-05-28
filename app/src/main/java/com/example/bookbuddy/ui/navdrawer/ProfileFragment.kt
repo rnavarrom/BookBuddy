@@ -25,6 +25,7 @@ import androidx.core.app.ActivityCompat.recreate
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -227,6 +228,10 @@ class ProfileFragment : Fragment(), CoroutineScope,
                                 coroutine.join()
                             }
                             if (result != null && result as Boolean) {
+                                val userPrefs = UserPreferences(requireContext())
+                                lifecycleScope.launch {
+                                    userPrefs.saveCredentials("", "")
+                                }
                                 showSnackBar(
                                     requireContext(),
                                     requireView(),

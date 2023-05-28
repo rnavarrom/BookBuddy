@@ -7,7 +7,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="title"
+        android:text="@string/DL_ReadPages"
         android:id="@+id/title"
         android:textColor="@color/primary_green"
         app:layout_constraintTop_toTopOf="parent"
@@ -24,7 +24,8 @@
     android:id="@+id/linearLayout">
     <EditText
         android:id="@+id/dialog_readed_pages"
-        android:layout_width="40dp"
+        android:layout_width="wrap_content"
+        android:minWidth="40dp"
         android:layout_height="wrap_content"
         android:inputType="number"
         />

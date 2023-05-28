@@ -122,6 +122,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
         codeScanner.decodeCallback = DecodeCallback {
             activity.runOnUiThread {
                 // Vibrate
+                codeScanner.releaseResources()
                 val isbnLength = 13
                 val vibrator = context?.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                 vibrator.vibrate(

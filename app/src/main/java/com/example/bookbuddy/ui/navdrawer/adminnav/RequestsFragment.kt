@@ -73,7 +73,6 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         binding.btnAdd.setOnClickListener {
             val selection = adapter.getSelected()
-            var result = false
             if (selection != null) {
                 val fra = requireArguments().getParcelable("fragment") as? AdminFragment?
                 val bundle = Bundle()
@@ -111,6 +110,7 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                         bookRequests!!.remove(selection)
                         adapter.updateList(bookRequests as ArrayList<BookRequest>)
                     }
+                    adapter.setSelectedNull()
                     dialogInterface.dismiss()
                 }
                 builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialogInterface: DialogInterface, _: Int ->

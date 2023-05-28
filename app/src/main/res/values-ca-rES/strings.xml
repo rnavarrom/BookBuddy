@@ -256,4 +256,7 @@
     <string name="TTS_Description">Descripció:</string>
     <string name="MSG_PasswordError">Com a mínim una lletra minúscula, una majúscules, un nombre i 8 caràcters de longitud</string>
     <string name="MSG_PasswordVisualize">Veure contrasenya</string>
+    <string name="MSG_AuthorCannotBeEmpty">Auto no pot ser buit</string>
+    <string name="MSG_GenreCannotBeEmpty">Gènere no pot ser buit</string>
+    <string name="DL_ReadPages">Pàgines llegides</string>
 </resources>

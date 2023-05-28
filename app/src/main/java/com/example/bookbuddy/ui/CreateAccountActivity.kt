@@ -99,7 +99,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     private fun getValues() {
-        currentUserCreate.name = binding.CAEditUser.text.toString()
+        currentUserCreate.name = binding.CAEditUser.text.toString().trim()
         currentUserCreate.password = Sha.calculateSHA(binding.CAEditPassword.text.toString())
         currentUserCreate.email = binding.CAEditEmail.text.toString()
     }
