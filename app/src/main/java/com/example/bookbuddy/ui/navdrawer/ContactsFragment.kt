@@ -11,16 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.ContactAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentContactsBinding
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileDialog
-import com.example.bookbuddy.utils.ApiErrorListener
-import com.example.bookbuddy.utils.Tools
-import com.example.bookbuddy.utils.currentUser
-import com.example.bookbuddy.utils.navController
+import com.example.bookbuddy.utils.*
 import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
@@ -29,7 +25,8 @@ import kotlin.coroutines.CoroutineContext
  * Contacts ragment from the navMenu.
  */
 @Parcelize
-class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDialogClose, ApiErrorListener, Parcelable {
+class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDialogClose,
+    ApiErrorListener, Parcelable {
     lateinit var binding: FragmentContactsBinding
     private var job: Job = Job()
     lateinit var adapter: ContactAdapter
@@ -45,10 +42,15 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  FragmentContactsBinding.inflate(layoutInflater, container, false)
+        binding = FragmentContactsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
+        binding.mainContent.setColorSchemeColors(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primary_green
+            )
+        )
 
         getUserFollows(true)
         onLoadingEnded()
@@ -59,8 +61,8 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
     /**
      * What to do if there are no contacts
      */
-    private fun emptyContacts(){
-        if (follows == null || follows!!.isEmpty()){
+    private fun emptyContacts() {
+        if (follows == null || follows!!.isEmpty()) {
             binding.emptyActivity.text = "No contacts"
             binding.emptyActivity.visibility = View.VISIBLE
         } else {
@@ -72,25 +74,29 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
      * Get the users an user is following and show them on the recycler view.
      * @param addAdapter Chech if the adapter is already running.
      */
-    private fun getUserFollows(addAdapter: Boolean){
+    private fun getUserFollows(addAdapter: Boolean) {
         runBlocking {
 
             val coroutine = launch {
-                if (position == 0){
-                    val tempFollows = api.getFollowersProfile(currentUser!!.userId, position) as MutableList<UserItem>?
-                    if (tempFollows != null){
+                if (position == 0) {
+                    val tempFollows = api.getFollowersProfile(
+                        currentUser!!.userId,
+                        position
+                    ) as MutableList<UserItem>?
+                    if (tempFollows != null) {
                         follows = tempFollows
                     }
                 } else {
                     val tempFollows = api.getFollowersProfile(currentUser!!.userId, position)
-                    if(tempFollows != null){
+                    if (tempFollows != null) {
                         follows!!.addAll(tempFollows as MutableList<UserItem>)
                     }
                 }
-                if(follows != null) {
+                if (follows != null) {
                     if (addAdapter) {
                         binding.rvContacts.layoutManager = LinearLayoutManager(context)
-                        adapter = ContactAdapter(follows as ArrayList<UserItem>, this@ContactsFragment)
+                        adapter =
+                            ContactAdapter(follows as ArrayList<UserItem>, this@ContactsFragment)
                         binding.rvContacts.adapter = adapter
                     } else {
                         adapter.updateList(follows as ArrayList<UserItem>)
@@ -104,7 +110,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
     /**
      * Load the configuration upon ending the loading animation
      */
-    fun onLoadingEnded(){
+    fun onLoadingEnded() {
         emptyContacts()
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
@@ -129,7 +135,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -146,7 +152,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted){
+        if (isOnCreateViewExecuted) {
             Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
     }
@@ -162,6 +168,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

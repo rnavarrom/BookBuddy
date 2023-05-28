@@ -12,12 +12,12 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
-import com.example.bookbuddy.utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.ui.navdrawer.bookdisplay.CommentsListDialogDirections
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
@@ -31,11 +31,16 @@ import kotlin.coroutines.CoroutineContext
  * Adapter for displaying comments in a recycler view
  * @param list The list of search results to display.
  */
-class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activity, val title: String) :
+class CommentAdapter(
+    var list: java.util.ArrayList<Comment>,
+    val activity: Activity,
+    val title: String
+) :
     RecyclerView.Adapter<CommentAdapter.ViewHolder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
-    lateinit var view : View
-    private val api = CrudApi( this@CommentAdapter)
+    lateinit var view: View
+    private val api = CrudApi(this@CommentAdapter)
+
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val profilePicture = view.findViewById<ImageView>(R.id.profile_imageView)!!
         val username = view.findViewById<TextView>(R.id.tv_name)!!
@@ -43,7 +48,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
         val rating = view.findViewById<RatingBar>(R.id.book_rating_display)!!
         val comment = view.findViewById<TextView>(R.id.tv_comment)!!
         val share = view.findViewById<ImageView>(R.id.iv_share)!!
-        val dropmenu: ImageButton = view.findViewById<ImageButton>(R.id.drop_menu)
+        val dropmenu = view.findViewById<ImageButton>(R.id.drop_menu)
     }
 
     private lateinit var context: Context
@@ -59,13 +64,11 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        //holder.profilePicture.setImageResource()
-
-        if(list[position].user!!.haspicture){
+        if (list[position].user!!.haspicture) {
             runBlocking {
 
                 val coroutine = launch {
-                    if (list[position].user!!.haspicture){
+                    if (list[position].user!!.haspicture) {
                         val commentPicture = api.getUserImage(list[position].user!!.userId)
                         val body = commentPicture //.body()
                         if (body != null) {
@@ -73,7 +76,10 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
                             val bytes = body.bytes()
 
                             // Guardar los bytes en un archivo
-                            val file = File(context.cacheDir, list[position].user!!.userId.toString() + "user.jpg")
+                            val file = File(
+                                context.cacheDir,
+                                list[position].user!!.userId.toString() + "user.jpg"
+                            )
                             withContext(Dispatchers.IO) {
                                 val outputStream = FileOutputStream(file)
                                 outputStream.write(bytes)
@@ -96,7 +102,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
         val outputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
         val dateString = list[position].fecha.toString()
         val dateTime = LocalDateTime.parse(dateString, inputFormat)
-        holder.date.text = dateTime.format(outputFormat)//list[position].fecha.toString()
+        holder.date.text = dateTime.format(outputFormat)
         holder.rating.rating = list[position].rating.toFloat()
         holder.comment.text = list[position].comentText
 
@@ -108,7 +114,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
             val title = title
             val rating = list[position].rating.toString()
             val review = context.getString(R.string.MSG_ShareReviewOf) + title + "\n" +
-                    context.getString(R.string.MSG_ShareRating) +  rating +
+                    context.getString(R.string.MSG_ShareRating) + rating +
                     context.getString(R.string.MSG_ShareStars) + "\n" +
                     context.getString(R.string.MSG_ShareText)
             val shareIntent = Intent().apply {
@@ -116,14 +122,19 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, review)
             }
-            activity.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.MSG_ShareTitle)))
+            activity.startActivity(
+                Intent.createChooser(
+                    shareIntent,
+                    context.getString(R.string.MSG_ShareTitle)
+                )
+            )
         }
 
-        holder.username.setOnClickListener{
+        holder.username.setOnClickListener {
             goToUserProfile(list[position].user!!.userId, list[position].user!!.name)
         }
 
-        if (holder.dropmenu != null){
+        if (holder.dropmenu != null) {
             holder.dropmenu.setOnClickListener {
                 val popup = PopupMenu(context, holder.dropmenu)
                 popup.menuInflater
@@ -153,7 +164,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
         }
     }
 
-    private fun goToUserProfile(userid: Int, username: String){
+    private fun goToUserProfile(userid: Int, username: String) {
         val bundle = Bundle()
         bundle.putInt("userid", userid)
         bundle.putString("username", username)
@@ -161,7 +172,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
         navController.navigate(action)
     }
 
-    fun updateList(newList: ArrayList<Comment>){
+    fun updateList(newList: ArrayList<Comment>) {
         list = newList
         notifyDataSetChanged()
     }

@@ -8,11 +8,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.Author
+
 /**
  * Adapter for displaying authors in a recycler view
  * @param list The list of search results to display.
  */
-class AdminAuthorsAdapter(var list: ArrayList<Author>) : RecyclerView.Adapter<AdminAuthorsAdapter.ViewHolder>() {
+class AdminAuthorsAdapter(var list: ArrayList<Author>) :
+    RecyclerView.Adapter<AdminAuthorsAdapter.ViewHolder>() {
     private var selected: Author? = null
 
     //Link values to the view
@@ -21,28 +23,29 @@ class AdminAuthorsAdapter(var list: ArrayList<Author>) : RecyclerView.Adapter<Ad
     }
 
     lateinit var context: Context
+
     //Load values to the view and select cardview
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(parent.context)
         context = parent.context
 
-        return if (viewType == 0){
+        return if (viewType == 0) {
             ViewHolder(layout.inflate(R.layout.cardview_admin_genre, parent, false))
-        } else{
+        } else {
             ViewHolder(layout.inflate(R.layout.cardview_admin_genre_selected, parent, false))
         }
     }
+
     //Bind each value from the list
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.name.text = list[position].name
         holder.view.setOnClickListener {
             for (i in 0 until list.size) {
                 if (i == position)
-                    if (list[i].cardview == 0){
+                    if (list[i].cardview == 0) {
                         list[i].cardview = 1
                         selected = list[position]
-                    }
-                    else {
+                    } else {
                         list[i].cardview = 0
                         selected = null
                     }
@@ -52,7 +55,8 @@ class AdminAuthorsAdapter(var list: ArrayList<Author>) : RecyclerView.Adapter<Ad
             notifyDataSetChanged()
         }
     }
-    fun updateList(newList: ArrayList<Author>){
+
+    fun updateList(newList: ArrayList<Author>) {
         list = newList
         notifyDataSetChanged()
     }

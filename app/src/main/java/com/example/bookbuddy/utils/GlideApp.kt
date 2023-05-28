@@ -9,7 +9,9 @@ import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.module.AppGlideModule
 import okhttp3.OkHttpClient
 import java.io.InputStream
-import javax.net.ssl.*
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
 /**
  * Class to bypass SSL restrictions
@@ -21,10 +23,16 @@ class UnsafeOkHttpClient {
                 // Create a trust manager that does not validate certificate chains
                 val trustAllCerts = arrayOf<TrustManager>(
                     object : X509TrustManager {
-                        override fun checkClientTrusted(chain: Array<out java.security.cert.X509Certificate>?, authType: String?) {
+                        override fun checkClientTrusted(
+                            chain: Array<out java.security.cert.X509Certificate>?,
+                            authType: String?
+                        ) {
                         }
 
-                        override fun checkServerTrusted(chain: Array<out java.security.cert.X509Certificate>?, authType: String?) {
+                        override fun checkServerTrusted(
+                            chain: Array<out java.security.cert.X509Certificate>?,
+                            authType: String?
+                        ) {
                         }
 
                         override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> {
@@ -61,6 +69,10 @@ class UnsafeOkHttpGlideModule : AppGlideModule() {
         // Create an unsafe OkHttpClient that trusts any certificate
         val okHttpClient = UnsafeOkHttpClient.getUnsafeOkHttpClient()
         // Register it as the default network loader for Glide
-        registry.replace(GlideUrl::class.java, InputStream::class.java, OkHttpUrlLoader.Factory(okHttpClient))
+        registry.replace(
+            GlideUrl::class.java,
+            InputStream::class.java,
+            OkHttpUrlLoader.Factory(okHttpClient)
+        )
     }
 }

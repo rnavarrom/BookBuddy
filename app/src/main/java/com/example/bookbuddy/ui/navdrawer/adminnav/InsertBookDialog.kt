@@ -54,6 +54,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private var isRequest = false
     private var requestId = 0
     private val api = CrudApi(this@InsertBookDialog)
+
     interface OnAdminDialogClose {
         fun onAdminDialogClose()
     }
@@ -72,23 +73,23 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  DialogAdminInsertBookBinding.inflate(layoutInflater, container, false)
+        binding = DialogAdminInsertBookBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
         val bundle = arguments?.getBundle("bundle")
         var toolbarMessage = ""
         //Handle bundle value if any to load correct fragment
-        if (bundle != null && bundle.containsKey("fragment")){
+        if (bundle != null && bundle.containsKey("fragment")) {
             fragment = bundle.getParcelable("fragment") as? AdminFragment?
-            if (fragment != null){
+            if (fragment != null) {
                 onAdminDialogClose = fragment
             }
-            if (bundle.containsKey("book")){
+            if (bundle.containsKey("book")) {
                 mode = "edit"
                 book = bundle.getParcelable("book")!!
             }
 
-            if (bundle.containsKey("isbn")){
+            if (bundle.containsKey("isbn")) {
                 isRequest = true
                 requestId = bundle.getInt("id")
                 val isbn = bundle.getString("isbn")
@@ -96,7 +97,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 binding.etIsbn.focusable = View.NOT_FOCUSABLE
             }
 
-            if (mode == "edit"){
+            if (mode == "edit") {
                 toolbarMessage = getString(R.string.EditBook)
                 binding.etId.text = book.bookId.toString()
                 binding.etIsbn.setText(book.isbn)
@@ -156,7 +157,12 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 .into(binding.ivCover)
         }
     }
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == REQUEST_CODE_PERMISSION) {
@@ -174,8 +180,9 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             }
         }
     }
+
     //Navigate to book references
-    private fun openReferences(){
+    private fun openReferences() {
         val bundle = Bundle()
         bundle.putInt("bookid", book.bookId)
         val action = InsertBookDialogDirections.actionNavInsertBookToNavReferencesBook(bundle)
@@ -202,15 +209,21 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             initialDay = calendar.get(Calendar.DAY_OF_MONTH)
         }
 
-        val datePickerDialog = DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
-            calendar.set(Calendar.YEAR, year)
-            calendar.set(Calendar.MONTH, month)
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, year, month, dayOfMonth ->
+                calendar.set(Calendar.YEAR, year)
+                calendar.set(Calendar.MONTH, month)
+                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val formattedDate = dateFormat.format(calendar.time)
-            binding.etDate.setText(formattedDate)
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val formattedDate = dateFormat.format(calendar.time)
+                binding.etDate.setText(formattedDate)
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        )
         val datePicker = datePickerDialog.datePicker
         datePicker.updateDate(initialYear, initialMonth, initialDay)
         datePicker.maxDate = System.currentTimeMillis() - 1000
@@ -218,7 +231,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         datePickerDialog.show()
     }
 
-    private fun editLibrary(){
+    private fun editLibrary() {
         var result: Book? = null
         var editResult: Boolean? = null
         val isbn = binding.etIsbn.text.toString().trim()
@@ -228,13 +241,13 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         val date = binding.etDate.text.toString()
         var cover = binding.etCover.text.toString().trim()
         //Check if the values ar correctly added
-        if (isbn.isEmpty()){
+        if (isbn.isEmpty()) {
             showSnackBar(requireContext(), requireView(), getString(R.string.ISBNEmptyWarning))
         }
-        if (isbn.length < 13){
+        if (isbn.length < 13) {
             showSnackBar(requireContext(), requireView(), getString(R.string.ISBNMaxLenght))
         }
-        if (this::book.isInitialized && (book.isbn != isbn || !binding.etIsbn.isFocusable)){
+        if (this::book.isInitialized && (book.isbn != isbn || !binding.etIsbn.isFocusable)) {
             var isbnExist = false
             runBlocking {
 
@@ -243,24 +256,28 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 }
                 coroutine.join()
             }
-            if (isbnExist){
-                showSnackBar(requireContext(), requireView(), getString(R.string.ISBNDuplicateWarning))
+            if (isbnExist) {
+                showSnackBar(
+                    requireContext(),
+                    requireView(),
+                    getString(R.string.ISBNDuplicateWarning)
+                )
                 return
             }
         }
-        if (title.isEmpty()){
+        if (title.isEmpty()) {
             showSnackBar(requireContext(), requireView(), getString(R.string.TitleEmptyWarning))
             return
         }
-        if (pages == null){
+        if (pages == null) {
             showSnackBar(requireContext(), requireView(), getString(R.string.PagesEmptyWarning))
             return
         }
-        if (date.isEmpty()){
+        if (date.isEmpty()) {
             showSnackBar(requireContext(), requireView(), getString(R.string.PublishEmptyWarning))
             return
         }
-        if (this::tmpUri.isInitialized){
+        if (this::tmpUri.isInitialized) {
             var bitmap: Bitmap?
             // Use glide to get hte bitmap of an image to upload to the server, with glide the
             // image flips automatically
@@ -289,8 +306,13 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                         scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                         val byteArray = outputStream.toByteArray()
 
-                        val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
-                        val image = MultipartBody.Part.createFormData("image", isbn + "book.jpg", requestFile)
+                        val requestFile =
+                            RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
+                        val image = MultipartBody.Part.createFormData(
+                            "image",
+                            isbn + "book.jpg",
+                            requestFile
+                        )
                         cover = BASE_URL + "api/book/cover/" + isbn + "book.jpg"
 
                         // Upload image to te server
@@ -298,7 +320,11 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                             val ru = launch {
                                 val response = api.uploadImageToAPI(true, image)
                                 if (response == null) {
-                                    showSnackBar(requireContext(), requireView(), getString(R.string.MSG_ErrorUploadImg))
+                                    showSnackBar(
+                                        requireContext(),
+                                        requireView(),
+                                        getString(R.string.MSG_ErrorUploadImg)
+                                    )
                                 }
                             }
                             ru.join()
@@ -309,8 +335,12 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                     }
                 })
         } else {
-            if (cover.isEmpty()){
-                showSnackBar(requireContext(), requireView(), getString(R.string.CoverWarningMessage))
+            if (cover.isEmpty()) {
+                showSnackBar(
+                    requireContext(),
+                    requireView(),
+                    getString(R.string.CoverWarningMessage)
+                )
                 return
             }
         }
@@ -318,11 +348,20 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         // Insert or edit book
         runBlocking {
             val coroutine = launch {
-                if (mode == "edit"){
-                    editResult = api.updateBook(book.bookId,isbn, title, description, book.rating, pages, date , cover)
+                if (mode == "edit") {
+                    editResult = api.updateBook(
+                        book.bookId,
+                        isbn,
+                        title,
+                        description,
+                        book.rating,
+                        pages,
+                        date,
+                        cover
+                    )
                 } else {
-                    val tmpResult = api.insertBook(isbn, title, description, pages, date , cover)
-                    if (tmpResult != null){
+                    val tmpResult = api.insertBook(isbn, title, description, pages, date, cover)
+                    if (tmpResult != null) {
                         result = tmpResult
                         api.deleteRequest(requestId)
                     }
@@ -333,33 +372,59 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         //Handle result on edit value
         if (result != null) {
             onAdminDialogClose!!.onAdminDialogClose()
-            showSnackBar(requireActivity().applicationContext, requireParentFragment().requireView(), getString(
-                            R.string.BookAdded))
+            showSnackBar(
+                requireActivity().applicationContext,
+                requireParentFragment().requireView(),
+                getString(
+                    R.string.BookAdded
+                )
+            )
             dismiss()
-        } else if (editResult != null && editResult as Boolean){
+        } else if (editResult != null && editResult as Boolean) {
             onAdminDialogClose!!.onAdminDialogClose()
-            showSnackBar(requireActivity().applicationContext, requireParentFragment().requireView(), getString(
-                            R.string.BookEdited))
+            showSnackBar(
+                requireActivity().applicationContext,
+                requireParentFragment().requireView(),
+                getString(
+                    R.string.BookEdited
+                )
+            )
             dismiss()
         } else {
-            showSnackBar(requireContext(), requireView(), getString(R.string.SB_DuplicateLibraryName))
+            showSnackBar(
+                requireContext(),
+                requireView(),
+                getString(R.string.SB_DuplicateLibraryName)
+            )
         }
     }
 
     // Open the image galery
-    private fun imageChooser(){
+    private fun imageChooser() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, REQUEST_CODE_GALLERY)
     }
-    private fun checkPermissions(){
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-            == PackageManager.PERMISSION_GRANTED){
+
+    private fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+            == PackageManager.PERMISSION_GRANTED
+        ) {
             imageChooser()
-        }else{
-            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE_PERMISSION)
+        } else {
+            requestPermissions(
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                REQUEST_CODE_PERMISSION
+            )
 
             if (shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                showSnackBar(requireContext(), requireView(),getString(R.string.SB_GaleryNotAviable))
+                showSnackBar(
+                    requireContext(),
+                    requireView(),
+                    getString(R.string.SB_GaleryNotAviable)
+                )
             }
 
         }
@@ -368,6 +433,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     override fun onApiError(connectionFailed: Boolean) {
         showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
@@ -380,6 +446,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
+
     companion object {
         private const val REQUEST_CODE_PERMISSION = 5
         private const val REQUEST_CODE_GALLERY = 10

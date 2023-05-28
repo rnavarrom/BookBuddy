@@ -11,13 +11,13 @@ import java.io.File
 // Variables used in all the application
 
 lateinit var navView: NavigationView
-lateinit var navController : NavController
+lateinit var navController: NavController
 lateinit var navTop: Menu
-var currentUser : User? = null
+var currentUser: User? = null
 lateinit var currentProfile: Profile
 var currentPicture: File? = null
-lateinit var currentUserCreate : UserItem
-val keyboardValue : Int = 250
+lateinit var currentUserCreate: UserItem
+val keyboardValue: Int = 250
 var currentLanguageChanged: Boolean = false
 
 // Check if the profiles has been initialized

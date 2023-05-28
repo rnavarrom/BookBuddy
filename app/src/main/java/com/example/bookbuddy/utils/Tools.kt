@@ -58,7 +58,7 @@ class Tools {
         }
 
         // Shows the content of a editext password
-        fun tooglePasswordVisible(editText: EditText){
+        fun tooglePasswordVisible(editText: EditText) {
             if (editText.transformationMethod == PasswordTransformationMethod.getInstance()) {
                 editText.transformationMethod = HideReturnsTransformationMethod.getInstance()
             } else {
@@ -67,7 +67,12 @@ class Tools {
         }
 
         // Sets a toolbar on dialog fragments
-        fun setToolBar(dialogFragment: DialogFragment, toolbar: Toolbar, context: Context, title: String){
+        fun setToolBar(
+            dialogFragment: DialogFragment,
+            toolbar: Toolbar,
+            context: Context,
+            title: String
+        ) {
             toolbar.title = title
             toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
             toolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.primary_green))
@@ -76,7 +81,7 @@ class Tools {
         }
 
         // Clears all cache of images except your profile pic
-        fun clearCache(context: Context){
+        fun clearCache(context: Context) {
             val cacheDir = context.cacheDir
             val files = cacheDir.listFiles()
 
@@ -90,15 +95,15 @@ class Tools {
         }
 
         // Updates the username and the profile pic on the navigation drawer menu
-        fun setNavigationProfile(context: Context, image: File?, username: String?){
+        fun setNavigationProfile(context: Context, image: File?, username: String?) {
             val hView: View = navView.getHeaderView(0)
-            if (username != null){
+            if (username != null) {
                 val profileName: TextView = hView.findViewById(R.id.profile_name)
                 profileName.text = username
             }
 
-            if (image != null){
-                if (currentUser!!.haspicture){
+            if (image != null) {
+                if (currentUser!!.haspicture) {
                     val profileImg: ShapeableImageView = hView.findViewById(R.id.profile_imageView)
 
                     Glide.with(context)
@@ -110,7 +115,7 @@ class Tools {
         }
 
         // Given a respone of the bytes of an image, generates a file and set it to the currentPicture
-        fun responseToFile(context: Context, response: ResponseBody? ){
+        fun responseToFile(context: Context, response: ResponseBody?) {
             val bytes = response!!.bytes()
             context.cacheDir.deleteRecursively()
             val file = File(context.cacheDir, currentUser!!.userId.toString() + "user.jpg")
@@ -121,16 +126,19 @@ class Tools {
         }
 
         // Shows information on the bottom part of the application
-        fun showSnackBar(context: Context, view: View, text: String){
-            val snackbar = Snackbar.make(view, text,
-                Snackbar.LENGTH_LONG)
-            snackbar.setAction("OK"){
+        fun showSnackBar(context: Context, view: View, text: String) {
+            val snackbar = Snackbar.make(
+                view, text,
+                Snackbar.LENGTH_LONG
+            )
+            snackbar.setAction("OK") {
                 snackbar.dismiss()
             }
             snackbar.setActionTextColor(ContextCompat.getColor(context, R.color.white))
             val snackbarView = snackbar.view
             snackbarView.setBackgroundColor(ContextCompat.getColor(context, R.color.primary_green))
-            val textView = snackbarView.findViewById(com.google.android.material.R.id.snackbar_text) as TextView
+            val textView =
+                snackbarView.findViewById(com.google.android.material.R.id.snackbar_text) as TextView
             textView.setTextColor(Color.WHITE)
             textView.textSize = 14f
             snackbar.show()

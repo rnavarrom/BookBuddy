@@ -22,9 +22,14 @@ import kotlin.coroutines.CoroutineContext
  * @param dialog Dialog where execute function on search end
  * @param list The list of search results to display.
  */
-class SearchAuthorsAdapter(private var dialogFragment: DialogFragment, var dialog: ProfileAuthorDialog.OnAuthorSearchCompleteListener?, var list: java.util.ArrayList<Author>) :
+class SearchAuthorsAdapter(
+    private var dialogFragment: DialogFragment,
+    var dialog: ProfileAuthorDialog.OnAuthorSearchCompleteListener?,
+    var list: java.util.ArrayList<Author>
+) :
     RecyclerView.Adapter<SearchAuthorsAdapter.ViewHolder>(), CoroutineScope {
     private var job: Job = Job()
+
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val name = view.findViewById<TextView>(R.id.tv_search_name)!!
     }
@@ -44,13 +49,13 @@ class SearchAuthorsAdapter(private var dialogFragment: DialogFragment, var dialo
         }
     }
 
-    private fun addAuthorToFavourite(id: Int, name: String){
+    private fun addAuthorToFavourite(id: Int, name: String) {
         currentProfile.authorId = id
         dialog?.onAuthorSearchComplete(id, name)
         dialogFragment.dismiss()
     }
 
-    fun updateList(newList: ArrayList<Author>){
+    fun updateList(newList: ArrayList<Author>) {
         list = newList
         notifyDataSetChanged()
     }

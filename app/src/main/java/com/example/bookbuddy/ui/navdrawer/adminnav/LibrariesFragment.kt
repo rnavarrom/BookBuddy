@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.AdminLibraryAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminLibrariesBinding
@@ -20,10 +19,12 @@ import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.ui.navdrawer.AdminFragmentDirections
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+
 /**
  * Fragment to display the libraries list crud.
  */
@@ -48,10 +49,15 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  FragmentAdminLibrariesBinding.inflate(layoutInflater, container, false)
+        binding = FragmentAdminLibrariesBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
+        binding.mainContent.setColorSchemeColors(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primary_green
+            )
+        )
 
         getLibraries(true)
         onLoadingEnded()
@@ -68,6 +74,7 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
     /**
      * Function to select what dialog needs to be loaded and aply the correct filter to the search
      */
@@ -103,24 +110,25 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }, 200)
     }
 
-    private fun insertLibrary(){
+    private fun insertLibrary() {
         val bundle = Bundle()
         bundle.putParcelable("fragment", arguments?.getParcelable("fragment") as? AdminFragment?)
         val action = AdminFragmentDirections.actionNavAdminToNavInsertLibrary(bundle)
         navController.navigate(action)
     }
 
-    private fun editLibrary(library: Library){
+    private fun editLibrary(library: Library) {
         val bundle = Bundle()
         bundle.putParcelable("fragment", arguments?.getParcelable("fragment") as? AdminFragment?)
         bundle.putParcelable("library", library)
         val action = AdminFragmentDirections.actionNavAdminToNavInsertLibrary(bundle)
         navController.navigate(action)
     }
+
     /**
      * Load the configuration upon ending the loading animation
      */
-    private fun onLoadingEnded(){
+    private fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -130,7 +138,7 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         binding.btnEdit.setOnClickListener {
             val selection = adapter.getSelected()
-            if (selection != null){
+            if (selection != null) {
                 editLibrary(selection)
             } else {
                 showSnackBar(requireContext(), requireView(), getString(R.string.PickLibrary))
@@ -140,7 +148,7 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.btnDelete.setOnClickListener {
             val selection = adapter.getSelected()
             var result = false
-            if (selection != null){
+            if (selection != null) {
                 runBlocking {
                     val coroutine = launch {
                         result = api.deleteLibrary(selection.libraryId)!!
@@ -153,7 +161,11 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
                     libraries!!.remove(selection)
                     adapter.updateList(libraries as ArrayList<Library>)
                 } else {
-                    showSnackBar(requireContext(), requireView(), getString(R.string.LibraryHasBook))
+                    showSnackBar(
+                        requireContext(),
+                        requireView(),
+                        getString(R.string.LibraryHasBook)
+                    )
                 }
             } else {
                 showSnackBar(requireContext(), requireView(), getString(R.string.PickLibrary))
@@ -179,7 +191,7 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -192,30 +204,44 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun loadMoreItems() {
         getLibraries(false)
     }
+
     /**
      * Function to load or add more values to a list
      * @param addAdapter To check if the adapter is active
      */
-    private fun getLibraries(addAdapter: Boolean){
+    private fun getLibraries(addAdapter: Boolean) {
         runBlocking {
 
             val coroutine = launch {
-                if (position == 0){
-                    libraries = if (search.isNullOrEmpty()){
+                if (position == 0) {
+                    libraries = if (search.isNullOrEmpty()) {
                         api.getLibraries("null", false, position) as MutableList<Library>?
                     } else {
                         api.getLibraries(search!!, true, position) as MutableList<Library>?
                     }
                 } else {
-                    if (search.isNullOrEmpty()){
-                        libraries!!.addAll((api.getLibraries("null", false, position) as MutableList<Library>?)!!)
+                    if (search.isNullOrEmpty()) {
+                        libraries!!.addAll(
+                            (api.getLibraries(
+                                "null",
+                                false,
+                                position
+                            ) as MutableList<Library>?)!!
+                        )
                     } else {
-                        libraries!!.addAll((api.getLibraries(search!!, true, position) as MutableList<Library>?)!!)
+                        libraries!!.addAll(
+                            (api.getLibraries(
+                                search!!,
+                                true,
+                                position
+                            ) as MutableList<Library>?)!!
+                        )
                     }
                 }
-                if (libraries != null){
-                    if (addAdapter){
-                        binding.rvLibraries.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                if (libraries != null) {
+                    if (addAdapter) {
+                        binding.rvLibraries.layoutManager =
+                            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                         adapter = AdminLibraryAdapter(libraries as ArrayList<Library>)
                         binding.rvLibraries.adapter = adapter
                     } else {
@@ -228,7 +254,7 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted){
+        if (isOnCreateViewExecuted) {
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
     }

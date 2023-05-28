@@ -10,13 +10,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
-import com.example.bookbuddy.utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.UserItem
 import com.example.bookbuddy.ui.navdrawer.ContactsFragment
 import com.example.bookbuddy.ui.navdrawer.ContactsFragmentDirections
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.navController
 import com.google.android.material.imageview.ShapeableImageView
@@ -32,8 +32,9 @@ import kotlin.coroutines.CoroutineContext
 class ContactAdapter(var list: java.util.ArrayList<UserItem>, val fragment: ContactsFragment) :
     RecyclerView.Adapter<ContactAdapter.ViewHolder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
-    lateinit var view : View
+    lateinit var view: View
     private val api = CrudApi(this@ContactAdapter)
+
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val profilePicture = view.findViewById<ShapeableImageView>(R.id.profile_imageView)!!
         val username = view.findViewById<TextView>(R.id.tv_name)!!
@@ -46,6 +47,7 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>, val fragment: Cont
         view = parent
         return ViewHolder(layout.inflate(R.layout.cardview_contact, parent, false))
     }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.username.text = list[position].name
 
@@ -53,10 +55,10 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>, val fragment: Cont
             goToUserProfile(list[position].userId, list[position].name)
         }
 
-        if(list[position].haspicture){
+        if (list[position].haspicture) {
             runBlocking {
                 val coroutine = launch {
-                    if (list[position].haspicture){
+                    if (list[position].haspicture) {
                         val commentPicture = api.getUserImage(list[position].userId)
                         val body = commentPicture //.body()
                         if (body != null) {
@@ -64,7 +66,10 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>, val fragment: Cont
                             val bytes = body.bytes()
 
                             // Guardar los bytes en un archivo
-                            val file = File(context.cacheDir, list[position].userId.toString() + "user.jpg")
+                            val file = File(
+                                context.cacheDir,
+                                list[position].userId.toString() + "user.jpg"
+                            )
                             withContext(Dispatchers.IO) {
                                 val outputStream = FileOutputStream(file)
                                 outputStream.write(bytes)
@@ -84,7 +89,7 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>, val fragment: Cont
         }
     }
 
-    private fun goToUserProfile(userid: Int, username: String){
+    private fun goToUserProfile(userid: Int, username: String) {
         val bundle = Bundle()
         bundle.putInt("userid", userid)
         bundle.putString("username", username)
@@ -93,7 +98,7 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>, val fragment: Cont
         navController.navigate(action)
     }
 
-    fun updateList(newList: ArrayList<UserItem>){
+    fun updateList(newList: ArrayList<UserItem>) {
         list = newList
         notifyDataSetChanged()
     }

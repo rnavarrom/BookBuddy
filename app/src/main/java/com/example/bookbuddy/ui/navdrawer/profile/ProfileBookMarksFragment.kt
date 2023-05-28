@@ -10,16 +10,17 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.ProfileBookMarkAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileBookmarksBinding
 import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+
 /**
  * Fragment to display the books list on profile.
  */
@@ -43,7 +44,12 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         userId = requireArguments().getInt("userid")
         isProfileFragment = requireArguments().getBoolean("isfragment")
-        binding.refresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
+        binding.refresh.setColorSchemeColors(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primary_green
+            )
+        )
 
         //Initial call to get values
         launch {
@@ -52,44 +58,46 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
         return binding.root
     }
+
     /**
      * Get the Books from an user and show them on the recycler view.
      * @param userId The id from the user to get the books
      * @param addAdapter Chech if the adapter is already running.
      */
-    private fun getBooksUser(userId: Int, addAdapter: Boolean){
-        runBlocking {            
+    private fun getBooksUser(userId: Int, addAdapter: Boolean) {
+        runBlocking {
             val coroutine = launch {
-                if (position == 0){
-                     val tempReadeds = api.getReadedsFromUser(userId,position)
-                    if(tempReadeds != null){
-                        readeds = tempReadeds  as MutableList<Readed>
+                if (position == 0) {
+                    val tempReadeds = api.getReadedsFromUser(userId, position)
+                    if (tempReadeds != null) {
+                        readeds = tempReadeds as MutableList<Readed>
                     }
                 } else {
-                    val tempReadeds = api.getReadedsFromUser(userId,position)
-                    if(tempReadeds != null){
-                        readeds!!.addAll( tempReadeds as MutableList<Readed>)
+                    val tempReadeds = api.getReadedsFromUser(userId, position)
+                    if (tempReadeds != null) {
+                        readeds!!.addAll(tempReadeds as MutableList<Readed>)
                     }
                 }
             }
             coroutine.join()
         }
-        if(readeds != null){
+        if (readeds != null) {
 
-        if (addAdapter){
-            val gridLayout = GridLayoutManager(context, 3)
-            binding.rvBookmarks.layoutManager = gridLayout
-            adapter = ProfileBookMarkAdapter(readeds as ArrayList<Readed>, isProfileFragment)
-            binding.rvBookmarks.adapter = adapter
-        } else {
-            adapter.updateList(readeds as ArrayList<Readed>)
-        }
+            if (addAdapter) {
+                val gridLayout = GridLayoutManager(context, 3)
+                binding.rvBookmarks.layoutManager = gridLayout
+                adapter = ProfileBookMarkAdapter(readeds as ArrayList<Readed>, isProfileFragment)
+                binding.rvBookmarks.adapter = adapter
+            } else {
+                adapter.updateList(readeds as ArrayList<Readed>)
+            }
         }
     }
+
     /**
      * Load the configuration upon ending the loading animation
      */
-    fun onLoadingEnded(){
+    fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -111,7 +119,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -130,10 +138,12 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     override fun onApiError(connectionFailed: Boolean) {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

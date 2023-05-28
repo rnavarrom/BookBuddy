@@ -10,16 +10,17 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.RecommendedBooksAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentRecommendationsBinding
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+
 /**
  * Load the recomendations fragment from navMenu
  */
@@ -37,10 +38,15 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  FragmentRecommendationsBinding.inflate(layoutInflater, container, false)
+        binding = FragmentRecommendationsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
+        binding.mainContent.setColorSchemeColors(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primary_green
+            )
+        )
 
         getUserRecommended(true)
         onLoadingEnded()
@@ -48,8 +54,8 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         return binding.root
     }
 
-    private fun getUserRecommended(addAdapter: Boolean){
-        runBlocking {            
+    private fun getUserRecommended(addAdapter: Boolean) {
+        runBlocking {
             val coroutine = launch {
                 if (position == 0) {
                     val tempBooks = api.getRecommendedBooks(
@@ -67,21 +73,21 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 }
                 if (books != null) {
                     if (addAdapter) {
-                    binding.rvRecommended.layoutManager = GridLayoutManager(context, 3)
-                    adapter = RecommendedBooksAdapter(books as ArrayList<Book>)
-                    binding.rvRecommended.adapter = adapter
-                } else {
-                    adapter.updateList(books as ArrayList<Book>)
+                        binding.rvRecommended.layoutManager = GridLayoutManager(context, 3)
+                        adapter = RecommendedBooksAdapter(books as ArrayList<Book>)
+                        binding.rvRecommended.adapter = adapter
+                    } else {
+                        adapter.updateList(books as ArrayList<Book>)
+                    }
                 }
-            }
             }
             coroutine.join()
         }
 
     }
 
-    private fun emptyBooks(){
-        if (books == null || books!!.isEmpty()){
+    private fun emptyBooks() {
+        if (books == null || books!!.isEmpty()) {
             binding.emptyActivity.text = getString(R.string.MSG_NoRecommendedBooks)
             binding.emptyActivity.visibility = View.VISIBLE
         } else {
@@ -90,7 +96,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     // Change visible layouts and add bindings
-    private fun onLoadingEnded(){
+    private fun onLoadingEnded() {
         emptyBooks()
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
@@ -114,7 +120,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -131,14 +137,16 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted){
+        if (isOnCreateViewExecuted) {
             Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

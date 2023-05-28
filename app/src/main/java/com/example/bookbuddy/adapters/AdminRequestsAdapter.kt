@@ -8,11 +8,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.BookRequest
+
 /**
  * Adapter for displaying book requests in a recycler view
  * @param list The list of search results to display.
  */
-class AdminRequestsAdapter(var list: ArrayList<BookRequest>) : RecyclerView.Adapter<AdminRequestsAdapter.ViewHolder>() {
+class AdminRequestsAdapter(var list: ArrayList<BookRequest>) :
+    RecyclerView.Adapter<AdminRequestsAdapter.ViewHolder>() {
     private var selected: BookRequest? = null
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -24,22 +26,22 @@ class AdminRequestsAdapter(var list: ArrayList<BookRequest>) : RecyclerView.Adap
         val layout = LayoutInflater.from(parent.context)
         context = parent.context
 
-        return if (viewType == 0){
+        return if (viewType == 0) {
             ViewHolder(layout.inflate(R.layout.cardview_admin_genre, parent, false))
-        } else{
+        } else {
             ViewHolder(layout.inflate(R.layout.cardview_admin_genre_selected, parent, false))
         }
     }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.name.text = list[position].bookIsbn
         holder.view.setOnClickListener {
             for (i in 0 until list.size) {
                 if (i == position)
-                    if (list[i].cardview == 0){
+                    if (list[i].cardview == 0) {
                         list[i].cardview = 1
                         selected = list[position]
-                    }
-                    else {
+                    } else {
                         list[i].cardview = 0
                         selected = null
                     }
@@ -50,7 +52,7 @@ class AdminRequestsAdapter(var list: ArrayList<BookRequest>) : RecyclerView.Adap
         }
     }
 
-    fun updateList(newList: ArrayList<BookRequest>){
+    fun updateList(newList: ArrayList<BookRequest>) {
         list = newList
         notifyDataSetChanged()
     }

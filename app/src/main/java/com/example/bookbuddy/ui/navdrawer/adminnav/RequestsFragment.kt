@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.AdminRequestsAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminRequestsBinding
@@ -17,10 +16,12 @@ import com.example.bookbuddy.models.BookRequest
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.ui.navdrawer.AdminFragmentDirections
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+
 /**
  * Fragment to display the requests list crud.
  */
@@ -40,33 +41,40 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu.findItem(R.id.action_search).isVisible =false
+        menu.findItem(R.id.action_search).isVisible = false
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  FragmentAdminRequestsBinding.inflate(layoutInflater, container, false)
+        binding = FragmentAdminRequestsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
+        binding.mainContent.setColorSchemeColors(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primary_green
+            )
+        )
 
         getRequests(true)
         onLoadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
     }
+
     /**
      * Load the configuration upon ending the loading animation
      */
-    private fun onLoadingEnded(){
+    private fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
         binding.btnAdd.setOnClickListener {
             val selection = adapter.getSelected()
             var result = false
-            if (selection != null){
+            if (selection != null) {
                 val fra = requireArguments().getParcelable("fragment") as? AdminFragment?
                 val bundle = Bundle()
                 bundle.putInt("id", selection.bookRequest1)
@@ -82,7 +90,7 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.btnDelete.setOnClickListener {
             val selection = adapter.getSelected()
             var result = false
-            if (selection != null){
+            if (selection != null) {
                 val builder = AlertDialog.Builder(requireContext())
 
                 builder.setTitle(getString(R.string.DeleteRequest))
@@ -95,7 +103,11 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                         coroutine.join()
                     }
                     if (result) {
-                        showSnackBar(requireContext(), requireView(), getString(R.string.SB_BookRequestDeleted))
+                        showSnackBar(
+                            requireContext(),
+                            requireView(),
+                            getString(R.string.SB_BookRequestDeleted)
+                        )
                         bookRequests!!.remove(selection)
                         adapter.updateList(bookRequests as ArrayList<BookRequest>)
                     }
@@ -127,7 +139,7 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -140,20 +152,22 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun loadMoreItems() {
         getRequests(false)
     }
+
     /**
      * Function to load or add more values to a list
      * @param addAdapter To check if the adapter is active
      */
-    private fun getRequests(addAdapter: Boolean){
+    private fun getRequests(addAdapter: Boolean) {
         runBlocking {
             val coroutine = launch {
-                if (position == 0){
+                if (position == 0) {
                     bookRequests = api.getRequests(position) as MutableList<BookRequest>?
                 } else {
                     bookRequests!!.addAll((api.getRequests(position) as MutableList<BookRequest>?)!!)
                 }
-                if (addAdapter){
-                    binding.rvRequests.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                if (addAdapter) {
+                    binding.rvRequests.layoutManager =
+                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                     adapter = AdminRequestsAdapter(bookRequests as ArrayList<BookRequest>)
                     binding.rvRequests.adapter = adapter
                 } else {
@@ -165,14 +179,16 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted){
+        if (isOnCreateViewExecuted) {
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

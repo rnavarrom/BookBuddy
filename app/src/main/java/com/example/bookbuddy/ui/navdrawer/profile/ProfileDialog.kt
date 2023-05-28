@@ -9,12 +9,12 @@ import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.viewpager.widget.ViewPager
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileBinding
 import com.example.bookbuddy.ui.navdrawer.ContactsFragment
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
@@ -42,6 +42,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
     private var onProfileDialogClose: OnProfileDialogClose? = null
     private var isOnCreateViewExecuted = false
+
     interface OnProfileDialogClose {
         fun onProfileDialogClose()
     }
@@ -59,7 +60,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  DialogProfileBinding.inflate(layoutInflater, container, false)
+        binding = DialogProfileBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
 
@@ -67,18 +68,18 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
         val bundle = arguments?.getBundle("bundle")
         profileUser = bundle?.getInt("userid", currentUser!!.userId)
-        username = bundle?.getString("username",  currentUser!!.name)
+        username = bundle?.getString("username", currentUser!!.name)
 
-        if (bundle != null){
-            if (bundle.containsKey("fragment")){
+        if (bundle != null) {
+            if (bundle.containsKey("fragment")) {
                 val fragment = bundle.getParcelable("fragment") as? ContactsFragment?
-                if (fragment != null){
+                if (fragment != null) {
                     onProfileDialogClose = fragment
                 }
             }
         }
 
-        if (profileUser == null){
+        if (profileUser == null) {
             profileUser = currentUser!!.userId
             username = currentUser!!.name
         }
@@ -91,17 +92,17 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         return binding.root
     }
 
-    private fun loadUser(){
+    private fun loadUser() {
         binding.tvUsername.text = username
         var profileImage: File? = null
-        runBlocking {            
+        runBlocking {
             val coroutine = launch {
                 val tempFollowers = api.getFollowerCount(profileUser!!)
-                if(tempFollowers != null){
+                if (tempFollowers != null) {
                     followers = tempFollowers
                 }
-                val tempFollowing = api.getIsFollowing(currentUser!!.userId,profileUser!!)
-                if(tempFollowing != null){
+                val tempFollowing = api.getIsFollowing(currentUser!!.userId, profileUser!!)
+                if (tempFollowing != null) {
                     following = tempFollowing
                 }
             }
@@ -111,9 +112,9 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         followButton()
     }
 
-    private fun followButton(){
+    private fun followButton() {
 
-        if (following){
+        if (following) {
             binding.btFollow.tag = "Following"
             binding.btFollow.text = getString(R.string.BT_Following)
         } else {
@@ -122,28 +123,30 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
 
         binding.btFollow.setOnClickListener {
-            if (binding.btFollow.tag.equals("Follow")){
-                var followed : Boolean? = false
-                runBlocking {                    
+            if (binding.btFollow.tag.equals("Follow")) {
+                var followed: Boolean? = false
+                runBlocking {
                     val coroutine = launch {
                         followed = api.addFollowToAPI(currentUser!!.userId, profileUser!!)
                     }
                     coroutine.join()
                 }
-                if(followed != null){
-                if(followed == true){
-                    binding.btFollow.text = getString(R.string.BT_Following)
-                    binding.btFollow.tag = "Following"
-                }}
+                if (followed != null) {
+                    if (followed == true) {
+                        binding.btFollow.text = getString(R.string.BT_Following)
+                        binding.btFollow.tag = "Following"
+                    }
+                }
             } else {
-                var result : Boolean? = false
+                var result: Boolean? = false
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle(getString(R.string.MSG_WantUnfollow) + binding.tvUsername.text + "?")
                 builder.setMessage(getString(R.string.MSG_WantUnfollow2))
                     .setPositiveButton(getString(R.string.BT_Unfollow)) { _, _ ->
                         runBlocking {
                             val coroutine = launch {
-                                var result = api.deleteFollowAPI(currentUser!!.userId, profileUser!!)
+                                var result =
+                                    api.deleteFollowAPI(currentUser!!.userId, profileUser!!)
                             }
                             coroutine.join()
                         }
@@ -162,13 +165,14 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         binding.mainContent.visibility = View.VISIBLE
     }
 
-    private fun loadTabLayout(){
+    private fun loadTabLayout() {
         tabLayout = binding.tabLayout
         viewPager = binding.viewPager
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.TB_Comments)))
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.TB_Reads)))
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
-        val adapter = ProfileAdapter(activity?.applicationContext, childFragmentManager,
+        val adapter = ProfileAdapter(
+            activity?.applicationContext, childFragmentManager,
             tabLayout.tabCount, profileUser!!, false
         )
         viewPager.adapter = adapter
@@ -177,13 +181,14 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted){
+        if (isOnCreateViewExecuted) {
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
     }
@@ -194,6 +199,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

@@ -23,7 +23,7 @@ suspend fun <T> safeApiCall(
         }
     } catch (e: SocketTimeoutException) {
         errorListener.onApiError(true)
-    } catch (e: ConnectException){
+    } catch (e: ConnectException) {
         errorListener.onApiError(true)
     } catch (e: Throwable) {
         e.printStackTrace()

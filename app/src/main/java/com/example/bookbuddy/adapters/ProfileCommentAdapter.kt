@@ -17,15 +17,21 @@ import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.coroutines.CoroutineContext
 
 /**
  * Adapter for displaying comments of a user in a RecyclerView.
  * @param list The list of comments to display.
  */
-class ProfileCommentAdapter(var list: java.util.ArrayList<Comment>, private val isProfileFragment: Boolean) :
+class ProfileCommentAdapter(
+    var list: java.util.ArrayList<Comment>,
+    private val isProfileFragment: Boolean
+) :
     RecyclerView.Adapter<ProfileCommentAdapter.ViewHolder>(), CoroutineScope {
     private var job: Job = Job()
+
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val bookTitle = view.findViewById<TextView>(R.id.tv_book_title)!!
         val date = view.findViewById<TextView>(R.id.tv_date)!!
@@ -42,15 +48,19 @@ class ProfileCommentAdapter(var list: java.util.ArrayList<Comment>, private val 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bookTitle.text = list[position].book!!.title
-        holder.date.text = list[position].fecha.toString()
+        val inputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+        val outputFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+        val dateString = list[position].fecha.toString()
+        val dateTime = LocalDateTime.parse(dateString, inputFormat)
+        holder.date.text = dateTime.format(outputFormat)
         holder.rating.rating = list[position].rating.toFloat()
         holder.comment.text = list[position].comentText
 
-        holder.view.setOnClickListener{
+        holder.view.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("isbn", list[position].book!!.isbn)
             var action: NavDirections? = null
-            action = if (isProfileFragment){
+            action = if (isProfileFragment) {
                 ProfileFragmentDirections.actionNavProfileToNavBookDisplay(bundle)
             } else {
                 ProfileDialogDirections.actionNavProfileDialogToNavBookDisplay(bundle)
@@ -59,7 +69,7 @@ class ProfileCommentAdapter(var list: java.util.ArrayList<Comment>, private val 
         }
     }
 
-    fun updateList(newList: ArrayList<Comment>){
+    fun updateList(newList: ArrayList<Comment>) {
         list = newList
         notifyDataSetChanged()
     }

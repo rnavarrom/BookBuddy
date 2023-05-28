@@ -12,11 +12,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
+
 /**
  * Fragment to display Admin navMenu.
  */
 @Parcelize
-class AdminFragment : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialog.OnAdminDialogClose,
+class AdminFragment : Fragment(), CoroutineScope, Parcelable,
+    InsertLibraryDialog.OnAdminDialogClose,
     InsertBookDialog.OnAdminDialogClose {
     lateinit var binding: FragmentAdminBinding
     private var job: Job = Job()
@@ -44,7 +46,7 @@ class AdminFragment : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialo
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  FragmentAdminBinding.inflate(layoutInflater, container, false)
+        binding = FragmentAdminBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         binding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
@@ -69,7 +71,7 @@ class AdminFragment : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialo
                     true
                 }
                 R.id.users -> {
-                    gMenu!!.findItem(R.id.action_search).isVisible =false
+                    gMenu!!.findItem(R.id.action_search).isVisible = false
                     fragmentSaved = "requests"
                     replaceFragment(RequestsFragment())
                     true
@@ -82,7 +84,7 @@ class AdminFragment : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialo
         return binding.root
     }
 
-    private fun replaceFragment(fragment: Fragment){
+    private fun replaceFragment(fragment: Fragment) {
         val bundle = Bundle()
         bundle.putParcelable("fragment", this)
         fragment.arguments = bundle
@@ -97,7 +99,7 @@ class AdminFragment : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialo
      */
     override fun onAdminDialogClose() {
         var fragment: Fragment? = null
-        when(fragmentSaved){
+        when (fragmentSaved) {
             "books" -> fragment = BooksFragment()
             "genre" -> fragment = GenresFragment()
             "authors" -> fragment = AuthorsFragment()
@@ -118,6 +120,7 @@ class AdminFragment : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialo
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

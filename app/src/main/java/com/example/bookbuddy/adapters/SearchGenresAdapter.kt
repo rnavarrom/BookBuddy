@@ -22,9 +22,14 @@ import kotlin.coroutines.CoroutineContext
  * @param dialog Dialog where execute function on search end
  * @param list The list of search results to display.
  */
-class SearchGenresAdapter(private var dialogFragment: DialogFragment, var dialog: ProfileSearchDialog.OnGenreSearchCompleteListener?, var list: java.util.ArrayList<Genre>) :
+class SearchGenresAdapter(
+    private var dialogFragment: DialogFragment,
+    var dialog: ProfileSearchDialog.OnGenreSearchCompleteListener?,
+    var list: java.util.ArrayList<Genre>
+) :
     RecyclerView.Adapter<SearchGenresAdapter.ViewHolder>(), CoroutineScope {
     private var job: Job = Job()
+
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val name = view.findViewById<TextView>(R.id.tv_search_name)!!
     }
@@ -44,13 +49,13 @@ class SearchGenresAdapter(private var dialogFragment: DialogFragment, var dialog
         }
     }
 
-    private fun addGenreToFavourite(id: Int, name: String){
+    private fun addGenreToFavourite(id: Int, name: String) {
         currentProfile.genreId = id
         dialog?.onGenreSearchComplete(id, name)
         dialogFragment.dismiss()
     }
 
-    fun updateList(newList: ArrayList<Genre>){
+    fun updateList(newList: ArrayList<Genre>) {
         list = newList
         notifyDataSetChanged()
     }

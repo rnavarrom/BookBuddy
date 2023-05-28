@@ -13,7 +13,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.AdminBookLibraryAdapter
 import com.example.bookbuddy.adapters.AdminGenresAdapter
 import com.example.bookbuddy.api.CrudApi
@@ -24,6 +23,7 @@ import com.example.bookbuddy.ui.navdrawer.profile.ProfileLanguageDialog
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileLibraryDialog
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileSearchDialog
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import kotlinx.coroutines.*
@@ -55,11 +55,11 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         var genreExist = false
         var resultApi: Boolean? = null
         genres!!.forEach {
-            if (it.genreId == result){
+            if (it.genreId == result) {
                 genreExist = true
             }
         }
-        if (!genreExist){
+        if (!genreExist) {
             runBlocking {
                 val corrutine = launch {
                     resultApi = api.insertBookGenre(bookId, result)
@@ -70,7 +70,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_GenreInList))
         }
 
-        if (resultApi != null && resultApi as Boolean){
+        if (resultApi != null && resultApi as Boolean) {
             val tmpGenre = Genre(result, name)
             genres!!.add(tmpGenre)
             genres!!.sortBy { it.name }
@@ -84,14 +84,14 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         var authorExist = false
         var resultApi: Boolean? = null
 
-        if (author != null && author!!.authorId == result){
+        if (author != null && author!!.authorId == result) {
             authorExist = true
         }
 
-        if (!authorExist){
+        if (!authorExist) {
             runBlocking {
                 val corrutine = launch {
-                    if (author != null){
+                    if (author != null) {
                         api.deleteBookAuthors(bookId, author!!.authorId)
                     }
                     resultApi = api.insertBookAuthors(bookId, result)
@@ -100,7 +100,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
             }
         }
 
-        if (resultApi != null && resultApi as Boolean){
+        if (resultApi != null && resultApi as Boolean) {
             author = Author(result, name)
             binding.etAuthor.setText(author!!.name)
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_AuthorChanged))
@@ -112,14 +112,14 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         var languageExist = false
         var resultApi: Boolean? = null
 
-        if (lang != null && lang!!.languageId == result){
+        if (lang != null && lang!!.languageId == result) {
             languageExist = true
         }
 
-        if (!languageExist){
+        if (!languageExist) {
             runBlocking {
                 val corrutine = launch {
-                    if (lang != null){
+                    if (lang != null) {
                         api.deleteBookLang(bookId, lang!!.languageId)
                     }
                     resultApi = api.insertBookLang(bookId, result)
@@ -128,7 +128,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
             }
         }
 
-        if (resultApi != null && resultApi as Boolean){
+        if (resultApi != null && resultApi as Boolean) {
             lang = Language(result, name)
             binding.etLanguage.setText(lang!!.name)
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_LanguageChanged))
@@ -140,11 +140,11 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         var libraryExist = false
         var resultApi: Boolean? = null
         libraries!!.forEach {
-            if (it.library.libraryId == result){
+            if (it.library.libraryId == result) {
                 libraryExist = true
             }
         }
-        if (!libraryExist){
+        if (!libraryExist) {
             runBlocking {
                 val corrutine = launch {
                     resultApi = api.insertBookLibrary(bookId, result, 0)
@@ -152,13 +152,21 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 corrutine.join()
             }
         } else {
-            showSnackBar(requireContext(), requireView(), getString(R.string.SB_LibraryAlreadyInList))
+            showSnackBar(
+                requireContext(),
+                requireView(),
+                getString(R.string.SB_LibraryAlreadyInList)
+            )
         }
 
-        if (resultApi != null && resultApi as Boolean){
-            val tmpLibrary = LibraryExtended(library = Library(0.0, result, 0.0, name, zipCode), distance = null, copies = 0)
+        if (resultApi != null && resultApi as Boolean) {
+            val tmpLibrary = LibraryExtended(
+                library = Library(0.0, result, 0.0, name, zipCode),
+                distance = null,
+                copies = 0
+            )
             libraries!!.add(tmpLibrary)
-            libraries!!.sortBy { it.library.name}
+            libraries!!.sortBy { it.library.name }
             adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_LibraryAdded))
         }
@@ -177,10 +185,15 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  DialogAdminBookReferencesBinding.inflate(layoutInflater, container, false)
+        binding = DialogAdminBookReferencesBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        Tools.setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_BookReferences))
+        Tools.setToolBar(
+            this,
+            binding.toolbar,
+            requireContext(),
+            getString(R.string.TB_BookReferences)
+        )
 
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle!!.getInt("bookid")
@@ -196,7 +209,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
     }
 
     // Change visible layouts and add bindings
-    private fun onLoadingEnded(){
+    private fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -213,7 +226,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
 
         binding.btnAdd.setOnClickListener {
-            if (genres == null || genres!!.size <= 10){
+            if (genres == null || genres!!.size <= 10) {
                 val dialog = ProfileSearchDialog()
                 dialog.onGenreSearchCompleteListener = this //Changed
                 dialog.show(childFragmentManager, "")
@@ -225,7 +238,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         binding.btnDelete.setOnClickListener {
             val selection = adapterGenres.getSelected()
             var result = false
-            if (selection != null){
+            if (selection != null) {
                 runBlocking {
                     val coroutine = launch {
                         result = api.deleteBookGenre(bookId, selection.genreId)!!
@@ -254,7 +267,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         binding.btnEditLibrary.setOnClickListener {
             val selection = adapterLibraries.getSelected()
             var result = false
-            if (selection != null){
+            if (selection != null) {
                 val builder = AlertDialog.Builder(requireContext())
                 val editText = EditText(requireContext())
                 editText.inputType = InputType.TYPE_CLASS_NUMBER
@@ -264,28 +277,48 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 builder.setPositiveButton(getString(R.string.BT_Edit)) { _, _ ->
                     val copiesString = editText.text.toString()
 
-                    if (copiesString.isNotEmpty()){
+                    if (copiesString.isNotEmpty()) {
                         val copies = copiesString.toInt()
-                        if (copies >= 0){
+                        if (copies >= 0) {
                             runBlocking {
                                 val coroutine = launch {
-                                    result = api.updateBookLibrary(bookId, selection.library.libraryId, copies)!!
+                                    result = api.updateBookLibrary(
+                                        bookId,
+                                        selection.library.libraryId,
+                                        copies
+                                    )!!
                                 }
                                 coroutine.join()
                             }
 
                             if (result) {
-                                showSnackBar(requireContext(), requireView(), getString(R.string.SB_CopiesEdited))
+                                showSnackBar(
+                                    requireContext(),
+                                    requireView(),
+                                    getString(R.string.SB_CopiesEdited)
+                                )
                                 selection.copies = copies
                                 adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)
                             } else {
-                                showSnackBar(requireContext(), requireView(), getString(R.string.GenreDuplicated))
+                                showSnackBar(
+                                    requireContext(),
+                                    requireView(),
+                                    getString(R.string.GenreDuplicated)
+                                )
                             }
                         } else {
-                            showSnackBar(requireContext(), requireView(), getString(R.string.SB_NoNegatives))
+                            showSnackBar(
+                                requireContext(),
+                                requireView(),
+                                getString(R.string.SB_NoNegatives)
+                            )
                         }
                     } else {
-                        showSnackBar(requireContext(), requireView(), getString(R.string.SB_NotChanged))
+                        showSnackBar(
+                            requireContext(),
+                            requireView(),
+                            getString(R.string.SB_NotChanged)
+                        )
                     }
                 }
 
@@ -299,18 +332,23 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
 
                 editText.postDelayed({
                     editText.requestFocus()
-                    val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    val imm =
+                        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
                 }, 200)
             } else {
-                showSnackBar(requireContext(), requireView(), getString(R.string.SB_PickLibraryToEdit))
+                showSnackBar(
+                    requireContext(),
+                    requireView(),
+                    getString(R.string.SB_PickLibraryToEdit)
+                )
             }
         }
 
         binding.btnDeleteLibrary.setOnClickListener {
             val selection = adapterLibraries.getSelected()
             var result = false
-            if (selection != null){
+            if (selection != null) {
                 runBlocking {
                     val coroutine = launch {
                         result = api.deleteBookLibrary(bookId, selection.library.libraryId)!!
@@ -319,7 +357,11 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 }
 
                 if (result) {
-                    showSnackBar(requireContext(), requireView(), getString(R.string.SB_LibraryEdited))
+                    showSnackBar(
+                        requireContext(),
+                        requireView(),
+                        getString(R.string.SB_LibraryEdited)
+                    )
                     libraries!!.remove(selection)
                     adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)
                 } else {
@@ -331,36 +373,37 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
     }
 
-    private fun getAuthor(){
+    private fun getAuthor() {
         runBlocking {
             val coroutine = launch {
                 author = api.getBookAuthors(bookId)
             }
             coroutine.join()
         }
-        if (author != null){
+        if (author != null) {
             binding.etAuthor.setText(author!!.name)
         }
     }
 
-    private fun getLang(){
+    private fun getLang() {
         runBlocking {
             val coroutine = launch {
                 lang = api.getBookLang(bookId)
             }
             coroutine.join()
         }
-        if (lang != null){
+        if (lang != null) {
             binding.etLanguage.setText(lang!!.name)
         }
     }
 
-    private fun getGenres(addAdapter: Boolean){
+    private fun getGenres(addAdapter: Boolean) {
         runBlocking {
             val coroutine = launch {
                 genres = api.getBookGenres(bookId) as MutableList<Genre>?
-                if (addAdapter){
-                    binding.rvGenres.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                if (addAdapter) {
+                    binding.rvGenres.layoutManager =
+                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                     adapterGenres = AdminGenresAdapter(genres as ArrayList<Genre>)
                     binding.rvGenres.adapter = adapterGenres
                 } else {
@@ -371,13 +414,15 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
     }
 
-    private fun getLibraries(addAdapter: Boolean){
+    private fun getLibraries(addAdapter: Boolean) {
         runBlocking {
             val coroutine = launch {
                 libraries = api.getBookLibraries(bookId) as MutableList<LibraryExtended>?
-                if (addAdapter){
-                    binding.rvLibraries.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                    adapterLibraries = AdminBookLibraryAdapter(libraries as ArrayList<LibraryExtended>)
+                if (addAdapter) {
+                    binding.rvLibraries.layoutManager =
+                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                    adapterLibraries =
+                        AdminBookLibraryAdapter(libraries as ArrayList<LibraryExtended>)
                     binding.rvLibraries.adapter = adapterLibraries
                 } else {
                     adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)
@@ -390,10 +435,12 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
     override fun onApiError(connectionFailed: Boolean) {
         showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

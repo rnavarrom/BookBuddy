@@ -17,6 +17,7 @@ import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.setNavigationProfile
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
+
 /**
  * Main nav meno for the application
  */
@@ -32,8 +33,8 @@ class NavDrawerActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.appBarNavDrawer.toolbar)
 
-        if (isProfileInitialized()){
-            if (currentProfile.authorId == null && currentProfile.genreId == null){
+        if (isProfileInitialized()) {
+            if (currentProfile.authorId == null && currentProfile.genreId == null) {
                 val builder = MaterialAlertDialogBuilder(this)
                 builder.setTitle(getString(R.string.DG_Preferences))
                     .setMessage(getString(R.string.DG_Remember))
@@ -77,7 +78,7 @@ class NavDrawerActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-        if (currentUser?.isadmin!!){
+        if (currentUser?.isadmin!!) {
             navView.menu.findItem(R.id.nav_admin).isVisible = true
             navView.menu.findItem(R.id.nav_admin).isChecked = false
             navView.menu.findItem(R.id.nav_home).isChecked = true

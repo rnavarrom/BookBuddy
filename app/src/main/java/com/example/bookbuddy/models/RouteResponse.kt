@@ -65,7 +65,7 @@ data class Summary(
     val duration: Double
 )
 
-data class CleanResponse (
+data class CleanResponse(
     val coordinates: List<List<Double>>,
     val distance: Double,
     val duration: Double

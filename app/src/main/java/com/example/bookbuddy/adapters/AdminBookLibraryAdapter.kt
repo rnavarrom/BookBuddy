@@ -8,11 +8,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.LibraryExtended
+
 /**
  * Adapter for displaying libraries in a recycler view
  * @param list The list of search results to display.
  */
-class AdminBookLibraryAdapter(var list: ArrayList<LibraryExtended>) : RecyclerView.Adapter<AdminBookLibraryAdapter.ViewHolder>() {
+class AdminBookLibraryAdapter(var list: ArrayList<LibraryExtended>) :
+    RecyclerView.Adapter<AdminBookLibraryAdapter.ViewHolder>() {
     private var selected: LibraryExtended? = null
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -26,12 +28,13 @@ class AdminBookLibraryAdapter(var list: ArrayList<LibraryExtended>) : RecyclerVi
         val layout = LayoutInflater.from(parent.context)
         context = parent.context
 
-        return if (viewType == 0){
+        return if (viewType == 0) {
             ViewHolder(layout.inflate(R.layout.cardview_admin_library, parent, false))
-        } else{
+        } else {
             ViewHolder(layout.inflate(R.layout.cardview_admin_library_selected, parent, false))
         }
     }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.name.text = list[position].library.name
         holder.zip.text = list[position].library.zipCode
@@ -39,11 +42,10 @@ class AdminBookLibraryAdapter(var list: ArrayList<LibraryExtended>) : RecyclerVi
         holder.view.setOnClickListener {
             for (i in 0 until list.size) {
                 if (i == position)
-                    if (list[i].cardview == 0){
+                    if (list[i].cardview == 0) {
                         list[i].cardview = 1
                         selected = list[position]
-                    }
-                    else {
+                    } else {
                         list[i].cardview = 0
                         selected = null
                     }
@@ -54,7 +56,7 @@ class AdminBookLibraryAdapter(var list: ArrayList<LibraryExtended>) : RecyclerVi
         }
     }
 
-    fun updateList(newList: ArrayList<LibraryExtended>){
+    fun updateList(newList: ArrayList<LibraryExtended>) {
         list = newList
         notifyDataSetChanged()
     }

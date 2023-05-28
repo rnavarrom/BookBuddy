@@ -12,19 +12,20 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.SearchResultAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentSearchBinding
 import com.example.bookbuddy.models.SimpleBook
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+
 /**
  * Load the search fragment from navMenu
  */
-class SearchFragment : Fragment(), ApiErrorListener{
+class SearchFragment : Fragment(), ApiErrorListener {
     lateinit var binding: FragmentSearchBinding
     private lateinit var searchResultList: MutableList<SimpleBook>
     private lateinit var adapter: SearchResultAdapter
@@ -64,17 +65,18 @@ class SearchFragment : Fragment(), ApiErrorListener{
 
                     //Check is theres a value at last on one field
                     searchValues = ArrayList()
-                    val performSearch: Boolean = if (binding.SearchView.text.isNullOrBlank() && binding.etAuthor.text.isNullOrBlank() && binding.etGenre.text.isNullOrBlank()) {
-                        binding.SearchView.setBackgroundResource(R.drawable.search_bg_error)
-                        binding.etAuthor.setBackgroundResource(R.drawable.search_bg_error)
-                        binding.etGenre.setBackgroundResource(R.drawable.search_bg_error)
-                        false
-                    } else {
-                        binding.SearchView.setBackgroundResource(R.drawable.search_bg)
-                        binding.etAuthor.setBackgroundResource(R.drawable.search_bg)
-                        binding.etGenre.setBackgroundResource(R.drawable.search_bg)
-                        true
-                    }
+                    val performSearch: Boolean =
+                        if (binding.SearchView.text.isNullOrBlank() && binding.etAuthor.text.isNullOrBlank() && binding.etGenre.text.isNullOrBlank()) {
+                            binding.SearchView.setBackgroundResource(R.drawable.search_bg_error)
+                            binding.etAuthor.setBackgroundResource(R.drawable.search_bg_error)
+                            binding.etGenre.setBackgroundResource(R.drawable.search_bg_error)
+                            false
+                        } else {
+                            binding.SearchView.setBackgroundResource(R.drawable.search_bg)
+                            binding.etAuthor.setBackgroundResource(R.drawable.search_bg)
+                            binding.etGenre.setBackgroundResource(R.drawable.search_bg)
+                            true
+                        }
 
                     if (!binding.SearchView.text.isNullOrBlank()) {
                         searchValues.add(binding.SearchView.text.toString())
@@ -91,15 +93,19 @@ class SearchFragment : Fragment(), ApiErrorListener{
                     } else {
                         searchValues.add("")
                     }
-                    if(performSearch){
+                    if (performSearch) {
                         val tempSearch = performSearch(searchValues)
                         if (tempSearch != null) {
                             searchResultList = tempSearch
-                        }else{
+                        } else {
                             searchResultList = arrayListOf()
                         }
-                    }else{
-                        showSnackBar(requireContext(), requireView(), getString(R.string.SB_NothingFound))
+                    } else {
+                        showSnackBar(
+                            requireContext(),
+                            requireView(),
+                            getString(R.string.SB_NothingFound)
+                        )
                         searchResultList = arrayListOf()
                     }
                     binding.SearchReciclerView.layoutManager = GridLayoutManager(context, 3)
@@ -125,7 +131,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreSearch(position, searchValues)
                         }
                         lastPosition = totalItemCount
@@ -136,7 +142,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
         return binding.root
     }
 
-    fun loadMoreSearch(position : Int, searchValues: ArrayList<String>) {
+    fun loadMoreSearch(position: Int, searchValues: ArrayList<String>) {
         runBlocking {
             val coroutine = launch {
                 val tempSearchList =
@@ -153,7 +159,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
     }
 
     private fun performSearch(searchValues: ArrayList<String>): ArrayList<SimpleBook>? {
-        var searchResultList : ArrayList<SimpleBook>? = arrayListOf()
+        var searchResultList: ArrayList<SimpleBook>? = arrayListOf()
         position = 0
         lastPosition = -1
         runBlocking {

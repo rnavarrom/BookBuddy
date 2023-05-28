@@ -15,16 +15,19 @@ val Context.dataStore by preferencesDataStore(DATASTORE_NAME)
 class UserPreferences(context: Context) {
 
     private val dataStore = context.dataStore
+
     object PreferencesKeys {
         val USERNAME = stringPreferencesKey("username")
         val PASSWORD = stringPreferencesKey("password")
     }
+
     suspend fun saveCredentials(username: String, password: String) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.USERNAME] = username
             preferences[PreferencesKeys.PASSWORD] = password
         }
     }
+
     val userCredentialsFlow = dataStore.data.map { preferences ->
         val username = preferences[PreferencesKeys.USERNAME] ?: ""
         val password = preferences[PreferencesKeys.PASSWORD] ?: ""

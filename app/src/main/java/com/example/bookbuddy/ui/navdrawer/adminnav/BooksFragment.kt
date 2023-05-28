@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.AdminBooksAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminBooksBinding
@@ -28,6 +27,7 @@ import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.ui.navdrawer.AdminFragmentDirections
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.navController
 import com.google.zxing.BarcodeFormat
@@ -37,6 +37,7 @@ import com.google.zxing.common.BitMatrix
 import com.google.zxing.oned.Code128Writer
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+
 /**
  * Fragment to display the books list crud.
  */
@@ -69,16 +70,22 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  FragmentAdminBooksBinding.inflate(layoutInflater, container, false)
+        binding = FragmentAdminBooksBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
+        binding.mainContent.setColorSchemeColors(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primary_green
+            )
+        )
 
         getBooks(true)
         onLoadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
     }
+
     /**
      * Show a custom dialog to make book search
      */
@@ -114,7 +121,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }, 200)
     }
 
-    private fun insertBook(){
+    private fun insertBook() {
         val fra = requireArguments().getParcelable("fragment") as? AdminFragment?
         val bundle = Bundle()
         bundle.putParcelable("fragment", fra)
@@ -122,7 +129,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         navController.navigate(action)
     }
 
-    private fun editBook(book: Book){
+    private fun editBook(book: Book) {
         val fra = requireArguments().getParcelable("fragment") as? AdminFragment?
         val bundle = Bundle()
         bundle.putParcelable("book", book)
@@ -130,10 +137,11 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         val action = AdminFragmentDirections.actionNavAdminToNavInsertBook(bundle)
         navController.navigate(action)
     }
+
     /**
      * Function to set the buttons function when the load animation is over.
      */
-    fun onLoadingEnded(){
+    fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -143,7 +151,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         //handle edit button
         binding.btnEdit.setOnClickListener {
             val selection = adapter.getSelected()
-            if (selection != null){
+            if (selection != null) {
                 editBook(selection)
             } else {
                 showSnackBar(requireContext(), requireView(), getString(R.string.SB_PickABook))
@@ -151,7 +159,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
         binding.btnDelete.setOnClickListener {
             val selection = adapter.getSelected()
-            if (selection != null){
+            if (selection != null) {
                 val builder = AlertDialog.Builder(requireContext())
 
                 builder.setTitle(getString(R.string.DeleteBookQuestion))
@@ -172,7 +180,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
         binding.btnPrint.setOnClickListener {
             val selection = adapter.getSelected()
-            if (selection != null){
+            if (selection != null) {
                 val barcodeValue = generateBarcode(selection.isbn)
                 saveImageToGallery(barcodeValue, selection.isbn)
             } else {
@@ -196,7 +204,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -205,6 +213,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
         })
     }
+
     /**
      * Generates a bar code image from an ISNB.
      * @param content The ISBN code used to create the barcode
@@ -216,7 +225,8 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         try {
             val writer = Code128Writer()
-            val bitMatrix: BitMatrix = writer.encode(content, BarcodeFormat.CODE_128, 512, 256, hints)
+            val bitMatrix: BitMatrix =
+                writer.encode(content, BarcodeFormat.CODE_128, 512, 256, hints)
             val width = bitMatrix.width
             val height = bitMatrix.height
             val pixels = IntArray(width * height)
@@ -235,6 +245,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
         return null
     }
+
     /**
      * Saves an image in the device.
      * @param bitmap The image in bitmap format.
@@ -243,14 +254,16 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun saveImageToGallery(bitmap: Bitmap?, isbn: String) {
         bitmap?.let {
             val currentTimeMillis = System.currentTimeMillis()
-            val contentResolver: ContentResolver = requireActivity().applicationContext.contentResolver
+            val contentResolver: ContentResolver =
+                requireActivity().applicationContext.contentResolver
             val contentValues = ContentValues().apply {
                 put(MediaStore.Images.Media.DISPLAY_NAME, isbn + "_" + currentTimeMillis.toString())
                 put(MediaStore.Images.Media.MIME_TYPE, "image/png")
                 put(MediaStore.Images.Media.WIDTH, it.width)
                 put(MediaStore.Images.Media.HEIGHT, it.height)
             }
-            val uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            val uri =
+                contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
             uri?.let { imageUri ->
                 contentResolver.openOutputStream(imageUri)?.use { outputStream ->
                     it.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
@@ -265,12 +278,12 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    private fun deleteBook(book: Book){
+    private fun deleteBook(book: Book) {
         var result = false
         runBlocking {
             val coroutine = launch {
                 val tmpResult = api.deleteBook(book.isbn, false)
-                if (tmpResult != null){
+                if (tmpResult != null) {
                     result = tmpResult
                 }
             }
@@ -286,29 +299,43 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun loadMoreItems() {
         getBooks(false)
     }
+
     /**
      * Function to load or add more values to a list
      * @param addAdapter To check if the adapter is active
      */
-    private fun getBooks(addAdapter: Boolean){
+    private fun getBooks(addAdapter: Boolean) {
         runBlocking {
             val coroutine = launch {
-                if (position == 0){
-                    books = if (search.isNullOrEmpty()){
+                if (position == 0) {
+                    books = if (search.isNullOrEmpty()) {
                         api.getAllBooksSearch("null", false, position) as MutableList<Book>?
                     } else {
                         api.getAllBooksSearch(search!!, true, position) as MutableList<Book>?
                     }
                 } else {
-                    if (search.isNullOrEmpty()){
-                        books!!.addAll((api.getAllBooksSearch("null", false, position) as MutableList<Book>?)!!)
+                    if (search.isNullOrEmpty()) {
+                        books!!.addAll(
+                            (api.getAllBooksSearch(
+                                "null",
+                                false,
+                                position
+                            ) as MutableList<Book>?)!!
+                        )
                     } else {
-                        books!!.addAll((api.getAllBooksSearch(search!!, true, position) as MutableList<Book>?)!!)
+                        books!!.addAll(
+                            (api.getAllBooksSearch(
+                                search!!,
+                                true,
+                                position
+                            ) as MutableList<Book>?)!!
+                        )
                     }
                 }
-                if (books != null){
-                    if (addAdapter){
-                        binding.rvBooks.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                if (books != null) {
+                    if (addAdapter) {
+                        binding.rvBooks.layoutManager =
+                            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                         adapter = AdminBooksAdapter(books as ArrayList<Book>)
                         binding.rvBooks.adapter = adapter
                     } else {
@@ -319,8 +346,9 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             coroutine.join()
         }
     }
+
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted){
+        if (isOnCreateViewExecuted) {
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
     }

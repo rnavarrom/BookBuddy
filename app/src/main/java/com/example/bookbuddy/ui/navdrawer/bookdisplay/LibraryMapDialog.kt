@@ -45,15 +45,15 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
     private var permissionsGranted = false
     private var latitude: Double? = null
     private var longitude: Double? = null
-    private var method : String? = "walking"
+    private var method: String? = "walking"
     private var library: LibraryExtended? = null
     private lateinit var mMap: GoogleMap
 
     private val api = CrudApi()
     private var isGpsEnabled = false
-    private var resp : CleanResponse? = null
+    private var resp: CleanResponse? = null
 
-    lateinit var bundle : Bundle
+    lateinit var bundle: Bundle
 
     // Set fullscreen dialog style
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,16 +68,20 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  DialogBookdisplayLibraryMapBinding.inflate(layoutInflater, container, false)
+        binding = DialogBookdisplayLibraryMapBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        val locationManager = requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationManager =
+            requireActivity().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         isGpsEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
         setToolBar(this, binding.toolbar, requireContext(), getString(R.string.BT_Map))
 
         bundle = arguments?.getBundle("bundle")!!
-        if (bundle.containsKey("latitude") && bundle.containsKey("longitude") && bundle.containsKey("method")){
+        if (bundle.containsKey("latitude") && bundle.containsKey("longitude") && bundle.containsKey(
+                "method"
+            )
+        ) {
             latitude = bundle.getDouble("latitude")
             longitude = bundle.getDouble("longitude")
             method = bundle.getString("method")
@@ -91,8 +95,9 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
         }
         requestPermissionsMap()
 
-        if (library != null){
-            val supportMapFragment = childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
+        if (library != null) {
+            val supportMapFragment =
+                childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
             supportMapFragment!!.getMapAsync(this)
         }
 
@@ -117,7 +122,7 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
 
     override fun onMapReady(googleMap: GoogleMap) {
         // Loads different versions depending on the user permissions and if GPS is enabled
-        if (permissionsGranted && latitude != null && longitude != null && isGpsEnabled){
+        if (permissionsGranted && latitude != null && longitude != null && isGpsEnabled) {
             val start = LatLng(latitude!!, longitude!!)
             val lib = LatLng(library!!.library.lat, library!!.library.lon)
             mMap = googleMap
@@ -155,7 +160,10 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
                         getString(R.string.MAP_Distance) + distance.toString() + " m"
                     } else {
                         val distanceInKm = distance / 1000.0
-                        getString(R.string.MAP_Distance) + String.format("%.2f", distanceInKm) + " km"
+                        getString(R.string.MAP_Distance) + String.format(
+                            "%.2f",
+                            distanceInKm
+                        ) + " km"
                     }
 
                     val hours = (timeInSeconds / 3600).toInt()
@@ -164,20 +172,24 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
                     val formattedHours = String.format("%02d", hours)
                     val formattedMinutes = String.format("%02d", minutes)
 
-                    timeText = getString(R.string.MAP_Time) + "${formattedHours}:${formattedMinutes} " + "h"
+                    timeText =
+                        getString(R.string.MAP_Time) + "${formattedHours}:${formattedMinutes} " + "h"
 
                     binding.tvLibraryDistance.text = distanceText
                     binding.tvLibraryTime.text = timeText
 
-                    val middleLocation = LatLng((latitude!!+library!!.library.lat)/2, (longitude!!+library!!.library.lon)/2)
+                    val middleLocation = LatLng(
+                        (latitude!! + library!!.library.lat) / 2,
+                        (longitude!! + library!!.library.lon) / 2
+                    )
                     val zoom: Float?
                     zoom = if (resp!!.distance < 1000.0)
                         15.0f
-                    else if (resp!!.distance<= 5000.0)
+                    else if (resp!!.distance <= 5000.0)
                         14.0f
-                    else if (resp!!.distance<= 10000.0)
+                    else if (resp!!.distance <= 10000.0)
                         13.0f
-                    else if (resp!!.distance<= 15000.0)
+                    else if (resp!!.distance <= 15000.0)
                         12.0f
                     else
                         11.0f
@@ -191,7 +203,11 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
                     binding.tvLibraryDistance.visibility = View.GONE
 
                     onLoadingEnded()
-                    showSnackBar(requireContext(), requireView(), getString(R.string.MSG_CouldNotTrace))
+                    showSnackBar(
+                        requireContext(),
+                        requireView(),
+                        getString(R.string.MSG_CouldNotTrace)
+                    )
                 }
             }
         } else {
@@ -240,7 +256,10 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
 
     private fun requestPermissionsMap() {
         if (
-            (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
                     == PackageManager.PERMISSION_GRANTED) &&
             (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -279,7 +298,10 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
 
     private fun checkPermissions() {
         if (
-            (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
                     == PackageManager.PERMISSION_GRANTED) &&
             (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -293,7 +315,10 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
 
     private fun checkPermissionsTMP() {
         if (
-            (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            (ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
                     == PackageManager.PERMISSION_GRANTED) &&
             (ContextCompat.checkSelfPermission(
                 requireContext(),
@@ -301,19 +326,19 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
             ) == PackageManager.PERMISSION_GRANTED)
         ) {
             permissionsGranted = true
-            if (isGpsEnabled){
+            if (isGpsEnabled) {
                 mMap.isMyLocationEnabled = true
             }
         }
     }
 
-    private fun loadLibraryBasicInformation(library: LibraryExtended){
+    private fun loadLibraryBasicInformation(library: LibraryExtended) {
         binding.tvLibraryName.text = library.library.name
         //binding.tvLibraryDistance.text = String.format("%.1f", library.distance) + " km"
     }
 
-    private fun loadFragment(){
-        if (!permissionsGranted || latitude == null || longitude == null){
+    private fun loadFragment() {
+        if (!permissionsGranted || latitude == null || longitude == null) {
             binding.tvLibraryTime.visibility = View.GONE
             binding.tvLibraryDistance.visibility = View.GONE
         }
@@ -323,7 +348,7 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
     }
 
     // Change visible layouts
-    private fun onLoadingEnded(){
+    private fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
     }

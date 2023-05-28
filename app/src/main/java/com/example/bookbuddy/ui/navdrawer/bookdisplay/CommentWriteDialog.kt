@@ -14,11 +14,11 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogBookdisplayWriteCommentBinding
 import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.currentUser
@@ -39,6 +39,7 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
     private var isOnCreateViewExecuted = false
     private var connectionError = false
+
     interface OnWriteCommentClose {
         fun onWriteCommentClose()
     }
@@ -51,11 +52,12 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             R.style.FullScreenDialogStyle
         )
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  DialogBookdisplayWriteCommentBinding.inflate(layoutInflater, container, false)
+        binding = DialogBookdisplayWriteCommentBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_WriteComment))
@@ -63,14 +65,14 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle?.getInt("bookid")!!
 
-        if (bundle.containsKey("fragment")){
+        if (bundle.containsKey("fragment")) {
             val fragment = bundle.getParcelable("fragment") as? BookDisplayDialog?
-            if (fragment != null){
+            if (fragment != null) {
                 onWriteCommentClose = fragment
             }
-        } else if (bundle.containsKey("fragmentComments")){
+        } else if (bundle.containsKey("fragmentComments")) {
             val fragment = bundle.getParcelable("fragmentComments") as? CommentsListDialog?
-            if (fragment != null){
+            if (fragment != null) {
                 onWriteCommentClose = fragment
             }
         }
@@ -80,6 +82,7 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         isOnCreateViewExecuted = true
         return binding.root
     }
+
     override fun onResume() {
         super.onResume()
         binding.etWriteComment.postDelayed({
@@ -89,8 +92,8 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }, 200)
     }
 
-    private fun loadComment(){
-        runBlocking {            
+    private fun loadComment() {
+        runBlocking {
             val coroutine = launch {
                 comment = api.getCommentsFromUser(currentUser!!.userId, bookId)
             }
@@ -101,26 +104,34 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             if (comment != null) {
                 binding.etWriteComment.setText(comment!!.comentText)
                 binding.ratingWrite.rating = comment!!.rating.toFloat()
-                binding.wordCounter.text = comment!!.comentText.length.toString() + "/" + maxCharactersComment.toString()
+                binding.wordCounter.text =
+                    comment!!.comentText.length.toString() + "/" + maxCharactersComment.toString()
             }
         }
     }
 
     // Change visible layouts and add bindings
-    private fun onLoadingEnded(){
+    private fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainContent.visibility = View.VISIBLE
         binding.etWriteComment.filters = arrayOf<InputFilter>(LengthFilter(maxCharactersComment))
-        binding.etWriteComment.addTextChangedListener(object: TextWatcher{
+        binding.etWriteComment.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.wordCounter.text = s!!.length.toString() + "/" + maxCharactersComment.toString()
-                if (s.length == maxCharactersComment){
-                    binding.etWriteComment.background = ContextCompat.getDrawable(requireContext(), R.drawable.edit_text_border_comment_max)
+                binding.wordCounter.text =
+                    s!!.length.toString() + "/" + maxCharactersComment.toString()
+                if (s.length == maxCharactersComment) {
+                    binding.etWriteComment.background = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.edit_text_border_comment_max
+                    )
                 } else {
-                    binding.etWriteComment.background = ContextCompat.getDrawable(requireContext(), R.drawable.edit_text_border_comment)
+                    binding.etWriteComment.background = ContextCompat.getDrawable(
+                        requireContext(),
+                        R.drawable.edit_text_border_comment
+                    )
                 }
             }
 
@@ -133,14 +144,15 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    private fun insertComment(){
+    private fun insertComment() {
         val text = binding.etWriteComment.text.toString()
         val stars = binding.ratingWrite.rating.toInt()
-        if (text.isNotEmpty()){
-            runBlocking {                
+        if (text.isNotEmpty()) {
+            runBlocking {
                 val coroutine = launch {
-                    if (comment != null){
-                        api.updateCommentToAPI(comment!!.comentId!!, text, stars, currentUser!!.userId,
+                    if (comment != null) {
+                        api.updateCommentToAPI(
+                            comment!!.comentId!!, text, stars, currentUser!!.userId,
                             bookId
                         )
                     } else {
@@ -154,8 +166,8 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    private fun checkConnectionFailed(): Boolean{
-        if (connectionError){
+    private fun checkConnectionFailed(): Boolean {
+        if (connectionError) {
             connectionError = false
             return true
         }
@@ -176,6 +188,7 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

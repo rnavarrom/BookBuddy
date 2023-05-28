@@ -40,6 +40,7 @@ internal class ProfileAdapter(
             else -> getItem(position)
         }
     }
+
     override fun getCount(): Int {
         return totalTabs
     }

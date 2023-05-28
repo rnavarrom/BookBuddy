@@ -11,12 +11,12 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.CommentAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogBookdisplayCommentsBinding
 import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.clearCache
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
@@ -30,7 +30,8 @@ import kotlin.coroutines.CoroutineContext
  * Shows the list of comments of a book
  */
 @Parcelize
-class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.OnWriteCommentClose, Parcelable, ApiErrorListener {
+class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.OnWriteCommentClose,
+    Parcelable, ApiErrorListener {
     lateinit var binding: DialogBookdisplayCommentsBinding
     private var job: Job = Job()
     private var bookId: Int = 0
@@ -63,7 +64,7 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  DialogBookdisplayCommentsBinding.inflate(layoutInflater, container, false)
+        binding = DialogBookdisplayCommentsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
         setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_WriteComment))
@@ -71,14 +72,19 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle!!.getInt("bookid")
         title = bundle.getString("title").toString()
-        if (bundle.containsKey("fragment")){
+        if (bundle.containsKey("fragment")) {
             val fragment = bundle.getParcelable("fragment") as? BookDisplayDialog?
-            if (fragment != null){
+            if (fragment != null) {
                 onReadCommentClose = fragment
             }
         }
 
-        binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
+        binding.mainContent.setColorSchemeColors(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primary_green
+            )
+        )
 
         getCommentsBook(bookId, true)
         onLoadingEnded()
@@ -87,19 +93,27 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
     }
 
     // Get comments from the API and put them in the RecyclerView
-    private fun getCommentsBook(bookId: Int, addAdapter: Boolean){
+    private fun getCommentsBook(bookId: Int, addAdapter: Boolean) {
         runBlocking {
-            
+
             val coroutine = launch {
-                if (position == 0){
-                    comments = setCardview(api.getCommentsFromBook(bookId,position) as ArrayList<Comment>)
+                if (position == 0) {
+                    comments =
+                        setCardview(api.getCommentsFromBook(bookId, position) as ArrayList<Comment>)
                 } else {
-                    comments!!.addAll((setCardview(api.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?)!!)
+                    comments!!.addAll(
+                        (setCardview(
+                            api.getCommentsFromBook(
+                                bookId,
+                                position
+                            ) as ArrayList<Comment>
+                        ) as MutableList<Comment>?)!!
+                    )
                 }
             }
             coroutine.join()
         }
-        if (addAdapter){
+        if (addAdapter) {
             binding.rvComments.layoutManager = LinearLayoutManager(context)
             adapter = CommentAdapter(comments as ArrayList<Comment>, requireActivity(), title)
             binding.rvComments.adapter = adapter
@@ -109,7 +123,7 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
     }
 
     // Change visible layouts and add bindings
-    private fun onLoadingEnded(){
+    private fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainContent.visibility = View.VISIBLE
 
@@ -124,7 +138,7 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
 
         binding.mainContent.setOnRefreshListener {
             position = 0
-           lastPosition = -1
+            lastPosition = -1
             getCommentsBook(bookId, false)
             binding.mainContent.isRefreshing = false
         }
@@ -141,7 +155,7 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -151,9 +165,9 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
         })
     }
 
-    private fun setCardview(coms: ArrayList<Comment>): ArrayList<Comment>{
+    private fun setCardview(coms: ArrayList<Comment>): ArrayList<Comment> {
         coms.forEach { c ->
-            if (c.user!!.userId == currentUser!!.userId){
+            if (c.user!!.userId == currentUser!!.userId) {
                 c.typeCardview = 1
             }
         }
@@ -167,7 +181,7 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted){
+        if (isOnCreateViewExecuted) {
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
     }
@@ -183,6 +197,7 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

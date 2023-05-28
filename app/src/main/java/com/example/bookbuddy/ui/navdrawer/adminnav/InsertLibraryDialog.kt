@@ -7,12 +7,12 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogInsertLibraryBinding
 import com.example.bookbuddy.models.Library
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -40,6 +40,7 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
 
     private var onAdminDialogClose: OnAdminDialogClose? = null
     private val api = CrudApi(this@InsertLibraryDialog)
+
     interface OnAdminDialogClose {
         fun onAdminDialogClose()
     }
@@ -57,23 +58,23 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  DialogInsertLibraryBinding.inflate(layoutInflater, container, false)
+        binding = DialogInsertLibraryBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
 
         val bundle = arguments?.getBundle("bundle")
         val toolbarMessage: String
         val fragment = bundle!!.getParcelable("fragment") as? AdminFragment?
-        if (fragment != null){
+        if (fragment != null) {
             onAdminDialogClose = fragment
         }
 
-        if (bundle.containsKey("library")){
+        if (bundle.containsKey("library")) {
             mode = "edit"
             library = bundle.getParcelable("library")!!
         }
 
-        if (mode == "edit"){
+        if (mode == "edit") {
             toolbarMessage = getString(R.string.EditLibrary)
             binding.etId.text = library.libraryId.toString()
             binding.etName.setText(library.name)
@@ -97,45 +98,46 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
             dismiss()
         }
 
-        val supportMapFragment = childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
+        val supportMapFragment =
+            childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
         supportMapFragment!!.getMapAsync(this)
 
         return binding.root
     }
 
-    private fun editLibrary(){
+    private fun editLibrary() {
         var result = false
 
         val name = binding.etName.text.toString().trim()
         val zip = binding.etZip.text.toString()
         val lat = binding.etLat.text.toString().toDoubleOrNull()
         val lon = binding.etLon.text.toString().toDoubleOrNull()
-        if (name.isEmpty()){
+        if (name.isEmpty()) {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_CantEmptyName))
             return
         }
-        if (zip.isEmpty()){
+        if (zip.isEmpty()) {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_EmptyZip))
             return
         } else {
-            if (zip.length < 5){
+            if (zip.length < 5) {
                 showSnackBar(requireContext(), requireView(), getString(R.string.SB_ZipLenght))
                 return
             }
         }
-        if (lat == null){
+        if (lat == null) {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_Latitude))
             return
         }
-        if (lon == null){
+        if (lon == null) {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_Longitude))
             return
         }
 
         runBlocking {
             val coroutine = launch {
-                result = if (mode == "edit"){
-                    api.updateLibrary(library.libraryId,name, lat, lon, zip)!!
+                result = if (mode == "edit") {
+                    api.updateLibrary(library.libraryId, name, lat, lon, zip)!!
                 } else {
                     api.insertLibrary(name, lat, lon, zip)!!
                 }
@@ -145,12 +147,20 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
 
         if (result) {
             onAdminDialogClose!!.onAdminDialogClose()
-            showSnackBar(requireActivity().applicationContext, requireParentFragment().requireView(), getString(
-                            R.string.SB_LibraryEdited))
+            showSnackBar(
+                requireActivity().applicationContext,
+                requireParentFragment().requireView(),
+                getString(
+                    R.string.SB_LibraryEdited
+                )
+            )
             dismiss()
         } else {
-            showSnackBar(requireContext(), requireView(), getString(
-                R.string.SB_DuplicateLibraryName))
+            showSnackBar(
+                requireContext(), requireView(), getString(
+                    R.string.SB_DuplicateLibraryName
+                )
+            )
         }
     }
 
@@ -158,7 +168,7 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
         mMap = googleMap
         mMap.uiSettings.isZoomControlsEnabled = true
 
-        if (mode == "edit"){
+        if (mode == "edit") {
             val lib = LatLng(library.lat, library.lon)
 
             currentMarker = mMap.addMarker(
@@ -184,12 +194,14 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
             val lat = binding.etLat.text.toString().toDoubleOrNull()
             val lon = binding.etLon.text.toString().toDoubleOrNull()
 
-            if (lat != null && lon != null){
+            if (lat != null && lon != null) {
                 val lib = LatLng(lat, lon)
 
                 currentMarker?.remove()
 
-                currentMarker = mMap.addMarker(MarkerOptions().title(binding.etName.text.toString()).position(lib))
+                currentMarker = mMap.addMarker(
+                    MarkerOptions().title(binding.etName.text.toString()).position(lib)
+                )
                 val zoom = 17.0f
                 mMap.animateCamera(
                     CameraUpdateFactory.newLatLngZoom(lib, zoom),
@@ -204,10 +216,12 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
     override fun onApiError(connectionFailed: Boolean) {
         showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

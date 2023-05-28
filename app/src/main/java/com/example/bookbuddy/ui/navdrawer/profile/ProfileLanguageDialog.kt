@@ -13,12 +13,12 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.SearchLanguagesAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileSearchLanguageBinding
 import com.example.bookbuddy.models.Language
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -37,14 +37,16 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
     private var languages: MutableList<Language>? = null
 
     var onLanguageSearchCompleteListener: OnLanguageSearchCompleteListener? = null
+
     interface OnLanguageSearchCompleteListener {
         fun onLanguageSearchComplete(result: Int, name: String)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  DialogProfileSearchLanguageBinding.inflate(layoutInflater, container, false)
+        binding = DialogProfileSearchLanguageBinding.inflate(layoutInflater, container, false)
 
         // Load more items when scrolling the recycler view
         binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -58,7 +60,7 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -70,18 +72,23 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
         // Inflate the layout for this fragment
         binding.searchThings.setOnKeyListener { view, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val inputMethodManager =
+                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
                 val searchValue = binding.searchThings.text.toString()
 
                 performSearch(searchValue)
 
-                if(languages!!.isNotEmpty()){
+                if (languages!!.isNotEmpty()) {
                     position = 0
                     lastPosition = -1
                     binding.rvSearch.layoutManager = LinearLayoutManager(context)
-                    adapter = SearchLanguagesAdapter(this, onLanguageSearchCompleteListener, languages as java.util.ArrayList<Language>)
+                    adapter = SearchLanguagesAdapter(
+                        this,
+                        onLanguageSearchCompleteListener,
+                        languages as java.util.ArrayList<Language>
+                    )
                     binding.rvSearch.adapter = adapter
                 }
                 true
@@ -92,6 +99,7 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
 
         return binding.root
     }
+
     override fun onStart() {
         super.onStart()
         val dialog = dialog
@@ -108,6 +116,7 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
             window?.setLayout(width, height)
         }
     }
+
     override fun onResume() {
         super.onResume()
         binding.searchThings.postDelayed({
@@ -116,6 +125,7 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
             imm.showSoftInput(binding.searchThings, InputMethodManager.SHOW_IMPLICIT)
         }, 200)
     }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val parentFragment = parentFragment
@@ -125,15 +135,22 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
             throw IllegalArgumentException(getString(R.string.Throw_ParentFragment))
         }
     }
+
     private fun loadMoreItems() {
-        runBlocking {            
+        runBlocking {
             val coroutine = launch {
-                languages!!.addAll(api.getSearchLanguages(binding.searchThings.text.toString(), position) as MutableList<Language>)
+                languages!!.addAll(
+                    api.getSearchLanguages(
+                        binding.searchThings.text.toString(),
+                        position
+                    ) as MutableList<Language>
+                )
             }
             coroutine.join()
         }
         adapter.updateList(languages as ArrayList<Language>)
     }
+
     private fun performSearch(searchValue: String) {
         languages = mutableListOf()
         runBlocking {
@@ -143,13 +160,16 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
             coroutine.join()
         }
     }
+
     override fun onApiError(connectionFailed: Boolean) {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
+
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         requireActivity().invalidateOptionsMenu()
     }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()

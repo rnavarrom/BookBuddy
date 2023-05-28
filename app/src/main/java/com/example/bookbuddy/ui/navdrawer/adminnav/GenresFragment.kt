@@ -12,15 +12,16 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.AdminGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminGenresBinding
 import com.example.bookbuddy.models.Genre
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+
 /**
  * Fragment to display the genres list crud.
  */
@@ -44,10 +45,15 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  FragmentAdminGenresBinding.inflate(layoutInflater, container, false)
+        binding = FragmentAdminGenresBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-        binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
+        binding.mainContent.setColorSchemeColors(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primary_green
+            )
+        )
 
         getGenres(true)
         onLoadingEnded()
@@ -64,6 +70,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
     //Open the custom dialog with the correct
     private fun showCustomDialog(type: Int) {
         //type 0 -> insert, 1 -> edit, 2 -> search
@@ -72,13 +79,13 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         val editText = EditText(requireContext())
         editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
         //Load the correct values for the dialog
-        when(type){
+        when (type) {
             0 -> {
                 positiveText = getString(R.string.BT_Insert)
                 builder.setTitle(getString(R.string.InsertGenre))
                 editText.hint = getString(R.string.InsertGenre)
             }
-            1 ->  {
+            1 -> {
                 positiveText = getString(R.string.BT_Edit)
                 builder.setTitle(getString(R.string.EditGenre) + adapter.getSelected()!!.name)
                 editText.hint = getString(R.string.EditGenre)
@@ -94,12 +101,12 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         //Positive response
         builder.setPositiveButton(positiveText) { _, _ ->
             // Handle "Buscar" button click here
-            when(type){
+            when (type) {
                 0 -> {
                     genreName = editText.text.toString().trim()
                     insertGenre()
                 }
-                1 ->  {
+                1 -> {
                     genreName = editText.text.toString().trim()
                     editGenre()
                 }
@@ -126,10 +133,11 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
         }, 200)
     }
+
     //Call to insert new genre
-    private fun insertGenre(){
+    private fun insertGenre() {
         var result = false
-        if (!genreName.isNullOrEmpty()){
+        if (!genreName.isNullOrEmpty()) {
             runBlocking {
                 val coroutine = launch {
                     result = api.insertGenre(genreName!!)!!
@@ -145,11 +153,12 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_NameEmpty))
         }
     }
+
     //Call to edit genre
-    private fun editGenre(){
+    private fun editGenre() {
         val selection = adapter.getSelected()
         var result = false
-        if (!genreName.isNullOrEmpty()){
+        if (!genreName.isNullOrEmpty()) {
             runBlocking {
                 val coroutine = launch {
                     result = api.updateGenre(selection!!.genreId, genreName!!)!!
@@ -172,7 +181,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     /**
      * Load the configuration upon ending the loading animation
      */
-    fun onLoadingEnded(){
+    fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -182,7 +191,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         binding.btnEdit.setOnClickListener {
             val selection = adapter.getSelected()
-            if (selection != null){
+            if (selection != null) {
                 showCustomDialog(1)
             } else {
                 showSnackBar(requireContext(), requireView(), getString(R.string.PickGenre))
@@ -193,7 +202,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.btnDelete.setOnClickListener {
             val selection = adapter.getSelected()
             var result = false
-            if (selection != null){
+            if (selection != null) {
                 runBlocking {
                     val coroutine = launch {
                         result = api.deleteGenre(selection.genreId)!!
@@ -232,7 +241,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -245,30 +254,44 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun loadMoreItems() {
         getGenres(false)
     }
+
     /**
      * Function to load or add more values to a list
      * @param addAdapter To check if the adapter is active
      */
-    private fun getGenres(addAdapter: Boolean){
+    private fun getGenres(addAdapter: Boolean) {
         runBlocking {
             val crudApi = CrudApi(this@GenresFragment)
             val coroutine = launch {
-                if (position == 0){
-                    genres = if (search.isNullOrEmpty()){
+                if (position == 0) {
+                    genres = if (search.isNullOrEmpty()) {
                         crudApi.getGenres("null", false, position) as MutableList<Genre>?
                     } else {
                         crudApi.getGenres(search!!, true, position) as MutableList<Genre>?
                     }
                 } else {
-                    if (search.isNullOrEmpty()){
-                        genres!!.addAll((crudApi.getGenres("null", false, position) as MutableList<Genre>?)!!)
+                    if (search.isNullOrEmpty()) {
+                        genres!!.addAll(
+                            (crudApi.getGenres(
+                                "null",
+                                false,
+                                position
+                            ) as MutableList<Genre>?)!!
+                        )
                     } else {
-                        genres!!.addAll((crudApi.getGenres(search!!, true, position) as MutableList<Genre>?)!!)
+                        genres!!.addAll(
+                            (crudApi.getGenres(
+                                search!!,
+                                true,
+                                position
+                            ) as MutableList<Genre>?)!!
+                        )
                     }
                 }
-                if (genres != null){
-                    if (addAdapter){
-                        binding.rvGenres.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                if (genres != null) {
+                    if (addAdapter) {
+                        binding.rvGenres.layoutManager =
+                            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                         adapter = AdminGenresAdapter(genres as ArrayList<Genre>)
                         binding.rvGenres.adapter = adapter
                     } else {
@@ -281,7 +304,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted){
+        if (isOnCreateViewExecuted) {
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
     }
@@ -290,6 +313,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

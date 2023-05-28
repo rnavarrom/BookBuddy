@@ -13,12 +13,12 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.SearchAuthorsAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileSearchAuthorBinding
 import com.example.bookbuddy.models.Extra.Author
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -29,6 +29,7 @@ import kotlin.coroutines.CoroutineContext
 class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: DialogProfileSearchAuthorBinding
     private var job: Job = Job()
+
     //var searchResultList: ArrayList<Genre> = arrayListOf()
     private lateinit var adapter: SearchAuthorsAdapter
     private val api = CrudApi(this@ProfileAuthorDialog)
@@ -38,14 +39,16 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     var authors: MutableList<Author>? = null
 
     var onAuthorSearchCompleteListener: OnAuthorSearchCompleteListener? = null
+
     interface OnAuthorSearchCompleteListener {
         fun onAuthorSearchComplete(result: Int, name: String)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  DialogProfileSearchAuthorBinding.inflate(layoutInflater, container, false)
+        binding = DialogProfileSearchAuthorBinding.inflate(layoutInflater, container, false)
 
         // Load more items when scrolling the recycler view
         binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -59,7 +62,7 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -71,18 +74,23 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         // Inflate the layout for this fragment
         binding.searchThings.setOnKeyListener { view, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val inputMethodManager =
+                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
                 val searchValue = binding.searchThings.text.toString()
 
                 performSearch(searchValue)
 
-                if(authors!!.isNotEmpty()){
+                if (authors!!.isNotEmpty()) {
                     position = 0
                     lastPosition = -1
                     binding.rvSearch.layoutManager = LinearLayoutManager(context)
-                    adapter = SearchAuthorsAdapter(this, onAuthorSearchCompleteListener, authors as java.util.ArrayList<Author>)
+                    adapter = SearchAuthorsAdapter(
+                        this,
+                        onAuthorSearchCompleteListener,
+                        authors as java.util.ArrayList<Author>
+                    )
                     binding.rvSearch.adapter = adapter
                 }
                 true
@@ -93,6 +101,7 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
         return binding.root
     }
+
     override fun onStart() {
         super.onStart()
         val dialog = dialog
@@ -118,6 +127,7 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             imm.showSoftInput(binding.searchThings, InputMethodManager.SHOW_IMPLICIT)
         }, 200)
     }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val parentFragment = parentFragment
@@ -127,6 +137,7 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             throw IllegalArgumentException(getString(R.string.Throw_ParentFragment))
         }
     }
+
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         requireActivity().invalidateOptionsMenu()
@@ -134,10 +145,11 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
     private fun loadMoreItems() {
         runBlocking {
-            
+
             val coroutine = launch {
-                val tempAuthors= api.getSearchAuthors(binding.searchThings.text.toString(), position)
-                if(tempAuthors != null){
+                val tempAuthors =
+                    api.getSearchAuthors(binding.searchThings.text.toString(), position)
+                if (tempAuthors != null) {
                     authors!!.addAll(tempAuthors as MutableList<Author>)
                 }
             }
@@ -148,10 +160,10 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
     private fun performSearch(searchValue: String) {
         authors = mutableListOf()
-        runBlocking {            
+        runBlocking {
             val coroutine = launch {
                 val tempAuthors = api.getSearchAuthors(searchValue, position)
-                if(tempAuthors != null){
+                if (tempAuthors != null) {
                     authors = tempAuthors as MutableList<Author>
                 }
             }
@@ -162,10 +174,12 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     override fun onApiError(connectionFailed: Boolean) {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

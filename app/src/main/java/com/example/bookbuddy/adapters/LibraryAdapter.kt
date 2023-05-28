@@ -27,9 +27,9 @@ class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var locatio
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(parent.context)
-        return if (viewType == 0){
+        return if (viewType == 0) {
             ViewHolder(layout.inflate(R.layout.cardview_library, parent, false))
-        } else{
+        } else {
             ViewHolder(layout.inflate(R.layout.cardview_library_selected, parent, false))
         }
     }
@@ -38,7 +38,7 @@ class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var locatio
         holder.libraryName.text = list[position].library.name
         holder.libraryZip.text = list[position].library.zipCode
 
-        if (list[position].distance != null){
+        if (list[position].distance != null) {
             holder.libraryDistance.text = String.format("%.1f", list[position].distance) + " km"
         } else {
             holder.libraryDistance.visibility = View.GONE
@@ -62,7 +62,7 @@ class LibraryAdapter(var list: java.util.ArrayList<LibraryExtended>, var locatio
         }
     }
 
-    fun updateList(newList: ArrayList<LibraryExtended>){
+    fun updateList(newList: ArrayList<LibraryExtended>) {
         list = newList
         notifyDataSetChanged()
     }

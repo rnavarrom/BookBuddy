@@ -9,15 +9,17 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.ui.navdrawer.bookdisplay.AuthorBookDialogDirections
+import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.utils.navController
+
 /**
  * Adapter for displaying books in a recycler view
  * @param list The list of search results to display.
  */
-class AuthorBooksAdapter(var list: ArrayList<Book>) : RecyclerView.Adapter<AuthorBooksAdapter.ViewHolder>() {
+class AuthorBooksAdapter(var list: ArrayList<Book>) :
+    RecyclerView.Adapter<AuthorBooksAdapter.ViewHolder>() {
     class ViewHolder(val vista: View) : RecyclerView.ViewHolder(vista) {
         val bookCover = vista.findViewById<ImageView>(R.id.book_cover)!!
     }
@@ -28,6 +30,7 @@ class AuthorBooksAdapter(var list: ArrayList<Book>) : RecyclerView.Adapter<Autho
         context = parent.context
         return ViewHolder(layout.inflate(R.layout.cardview_book_only_cover_multiple, parent, false))
     }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Glide.with(holder.vista.context)
             .setDefaultRequestOptions(bookRequestOptions)
@@ -37,12 +40,13 @@ class AuthorBooksAdapter(var list: ArrayList<Book>) : RecyclerView.Adapter<Autho
         holder.vista.setOnClickListener {
             val bundle = Bundle()
             bundle.putString("isbn", list[position].isbn)
-            val action = AuthorBookDialogDirections.actionNavAuthorBookDialogToNavBookDisplay(bundle)
+            val action =
+                AuthorBookDialogDirections.actionNavAuthorBookDialogToNavBookDisplay(bundle)
             navController.navigate(action)
         }
     }
 
-    fun updateList(newList: ArrayList<Book>){
+    fun updateList(newList: ArrayList<Book>) {
         list = newList
         notifyDataSetChanged()
     }

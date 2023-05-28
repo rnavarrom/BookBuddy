@@ -9,16 +9,18 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.models.Pending
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
 import com.example.bookbuddy.ui.navdrawer.HomeFragmentDirections
+import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.utils.navController
+
 /**
  * Adapter for displaying book in a recycler view
  * @param list The list of search results to display.
  */
-class HomeBooksAdapter(private var list: ArrayList<Pending>, val fragment: HomeFragment) : RecyclerView.Adapter<HomeBooksAdapter.ViewHolder>() {
+class HomeBooksAdapter(private var list: ArrayList<Pending>, val fragment: HomeFragment) :
+    RecyclerView.Adapter<HomeBooksAdapter.ViewHolder>() {
     class ViewHolder(val vista: View) : RecyclerView.ViewHolder(vista) {
         val imatge: ImageView = vista.findViewById(R.id.book_cover)
     }
@@ -29,6 +31,7 @@ class HomeBooksAdapter(private var list: ArrayList<Pending>, val fragment: HomeF
         context = parent.context
         return ViewHolder(layout.inflate(R.layout.cardview_book_only_cover, parent, false))
     }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Glide.with(holder.vista.context)
             .setDefaultRequestOptions(bookRequestOptions)
@@ -44,7 +47,7 @@ class HomeBooksAdapter(private var list: ArrayList<Pending>, val fragment: HomeF
         }
     }
 
-    fun updateList(newList: ArrayList<Pending>){
+    fun updateList(newList: ArrayList<Pending>) {
         list = newList
         notifyDataSetChanged()
     }

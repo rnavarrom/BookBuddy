@@ -13,12 +13,12 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.SearchLibrariesAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileSearchLibraryBinding
 import com.example.bookbuddy.models.LibraryExtended
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -37,6 +37,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
     var libraries: MutableList<LibraryExtended>? = null
 
     var onLibrarySearchCompleteListener: OnLibrarySearchCompleteListener? = null
+
     interface OnLibrarySearchCompleteListener {
         fun onLibrarySearchComplete(result: Int, name: String, zipCode: String)
     }
@@ -46,7 +47,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  DialogProfileSearchLibraryBinding.inflate(layoutInflater, container, false)
+        binding = DialogProfileSearchLibraryBinding.inflate(layoutInflater, container, false)
 
         // Load more items when scrolling the recycler view
         binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -60,7 +61,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -72,18 +73,23 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
         // Inflate the layout for this fragment
         binding.searchThings.setOnKeyListener { view, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val inputMethodManager =
+                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
                 val searchValue = binding.searchThings.text.toString()
 
                 performSearch(searchValue)
 
-                if(libraries!!.isNotEmpty()){
+                if (libraries!!.isNotEmpty()) {
                     position = 0
                     lastPosition = -1
                     binding.rvSearch.layoutManager = LinearLayoutManager(context)
-                    adapter = SearchLibrariesAdapter(this, onLibrarySearchCompleteListener, libraries as java.util.ArrayList<LibraryExtended>)
+                    adapter = SearchLibrariesAdapter(
+                        this,
+                        onLibrarySearchCompleteListener,
+                        libraries as java.util.ArrayList<LibraryExtended>
+                    )
                     binding.rvSearch.adapter = adapter
                 }
                 true
@@ -94,6 +100,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
 
         return binding.root
     }
+
     override fun onStart() {
         super.onStart()
         val dialog = dialog
@@ -110,6 +117,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
             window?.setLayout(width, height)
         }
     }
+
     override fun onResume() {
         super.onResume()
         binding.searchThings.postDelayed({
@@ -130,9 +138,14 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
     }
 
     private fun loadMoreItems() {
-        runBlocking {            
+        runBlocking {
             val coroutine = launch {
-                libraries!!.addAll(api.getSearchLibraries(binding.searchThings.text.toString(), position) as MutableList<LibraryExtended>)
+                libraries!!.addAll(
+                    api.getSearchLibraries(
+                        binding.searchThings.text.toString(),
+                        position
+                    ) as MutableList<LibraryExtended>
+                )
             }
             coroutine.join()
         }
@@ -144,26 +157,33 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
         lastPosition = -1
         libraries = mutableListOf()
 
-        if (searchValue.isNotEmpty()){
-            runBlocking {                
+        if (searchValue.isNotEmpty()) {
+            runBlocking {
                 val coroutine = launch {
-                    libraries = api.getSearchLibraries(searchValue, position) as MutableList<LibraryExtended>
+                    libraries = api.getSearchLibraries(
+                        searchValue,
+                        position
+                    ) as MutableList<LibraryExtended>
                 }
                 coroutine.join()
             }
         }
     }
+
     override fun onApiError(connectionFailed: Boolean) {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
+
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         requireActivity().invalidateOptionsMenu()
     }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

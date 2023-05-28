@@ -16,7 +16,11 @@ import com.example.bookbuddy.ui.navdrawer.profile.ProfileLibraryDialog
  * @param dialog Dialog where execute function on search end
  * @param list The list of search results to display.
  */
-class SearchLibrariesAdapter(private var dialogFragment: DialogFragment, var dialog: ProfileLibraryDialog.OnLibrarySearchCompleteListener?, var list: java.util.ArrayList<LibraryExtended>) :
+class SearchLibrariesAdapter(
+    private var dialogFragment: DialogFragment,
+    var dialog: ProfileLibraryDialog.OnLibrarySearchCompleteListener?,
+    var list: java.util.ArrayList<LibraryExtended>
+) :
     RecyclerView.Adapter<SearchLibrariesAdapter.ViewHolder>() {
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val name = view.findViewById<TextView>(R.id.tv_search_name)!!
@@ -31,16 +35,20 @@ class SearchLibrariesAdapter(private var dialogFragment: DialogFragment, var dia
         holder.name.text = list[position].library.name
 
         holder.view.setOnClickListener {
-            addLibraryToFavourite(list[position].library.libraryId, list[position].library.name, list[position].library.zipCode)
+            addLibraryToFavourite(
+                list[position].library.libraryId,
+                list[position].library.name,
+                list[position].library.zipCode
+            )
         }
     }
 
-    private fun addLibraryToFavourite(id: Int, name: String, zipCode: String){
+    private fun addLibraryToFavourite(id: Int, name: String, zipCode: String) {
         dialog?.onLibrarySearchComplete(id, name, zipCode)
         dialogFragment.dismiss()
     }
 
-    fun updateList(newList: ArrayList<LibraryExtended>){
+    fun updateList(newList: ArrayList<LibraryExtended>) {
         list = newList
         notifyDataSetChanged()
     }

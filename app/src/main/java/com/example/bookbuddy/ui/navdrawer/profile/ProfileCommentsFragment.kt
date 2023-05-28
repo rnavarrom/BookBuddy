@@ -10,16 +10,17 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.ProfileCommentAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentProfileCommentsBinding
 import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+
 /**
  * Fragment to display the comments list on the profile.
  */
@@ -40,55 +41,63 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  FragmentProfileCommentsBinding.inflate(layoutInflater, container, false)
+        binding = FragmentProfileCommentsBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
         userId = requireArguments().getInt("userid")
         isProfileFragment = requireArguments().getBoolean("isfragment")
-        binding.refresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
+        binding.refresh.setColorSchemeColors(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.primary_green
+            )
+        )
 
         getCommentsUser(userId, true)
         onLoadingEnded()
 
         return binding.root
     }
+
     /**
      * Get the comments from an user and show them on the recycler view.
      * @param userId The id from the user to get the comments
      * @param addAdapter Chech if the adapter is already running.
      */
-    private fun getCommentsUser(userId: Int, addAdapter: Boolean){
-        runBlocking {            
+    private fun getCommentsUser(userId: Int, addAdapter: Boolean) {
+        runBlocking {
             val coroutine = launch {
-                if (position == 0){
-                    val tempComments = api.getUserComments(userId,position) as MutableList<Comment>?
-                    if(tempComments != null){
+                if (position == 0) {
+                    val tempComments =
+                        api.getUserComments(userId, position) as MutableList<Comment>?
+                    if (tempComments != null) {
                         comments = tempComments
                     }
                 } else {
-                    val tempComments = api.getUserComments(userId,position)
-                    if(tempComments != null){
-                        comments!!.addAll( tempComments as MutableList<Comment>)
+                    val tempComments = api.getUserComments(userId, position)
+                    if (tempComments != null) {
+                        comments!!.addAll(tempComments as MutableList<Comment>)
                     }
                 }
             }
             coroutine.join()
         }
-        if(comments != null){
+        if (comments != null) {
 
-        if (addAdapter){
-            binding.rvComments.layoutManager = LinearLayoutManager(context)
-            adapter = ProfileCommentAdapter(comments as ArrayList<Comment>, isProfileFragment)
-            binding.rvComments.adapter = adapter
-        } else {
-            adapter.updateList(comments as ArrayList<Comment>)
-        }
+            if (addAdapter) {
+                binding.rvComments.layoutManager = LinearLayoutManager(context)
+                adapter = ProfileCommentAdapter(comments as ArrayList<Comment>, isProfileFragment)
+                binding.rvComments.adapter = adapter
+            } else {
+                adapter.updateList(comments as ArrayList<Comment>)
+            }
         }
     }
+
     /**
      * Load the configuration upon ending the loading animation
      */
-    private fun onLoadingEnded(){
+    private fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -109,7 +118,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -133,6 +142,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

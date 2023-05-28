@@ -11,15 +11,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
-import com.example.bookbuddy.utils.Sha
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.ActivityCreateAccountBinding
 import com.example.bookbuddy.models.UserItem
-import com.example.bookbuddy.utils.ApiErrorListener
-import com.example.bookbuddy.utils.Tools
-import com.example.bookbuddy.utils.currentUserCreate
-import com.example.bookbuddy.utils.keyboardValue
+import com.example.bookbuddy.utils.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -108,6 +103,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         currentUserCreate.password = Sha.calculateSHA(binding.CAEditPassword.text.toString())
         currentUserCreate.email = binding.CAEditEmail.text.toString()
     }
+
     /**
      * Check if the values are right
      * returns true if all values are correct
@@ -164,7 +160,11 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         if (!Tools.isPasswordValid(binding.CAEditPassword.text.toString())) {
             binding.CAEditPassword.setTextColor(getColor(R.color.red_error))
             binding.CAEditPassword2.setTextColor(getColor(R.color.red_error))
-            Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.MSG_PasswordError))
+            Tools.showSnackBar(
+                this,
+                binding.createAcountLayout,
+                getString(R.string.MSG_PasswordError)
+            )
             return false
         }
         //check if the email has a valid formation

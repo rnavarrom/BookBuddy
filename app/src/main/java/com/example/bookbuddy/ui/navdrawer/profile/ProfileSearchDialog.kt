@@ -12,12 +12,12 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.SearchGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileSearchBinding
 import com.example.bookbuddy.models.Extra.Genre
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -25,7 +25,7 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Dialog to search preferred genre of the user
  */
-class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
+class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: DialogProfileSearchBinding
     private var job: Job = Job()
     private val api = CrudApi(this@ProfileSearchDialog)
@@ -36,14 +36,16 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
     var genres: MutableList<Genre>? = null
 
     var onGenreSearchCompleteListener: OnGenreSearchCompleteListener? = null
+
     interface OnGenreSearchCompleteListener {
         fun onGenreSearchComplete(result: Int, name: String)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  DialogProfileSearchBinding.inflate(layoutInflater, container, false)
+        binding = DialogProfileSearchBinding.inflate(layoutInflater, container, false)
 
         // Load more items when scrolling the recycler view
         binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -57,7 +59,7 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
-                        if (lastPosition != totalItemCount){
+                        if (lastPosition != totalItemCount) {
                             loadMoreItems()
                         }
                         lastPosition = totalItemCount
@@ -69,18 +71,23 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
         // Inflate the layout for this fragment
         binding.searchThings.setOnKeyListener { view, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val inputMethodManager =
+                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
                 val searchValue = binding.searchThings.text.toString()
 
                 performSearch(searchValue)
 
-                if(genres!!.isNotEmpty()){
+                if (genres!!.isNotEmpty()) {
                     position = 0
                     lastPosition = -1
                     binding.rvSearch.layoutManager = LinearLayoutManager(context)
-                    adapter = SearchGenresAdapter(this, onGenreSearchCompleteListener, genres as java.util.ArrayList<Genre>)
+                    adapter = SearchGenresAdapter(
+                        this,
+                        onGenreSearchCompleteListener,
+                        genres as java.util.ArrayList<Genre>
+                    )
                     binding.rvSearch.adapter = adapter
                 }
                 true
@@ -132,8 +139,8 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
         runBlocking {
             val coroutine = launch {
                 val tempGenres = api.getSearchGenres(binding.searchThings.text.toString(), position)
-                if(tempGenres != null){
-                    genres!!.addAll( tempGenres as MutableList<Genre>)
+                if (tempGenres != null) {
+                    genres!!.addAll(tempGenres as MutableList<Genre>)
                 }
             }
             coroutine.join()
@@ -146,7 +153,7 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
         runBlocking {
             val coroutine = launch {
                 val tempGenres = api.getSearchGenres(searchValue, position)
-                if(tempGenres != null){
+                if (tempGenres != null) {
                     genres = tempGenres as MutableList<Genre>
                 }
             }
@@ -157,10 +164,12 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
     override fun onApiError(connectionFailed: Boolean) {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

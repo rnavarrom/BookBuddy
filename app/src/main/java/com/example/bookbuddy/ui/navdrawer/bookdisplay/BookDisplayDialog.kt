@@ -14,8 +14,6 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
-import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.adapters.GenreAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogBookdisplayBinding
@@ -24,6 +22,8 @@ import com.example.bookbuddy.models.Genre
 import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.currentUser
@@ -80,9 +80,9 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
 
         val bundle = requireArguments().getBundle("bundle")
         val isbn: String?
-        if (bundle != null){
+        if (bundle != null) {
             isbn = bundle.getString("isbn")!!
-            if (bundle.containsKey("fragment")){
+            if (bundle.containsKey("fragment")) {
                 val fragment = bundle.getParcelable("fragment") as? HomeFragment?
                 onBookDisplayClose = fragment
             }
@@ -110,7 +110,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                                 book!!.bookId,
                                                 currentUser!!.userId
                                             )
-                                            if(result == true ){
+                                            if (result == true) {
                                                 getReaded(book!!.bookId)
                                                 readed!!.curreading = 3
                                             }
@@ -128,7 +128,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                                 book!!.bookId,
                                                 currentUser!!.userId
                                             )
-                                            if(result == true) {
+                                            if (result == true) {
                                                 getReaded(book!!.bookId)
                                                 readed!!.curreading = 1
                                             }
@@ -146,7 +146,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                                 book!!.bookId,
                                                 currentUser!!.userId
                                             )
-                                            if(result == true) {
+                                            if (result == true) {
                                                 getReaded(book!!.bookId)
                                                 readed!!.curreading = 2
                                             }
@@ -164,7 +164,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                             book!!.bookId,
                                             currentUser!!.userId
                                         )
-                                        if(result == true){
+                                        if (result == true) {
                                             readed = null
                                         }
                                     }
@@ -195,7 +195,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         return binding.root
     }
 
-    private fun loadBook(book: Book, isbn: String){
+    private fun loadBook(book: Book, isbn: String) {
         val coroutine = launch {
             getReaded(book.bookId)
             setBook(book)
@@ -209,19 +209,19 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
 
     override fun onStart() {
         super.onStart()
-        if (book == null){
+        if (book == null) {
             navController.popBackStack()
         }
     }
 
     override fun onWriteCommentClose() {
-        if (book != null){
+        if (book != null) {
             getCommentsNumber(book!!.bookId)
         }
     }
 
     override fun onReadCommentClose() {
-        if (book != null){
+        if (book != null) {
             getCommentsNumber(book!!.bookId)
         }
     }
@@ -230,7 +230,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         var commentsNumber: Int?
         launch {
             commentsNumber = api.getCommentsCounter(bookId)
-            if (commentsNumber != null){
+            if (commentsNumber != null) {
                 binding.numberComments.text = commentsNumber.toString()
             } else {
                 binding.numberComments.text = "0"
@@ -243,7 +243,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         var librariesNumber: Int?
         launch {
             librariesNumber = api.getBookLibrariesCount(isbn!!)
-            if (librariesNumber != null){
+            if (librariesNumber != null) {
                 binding.numberLibraries.text = librariesNumber.toString()
             } else {
                 binding.numberLibraries.text = "0"
@@ -365,13 +365,13 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
             tts!!.stop()
             isPlaying = false
         } else {
-            if(!isPlaying){
+            if (!isPlaying) {
                 tts!!.defaultVoice
                 textts = getString(R.string.TTS_Title) +
-                    binding.dBookTitle.text.toString() +
-                    " \n " +
-                    getString(R.string.TTS_Description) +
-                    binding.dBookDescription.text.toString()
+                        binding.dBookTitle.text.toString() +
+                        " \n " +
+                        getString(R.string.TTS_Description) +
+                        binding.dBookDescription.text.toString()
                 tts!!.speak(textts, TextToSpeech.QUEUE_FLUSH, null, null)
                 isPlaying = true
             }
@@ -381,42 +381,46 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
 
     // Gets the language stored in the phone
     private fun getStoredLanguage(): String {
-        val sharedPreferences = context?.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            context?.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
         var code = sharedPreferences?.getString("language_code", "") ?: ""
-        if (code.isEmpty()){
+        if (code.isEmpty()) {
             code = context?.resources?.configuration?.locales?.get(0)?.language.toString()
         }
         return code
     }
+
     override fun onInit(p0: Int) {
         var lang = getStoredLanguage()
         var country = getStoredLanguage()
-        if (lang == "en"){
+        if (lang == "en") {
             country = "us"
-        }else if (lang == "ca"){
+        } else if (lang == "ca") {
             lang = "es"
             country = "es"
         }
         if (p0 == TextToSpeech.SUCCESS) {
             val output = tts!!.setLanguage(Locale(lang, country))
             if (output == TextToSpeech.LANG_MISSING_DATA ||
-                output == TextToSpeech.LANG_NOT_SUPPORTED) {
+                output == TextToSpeech.LANG_NOT_SUPPORTED
+            ) {
                 Log.e("TTS", getString(R.string.MSG_LangNotSuported))
             }
         }
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted){
-            if (connectionFailed){
+        if (isOnCreateViewExecuted) {
+            if (connectionFailed) {
                 connectionError = true
                 showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
             }
         }
     }
+
     // Stop the text to speech on close dialog
     override fun onDestroy() {
-        if (onBookDisplayClose != null){
+        if (onBookDisplayClose != null) {
             onBookDisplayClose?.onBookDisplayClose()
         }
         if (tts != null) {
@@ -426,6 +430,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

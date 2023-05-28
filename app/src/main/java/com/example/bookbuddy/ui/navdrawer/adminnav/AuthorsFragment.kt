@@ -12,15 +12,16 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.AdminAuthorsAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminAuthorsBinding
 import com.example.bookbuddy.models.Author
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
+
 /**
  * Fragment to display the authors list crud.
  */
@@ -59,6 +60,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         isOnCreateViewExecuted = true
         return binding.root
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         return when (item.itemId) {
@@ -69,6 +71,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
     /**
      * Function to select what dialog needs to be loaded and aply the correct filter to the search
      * @param type What type of dialog to be loaded.
@@ -84,7 +87,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 builder.setTitle(getString(R.string.InsertAuthor))
                 editText.hint = getString(R.string.InsertAuthor)
             }
-            1 ->  {
+            1 -> {
                 positiveText = getString(R.string.BT_Edit)
                 builder.setTitle(getString(R.string.EditAuthor) + adapter.getSelected()!!.name)
                 editText.hint = getString(R.string.EditAuthor)
@@ -127,9 +130,10 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
         }, 200)
     }
+
     private fun insertAuthor() {
         var result = false
-        if (!authorName.isNullOrEmpty()){
+        if (!authorName.isNullOrEmpty()) {
             runBlocking {
                 val coroutine = launch {
                     result = api.insertAuthor(authorName!!)!!
@@ -145,10 +149,11 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_NameEmpty))
         }
     }
+
     private fun editAuthor() {
         val selection = adapter.getSelected()
         var result = false
-        if (!authorName.isNullOrEmpty()){
+        if (!authorName.isNullOrEmpty()) {
             runBlocking {
                 val coroutine = launch {
                     result = api.updateAuthor(selection!!.authorId, authorName!!)!!
@@ -160,12 +165,17 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 selection!!.name = authorName!!
                 adapter.updateList(authors as ArrayList<Author>)
             } else {
-                showSnackBar(requireContext(), requireView(), getString(R.string.SB_AuthorDuplicated))
+                showSnackBar(
+                    requireContext(),
+                    requireView(),
+                    getString(R.string.SB_AuthorDuplicated)
+                )
             }
         } else {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_NameEmpty))
         }
     }
+
     /**
      * Function to set the buttons function when the load animation is over.
      */
@@ -202,7 +212,11 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                     authors!!.remove(selection)
                     adapter.updateList(authors as ArrayList<Author>)
                 } else {
-                    showSnackBar(requireContext(), requireView(), getString(R.string.SB_AuthorHasBook))
+                    showSnackBar(
+                        requireContext(),
+                        requireView(),
+                        getString(R.string.SB_AuthorHasBook)
+                    )
                 }
             } else {
                 showSnackBar(requireContext(), requireView(), getString(R.string.SB_PickAuthor))
@@ -238,6 +252,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private fun loadMoreItems() {
         getAuthors(false)
     }
+
     /**
      * Function to load or add more values to a list
      * @param addAdapter To check if the adapter is active
@@ -270,9 +285,10 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                         )
                     }
                 }
-                if (authors != null){
+                if (authors != null) {
                     if (addAdapter) {
-                        binding.rvAuthors.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                        binding.rvAuthors.layoutManager =
+                            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
                         adapter = AdminAuthorsAdapter(authors as ArrayList<Author>)
                         binding.rvAuthors.adapter = adapter
                     } else {
@@ -283,15 +299,18 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             corrutine.join()
         }
     }
+
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted){
+        if (isOnCreateViewExecuted) {
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.adapters.HomeBooksAdapter
 import com.example.bookbuddy.adapters.HomeReadingBooksAdapter
 import com.example.bookbuddy.api.CrudApi
@@ -23,17 +22,20 @@ import com.example.bookbuddy.models.ActualReading
 import com.example.bookbuddy.models.Pending
 import com.example.bookbuddy.ui.navdrawer.bookdisplay.BookDisplayDialog
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
+
 /**
  * Home fragment from the navMenu
  */
 @Parcelize
-class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDialog.OnBookDisplayClose, Parcelable {
+class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener,
+    BookDisplayDialog.OnBookDisplayClose, Parcelable {
     lateinit var binding: FragmentHomeBinding
     private var job: Job = Job()
     private lateinit var adapterPending: HomeBooksAdapter
@@ -175,6 +177,7 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
         isOnCreateViewExecuted = true
         return binding.root
     }
+
     override fun onResume() {
         super.onResume()
         pendingList = arrayListOf()
@@ -188,33 +191,36 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
         emptyPending()
         emptyReaded()
     }
+
     /**
      * What to do if the reading list is empty
      */
-    private fun emptyReading(){
-        if (readingList.isEmpty()){
+    private fun emptyReading() {
+        if (readingList.isEmpty()) {
             binding.emptyReading.text = getString(R.string.LAY_NoReadingBooks)
             binding.emptyReading.visibility = View.VISIBLE
         } else {
             binding.emptyReading.visibility = View.GONE
         }
     }
+
     /**
      * What to do if the pending list is empty
      */
-    private fun emptyPending(){
-        if (pendingList.isEmpty()){
+    private fun emptyPending() {
+        if (pendingList.isEmpty()) {
             binding.emptyPending.text = getString(R.string.LAY_NoPendingBooks)
             binding.emptyPending.visibility = View.VISIBLE
         } else {
             binding.emptyPending.visibility = View.GONE
         }
     }
+
     /**
      * What to do if the read list is empty
      */
-    private fun emptyReaded(){
-        if (readedList.isEmpty()){
+    private fun emptyReaded() {
+        if (readedList.isEmpty()) {
             binding.emptyReaded.text = getString(R.string.LAY_NoReadBooks)
             binding.emptyReaded.visibility = View.VISIBLE
         } else {
@@ -225,10 +231,11 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
     fun loadMoreRead(position: Int) {
         runBlocking {
             val coroutine = launch {
-                   val tempRead = api.getReadBooksFromUser(
-                        currentUser!!.userId,
-                        position)
-                if(tempRead != null){
+                val tempRead = api.getReadBooksFromUser(
+                    currentUser!!.userId,
+                    position
+                )
+                if (tempRead != null) {
                     readedList.addAll(tempRead as MutableList<Pending>)
                 }
             }
@@ -269,6 +276,7 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
         }
         adapterReading.updateList(readingList as ArrayList<ActualReading>)
     }
+
     /**
      * Dialog to filter a list of books
      * @param choseList to check what list is currently filtering
@@ -287,14 +295,10 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
                 if (choseList) {
                     pendingList = arrayListOf()
                     filterPendingBooks(activeFilterText, position)
-                    loadMoreRead(position)
                     adapterPending.updateList(pendingList as ArrayList<Pending>)
-                    adapterReaded.updateList(readedList as ArrayList<Pending>)
                 } else {
                     readedList = arrayListOf()
                     filterReadBooks(activeFilterText, position)
-                    loadMorePending(position)
-                    adapterPending.updateList(pendingList as ArrayList<Pending>)
                     adapterReaded.updateList(readedList as ArrayList<Pending>)
                 }
             } else {
@@ -392,7 +396,7 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted){
+        if (isOnCreateViewExecuted) {
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
     }
@@ -407,6 +411,7 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()

@@ -12,18 +12,19 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
-import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.models.ActualReading
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
 import com.example.bookbuddy.ui.navdrawer.HomeFragmentDirections
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+
 /**
  * Adapter for displaying ActualReading books in a recycler view
  * @param list The list of search results to display.
@@ -31,7 +32,7 @@ import kotlinx.coroutines.runBlocking
 class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: HomeFragment) :
     RecyclerView.Adapter<HomeReadingBooksAdapter.ViewHolder>(), ApiErrorListener {
     lateinit var layout: LayoutInflater
-    lateinit var view : View
+    lateinit var view: View
     private val api = CrudApi(this@HomeReadingBooksAdapter)
 
     class ViewHolder(val vista: View) : RecyclerView.ViewHolder(vista) {
@@ -70,11 +71,11 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
             bundle.putString("isbn", list[position].isbn)
             bundle.putParcelable("fragment", fragment)
             val action = HomeFragmentDirections.actionNavHomeToNavBookDisplay(bundle)
-            navController.navigate(action)            
+            navController.navigate(action)
         }
     }
 
-    fun updateList(newList: ArrayList<ActualReading>){
+    fun updateList(newList: ArrayList<ActualReading>) {
         list = newList
         notifyDataSetChanged()
     }
@@ -85,7 +86,8 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
      * Function to change the read pages of a reading book
      * @param position The position of the item in the list.
      */
-    private fun changeReaded(context: Context, layoutInf: LayoutInflater, position: Int,
+    private fun changeReaded(
+        context: Context, layoutInf: LayoutInflater, position: Int,
         holder: ViewHolder
     ) {
         val builder = AlertDialog.Builder(context)
@@ -97,8 +99,8 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
         builder.setView(dialogLayout)
         builder.setNegativeButton(context.getString(R.string.BT_Cancel)) { _, _ -> }
         builder.setPositiveButton(context.getString(R.string.BT_Accept)) { _, _ ->
-                val valueint = Integer.parseInt(editText.text.toString())
-            if(valueint == list[position].pages){
+            val valueint = Integer.parseInt(editText.text.toString())
+            if (valueint == list[position].pages) {
                 list[position].pagesReaded = Integer.parseInt(editText.text.toString())
                 holder.pagesReaded.text = list[position].pagesReaded.toString()
                 val percent =
@@ -108,7 +110,7 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
                 putBook(list[position].readedId, list[position].pagesReaded)
                 getUser()
                 reloadFragment(fragment)
-            }else if ( valueint < list[position].pages) {
+            } else if (valueint < list[position].pages) {
                 list[position].pagesReaded = Integer.parseInt(editText.text.toString())
                 holder.pagesReaded.text = list[position].pagesReaded.toString()
                 val percent =
@@ -125,25 +127,26 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
         return ((current * 100) / total)
     }
 
-    private fun putBook(readedId: Int, pagesReaded: Int){
-        var result : Boolean? = false
+    private fun putBook(readedId: Int, pagesReaded: Int) {
         runBlocking {
             val coroutine = launch {
-                result = api.updateReadedToAPI(readedId, pagesReaded)
+                api.updateReadedToAPI(readedId, pagesReaded)
             }
             coroutine.join()
         }
-        showSnackBar(context, fragment.requireView(), context.getString(R.string.MSG_Result) + result)
     }
-    private fun reloadFragment(fragment: Fragment){
+
+    private fun reloadFragment(fragment: Fragment) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             fragment.parentFragmentManager.beginTransaction().detach(fragment).commitNow()
             fragment.parentFragmentManager.beginTransaction().attach(fragment).commitNow()
         } else {
-            fragment.parentFragmentManager.beginTransaction().detach(fragment).attach(fragment).commit()
+            fragment.parentFragmentManager.beginTransaction().detach(fragment).attach(fragment)
+                .commit()
         }
     }
-    private fun getUser(){
+
+    private fun getUser() {
         runBlocking {
             val coroutine = launch {
                 currentUser = api.getUserId(currentUser?.userId!!)

@@ -14,8 +14,6 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
-import com.example.bookbuddy.utils.Sha
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.api.logging
@@ -34,6 +32,7 @@ import java.util.*
 import javax.mail.*
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
+
 /**
  * Activity to log in the application
  */
@@ -57,41 +56,48 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
 
         val currentLanguageCode = getStoredLanguage()
         val curr = getCurrentLanguageCode(currentLanguageCode)
-        val languages = arrayOf("american_flag","catalan_flag")
+        val languages = arrayOf("american_flag", "catalan_flag")
         val adapter = LanguageSpinnerAdapter(this, languages)
         binding.languageSpinner.adapter = adapter
         val position = languages.indexOf(curr)
         binding.languageSpinner.setSelection(position)
         val lastSelectedPosition = position
 
-        binding.languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (position != lastSelectedPosition) {
-                    val selectedImageName = parent.getItemAtPosition(position).toString()
-                    when (selectedImageName){
-                        "american_flag" -> {
-                            setLocal(this@LoginActivity, "en")
-                            saveLanguageCode(applicationContext,"en")
+        binding.languageSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    if (position != lastSelectedPosition) {
+                        val selectedImageName = parent.getItemAtPosition(position).toString()
+                        when (selectedImageName) {
+                            "american_flag" -> {
+                                setLocal(this@LoginActivity, "en")
+                                saveLanguageCode(applicationContext, "en")
+                            }
+                            "catalan_flag" -> {
+                                setLocal(this@LoginActivity, "ca")
+                                saveLanguageCode(applicationContext, "ca")
+                            }
                         }
-                        "catalan_flag" -> {
-                            setLocal(this@LoginActivity, "ca")
-                            saveLanguageCode(applicationContext,"ca")
-                        }
+
+                        val intent = Intent(applicationContext, LoginActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+                        finish()
                     }
 
-                    val intent = Intent(applicationContext, LoginActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
-                    finish()
                 }
 
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                }
             }
-            override fun onNothingSelected(parent: AdapterView<*>) {
-            }
-        }
 
-        if (!currentLanguageChanged){
+        if (!currentLanguageChanged) {
             currentLanguageChanged = true
             setLocal(this@LoginActivity, currentLanguageCode)
             val intent = Intent(this, LoginActivity::class.java)
@@ -123,17 +129,25 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
                 .setView(editText)
                 .setPositiveButton(getString(R.string.BT_Accept)) { _, _ ->
                     val inputValue = editText.text.toString()
-                    if (Tools.isEmailValid(inputValue)){
-                        val emailAviable : Boolean? = isEmailAviable(inputValue)
-                        if (emailAviable != null){
+                    if (Tools.isEmailValid(inputValue)) {
+                        val emailAviable: Boolean? = isEmailAviable(inputValue)
+                        if (emailAviable != null) {
                             val password = generateRandomPassword(10)
                             val shaPassword = Sha.calculateSHA(password)
                             sendEmail(inputValue, shaPassword, password)
                         } else {
-                            Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_EmailNotExist))
+                            Tools.showSnackBar(
+                                applicationContext,
+                                binding.activityMain,
+                                getString(R.string.SB_EmailNotExist)
+                            )
                         }
                     } else {
-                        Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_EmailNotCorrect))
+                        Tools.showSnackBar(
+                            applicationContext,
+                            binding.activityMain,
+                            getString(R.string.SB_EmailNotCorrect)
+                        )
                     }
 
                 }
@@ -142,14 +156,15 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
 
         binding.MAButtonLogin.setOnClickListener {
             // Hide keyboard to change fragment
-            val inputMethodManager = applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val inputMethodManager =
+                applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(binding.MAButtonLogin.windowToken, 0)
 
             val userName = binding.MAEditUser.text.toString()
             val userPassword = binding.MAEditPassword.text.toString()
             if (userName.isNotBlank() && userPassword.isNotBlank()) {
                 getUsers(userName, Sha.calculateSHA(userPassword))
-                if (!checkConnectionFailed()){
+                if (!checkConnectionFailed()) {
                     if (currentUser != null) {
                         if (binding.MACheckBox.isChecked) {
                             lifecycleScope.launch {
@@ -160,13 +175,21 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
                                 userPrefs.saveCredentials("", "")
                             }
                         }
-                        Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_LogIn))
+                        Tools.showSnackBar(
+                            applicationContext,
+                            binding.activityMain,
+                            getString(R.string.SB_LogIn)
+                        )
 
                         val intent = Intent(this, NavDrawerActivity::class.java)
                         startActivity(intent)
                         finish()
                     } else {
-                        Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_IncorrectUserPass))
+                        Tools.showSnackBar(
+                            applicationContext,
+                            binding.activityMain,
+                            getString(R.string.SB_IncorrectUserPass)
+                        )
                     }
                 }
             }
@@ -214,7 +237,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     private fun isEmailAviable(email: String): Boolean? {
-        var response : Boolean? = false
+        var response: Boolean? = false
         runBlocking {
             val coroutine = launch {
                 response = api.getEmailExists(email)
@@ -223,11 +246,12 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
         }
         return response!!
     }
+
     //Send email with new passwrd
     private fun sendEmail(email: String, shaPassword: String, password: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val result = api.updateUserPasswordMail(email, shaPassword)
-            if (result != null && result){
+            if (result != null && result) {
                 val properties = Properties()
                 properties["mail.smtp.host"] = "smtp.gmail.com"
                 properties["mail.smtp.port"] = "587"
@@ -235,7 +259,10 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
                 properties["mail.smtp.starttls.enable"] = "true"
                 val session = Session.getInstance(properties, object : Authenticator() {
                     override fun getPasswordAuthentication(): PasswordAuthentication {
-                        return PasswordAuthentication(getString(R.string.AppEmail), getString(R.string.AppEmailCode))
+                        return PasswordAuthentication(
+                            getString(R.string.AppEmail),
+                            getString(R.string.AppEmailCode)
+                        )
                     }
                 })
                 try {
@@ -245,31 +272,43 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
                     message.subject = getString(R.string.MSG_PassRecovery)
                     message.setText(getString(R.string.MSG_NewPass) + password + getString(R.string.MSG_NewPassWarning))
                     Transport.send(message)
-                    Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_EmailSend))
+                    Tools.showSnackBar(
+                        applicationContext,
+                        binding.activityMain,
+                        getString(R.string.SB_EmailSend)
+                    )
                 } catch (e: MessagingException) {
-                    Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_EmailSendError))
+                    Tools.showSnackBar(
+                        applicationContext,
+                        binding.activityMain,
+                        getString(R.string.SB_EmailSendError)
+                    )
                 }
             } else {
-                Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_PassError))
+                Tools.showSnackBar(
+                    applicationContext,
+                    binding.activityMain,
+                    getString(R.string.SB_PassError)
+                )
             }
         }
     }
 
     private fun getUsers(userName: String, password: String) {
-        runBlocking {            
-            val coroutine = launch {                
+        runBlocking {
+            val coroutine = launch {
                 val tempData = api.getUserLogin(userName, password)
-                if (tempData != null){
+                if (tempData != null) {
                     currentUser = tempData
                 }
             }
             coroutine.join()
         }
         if (currentUser != null) {
-            runBlocking {                
+            runBlocking {
                 val coroutine = launch {
                     val tempData = api.getProfileUser(currentUser!!.userId)
-                    if(tempData != null){
+                    if (tempData != null) {
                         currentProfile = tempData
                     }
                     if (currentUser?.haspicture == true) {
@@ -281,7 +320,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
         }
     }
 
-    private fun setLocal(activity: Activity, langCode: String){
+    private fun setLocal(activity: Activity, langCode: String) {
         val locale = Locale(langCode)
         Locale.setDefault(locale)
         val resources = activity.resources
@@ -292,10 +331,11 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
 
     private fun getCurrentLanguageCode(code: String): String {
         var finalCode: String = code
-        if (finalCode == "null"){
-            finalCode = applicationContext.resources.configuration.locales.get(0).language.toString()
+        if (finalCode == "null") {
+            finalCode =
+                applicationContext.resources.configuration.locales.get(0).language.toString()
         }
-        return when (finalCode){
+        return when (finalCode) {
             "en" -> {
                 "american_flag"
             }
@@ -316,9 +356,10 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     private fun getStoredLanguage(): String {
-        val sharedPreferences = applicationContext.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            applicationContext.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
         var code = sharedPreferences.getString("language_code", "") ?: ""
-        if (code.isEmpty()){
+        if (code.isEmpty()) {
             code = applicationContext.resources.configuration.locales.get(0).language.toString()
         }
         return code
@@ -326,7 +367,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
 
     private fun loadingEndedHome() {
         getUsers(savedUser, savedPassword)
-        if(currentUser != null){
+        if (currentUser != null) {
             val intent = Intent(this, NavDrawerActivity::class.java)
             startActivity(intent)
         }
@@ -337,8 +378,8 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
         binding.mainContent.visibility = View.VISIBLE
     }
 
-    private fun checkConnectionFailed(): Boolean{
-        if (connectionError){
+    private fun checkConnectionFailed(): Boolean {
+        if (connectionError) {
             connectionError = false
             return true
         }
@@ -346,7 +387,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (connectionFailed){
+        if (connectionFailed) {
             binding.loadingMain.visibility = View.GONE
             connectionError = true
             Tools.showSnackBar(this, binding.activityMain, Constants.ErrrorMessage)

@@ -21,9 +21,14 @@ import kotlin.coroutines.CoroutineContext
  * @param dialog Dialog where execute function on search end
  * @param list The list of search results to display.
  */
-class SearchLanguagesAdapter(private var dialogFragment: DialogFragment, var dialog: ProfileLanguageDialog.OnLanguageSearchCompleteListener?, var list: java.util.ArrayList<Language>) :
+class SearchLanguagesAdapter(
+    private var dialogFragment: DialogFragment,
+    var dialog: ProfileLanguageDialog.OnLanguageSearchCompleteListener?,
+    var list: java.util.ArrayList<Language>
+) :
     RecyclerView.Adapter<SearchLanguagesAdapter.ViewHolder>(), CoroutineScope {
     private var job: Job = Job()
+
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val name = view.findViewById<TextView>(R.id.tv_search_name)!!
     }
@@ -43,12 +48,12 @@ class SearchLanguagesAdapter(private var dialogFragment: DialogFragment, var dia
         }
     }
 
-    private fun addLanguageToFavourite(id: Int, name: String){
+    private fun addLanguageToFavourite(id: Int, name: String) {
         dialog?.onLanguageSearchComplete(id, name)
         dialogFragment.dismiss()
     }
 
-    fun updateList(newList: ArrayList<Language>){
+    fun updateList(newList: ArrayList<Language>) {
         list = newList
         notifyDataSetChanged()
     }

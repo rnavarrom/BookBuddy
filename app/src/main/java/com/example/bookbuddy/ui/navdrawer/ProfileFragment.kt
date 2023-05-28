@@ -16,12 +16,14 @@ import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.text.InputType
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.recreate
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
@@ -51,7 +53,9 @@ import kotlin.coroutines.CoroutineContext
 /**
  * Profile fragment from the navMenu
  */
-class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreSearchCompleteListener, ProfileAuthorDialog.OnAuthorSearchCompleteListener, ApiErrorListener {
+class ProfileFragment : Fragment(), CoroutineScope,
+    ProfileSearchDialog.OnGenreSearchCompleteListener,
+    ProfileAuthorDialog.OnAuthorSearchCompleteListener, ApiErrorListener {
     lateinit var binding: FragmentProfileBinding
     private var job: Job = Job()
     private val api = CrudApi(this@ProfileFragment)
@@ -69,7 +73,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     private var tmpAuthorId: Int = 0
     private var menuItemsVisibility = mutableMapOf("settings" to true, "accept" to false, "cancel" to false)
     private lateinit var menuItems: ArrayList<MenuItem>
-
+    private var connectionError = false
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.profile_menu, menu)
         gMenu = menu
@@ -82,20 +86,22 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             it.isVisible = menuItemsVisibility[it.title.toString()]!!
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding =  FragmentProfileBinding.inflate(layoutInflater, container, false)
+        binding = FragmentProfileBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
         val currentLanguageCode = getStoredLanguage()
         val curr = getCurrentLanguageCode(currentLanguageCode)
-        val languages = arrayOf("american_flag","catalan_flag")
+        val languages = arrayOf("american_flag", "catalan_flag")
         val adapter = LanguageSpinnerAdapter(requireContext(), languages)
         binding.languageSpinner.adapter = adapter
         val position = languages.indexOf(curr)
@@ -103,28 +109,35 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         val lastSelectedPosition = position
 
         //Change and store the active language on the app
-        binding.languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (position != lastSelectedPosition) {
-                    when (parent.getItemAtPosition(position).toString()){
-                        "american_flag" -> {
-                            setLocal(requireActivity(), "en")
-                            saveLanguageCode(requireActivity().applicationContext,"en")
+        binding.languageSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    if (position != lastSelectedPosition) {
+                        when (parent.getItemAtPosition(position).toString()) {
+                            "american_flag" -> {
+                                setLocal(requireActivity(), "en")
+                                saveLanguageCode(requireActivity().applicationContext, "en")
+                            }
+                            "catalan_flag" -> {
+                                setLocal(requireActivity(), "ca")
+                                saveLanguageCode(requireActivity().applicationContext, "ca")
+                            }
                         }
-                        "catalan_flag" -> {
-                            setLocal(requireActivity(), "ca")
-                            saveLanguageCode(requireActivity().applicationContext,"ca")
-                        }
+                        recreate(requireActivity())
                     }
-                    recreate(requireActivity())
+
                 }
 
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                }
             }
-            override fun onNothingSelected(parent: AdapterView<*>) {
-            }
-        }
 
-        if (profileUser == null){
+        if (profileUser == null) {
             profileUser = currentUser!!.userId
             username = currentUser!!.name
         }
@@ -134,27 +147,35 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         onLoadingEnded()
 
         binding.bContacts.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_CONTACTS)
-                != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(android.Manifest.permission.READ_CONTACTS),
-                    REQUEST_READ_CONTACTS)
+            if (ContextCompat.checkSelfPermission(
+                    requireContext(),
+                    android.Manifest.permission.READ_CONTACTS
+                )
+                != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissions(
+                    arrayOf(android.Manifest.permission.READ_CONTACTS),
+                    REQUEST_READ_CONTACTS
+                )
             } else {
                 val emails = getEmailsFromContacts()
                 val emailList = ArrayList<String>()
                 emailList.addAll(emails)
                 runBlocking {
                     val coroutine = launch {
-                        val addedContacts : Int? = api.getEmailsContact(currentUser!!.userId, emailList)
+                        val addedContacts: Int? =
+                            api.getEmailsContact(currentUser!!.userId, emailList)
                         var message = ""
-                        if(addedContacts != null){
+                        if (addedContacts != null) {
 
-                        if (addedContacts > 0){
-                            message = getString(R.string.MSG_Added) + addedContacts + getString(R.string.MSG_NewContacts)
-                        } else {
-                            message = getString(R.string.MSG_NoContactsFound)
+                            if (addedContacts > 0) {
+                                message =
+                                    getString(R.string.MSG_Added) + addedContacts + getString(R.string.MSG_NewContacts)
+                            } else {
+                                message = getString(R.string.MSG_NoContactsFound)
+                            }
                         }
-                        }
-                        showSnackBar(requireContext(), requireView(),message)
+                        showSnackBar(requireContext(), requireView(), message)
                     }
                     coroutine.join()
                 }
@@ -227,6 +248,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
         return binding.root
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
@@ -238,6 +260,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                 .into(binding.editProfileImageView)
         }
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
@@ -265,10 +288,15 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         when (requestCode) {
             REQUEST_READ_EXTERNAL_STORAGE -> {
                 if (grantResults.isNotEmpty() &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED
+                ) {
                     imageChooser()
                 } else {
-                    showSnackBar(requireContext(), requireView(),getString(R.string.MSG_GaleryAccesRequired))
+                    showSnackBar(
+                        requireContext(),
+                        requireView(),
+                        getString(R.string.MSG_GaleryAccesRequired)
+                    )
                 }
                 return
             }
@@ -278,14 +306,18 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     val emailList = ArrayList<String>()
                     emailList.addAll(emails)
                 } else {
-                    showSnackBar(requireContext(), requireView(),getString(R.string.MSG_ContactsAccesRequired))
+                    showSnackBar(
+                        requireContext(),
+                        requireView(),
+                        getString(R.string.MSG_ContactsAccesRequired)
+                    )
                 }
                 return
             }
         }
     }
 
-    fun setLocal(activity: Activity, langCode: String){
+    fun setLocal(activity: Activity, langCode: String) {
         val locale = Locale(langCode)
         Locale.setDefault(locale)
         val resources = activity.resources
@@ -293,16 +325,18 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         config.setLocale(locale)
         resources.updateConfiguration(config, resources.displayMetrics)
     }
+
     /**
      * Get the language code from the selected value
      * @param code the selected value
      */
     private fun getCurrentLanguageCode(code: String): String {
         var finalCode: String = code
-        if (finalCode == "null"){
-            finalCode = requireActivity().applicationContext.resources.configuration.locales.get(0).language.toString()
+        if (finalCode == "null") {
+            finalCode =
+                requireActivity().applicationContext.resources.configuration.locales.get(0).language.toString()
         }
-        return when (finalCode){
+        return when (finalCode) {
             "en" -> {
                 "american_flag"
             }
@@ -314,6 +348,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             }
         }
     }
+
     /**
      * Save the language code on sharedPreferences
      * @param languageCode the language code to be stored
@@ -324,20 +359,25 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         editor.putString("language_code", languageCode)
         editor.apply()
     }
+
     /**
      * Get the language code stored on sharedPreferences
      * return the stored language code
      */
     private fun getStoredLanguage(): String {
-        val sharedPreferences = requireActivity().applicationContext.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        val sharedPreferences = requireActivity().applicationContext.getSharedPreferences(
+            "AppPreferences",
+            Context.MODE_PRIVATE
+        )
         var code = sharedPreferences.getString("language_code", "") ?: ""
-        if (code.isEmpty()){
-            code = requireActivity().applicationContext.resources.configuration.locales.get(0).language.toString()
+        if (code.isEmpty()) {
+            code =
+                requireActivity().applicationContext.resources.configuration.locales.get(0).language.toString()
         }
         return code
     }
 
-    private fun actionSettings(){
+    private fun actionSettings() {
         menuItems.forEach {
             it.isVisible = !menuItemsVisibility[it.title.toString()]!!
             val title = it.title.toString()
@@ -363,18 +403,20 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
         binding.et1PrefferredGenre.visibility = View.INVISIBLE
         binding.et2PrefferredGenre.visibility = View.VISIBLE
-        if (binding.et1PrefferredGenre.text != getString(R.string.MSG_NotSelected)){
+        if (binding.et1PrefferredGenre.text != getString(R.string.MSG_NotSelected)) {
             binding.et2PrefferredGenre.setText(binding.et1PrefferredGenre.text.toString())
         }
 
         binding.et1PrefferredAuthor.visibility = View.INVISIBLE
         binding.et2PrefferredAuthor.visibility = View.VISIBLE
-        if (binding.et1PrefferredAuthor.text != getString(R.string.MSG_NotSelected)){
+        if (binding.et1PrefferredAuthor.text != getString(R.string.MSG_NotSelected)) {
             binding.et2PrefferredAuthor.setText(binding.et1PrefferredAuthor.text.toString())
         }
     }
 
-    private fun actionAccept(){
+    private fun actionAccept() {
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.etUsername.windowToken, 0)
         menuItems.forEach {
             it.isVisible = !menuItemsVisibility[it.title.toString()]!!
             val title = it.title.toString()
@@ -382,7 +424,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
 
         updateUserName()
-        if (this::tmpUri.isInitialized){
+        if (this::tmpUri.isInitialized) {
             uploadImage(tmpUri)
         }
         updateGenre()
@@ -400,48 +442,54 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         binding.et2PrefferredAuthor.visibility = View.INVISIBLE
     }
 
-    private fun updateGenre(){
+    private fun updateGenre() {
         var result: Boolean? = false
-        if (binding.et1PrefferredGenre.text.toString() != binding.et2PrefferredGenre.text.toString()){
+        if (binding.et1PrefferredGenre.text.toString() != binding.et2PrefferredGenre.text.toString()) {
             runBlocking {
                 val coroutine = launch {
                     result = api.updateProfileGenreToAPI(currentProfile.profileId, tmpGenreId)
                 }
                 coroutine.join()
             }
-            if (result != null) {
-                currentProfile.genre!!.name = binding.et2PrefferredGenre.text.toString()
-                binding.et1PrefferredGenre.text = binding.et2PrefferredGenre.text.toString()
+            if (!checkConnectionFailed()){
+                if (result != null) {
+                    currentProfile.genre!!.name = binding.et2PrefferredGenre.text.toString()
+                    binding.et1PrefferredGenre.text = binding.et2PrefferredGenre.text.toString()
+                }
             }
         }
     }
 
-    private fun updateAuthor(){
+    private fun updateAuthor() {
         var result: Boolean? = false
-        if (binding.et1PrefferredAuthor.text.toString() != binding.et2PrefferredAuthor.text.toString()){
+        if (binding.et1PrefferredAuthor.text.toString() != binding.et2PrefferredAuthor.text.toString()) {
             runBlocking {
                 val coroutine = launch {
                     result = api.updateProfileAuthorToAPI(currentProfile.profileId, tmpAuthorId)
                 }
                 coroutine.join()
             }
-            if (result != null){
-                currentProfile.author!!.name = binding.et2PrefferredAuthor.text.toString()
-                binding.et1PrefferredAuthor.text = binding.et2PrefferredAuthor.text.toString()
+            if (!checkConnectionFailed()){
+                if (result != null) {
+                    currentProfile.author!!.name = binding.et2PrefferredAuthor.text.toString()
+                    binding.et1PrefferredAuthor.text = binding.et2PrefferredAuthor.text.toString()
+                }
             }
         }
     }
 
-    private fun updateUserName(){
-        if (binding.etUsername.text.toString().isNotEmpty()){
-            if (binding.tvUsername.text.toString() != binding.etUsername.text.toString()){
+    private fun updateUserName() {
+        if (binding.etUsername.text.toString().isNotEmpty()) {
+            if (binding.tvUsername.text.toString() != binding.etUsername.text.toString()) {
                 val userName = binding.etUsername.text.toString().trim()
                 runBlocking {
                     val coroutine = launch {
-                        if (!api.getUserExists(userName)!!){
+                        if (api.getUserExists(userName)!!) {
                             api.updateUserName(currentUser!!.userId, userName)
                             Tools.setNavigationProfile(requireContext(), null, userName)
                             binding.tvUsername.text = binding.etUsername.text.toString()
+                        } else {
+                            showSnackBar(requireContext(), requireView(), getString(R.string.SB_UserNameInUse))
                         }
                     }
                     coroutine.join()
@@ -450,7 +498,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
     }
 
-    private fun actionCancel(){
+    private fun actionCancel() {
         menuItems.forEach {
             it.isVisible = !menuItemsVisibility[it.title.toString()]!!
             val title = it.title.toString()
@@ -506,12 +554,12 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         return emails
     }
 
-    private fun loadUser(){
+    private fun loadUser() {
         binding.tvUsername.text = currentUser!!.name
         runBlocking {
             val coroutine = launch {
                 val tempFollowers = api.getFollowerCount(currentUser!!.userId)
-                if(tempFollowers != null){
+                if (tempFollowers != null) {
                     followers = tempFollowers
                 }
             }
@@ -519,15 +567,15 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
         binding.tvFollowers.text = followers.toString() + getString(R.string.MSG_Followers)
 
-        if (currentProfile.genre != null && currentProfile.genre!!.name.isNotBlank()){
+        if (currentProfile.genre != null && currentProfile.genre!!.name != null && currentProfile.genre!!.name.isNotBlank()) {
             binding.et1PrefferredGenre.text = currentProfile.genre!!.name
         }
 
-        if (currentProfile.author != null && currentProfile.author!!.name.isNotBlank()){
+        if (currentProfile.author != null && currentProfile.author!!.name != null && currentProfile.author!!.name.isNotBlank()) {
             binding.et1PrefferredAuthor.text = currentProfile.author!!.name
         }
 
-        if (currentPicture != null){
+        if (currentPicture != null) {
             binding.profileImageView.visibility = View.VISIBLE
             binding.editProfileImageView.visibility = View.INVISIBLE
             Glide.with(requireContext())
@@ -555,13 +603,14 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
     }
 
-    private fun loadTabLayout(){
+    private fun loadTabLayout() {
         tabLayout = binding.tabLayout
         viewPager = binding.viewPager
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.MSG_Comments)))
         tabLayout.addTab(tabLayout.newTab().setText(getString(R.string.MSG_Reads)))
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
-        val adapter = ProfileAdapter(activity?.applicationContext, childFragmentManager,
+        val adapter = ProfileAdapter(
+            activity?.applicationContext, childFragmentManager,
             tabLayout.tabCount, currentUser!!.userId, true
         )
         viewPager.adapter = adapter
@@ -570,15 +619,17 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
     }
 
-    private fun imageChooser(){
+    private fun imageChooser() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, PICK_IMAGE_REQUEST)
     }
+
     /**
      * Upload the profile image to the server
      * @param imageUri The url from the image
@@ -610,8 +661,13 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                     val byteArray = outputStream.toByteArray()
 
-                    val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
-                    val image = MultipartBody.Part.createFormData("image", currentUser!!.userId.toString() + "user.jpg", requestFile)
+                    val requestFile =
+                        RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
+                    val image = MultipartBody.Part.createFormData(
+                        "image",
+                        currentUser!!.userId.toString() + "user.jpg",
+                        requestFile
+                    )
 
 
                     runBlocking {
@@ -622,7 +678,10 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                                 currentUser!!.haspicture = true
                                 val body = response
                                 val bytes = body.bytes()
-                                val file = File(requireContext().cacheDir, currentUser!!.userId.toString() + "user.jpg")
+                                val file = File(
+                                    requireContext().cacheDir,
+                                    currentUser!!.userId.toString() + "user.jpg"
+                                )
 
                                 withContext(Dispatchers.IO) {
                                     val outputStream = FileOutputStream(file)
@@ -639,7 +698,11 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
                                 Tools.setNavigationProfile(requireContext(), file, null)
                             } else {
-                                showSnackBar(requireContext(), requireView(), getString(R.string.SB_ImageNotUploaded))
+                                showSnackBar(
+                                    requireContext(),
+                                    requireView(),
+                                    getString(R.string.SB_ImageNotUploaded)
+                                )
                             }
                         }
                         ru.join()
@@ -651,14 +714,26 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             })
     }
 
-    private fun checkPermissions(){
-        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED){
+    private fun checkPermissions() {
+        if (ContextCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+            == PackageManager.PERMISSION_GRANTED
+        ) {
             imageChooser()
-        }else{
-            if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                showSnackBar(requireContext(), requireView(),getString(R.string.SB_GaleryNotAviable))
-            }else{
+        } else {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    requireActivity(),
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+            ) {
+                showSnackBar(
+                    requireContext(),
+                    requireView(),
+                    getString(R.string.SB_GaleryNotAviable)
+                )
+            } else {
                 requestPermissions(
                     arrayOf(
                         android.Manifest.permission.READ_EXTERNAL_STORAGE
@@ -669,13 +744,26 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
     }
 
-    override fun onApiError(connectionFailed: Boolean) {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+    private fun checkConnectionFailed(): Boolean {
+        if (connectionError) {
+            connectionError = false
+            return true
+        }
+        return false
     }
+
+    override fun onApiError(connectionFailed: Boolean) {
+        if (connectionFailed) {
+            connectionError = true
+            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         job.cancel()
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         job.cancel()
@@ -683,6 +771,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
+
     companion object {
         private const val PICK_IMAGE_REQUEST = 1
         private const val REQUEST_READ_EXTERNAL_STORAGE = 2
