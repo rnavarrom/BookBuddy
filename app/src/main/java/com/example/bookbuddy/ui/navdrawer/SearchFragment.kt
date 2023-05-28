@@ -101,8 +101,6 @@ class SearchFragment : Fragment(), ApiErrorListener{
         for (et in searchList) {
             et.setOnKeyListener { view, keyCode, event ->
                 if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                    // Realizar búsqueda
-                    //Toast.makeText(context, "", Toast.LENGTH_LONG).show()
                     binding.advanced.visibility = View.GONE
                     val inputMethodManager =
                         requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

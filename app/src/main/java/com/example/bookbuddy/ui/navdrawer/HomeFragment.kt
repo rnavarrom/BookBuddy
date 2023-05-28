@@ -382,19 +382,6 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
             coroutine.join()
         }
     }
-/*
-    fun reloadFragment() {
-        getUser()
-        Toast.makeText(context, "Reloading fragment", Toast.LENGTH_LONG).show()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            parentFragmentManager.beginTransaction().detach(this).commitNow()
-            parentFragmentManager.beginTransaction().attach(this).commitNow()
-        } else {
-            parentFragmentManager.beginTransaction().detach(this).attach(this).commit()
-        }
-    }
-
- */
 
     override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted){

@@ -52,20 +52,6 @@ class ScanFragment : Fragment(), ApiErrorListener {
         } else if (!isDialogOpen){
             requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
-
-        /*
-        val currentDestination = navController.currentDestination
-        val isDialogOpen = currentDestination?.id == R.id.nav_book_display
-        if (allPermissionsGranted() && !isDialogOpen) {
-            isScannerEnabled = true
-            startCamera()
-            codeScanner.startPreview()
-        } else if (isDialogOpen){
-            //TODO : ????
-            //println("El idalogog esta abierto")
-        } else {
-            requestPermissions(REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
-        }*/
     }
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<String>, grantResults:

@@ -276,7 +276,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
 
                             if (result) {
                                 showSnackBar(requireContext(), requireView(), getString(R.string.SB_CopiesEdited))
-                                selection!!.copies = copies
+                                selection.copies = copies
                                 adapterLibraries.updateList(libraries as ArrayList<LibraryExtended>)
                             } else {
                                 showSnackBar(requireContext(), requireView(), getString(R.string.GenreDuplicated))

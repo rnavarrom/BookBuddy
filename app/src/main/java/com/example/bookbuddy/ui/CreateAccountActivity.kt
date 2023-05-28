@@ -26,7 +26,6 @@ import kotlinx.coroutines.runBlocking
 class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
     private lateinit var binding: ActivityCreateAccountBinding
     private val api = CrudApi(this@CreateAccountActivity)
-    var checkValues: Boolean = false
     lateinit var user: UserItem
     private var conditions = false
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +40,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
             mainLayout.getWindowVisibleDisplayFrame(rect)
             val screenHeight = mainLayout.rootView.height
             val keyboardHeight = screenHeight - rect.bottom
-            // Verifica si el teclado está oculto
+
             if (keyboardHeight < keyboardValue) {
                 binding.CAImage.visibility = View.VISIBLE
             } else {
@@ -50,7 +49,6 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         }
 
         binding.CAButtonRegister.setOnClickListener {
-            //checkValues = CheckFields()
             if (checkFields()) {
                 currentUserCreate = UserItem()
                 getValues()
@@ -62,8 +60,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
                         binding.createAcountLayout,
                         getString(R.string.SB_AccountCreated)
                     )
-                    //Toast.makeText(this, , Toast.LENGTH_LONG).show()
-                    var intent = Intent(this, LoginActivity::class.java)
+                    val intent = Intent(this, LoginActivity::class.java)
                     intent.putExtra("userName", currentUserCreate.name)
                     startActivity(intent)
                     finish()
@@ -73,7 +70,6 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
                         binding.createAcountLayout,
                         getString(R.string.SB_AccountNotCreated)
                     )
-                    //Toast.makeText(this, "Acount not created!", Toast.LENGTH_LONG).show()
                 }
 
             }
@@ -127,7 +123,6 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
                 binding.createAcountLayout,
                 getString(R.string.SB_NoBlankFields)
             )
-            //Toast.makeText(this, , Toast.LENGTH_LONG).show()
             return false
         }
         //Check if the terms and conditions are accepted
@@ -138,7 +133,6 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
                 binding.createAcountLayout,
                 getString(R.string.SB_UserConditions)
             )
-            //Toast.makeText(this, , Toast.LENGTH_LONG).show()
             return false
         }
         //Check if the input text is valid
@@ -149,7 +143,6 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
                 binding.createAcountLayout,
                 getString(R.string.SB_InvalidUserName)
             )
-            //Toast.makeText(this, "Invalid user name!", Toast.LENGTH_LONG).show()
             return false
         }
         //Check if the two passwrod fields are equal
@@ -162,20 +155,18 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
                 binding.createAcountLayout,
                 getString(R.string.SB_PasswordNoMatch)
             )
-            //Toast.makeText(this, , Toast.LENGTH_LONG).show()
             return false
         }
         if (!Tools.isPasswordValid(binding.CAEditPassword.text.toString())) {
             binding.CAEditPassword.setTextColor(getColor(R.color.red_error))
             binding.CAEditPassword2.setTextColor(getColor(R.color.red_error))
-            Tools.showSnackBar(this, binding.createAcountLayout, "Password needs to be at least one letter lowercase, one uppsercase, one number and 8 characters long")
+            Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_PasswordMatch))
             return false
         }
         //check if the email has a valid formation
         if (!Tools.isEmailValid(binding.CAEditEmail.text.toString())) {
             binding.CAEditEmail.setTextColor(getColor(R.color.red_error))
             Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.InvalidEmail))
-            //Toast.makeText(this, , Toast.LENGTH_LONG).show()
             return false
         }
         //Check if the username is not repited in the DB
@@ -199,7 +190,6 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         } else if (!emailAviable) {
             binding.CAEditEmail.setTextColor(getColor(R.color.red_error))
             Tools.showSnackBar(this, binding.createAcountLayout, getString(R.string.SB_EmailUsed))
-            // Toast.makeText(this, , Toast.LENGTH_LONG).show()
             return false
         }
         return true
@@ -234,11 +224,11 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         val textView = dialogLayout.findViewById<TextView>(R.id.userConditionsText)
         textView.movementMethod = ScrollingMovementMethod()
         builder.setView(dialogLayout)
-        builder.setPositiveButton(getString(R.string.DG_Accept)) { dialogInterface, i ->
+        builder.setPositiveButton(getString(R.string.DG_Accept)) { _, _ ->
             conditions = true
             resetColors()
         }
-        builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialogInterface, i ->
+        builder.setNegativeButton(getString(R.string.BT_Cancel)) { _, _ ->
             conditions = false
             resetColors()
         }

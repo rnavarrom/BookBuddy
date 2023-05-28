@@ -135,7 +135,7 @@ class Tools {
                 column
             )
             try {
-                cursor = context.getContentResolver().query(
+                cursor = context.contentResolver.query(
                     uri!!, projection, selection, selectionArgs,
                     null
                 )

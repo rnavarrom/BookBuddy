@@ -35,6 +35,7 @@ import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
@@ -289,7 +290,11 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                         scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                         val byteArray = outputStream.toByteArray()
 
-                        val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
+                        val requestFile = byteArray.toRequestBody(
+                            "image/jpeg".toMediaTypeOrNull(),
+                            0,
+                            content.size
+                        )
                         val image = MultipartBody.Part.createFormData("image", isbn + "book.jpg", requestFile)
                         cover = BASE_URL + "api/book/cover/" + isbn + "book.jpg"
 

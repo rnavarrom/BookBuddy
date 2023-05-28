@@ -103,15 +103,8 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     private fun insertLibrary(){
-        val fra = requireArguments().getParcelable("fragment") as? AdminFragment?
-
-        if (fra != null){
-            println("OKS")
-        }
-
         val bundle = Bundle()
         bundle.putParcelable("fragment", arguments?.getParcelable("fragment") as? AdminFragment?)
-        //val action = AdminLibrariesFragmentDirections.actionNavLibraryToNavInsertLibrary(bundle)
         val action = AdminFragmentDirections.actionNavAdminToNavInsertLibrary(bundle)
         navController.navigate(action)
     }

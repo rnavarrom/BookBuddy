@@ -1,6 +1,6 @@
 package com.example.bookbuddy.models
 
-public data class User(
+data class User(
     val isadmin: Boolean, // = false,
     var name: String, // = "",
     var haspicture: Boolean, // = false,

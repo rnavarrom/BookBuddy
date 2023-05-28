@@ -110,7 +110,6 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
         val zip = binding.etZip.text.toString()
         val lat = binding.etLat.text.toString().toDoubleOrNull()
         val lon = binding.etLon.text.toString().toDoubleOrNull()
-        println(binding.etLon.text.toString())
         if (name.isNullOrEmpty()){
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_CantEmptyName))
             return

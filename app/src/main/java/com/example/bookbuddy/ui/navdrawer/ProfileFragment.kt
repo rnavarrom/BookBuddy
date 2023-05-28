@@ -45,6 +45,7 @@ import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -116,7 +117,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 if (position != lastSelectedPosition) {
                     val selectedImageName = parent.getItemAtPosition(position).toString()
-                    println(selectedImageName)
                     when (selectedImageName){
                         "american_flag" -> {
                             setLocal(requireActivity(), "en")
@@ -607,7 +607,8 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
                     val byteArray = outputStream.toByteArray()
 
-                    val requestFile = RequestBody.create("image/jpeg".toMediaTypeOrNull(), byteArray)
+                    val requestFile =
+                        byteArray.toRequestBody("image/jpeg".toMediaTypeOrNull(), 0, content.size)
                     val image = MultipartBody.Part.createFormData("image", currentUser!!.userId.toString() + "user.jpg", requestFile)
 
 

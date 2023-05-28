@@ -14,13 +14,13 @@ import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
 
 @Parcelize
-class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialog.OnAdminDialogClose,
+class AdminFragment : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialog.OnAdminDialogClose,
     InsertBookDialog.OnAdminDialogClose {
     lateinit var binding: FragmentAdminBinding
     private var job: Job = Job()
 
     private var fragmentSaved = "books"
-    public var gMenu: Menu? = null
+    var gMenu: Menu? = null
     private var isFragmentReplaced = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,10 +30,7 @@ class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDia
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)
         gMenu = menu
-
-        println("REPLACING")
         if (!isFragmentReplaced) {
-            println("CHANGING MENU")
             menu.clear()
             inflater.inflate(R.menu.search_menu, menu)
             //menu.findItem(R.id.action_search).isVisible =false
@@ -44,18 +41,12 @@ class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDia
     }
 
     lateinit var searchItem: MenuItem
-    override fun onResume() {
-        super.onResume()
-    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding =  FragmentAdminBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-        //navView.invalidate()
-
-
         binding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.books -> {

@@ -66,7 +66,6 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 if (position != lastSelectedPosition) {
                     val selectedImageName = parent.getItemAtPosition(position).toString()
-                    println(selectedImageName)
                     when (selectedImageName){
                         "american_flag" -> {
                             setLocal(this@LoginActivity, "en")

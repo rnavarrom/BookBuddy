@@ -127,11 +127,9 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
             }
             corrutina.join()
         }
-        Toast.makeText(context, context.getString(R.string.MSG_Result) + result, Toast.LENGTH_LONG).show()
+        showSnackBar(context, fragment.requireView(), context.getString(R.string.MSG_Result) + result)
     }
     private fun reloadFragment(fragment: Fragment){
-        //Toast.makeText(context, context.getString(R.string.MSG_ReladingFragment), Toast.LENGTH_LONG).show()
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             fragment.parentFragmentManager.beginTransaction().detach(fragment).commitNow()
             fragment.parentFragmentManager.beginTransaction().attach(fragment).commitNow()

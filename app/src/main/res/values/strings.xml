@@ -274,5 +274,6 @@
     <string name="MSG_ShareText">Take a look at the review on BookBuddy!</string>
     <string name="SB_ScanFailed">Scan failed</string>
     <string name="MSG_ErrorUploadImg">Image not uploaded, please try again.</string>
+    <string name="SB_PasswordMatch">Password must use one lowercase, one uppsercase, one number and 8 characters long</string>
 
 </resources>

@@ -39,7 +39,7 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        menu!!.findItem(R.id.action_search).isVisible =false
+        menu.findItem(R.id.action_search).isVisible =false
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

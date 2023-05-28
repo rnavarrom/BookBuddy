@@ -70,8 +70,6 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
         // Inflate the layout for this fragment
         binding.searchThings.setOnKeyListener { view, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                // Realizar búsqueda
-                //Toast.makeText(context, "", Toast.LENGTH_LONG).show()
                 val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
@@ -137,11 +135,7 @@ class ProfileLanguageDialog : DialogFragment(), CoroutineScope, ApiErrorListener
         adapter.updateList(languages as ArrayList<Language>)
     }
     private fun performSearch(searchValue: String) {
-        // Aquí se realiza la búsqueda con el texto ingresado en el AutoCompleteTextView
-        //Toast.makeText(requireContext(), "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
-
         languages = mutableListOf()
-
         runBlocking {
             val corrutina = launch {
                 languages = api.getSearchLanguages(searchValue, position) as MutableList<Language>
