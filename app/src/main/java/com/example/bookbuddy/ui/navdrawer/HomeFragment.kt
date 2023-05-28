@@ -29,7 +29,9 @@ import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
-
+/**
+ * Home fragment from the navMenu
+ */
 @Parcelize
 class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDialog.OnBookDisplayClose, Parcelable {
     lateinit var binding: FragmentHomeBinding
@@ -49,7 +51,6 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
     var lastPositionReading = -1
     var positionReading = 0
     val startingPosition = 0
-
     private var isOnCreateViewExecuted = false
 
     override fun onCreateView(
@@ -58,10 +59,8 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
     ): View {
         binding = FragmentHomeBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-
         val onBackPressedDispatcher = requireActivity().onBackPressedDispatcher
 
-        // Agregar un callback al OnBackPressedDispatcher
         onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
@@ -186,7 +185,9 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
         emptyPending()
         emptyReaded()
     }
-
+    /**
+     * What to do if the reading list is empty
+     */
     private fun emptyReading(){
         if (readingList.isEmpty()){
             binding.emptyReading.text = getString(R.string.LAY_NoReadingBooks)
@@ -195,7 +196,9 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
             binding.emptyReading.visibility = View.GONE
         }
     }
-
+    /**
+     * What to do if the pending list is empty
+     */
     private fun emptyPending(){
         if (pendingList.isEmpty()){
             binding.emptyPending.text = getString(R.string.LAY_NoPendingBooks)
@@ -204,7 +207,9 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
             binding.emptyPending.visibility = View.GONE
         }
     }
-
+    /**
+     * What to do if the read list is empty
+     */
     private fun emptyReaded(){
         if (readedList.isEmpty()){
             binding.emptyReaded.text = getString(R.string.LAY_NoReadBooks)
@@ -261,7 +266,10 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
         }
         adapterReading.updateList(readingList as ArrayList<ActualReading>)
     }
-
+    /**
+     * Dialog to filter a list of books
+     * @param addAdapter to check what list is currently filtering
+     */
     private fun filterBooks(choseList: Boolean) {
         val builder = AlertDialog.Builder(requireContext())
         val inflater = layoutInflater
@@ -379,19 +387,6 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
             corroutine.join()
         }
     }
-/*
-    fun reloadFragment() {
-        getUser()
-        Toast.makeText(context, "Reloading fragment", Toast.LENGTH_LONG).show()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            parentFragmentManager.beginTransaction().detach(this).commitNow()
-            parentFragmentManager.beginTransaction().attach(this).commitNow()
-        } else {
-            parentFragmentManager.beginTransaction().detach(this).attach(this).commit()
-        }
-    }
-
- */
 
     override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted){

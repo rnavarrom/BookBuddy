@@ -17,15 +17,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
-
+/**
+ * Fragment to display Admin navMenu.
+ */
 @Parcelize
 class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialog.OnAdminDialogClose,
     InsertBookDialog.OnAdminDialogClose {
     lateinit var binding: FragmentAdminBinding
     private var job: Job = Job()
-
     private var fragmentSaved = "books"
-    public var gMenu: Menu? = null
+    var gMenu: Menu? = null
     private var isFragmentReplaced = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,12 +37,9 @@ class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDia
         inflater.inflate(R.menu.search_menu, menu)
         gMenu = menu
 
-        println("REPLACING")
         if (!isFragmentReplaced) {
-            println("CHANGING MENU")
             menu.clear()
             inflater.inflate(R.menu.search_menu, menu)
-            //menu.findItem(R.id.action_search).isVisible =false
             gMenu = menu
             replaceFragment(BooksFragment())
             isFragmentReplaced = true
@@ -58,8 +56,6 @@ class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDia
     ): View {
         binding =  FragmentAdminBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-        //navView.invalidate()
-
 
         binding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
@@ -94,7 +90,6 @@ class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDia
                 }
             }
         }
-
         return binding.root
     }
 
@@ -107,7 +102,9 @@ class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDia
         fragmentTransaction.replace(R.id.container, fragment)
         fragmentTransaction.commit()
     }
-
+    /**
+     * Reload fragments on close
+     */
     override fun onAdminDialogClose() {
         var fragment: Fragment? = null
         when(fragmentSaved){

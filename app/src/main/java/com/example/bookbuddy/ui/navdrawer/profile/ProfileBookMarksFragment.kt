@@ -47,13 +47,17 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         //Initial call to get values
         launch {
-            getCommentsUser(userId, true)
+            getBooksUser(userId, true)
             loadingEnded()
         }
         return binding.root
     }
-
-    private fun getCommentsUser(userId: Int, addAdapter: Boolean){
+    /**
+     * Get the Books from an user and show them on the recycler view.
+     * @param userId The id from the user to get the books
+     * @param addAdapter Chech if the adapter is already running.
+     */
+    private fun getBooksUser(userId: Int, addAdapter: Boolean){
         runBlocking {            
             val corrutina = launch {
                 if (position == 0){
@@ -81,8 +85,9 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             adapter.updateList(readeds as ArrayList<Readed>)
         }
     }
-
-
+    /**
+     * Load the configuration upon ending the loading animation
+     */
     fun loadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
@@ -90,7 +95,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.refresh.setOnRefreshListener {
             position = 0
             lastPosition = -1
-            getCommentsUser(userId, false)
+            getBooksUser(userId, false)
             binding.refresh.isRefreshing = false
         }
 
@@ -117,10 +122,9 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     private fun loadMoreItems() {
         binding.loadingComment.visibility = View.VISIBLE
-        getCommentsUser(userId, false)
+        getBooksUser(userId, false)
         binding.loadingComment.visibility = View.GONE
     }
-
 
     override fun onApiError(connectionFailed: Boolean) {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)

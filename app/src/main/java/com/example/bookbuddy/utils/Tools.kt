@@ -138,7 +138,6 @@ class Tools {
             return null
         }
 
-
         fun showSnackBar(context: Context, view: View, text: String){
             //Snackbar(view)
             val snackbar = Snackbar.make(view, text,
@@ -162,4 +161,3 @@ class Tools {
         }
     }
 }
-

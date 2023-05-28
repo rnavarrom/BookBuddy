@@ -20,7 +20,9 @@ import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-
+/**
+ * Fragment to display the comments list on the profile.
+ */
 class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
     lateinit var binding: FragmentProfileCommentsBinding
@@ -50,7 +52,11 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         return binding.root
     }
-
+    /**
+     * Get the comments from an user and show them on the recycler view.
+     * @param userId The id from the user to get the comments
+     * @param addAdapter Chech if the adapter is already running.
+     */
     private fun getCommentsUser(userId: Int, addAdapter: Boolean){
         runBlocking {            
             val corrutina = launch {
@@ -78,8 +84,9 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             adapter.updateList(comments as ArrayList<Comment>)
         }
     }
-
-
+    /**
+     * Load the configuration upon ending the loading animation
+     */
     private fun loadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE

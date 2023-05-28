@@ -59,23 +59,17 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     private var profileUser: Int? = 0
     private var username: String? = ""
     private var profilepicture: String? = ""
-
     private var followers: Int = 0
     private var following: Boolean = false
-
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
-
     private lateinit var gMenu: Menu
-
     private lateinit var settings: MenuItem
     private lateinit var accept: MenuItem
     private lateinit var cancel: MenuItem
-
     private lateinit var tmpUri: Uri
     private var tmpGenreId: Int = 0
     private var tmpAuthorId: Int = 0
-
     var permission = false
     private var menuItemsVisibility = mutableMapOf("settings" to true, "accept" to false, "cancel" to false)
     private lateinit var menuItems: ArrayList<MenuItem>

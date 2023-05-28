@@ -21,7 +21,9 @@ import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
-
+/**
+ * Contacts ragment from the navMenu.
+ */
 @Parcelize
 class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDialogClose, ApiErrorListener, Parcelable {
     lateinit var binding: FragmentContactsBinding
@@ -49,9 +51,9 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
         isOnCreateViewExecuted = true
         return binding.root
     }
-
-
-
+    /**
+     * What to do if there are no contacts
+     */
     private fun emptyContacts(){
         if (follows == null || follows!!.isEmpty()){
             binding.emptyActivity.text = "No contacts"
@@ -60,10 +62,12 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
             binding.emptyActivity.visibility = View.GONE
         }
     }
-
+    /**
+     * Get the users an user is following and show them on the recycler view.
+     * @param addAdapter Chech if the adapter is already running.
+     */
     private fun getUserFollows(addAdapter: Boolean){
         runBlocking {
-
             val corrutina = launch {
                 if (position == 0){
                     val tempFollows = api.getFollowersProfile(currentUser!!.userId, position) as MutableList<UserItem>?
@@ -89,7 +93,9 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
             corrutina.join()
         }
     }
-
+    /**
+     * Load the configuration upon ending the loading animation
+     */
     fun loadingEnded(){
         emptyContacts()
         binding.loadingView.visibility = View.GONE
@@ -102,7 +108,6 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
             emptyContacts()
             binding.mainContent.isRefreshing = false
         }
-
         binding.rvContacts.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
