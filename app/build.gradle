@@ -78,25 +78,17 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
-    //implementation 'org.parceler:parceler-api:1.1.12'
-    //annotationProcessor 'org.parceler:parceler:1.1.12'
 
     implementation 'com.github.bumptech.glide:glide:4.14.2'
-    // temp
     implementation 'com.github.bumptech.glide:annotations:4.14.2'
     implementation "com.github.bumptech.glide:okhttp3-integration:4.14.2"
-    //
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
     kapt 'com.github.bumptech.glide:compiler:4.14.2'
 
-
-    // Accés asíncron a la BD.
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
 
-    // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 
-    // Okhttp3 for the POST requests
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
 
     // Gson (To convert raw JSON to pretty JSON)
@@ -104,10 +96,6 @@ dependencies {
 
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
     implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
-
-    //notificacions
-    implementation "androidx.media:media:1.6.0"
-    implementation 'com.google.android.material:material:<version>'
 
     //scanner
     implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
@@ -120,10 +108,6 @@ dependencies {
 
     //DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
-    // optional - RxJava2 support
-    //implementation("androidx.datastore:datastore-preferences-rxjava2:1.0.0")
-    // optional - RxJava3 support
-    //implementation("androidx.datastore:datastore-preferences-rxjava3:1.0.0")
 
     // Email
     implementation 'com.sun.mail:android-mail:1.6.6'

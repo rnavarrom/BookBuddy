@@ -107,7 +107,6 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
         lifecycleScope.launch {
             savedUser = userPrefs.userCredentialsFlow.first().first
             savedPassword = userPrefs.userCredentialsFlow.first().second
-
             if (savedUser.isNotBlank() && savedPassword.isNotBlank()) {
                 loadingEndedHome()
             } else {
@@ -353,6 +352,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
 
     override fun onApiError(connectionFailed: Boolean) {
         if (connectionFailed){
+            binding.loadingMain.visibility = View.GONE
             connectionError = true
             Tools.showSnackBar(this, binding.activityMain, Constants.ErrrorMessage)
         }
