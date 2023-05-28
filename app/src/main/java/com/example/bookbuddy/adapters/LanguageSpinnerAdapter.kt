@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import com.example.bookbuddy.R
 
+//Adapter for the language lists, login and profile
 class LanguageSpinnerAdapter(context: Context, private val imageNames: Array<String>) :
     ArrayAdapter<String>(context, R.layout.spinner_item, imageNames) {
 
@@ -27,9 +28,6 @@ class LanguageSpinnerAdapter(context: Context, private val imageNames: Array<Str
         val imageName = imageNames[position]
         val imageResId = context.resources.getIdentifier(imageName, "drawable", context.packageName)
         imageView.setImageResource(imageResId)
-
-
-
         return view
     }
 }

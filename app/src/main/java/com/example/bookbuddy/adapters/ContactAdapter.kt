@@ -25,7 +25,7 @@ import java.io.File
 import java.io.FileOutputStream
 import kotlin.coroutines.CoroutineContext
 
-
+//Adapter for the contacts fragment
 class ContactAdapter(var list: java.util.ArrayList<UserItem>, val fragment: ContactsFragment) :
     RecyclerView.Adapter<ContactAdapter.ViewHolder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()

@@ -28,7 +28,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.coroutines.CoroutineContext
 
-
+//Adapter for the comments fragment
 class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activity, val title: String) :
     RecyclerView.Adapter<CommentAdapter.ViewHolder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()

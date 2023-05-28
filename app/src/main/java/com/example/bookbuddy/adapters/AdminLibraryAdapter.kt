@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.Library
-
+//Adapter for the admin library fragment
 class AdminLibraryAdapter(var list: ArrayList<Library>) : RecyclerView.Adapter<AdminLibraryAdapter.ViewHolder>() {
     private var selected: Library? = null
 

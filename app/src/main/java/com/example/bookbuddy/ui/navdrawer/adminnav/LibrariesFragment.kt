@@ -29,15 +29,11 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentAdminLibrariesBinding
     private var job: Job = Job()
     lateinit var adapter: AdminLibraryAdapter
-
     private var position = 0
     private var lastPosition = -1
     private var libraries: MutableList<Library>? = null
-
     private lateinit var gMenu: Menu
-
     private lateinit var searchItem: MenuItem
-
     private var search: String? = null
     private val api = CrudApi(this@LibrariesFragment)
     private var isOnCreateViewExecuted = false

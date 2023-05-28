@@ -45,18 +45,13 @@ import kotlin.coroutines.CoroutineContext
 class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: DialogAdminInsertBookBinding
     private var job: Job = Job()
-
     private var mode = "insert"
     private lateinit var book: Book
-
     var onAdminDialogClose: OnAdminDialogClose? = null
-
     private lateinit var tmpUri: Uri
-
     var fragment: AdminFragment? = null
     private var isRequest = false
     private var requestId = 0
-
     private val api = CrudApi(this@InsertBookDialog)
     interface OnAdminDialogClose {
         fun onAdminDialogClose()
@@ -77,9 +72,9 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         binding =  DialogAdminInsertBookBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
 
-
         val bundle = arguments?.getBundle("bundle")
         var toolbarMessage = ""
+        //Handle bundle value if any to load correct fragment
         if (bundle != null && bundle.containsKey("fragment")){
             fragment = bundle.getParcelable("fragment") as? AdminFragment?
             if (fragment != null){
@@ -119,7 +114,6 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             }
         }
 
-
         setToolBar(this, binding.toolbar, requireContext(), toolbarMessage)
 
         binding.etDate.setOnClickListener {
@@ -147,6 +141,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        //Load image from gallery to glide
         if (requestCode == REQUEST_CODE_GALLERY && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
             val imageUri = data.data
             tmpUri = imageUri!!
@@ -161,13 +156,12 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (requestCode == REQUEST_CODE_PERMISSION) {
-            // Verificar si se concedieron los permisos
+            // Check granted permisions
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permiso concedido, abrir la galería
+                // If granted open gallery
                 imageChooser()
             } else {
-                // Permiso denegado, manejar el caso de denegación de permisos
-                // Puedes mostrar un mensaje al usuario o realizar alguna otra acción
+                // Permisions not granted
                 showSnackBar(
                     requireContext(),
                     requireView(),
@@ -176,6 +170,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             }
         }
     }
+    //Navigate to book references
     private fun openReferences(){
         val bundle = Bundle()
         bundle.putInt("bookid", book.bookId)
@@ -228,7 +223,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         val pages = binding.etPages.text.toString().toIntOrNull()
         val date = binding.etDate.text.toString()
         var cover = binding.etCover.text.toString().trim()
-
+        //Check if the values ar correctly added
         if (isbn.isEmpty()){
             showSnackBar(requireContext(), requireView(), getString(R.string.ISBNEmptyWarning))
         }
@@ -298,9 +293,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                                 if (response != null) {
                                     val response2 = api.updateProfilePic(currentUser!!.userId)
                                 } else {
-                                    // TODO: NOSE
-                                    // Manejar la respuesta de error
-                                    showSnackBar(requireContext(), requireView(), "Image not uploaded, please try again.")
+                                    showSnackBar(requireContext(), requireView(), getString(R.string.MSG_ErrorUploadImg))
                                 }
                             }
                             ru.join()
@@ -308,7 +301,6 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                     }
 
                     override fun onLoadCleared(placeholder: Drawable?) {
-                        // Opcionalmente, puedes hacer algo aquí cuando se borra la carga
                     }
                 })
         } else {
@@ -318,12 +310,9 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             }
         }
 
-
-
         runBlocking {
             val coroutine = launch {
                 if (mode == "edit"){
-                    //result = api.updateLibrary(library.libraryId,name, lat, lon, zip, "Edit failes")!!
                     editResult = api.updateBook(book.bookId,isbn, title, description, book.rating, pages, date , cover)
                 } else {
                     val tmpResult = api.insertBook(isbn, title, description, pages, date , cover)
@@ -335,7 +324,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             }
             coroutine.join()
         }
-
+        //Handle result on edit value
         if (result != null) {
             onAdminDialogClose!!.onAdminDialogClose()
             showSnackBar(requireActivity().applicationContext, requireParentFragment().requireView(), getString(

@@ -9,14 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.Author
 
+//Adapter for the admin authors fragment
 class AdminAuthorsAdapter(var list: ArrayList<Author>) : RecyclerView.Adapter<AdminAuthorsAdapter.ViewHolder>() {
     private var selected: Author? = null
 
+    //Link values to the view
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val name = view.findViewById<TextView>(R.id.genre_name)
     }
 
     lateinit var context: Context
+    //Load values to the view and select cardview
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(parent.context)
         context = parent.context
@@ -27,6 +30,7 @@ class AdminAuthorsAdapter(var list: ArrayList<Author>) : RecyclerView.Adapter<Ad
             ViewHolder(layout.inflate(R.layout.cardview_admin_genre_selected, parent, false))
         }
     }
+    //Bind each value from the list
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.name.text = list[position].name
         holder.view.setOnClickListener {
@@ -46,7 +50,6 @@ class AdminAuthorsAdapter(var list: ArrayList<Author>) : RecyclerView.Adapter<Ad
             notifyDataSetChanged()
         }
     }
-
     fun updateList(newList: ArrayList<Author>){
         list = newList
         notifyDataSetChanged()
