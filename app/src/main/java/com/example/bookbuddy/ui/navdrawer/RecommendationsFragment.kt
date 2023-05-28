@@ -41,7 +41,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         getUserRecommended(true)
-        loadingEnded()
+        onLoadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
     }
@@ -87,7 +87,8 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    fun loadingEnded(){
+    // Change visible layouts and add bindings
+    private fun onLoadingEnded(){
         emptyBooks()
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
@@ -100,6 +101,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             binding.mainContent.isRefreshing = false
         }
 
+        // Load more items when scrolling the recycler view
         binding.rvRecommended.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

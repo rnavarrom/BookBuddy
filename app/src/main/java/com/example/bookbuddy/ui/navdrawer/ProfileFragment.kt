@@ -126,7 +126,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
             }
             override fun onNothingSelected(parent: AdapterView<*>) {
-                // Acciones a realizar cuando no se selecciona ningún elemento
             }
         }
 
@@ -137,7 +136,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
         loadUser()
         loadTabLayout()
-        loadingEnded()
+        onLoadingEnded()
 
         binding.bContacts.setOnClickListener {
             if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_CONTACTS)
@@ -150,7 +149,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                 emailList.addAll(emails)
                 runBlocking {
                     val corrutina = launch {
-                        //var a = api.getEmailsContact(currentUser.userId, listOf("email1","email2"))
                         var addedContacts : Int? = api.getEmailsContact(currentUser!!.userId, emailList)
                         var message = ""
                         if(addedContacts == null){
@@ -427,14 +425,14 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             if (binding.tvUsername.text.toString() != binding.etUsername.text.toString()){
                 val userName = binding.etUsername.text.toString().trim()
                 runBlocking {
-                    val corroutine = launch {
+                    val coroutine = launch {
                         if (!api.getUserExists(userName)!!){
                             api.updateUserName(currentUser!!.userId, userName)
                             Tools.setNavigationProfile(requireContext(), null, userName)
                             binding.tvUsername.text = binding.etUsername.text.toString()
                         }
                     }
-                    corroutine.join()
+                    coroutine.join()
                 }
             }
         }
@@ -493,7 +491,6 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             }
             cursor.close()
         }
-
         return emails
     }
 
@@ -528,7 +525,8 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
     }
 
-    private fun loadingEnded() {
+    // Change visible layouts and add bindings
+    private fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainContent.visibility = View.VISIBLE
 

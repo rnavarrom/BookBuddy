@@ -15,7 +15,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-
+/**
+ * Adapter for displaying search results of languages in a RecyclerView.
+ * @param dialogFragment The fragment to close when search completed
+ * @param dialog Dialog where execute function on search end
+ * @param list The list of search results to display.
+ */
 class SearchLanguagesAdapter(private var dialogFragment: DialogFragment, var dialog: ProfileLanguageDialog.OnLanguageSearchCompleteListener?, var list: java.util.ArrayList<Language>) :
     RecyclerView.Adapter<SearchLanguagesAdapter.ViewHolder>(), CoroutineScope {
     private var job: Job = Job()

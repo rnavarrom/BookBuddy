@@ -31,7 +31,7 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var position = 0
     private var lastPosition = -1
     private var bookRequests: MutableList<BookRequest>? = null
-    private var isbn: String? = null
+
     private val api = CrudApi(this@RequestsFragment)
     private var isOnCreateViewExecuted = false
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,14 +52,14 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         getRequests(true)
-        loadingEnded()
+        onLoadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
     }
     /**
      * Load the configuration upon ending the loading animation
      */
-    private fun loadingEnded(){
+    private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 

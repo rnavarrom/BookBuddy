@@ -2,8 +2,6 @@ package com.example.bookbuddy.api
 
 import com.example.bookbuddy.Utils.Constants
 import com.example.bookbuddy.models.*
-import com.example.bookbuddy.models.ActualReading
-import com.example.bookbuddy.models.Pending
 import com.example.bookbuddy.models.UserComments.Comment
 import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.safeApiCall

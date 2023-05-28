@@ -6,7 +6,9 @@ import java.security.NoSuchAlgorithmException
 import java.util.logging.Level
 import java.util.logging.Logger
 
-
+/**
+ * Transforms a String to a Sha-256
+ */
 class Sha {
     companion object {
         private fun bytesToHex(hash: ByteArray?): String {

@@ -77,33 +77,36 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation "androidx.media:media:1.6.0"
+    implementation 'com.google.android.material:material:<version>'
 
-
+    // Images
     implementation 'com.github.bumptech.glide:glide:4.14.2'
     implementation 'com.github.bumptech.glide:annotations:4.14.2'
     implementation "com.github.bumptech.glide:okhttp3-integration:4.14.2"
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
     kapt 'com.github.bumptech.glide:compiler:4.14.2'
 
+    // Multi threading
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
 
+    // Api calls
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
 
     // Gson (To convert raw JSON to pretty JSON)
     implementation 'com.google.code.gson:gson:2.9.0'
 
-    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
-    implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
 
-    //scanner
+    // Code scanner
     implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
 
-    //reload
+    // Reload activities/recyclerviews
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
 
-    // Maps
+    // Google maps
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
     //DataStore
@@ -112,13 +115,11 @@ dependencies {
     // Email
     implementation 'com.sun.mail:android-mail:1.6.6'
     implementation 'com.sun.mail:android-activation:1.6.6'
-    //implementation 'com.sun.mail:javax.mail:1.6.2'
-    //implementation 'com.sun.mail:javax.activation:1.6.2'
 
     implementation 'com.google.dagger:dagger:2.39.1'
     kapt 'com.google.dagger:dagger-compiler:2.39.1'
 
+    // Generate bar codes
     implementation 'com.google.zxing:core:3.4.1'
-    //implementation 'com.google.zxing:android-core:3.4.1'
-    //implementation 'com.google.zxing:android-integration:3.4.1'
+
 }

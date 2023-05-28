@@ -23,7 +23,9 @@ import com.example.bookbuddy.utils.Tools
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-
+/**
+ * Dialog to search a library
+ */
 class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: DialogProfileSearchLibraryBinding
     private var job: Job = Job()
@@ -46,6 +48,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
     ): View {
         binding =  DialogProfileSearchLibraryBinding.inflate(layoutInflater, container, false)
 
+        // Load more items when scrolling the recycler view
         binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

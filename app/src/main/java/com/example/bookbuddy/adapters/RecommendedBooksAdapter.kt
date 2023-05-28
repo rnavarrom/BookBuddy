@@ -15,6 +15,10 @@ import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.ui.navdrawer.RecommendationsFragmentDirections
 import com.example.bookbuddy.utils.navController
 
+/**
+ * Adapter for displaying recommended books in a RecyclerView.
+ * @param list The list of recommended books to display.
+ */
 class RecommendedBooksAdapter(var list: ArrayList<Book>) : RecyclerView.Adapter<RecommendedBooksAdapter.ViewHolder>() {
     class ViewHolder(val vista: View) : RecyclerView.ViewHolder(vista) {
         val imatge = vista.findViewById<ImageView>(R.id.book_cover)!!

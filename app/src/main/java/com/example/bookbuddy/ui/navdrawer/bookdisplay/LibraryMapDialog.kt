@@ -32,6 +32,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Displays the map where the library is located
+ */
 class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
     lateinit var binding: DialogBookdisplayLibraryMapBinding
 
@@ -51,6 +54,8 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
     private var resp : CleanResponse? = null
 
     lateinit var bundle : Bundle
+
+    // Set fullscreen dialog style
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -91,7 +96,6 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
             supportMapFragment!!.getMapAsync(this)
         }
 
-
         return binding.root
     }
 
@@ -101,38 +105,33 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
             library = bundle.getParcelable("library") as? LibraryExtended
             if (library != null) {
                 loadLibraryBasicInformation(library!!)
-                //TODO : prints
-                //println("CRASH")
             }
         }
 
         if (library != null) {
-            println("DEF1")
             val supportMapFragment =
                 childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
             supportMapFragment!!.getMapAsync(this)
-            println("DEF2")
         }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        // Loads different versions depending on the user permissions and if GPS is enabled
         if (permissionsGranted && latitude != null && longitude != null && isGpsEnabled){
             val start = LatLng(latitude!!, longitude!!)
-            val end = LatLng(library!!.library.lat, library!!.library.lon)
+            val lib = LatLng(library!!.library.lat, library!!.library.lon)
             mMap = googleMap
             checkPermissionsTMP()
-            val lib = LatLng(library!!.library.lat, library!!.library.lon)
 
             mMap.addMarker(
                 MarkerOptions().position(lib).title(library!!.library.name)
             )
 
             launch {
-
                 val startString =
                     start.longitude.toString() + ", " + start.latitude.toString()
                 val endString =
-                    end.longitude.toString() + ", " + end.latitude.toString()
+                    lib.longitude.toString() + ", " + lib.latitude.toString()
 
                 binding.tvLibraryName.setOnClickListener {
                     mMap.animateCamera(
@@ -141,18 +140,17 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
                     )
                 }
 
+                // Gets the route depending on what user selected
                 resp = if (method == "car")
                     api.getCarRoute(startString, endString)
                 else
                     api.getWalkingRoute(startString, endString)
                 if (resp != null) {
                     drawRoute(mMap, resp!!.coordinates)
-
                     val distance = resp!!.distance
                     val timeInSeconds = resp!!.duration
-
-                    var distanceText: String?
-                    var timeText: String?
+                    val distanceText: String?
+                    val timeText: String?
 
                     if (distance < 1000) {
                         distanceText = getString(R.string.MAP_Distance) + distance.toString() + " m"
@@ -184,7 +182,7 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
                         12.0f
                     else
                         11.0f
-                    loadingEnded()
+                    onLoadingEnded()
                     mMap.animateCamera(
                         CameraUpdateFactory.newLatLngZoom(middleLocation, zoom),
                         2500, null
@@ -193,7 +191,7 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
                     binding.tvLibraryTime.visibility = View.GONE
                     binding.tvLibraryDistance.visibility = View.GONE
 
-                    loadingEnded()
+                    onLoadingEnded()
                     showSnackBar(requireContext(), requireView(), getString(R.string.MSG_CouldNotTrace))
                 }
             }
@@ -213,7 +211,7 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
                     )
                 }
 
-                loadingEnded()
+                onLoadingEnded()
                 mMap.animateCamera(
 
                     CameraUpdateFactory.newLatLngZoom(lib, zoom),
@@ -257,7 +255,6 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
                     Manifest.permission.ACCESS_FINE_LOCATION
                 )
             ) {
-                //Toast.makeText(requireContext(),"El permís ACCESS_FINE_LOCATION no està disponible",Toast.LENGTH_LONG).show()
                 permissionsGranted = false
                 loadFragment()
             } else {
@@ -265,7 +262,6 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     )
                 ) {
-                    //Toast.makeText(requireContext(),"El permís ACCESS_COARSE_LOCATION no està disponible",Toast.LENGTH_LONG).show()
                     permissionsGranted = false
                     loadFragment()
                 } else {
@@ -281,8 +277,6 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
         }
 
     }
-
-
 
     private fun checkPermissions() {
         if (
@@ -327,10 +321,10 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
         val supportMapFragment =
             childFragmentManager.findFragmentById(R.id.googlemap) as SupportMapFragment?
         supportMapFragment!!.getMapAsync(this)
-        //loadingEnded()
     }
 
-    fun loadingEnded(){
+    // Change visible layouts
+    private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
     }

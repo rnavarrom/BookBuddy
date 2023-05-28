@@ -25,7 +25,9 @@ import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-
+/**
+ * Show write review display
+ */
 class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: DialogBookdisplayWriteCommentBinding
     private var job: Job = Job()
@@ -41,6 +43,7 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         fun onWriteCommentClose()
     }
 
+    // Set fullscreen dialog style
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -73,7 +76,7 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
 
         loadComment()
-        loadingEnded()
+        onLoadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
     }
@@ -103,7 +106,8 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    private fun loadingEnded(){
+    // Change visible layouts and add bindings
+    private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainContent.visibility = View.VISIBLE
         binding.etWriteComment.filters = arrayOf<InputFilter>(LengthFilter(maxCharactersComment))

@@ -11,6 +11,9 @@ import okhttp3.OkHttpClient
 import java.io.InputStream
 import javax.net.ssl.*
 
+/**
+ * Class to bypass SSL restrictions
+ */
 class UnsafeOkHttpClient {
     companion object {
         fun getUnsafeOkHttpClient(): OkHttpClient {
@@ -53,6 +56,9 @@ class UnsafeOkHttpClient {
     }
 }
 
+/**
+ * Class to bypass SSL restrictions using Glide
+ */
 @GlideModule
 class UnsafeOkHttpGlideModule : AppGlideModule() {
     override fun registerComponents(context: Context, glide: Glide, registry: Registry) {

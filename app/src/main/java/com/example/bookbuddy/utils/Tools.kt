@@ -26,15 +26,20 @@ import java.text.Normalizer
 
 class Tools {
     companion object {
+
+        // Check if email is valid
         fun isEmailValid(email: String): Boolean {
             val regex = Regex("[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
             return regex.matches(email)
         }
+
+        // Check if password is valid
         fun isPasswordValid(password: String): Boolean {
             val regex = Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$")
             return regex.matches(password)
         }
 
+        // Generates a valid password, used in the function recover password
         fun generateRandomPassword(length: Int): String {
             val allowedChars = ('A'..'Z') + ('a'..'z') + ('0'..'9')
             while (true) {
@@ -48,10 +53,13 @@ class Tools {
             }
         }
 
+        // Check if text has no special characters
         fun isValidText(text: String): Boolean {
             val regex = Regex("[^a-zA-Z0-9]")
             return !regex.containsMatchIn(text)
         }
+
+        // Shows the content of a editext password
         fun tooglePasswordVisible(editText: EditText){
             if (editText.transformationMethod == PasswordTransformationMethod.getInstance()) {
                 editText.transformationMethod = HideReturnsTransformationMethod.getInstance()
@@ -60,27 +68,30 @@ class Tools {
             }
         }
 
+        // Sets a toolbar on dialog fragments
         fun setToolBar(dialogFragment: DialogFragment, toolbar: Toolbar, context: Context, title: String){
             toolbar.title = title
-            toolbar.setNavigationIcon(R.drawable.ic_back_arrow) // Establece un icono para la navegación hacia atrás
-            toolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.primary_green)) // Establece el color de fondo de la Toolbar
-            toolbar.setTitleTextColor(ContextCompat.getColor(context, R.color.white)) // Establece el color del texto del título
+            toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
+            toolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.primary_green))
+            toolbar.setTitleTextColor(ContextCompat.getColor(context, R.color.white))
             toolbar.setNavigationOnClickListener(View.OnClickListener { dialogFragment.dismiss() })
         }
 
+        // Clears all cache of images except your profile pic
         fun clearCache(context: Context){
             val cacheDir = context.cacheDir
             val files = cacheDir.listFiles()
 
             if (files != null) {
                 for (file in files) {
-                    if (file != currentPicture) {  // Replace `specificFile` with the file you want to keep
+                    if (file != currentPicture) {
                         file.delete()
                     }
                 }
             }
         }
 
+        // Updates the username and the profile pic on the navigation drawer menu
         fun setNavigationProfile(context: Context, image: File?, username: String?){
             var hView: View = navView.getHeaderView(0)
             if (username != null){
@@ -100,9 +111,9 @@ class Tools {
             }
         }
 
+        // Given arespones of the bytes of an image, generates a file and set it to the currentPicture
         fun responseToFile(context: Context, response: ResponseBody? ){
-            val body = response//.body()
-            // Leer los bytes de la imagen
+            val body = response
             val bytes = body!!.bytes()
             context.cacheDir.deleteRecursively()
             val file = File(context.cacheDir, currentUser!!.userId.toString() + "user.jpg")
@@ -138,8 +149,8 @@ class Tools {
             return null
         }
 
+        // Shows information on the bottom part of the application
         fun showSnackBar(context: Context, view: View, text: String){
-            //Snackbar(view)
             val snackbar = Snackbar.make(view, text,
                 Snackbar.LENGTH_LONG)
             snackbar.setAction("OK"){

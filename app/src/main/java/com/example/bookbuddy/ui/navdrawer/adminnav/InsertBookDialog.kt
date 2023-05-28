@@ -6,7 +6,6 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -28,20 +27,22 @@ import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogAdminInsertBookBinding
 import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.ui.navdrawer.AdminFragment
-import com.example.bookbuddy.utils.*
+import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
+import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Dialog to insert or edit a book
+ */
 class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: DialogAdminInsertBookBinding
     private var job: Job = Job()
@@ -57,6 +58,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         fun onAdminDialogClose()
     }
 
+    // Set fullscreen dialog style
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -65,6 +67,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         )
     }
 
+    // Get the mode of the dialog, insert or edit
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -139,6 +142,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         return binding.root
     }
 
+    // Save image after being selected on the galery
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         //Load image from gallery to glide
@@ -258,6 +262,8 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
         if (this::tmpUri.isInitialized){
             var bitmap: Bitmap?
+            // Use glide to get hte bitmap of an image to upload to the server, with glide the
+            // image flips automatically
             Glide.with(this)
                 .asBitmap()
                 .load(tmpUri)
@@ -287,12 +293,11 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                         val image = MultipartBody.Part.createFormData("image", isbn + "book.jpg", requestFile)
                         cover = BASE_URL + "api/book/cover/" + isbn + "book.jpg"
 
+                        // Upload image to te server
                         runBlocking {
                             val ru = launch {
                                 val response = api.uploadImageToAPI(true, image)
-                                if (response != null) {
-                                    val response2 = api.updateProfilePic(currentUser!!.userId)
-                                } else {
+                                if (response == null) {
                                     showSnackBar(requireContext(), requireView(), getString(R.string.MSG_ErrorUploadImg))
                                 }
                             }
@@ -310,6 +315,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             }
         }
 
+        // Insert or edit book
         runBlocking {
             val coroutine = launch {
                 if (mode == "edit"){
@@ -340,6 +346,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
+    // Open the image galery
     private fun imageChooser(){
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
         startActivityForResult(intent, REQUEST_CODE_GALLERY)

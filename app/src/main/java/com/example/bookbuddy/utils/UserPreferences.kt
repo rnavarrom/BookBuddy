@@ -9,6 +9,9 @@ import kotlinx.coroutines.flow.map
 private const val DATASTORE_NAME = "user_prefs"
 val Context.dataStore by preferencesDataStore(DATASTORE_NAME)
 
+/**
+ * Class to store log session of a user
+ */
 class UserPreferences(context: Context) {
 
     private val dataStore = context.dataStore

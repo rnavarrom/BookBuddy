@@ -33,6 +33,9 @@ import kotlinx.parcelize.Parcelize
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Display all the book information
+ */
 @Parcelize
 class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitListener,
     ApiErrorListener, CommentWriteDialog.OnWriteCommentClose,
@@ -55,6 +58,8 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         fun onBookDisplayClose()
     }
 
+
+    // Set fullscreen dialog style
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -62,13 +67,13 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
             R.style.FullScreenDialogStyle
         )
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = DialogBookdisplayBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
-
         setToolBar(this, binding.toolbar, requireContext(), getString(R.string.TB_BookDisplay))
 
         tts = TextToSpeech(context, this)
@@ -85,26 +90,22 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
             binding.iconTextToSpeach.setOnClickListener {
                 speak()
             }
-            //launch {
+            // Load the book using the isbn
             book = getBook(isbn)
             if (book != null) {
-                //readed = null
-                //getBookMark(book!!.bookId, currentUser.userId)
                 loadBook(book!!, isbn)
+
+                // Display dialog when selection the bookmark of the book
                 binding.bookMark.setOnClickListener {
                     popup = PopupMenu(context, binding.bookMark)
-                    popup!!.menuInflater
-                        .inflate(R.menu.book_menu, popup!!.menu)
-                    //popup.setOnDismissListener {
-                    //holder.dropmenu.setImageResource(R.drawable.ic_drop_down_menu)
-                    //}
+                    popup!!.menuInflater.inflate(R.menu.book_menu, popup!!.menu)
                     popup!!.setOnMenuItemClickListener { item ->
                         var result: Boolean?
                         when (item.itemId) {
                             R.id.reading_book -> {
                                 if (readed == null || readed!!.curreading != 3) {
                                     runBlocking {
-                                        val corroutine = launch {
+                                        val coroutine = launch {
                                             result = api.setBookReading(
                                                 book!!.bookId,
                                                 currentUser!!.userId
@@ -114,7 +115,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                                 readed!!.curreading = 3
                                             }
                                         }
-                                        corroutine.join()
+                                        coroutine.join()
                                     }
                                 }
                                 true
@@ -122,7 +123,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                             R.id.pending_book -> {
                                 if (readed == null || readed!!.curreading != 1) {
                                     runBlocking {
-                                        val corroutine = launch {
+                                        val coroutine = launch {
                                             result = api.setBookPending(
                                                 book!!.bookId,
                                                 currentUser!!.userId
@@ -132,7 +133,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                                 readed!!.curreading = 1
                                             }
                                         }
-                                        corroutine.join()
+                                        coroutine.join()
                                     }
                                 }
                                 true
@@ -140,7 +141,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                             R.id.read_book -> {
                                 if (readed == null || readed!!.curreading != 2) {
                                     runBlocking {
-                                        val corroutine = launch {
+                                        val coroutine = launch {
                                             result = api.setBookRead(
                                                 book!!.bookId,
                                                 currentUser!!.userId
@@ -150,7 +151,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                                 readed!!.curreading = 2
                                             }
                                         }
-                                        corroutine.join()
+                                        coroutine.join()
                                     }
                                 }
                                 true
@@ -158,7 +159,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
 
                             R.id.remove_book -> {
                                 runBlocking {
-                                    val corroutine = launch {
+                                    val coroutine = launch {
                                         result = api.removeBookReading(
                                             book!!.bookId,
                                             currentUser!!.userId
@@ -167,7 +168,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                                             readed = null
                                         }
                                     }
-                                    corroutine.join()
+                                    coroutine.join()
                                 }
                                 true
                             }
@@ -187,9 +188,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
                         remove.isVisible = false
                     }
                 }
-                loadingEnded()
-                //createRequest(isbn)
-                //dismiss()
+                onLoadingEnded()
             }
         }
         isOnCreateViewExecuted = true
@@ -197,16 +196,16 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
     }
 
     fun loadBook(book: Book, isbn: String){
-        var corroutine = launch {
+        var coroutine = launch {
             println("Starting")
             getReaded(book.bookId)
             setBook(book)
             getCommentsNumber(book.bookId)
             getLibraries(isbn)
         }
-        corroutine.invokeOnCompletion {
+        coroutine.invokeOnCompletion {
             println("completed")
-            loadingEnded()
+            onLoadingEnded()
         }
     }
 
@@ -254,10 +253,12 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         }
     }
 
-    private fun loadingEnded() {
+    // Change loading layout by static layout
+    private fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.cl.visibility = View.VISIBLE
         binding.dBookDescription.movementMethod = ScrollingMovementMethod()
+        // Go to write review dialog
         binding.iconAddComments.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt("bookid", book!!.bookId)
@@ -266,6 +267,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
             val action = BookDisplayDialogDirections.actionNavBookDisplayToNavWriteComment(bundle)
             navController.navigate(action)
         }
+        // Go to book reviews dialog
         binding.iconComments.setOnClickListener {
             val bundle = Bundle()
             bundle.putInt("bookid", book!!.bookId)
@@ -274,6 +276,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
             val action = BookDisplayDialogDirections.actionNavBookDisplayToNavReadComment(bundle)
             navController.navigate(action)
         }
+        // Go to book libraries dialog
         binding.iconLibraries.setOnClickListener {
             if (binding.numberLibraries.text.toString().toInt() == 0) {
                 showSnackBar(requireContext(), requireView(), getString(R.string.SB_BookNotAviable))
@@ -287,6 +290,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         }
     }
 
+    // Once all the infromation of the api is downloaded, set it to the view
     private fun setBook(book: Book?) {
         Glide.with(requireActivity().applicationContext)
             .setDefaultRequestOptions(bookRequestOptions)
@@ -357,6 +361,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         return response
     }
 
+    // Start text to speech
     private fun speak() {
         if (tts!!.isSpeaking) {
             tts!!.stop()
@@ -375,6 +380,8 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
 
         }
     }
+
+    // Gets the language stored in the phone
     private fun getStoredLanguage(): String {
         val sharedPreferences = context?.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
         var code = sharedPreferences?.getString("language_code", "") ?: ""
@@ -409,6 +416,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
             }
         }
     }
+    // Stop the text to speech on close dialog
     override fun onDestroy() {
         if (onBookDisplayClose != null){
             onBookDisplayClose?.onBookDisplayClose()

@@ -153,9 +153,6 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        //if (this::context.isInitialized){
-
-        //}
         showSnackBar(context, view, Constants.ErrrorMessage)
     }
 }

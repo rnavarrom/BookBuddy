@@ -17,7 +17,6 @@ import com.example.bookbuddy.adapters.AdminGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminGenresBinding
 import com.example.bookbuddy.models.Genre
-import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import kotlinx.coroutines.*
@@ -53,7 +52,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         getGenres(true)
-        loadingEnded()
+        onLoadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
     }
@@ -175,7 +174,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     /**
      * Load the configuration upon ending the loading animation
      */
-    fun loadingEnded(){
+    fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -223,6 +222,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             binding.mainContent.isRefreshing = false
         }
 
+        // Load more items when scrolling the recycler view
         binding.rvGenres.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

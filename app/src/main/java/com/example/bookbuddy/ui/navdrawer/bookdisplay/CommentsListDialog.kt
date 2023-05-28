@@ -26,6 +26,9 @@ import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Shows the list of comments of a book
+ */
 @Parcelize
 class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.OnWriteCommentClose, Parcelable, ApiErrorListener {
     lateinit var binding: DialogBookdisplayCommentsBinding
@@ -46,6 +49,8 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
     interface OnReadCommentClose {
         fun onReadCommentClose()
     }
+
+    // Set fullscreen dialog style
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -76,11 +81,12 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         getCommentsBook(bookId, true)
-        loadingEnded()
+        onLoadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
     }
 
+    // Get comments from the API and put them in the RecyclerView
     private fun getCommentsBook(bookId: Int, addAdapter: Boolean){
         runBlocking {
             
@@ -102,7 +108,8 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
         }
     }
 
-    fun loadingEnded(){
+    // Change visible layouts and add bindings
+    private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainContent.visibility = View.VISIBLE
 
@@ -122,6 +129,7 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
             binding.mainContent.isRefreshing = false
         }
 
+        // Load more items when scrolling the recycler view
         binding.rvComments.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

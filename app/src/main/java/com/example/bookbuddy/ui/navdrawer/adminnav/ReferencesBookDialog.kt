@@ -29,6 +29,9 @@ import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Dialog to assign references to a book, such as author, language, genres and libraries
+ */
 class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
     ProfileSearchDialog.OnGenreSearchCompleteListener,
     ProfileAuthorDialog.OnAuthorSearchCompleteListener,
@@ -47,6 +50,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
     private var bookId: Int = 0
     private val api = CrudApi(this@ReferencesBookDialog)
 
+    // Add the genre to the book when the user ends the dialog
     override fun onGenreSearchComplete(result: Int, name: String) {
         var genreExist = false
         var resultApi: Boolean? = null
@@ -75,6 +79,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
     }
 
+    // Add the author to the book when the user ends the dialog
     override fun onAuthorSearchComplete(result: Int, name: String) {
         var authorExist = false
         var resultApi: Boolean? = null
@@ -102,6 +107,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
     }
 
+    // Add the language to the book when the user ends the dialog
     override fun onLanguageSearchComplete(result: Int, name: String) {
         var languageExist = false
         var resultApi: Boolean? = null
@@ -129,6 +135,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         }
     }
 
+    // Add the library to the book when the user ends the dialog
     override fun onLibrarySearchComplete(result: Int, name: String, zipCode: String) {
         var libraryExist = false
         var resultApi: Boolean? = null
@@ -156,6 +163,8 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_LibraryAdded))
         }
     }
+
+    // Set fullscreen dialog style
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -176,16 +185,18 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
         val bundle = arguments?.getBundle("bundle")
         bookId = bundle!!.getInt("bookid")
 
+        // Load all the references
         getAuthor()
         getLang()
         getGenres(true)
         getLibraries(true)
-        loadingEnded()
+        onLoadingEnded()
 
         return binding.root
     }
 
-    fun loadingEnded(){
+    // Change visible layouts and add bindings
+    private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 

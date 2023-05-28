@@ -16,7 +16,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-
+/**
+ * Adapter for displaying search results of authors in a RecyclerView.
+ * @param dialogFragment The fragment to close when search completed
+ * @param dialog Dialog where execute function on search end
+ * @param list The list of search results to display.
+ */
 class SearchAuthorsAdapter(private var dialogFragment: DialogFragment, var dialog: ProfileAuthorDialog.OnAuthorSearchCompleteListener?, var list: java.util.ArrayList<Author>) :
     RecyclerView.Adapter<SearchAuthorsAdapter.ViewHolder>(), CoroutineScope {
     private var job: Job = Job()

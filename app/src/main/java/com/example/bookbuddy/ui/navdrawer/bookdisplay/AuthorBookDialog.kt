@@ -21,6 +21,9 @@ import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Shows all books related to a given author
+ */
 class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: DialogBookdisplayAuthorbooksBinding
     private var job: Job = Job()
@@ -33,6 +36,7 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private var authorId = 0
     private var name = ""
 
+    // Set fullscreen dialog style
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -58,7 +62,7 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
         launch {
             getAuthorBooks(true)
-            loadingEnded()
+            onLoadingEnded()
         }
 
         return binding.root
@@ -93,7 +97,8 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
     }
 
-    fun loadingEnded(){
+    // Change visible layouts and add bindings
+    private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.cl.visibility = View.VISIBLE
 
@@ -104,6 +109,7 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             binding.mainContent.isRefreshing = false
         }
 
+        // Load more items when scrolling the recycler view
         binding.rvBooks.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

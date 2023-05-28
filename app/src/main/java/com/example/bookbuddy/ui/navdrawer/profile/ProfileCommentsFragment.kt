@@ -48,7 +48,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.refresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         getCommentsUser(userId, true)
-        loadingEnded()
+        onLoadingEnded()
 
         return binding.root
     }
@@ -87,7 +87,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     /**
      * Load the configuration upon ending the loading animation
      */
-    private fun loadingEnded(){
+    private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 

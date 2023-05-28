@@ -16,7 +16,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-
+/**
+ * Adapter for displaying search results of genres in a RecyclerView.
+ * @param dialogFragment The fragment to close when search completed
+ * @param dialog Dialog where execute function on search end
+ * @param list The list of search results to display.
+ */
 class SearchGenresAdapter(private var dialogFragment: DialogFragment, var dialog: ProfileSearchDialog.OnGenreSearchCompleteListener?, var list: java.util.ArrayList<Genre>) :
     RecyclerView.Adapter<SearchGenresAdapter.ViewHolder>(), CoroutineScope {
     private var job: Job = Job()

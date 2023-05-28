@@ -8,7 +8,10 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import com.example.bookbuddy.R
 
-//Adapter for the language lists, login and profile
+/**
+ * Adapter for displaying languages avaible in a Spinner Item.
+ * @param list The list of languages to display.
+ */
 class LanguageSpinnerAdapter(context: Context, private val imageNames: Array<String>) :
     ArrayAdapter<String>(context, R.layout.spinner_item, imageNames) {
 

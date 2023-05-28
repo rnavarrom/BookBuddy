@@ -1,6 +1,5 @@
 package com.example.bookbuddy.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,23 +9,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.LibraryExtended
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileLibraryDialog
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlin.coroutines.CoroutineContext
 
-
+/**
+ * Adapter for displaying search results of libraries in a RecyclerView.
+ * @param dialogFragment The fragment to close when search completed
+ * @param dialog Dialog where execute function on search end
+ * @param list The list of search results to display.
+ */
 class SearchLibrariesAdapter(private var dialogFragment: DialogFragment, var dialog: ProfileLibraryDialog.OnLibrarySearchCompleteListener?, var list: java.util.ArrayList<LibraryExtended>) :
-    RecyclerView.Adapter<SearchLibrariesAdapter.ViewHolder>(), CoroutineScope {
-    private var job: Job = Job()
+    RecyclerView.Adapter<SearchLibrariesAdapter.ViewHolder>() {
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val name = view.findViewById<TextView>(R.id.tv_search_name)!!
     }
 
-    private lateinit var context: Context
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layout = LayoutInflater.from(parent.context)
-        context = parent.context
         return ViewHolder(layout.inflate(R.layout.cardview_profile_search, parent, false))
     }
 
@@ -51,7 +48,4 @@ class SearchLibrariesAdapter(private var dialogFragment: DialogFragment, var dia
     override fun getItemCount(): Int {
         return list.size
     }
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
 }

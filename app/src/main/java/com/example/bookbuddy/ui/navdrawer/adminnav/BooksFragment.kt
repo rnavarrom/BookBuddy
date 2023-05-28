@@ -16,7 +16,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.core.view.removeItemAt
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -78,7 +77,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         getBooks(true)
-        loadingEnded()
+        onLoadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
     }
@@ -136,7 +135,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     /**
      * Function to set the buttons function when the load animation is over.
      */
-    fun loadingEnded(){
+    fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 

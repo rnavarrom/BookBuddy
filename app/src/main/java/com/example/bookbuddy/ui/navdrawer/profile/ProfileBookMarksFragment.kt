@@ -48,7 +48,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         //Initial call to get values
         launch {
             getBooksUser(userId, true)
-            loadingEnded()
+            onLoadingEnded()
         }
         return binding.root
     }
@@ -88,7 +88,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     /**
      * Load the configuration upon ending the loading animation
      */
-    fun loadingEnded(){
+    fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 

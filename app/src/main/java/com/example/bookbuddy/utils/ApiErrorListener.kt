@@ -7,6 +7,8 @@ import java.net.SocketTimeoutException
 interface ApiErrorListener {
     fun onApiError(connectionFailed: Boolean = false)
 }
+
+// Handle when the call is succesful or failed in some way
 suspend fun <T> safeApiCall(
     apiCall: suspend () -> Response<T>,
     errorListener: ApiErrorListener

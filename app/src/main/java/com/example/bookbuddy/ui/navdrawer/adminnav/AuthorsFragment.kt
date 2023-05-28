@@ -57,7 +57,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         )
 
         getAuthors(true)
-        loadingEnded()
+        onLoadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
     }
@@ -171,7 +171,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     /**
      * Function to set the buttons function when the load animation is over.
      */
-    fun loadingEnded() {
+    fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 

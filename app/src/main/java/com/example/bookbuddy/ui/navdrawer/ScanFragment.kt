@@ -91,10 +91,10 @@ class ScanFragment : Fragment(), ApiErrorListener {
     private fun bookExist(isbn: String): Boolean? {
         var exist : Boolean? = false
         runBlocking {
-            val corroutine = launch {
+            val coroutine = launch {
                 exist = api.getBookExist(isbn)
             }
-            corroutine.join()
+            coroutine.join()
         }
         return exist
     }
@@ -102,10 +102,10 @@ class ScanFragment : Fragment(), ApiErrorListener {
     private fun createRequest(isbn: String): Boolean? {
         var succes: Boolean? = false
         runBlocking {
-            val corroutine = launch {
+            val coroutine = launch {
                 succes = api.addRequestAPI(isbn)!!
             }
-            corroutine.join()
+            coroutine.join()
         }
         return succes
     }
