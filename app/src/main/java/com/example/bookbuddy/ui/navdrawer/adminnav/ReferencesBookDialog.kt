@@ -262,7 +262,7 @@ class ReferencesBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener,
                 editText.hint = selection.copies.toString() + getString(R.string.MSG_Copies)
                 builder.setView(editText)
                 builder.setPositiveButton(getString(R.string.BT_Edit)) { _, _ ->
-                    var copiesString = editText.text.toString()
+                    val copiesString = editText.text.toString()
 
                     if (copiesString.isNotEmpty()){
                         val copies = copiesString.toInt()

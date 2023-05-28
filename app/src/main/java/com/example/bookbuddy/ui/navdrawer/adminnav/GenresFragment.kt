@@ -31,8 +31,6 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var position = 0
     private var lastPosition = -1
     private var genres: MutableList<Genre>? = null
-    private lateinit var gMenu: Menu
-    private lateinit var searchItem: MenuItem
     private var search: String? = null
     private var genreName: String? = null
     private val api = CrudApi(this@GenresFragment)

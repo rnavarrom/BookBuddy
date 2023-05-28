@@ -47,8 +47,6 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var position = 0
     private var lastPosition = -1
     private var books: MutableList<Book>? = null
-    private lateinit var gMenu: Menu
-    private lateinit var searchItem: MenuItem
     private var search: String? = null
     private val api = CrudApi(this@BooksFragment)
     private var isOnCreateViewExecuted = false
@@ -175,7 +173,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.btnPrint.setOnClickListener {
             val selection = adapter.getSelected()
             if (selection != null){
-                var barcodeValue = generateBarcode(selection.isbn)
+                val barcodeValue = generateBarcode(selection.isbn)
                 saveImageToGallery(barcodeValue, selection.isbn)
             } else {
                 showSnackBar(requireContext(), requireView(), getString(R.string.SB_PickABook))

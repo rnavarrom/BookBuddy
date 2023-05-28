@@ -271,7 +271,7 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener, BookDisplayDi
     }
     /**
      * Dialog to filter a list of books
-     * @param addAdapter to check what list is currently filtering
+     * @param choseList to check what list is currently filtering
      */
     private fun filterBooks(choseList: Boolean) {
         val builder = AlertDialog.Builder(requireContext())

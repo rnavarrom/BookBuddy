@@ -48,7 +48,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
     private var mode = "insert"
     private lateinit var book: Book
-    var onAdminDialogClose: OnAdminDialogClose? = null
+    private var onAdminDialogClose: OnAdminDialogClose? = null
     private lateinit var tmpUri: Uri
     var fragment: AdminFragment? = null
     private var isRequest = false
@@ -91,7 +91,7 @@ class InsertBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             if (bundle.containsKey("isbn")){
                 isRequest = true
                 requestId = bundle.getInt("id")
-                var isbn = bundle.getString("isbn")
+                val isbn = bundle.getString("isbn")
                 binding.etIsbn.setText(isbn)
                 binding.etIsbn.focusable = View.NOT_FOCUSABLE
             }

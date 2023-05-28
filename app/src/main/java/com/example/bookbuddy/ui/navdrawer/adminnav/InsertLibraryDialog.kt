@@ -38,7 +38,7 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
     private lateinit var mMap: GoogleMap
     private var currentMarker: Marker? = null
 
-    var onAdminDialogClose: OnAdminDialogClose? = null
+    private var onAdminDialogClose: OnAdminDialogClose? = null
     private val api = CrudApi(this@InsertLibraryDialog)
     interface OnAdminDialogClose {
         fun onAdminDialogClose()
@@ -110,11 +110,11 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
         val zip = binding.etZip.text.toString()
         val lat = binding.etLat.text.toString().toDoubleOrNull()
         val lon = binding.etLon.text.toString().toDoubleOrNull()
-        if (name.isNullOrEmpty()){
+        if (name.isEmpty()){
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_CantEmptyName))
             return
         }
-        if (zip.isNullOrEmpty()){
+        if (zip.isEmpty()){
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_EmptyZip))
             return
         } else {

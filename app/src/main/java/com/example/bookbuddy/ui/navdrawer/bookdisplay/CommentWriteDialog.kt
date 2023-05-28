@@ -154,7 +154,7 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    fun checkConnectionFailed(): Boolean{
+    private fun checkConnectionFailed(): Boolean{
         if (connectionError){
             connectionError = false
             return true

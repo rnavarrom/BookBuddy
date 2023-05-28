@@ -42,11 +42,7 @@ class UnsafeOkHttpClient {
 
                 val builder = OkHttpClient.Builder()
                 builder.sslSocketFactory(sslSocketFactory, trustAllCerts[0] as X509TrustManager)
-                builder.hostnameVerifier(object : HostnameVerifier {
-                    override fun verify(hostname: String?, session: SSLSession?): Boolean {
-                        return true
-                    }
-                })
+                builder.hostnameVerifier { _, _ -> true }
 
                 return builder.build()
             } catch (e: Exception) {

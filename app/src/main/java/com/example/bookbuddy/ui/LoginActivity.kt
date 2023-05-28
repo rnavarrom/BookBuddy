@@ -162,7 +162,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
                         }
                         Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_LogIn))
 
-                        var intent = Intent(this, NavDrawerActivity::class.java)
+                        val intent = Intent(this, NavDrawerActivity::class.java)
                         startActivity(intent)
                         finish()
                     } else {
@@ -337,7 +337,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
         binding.mainContent.visibility = View.VISIBLE
     }
 
-    fun checkConnectionFailed(): Boolean{
+    private fun checkConnectionFailed(): Boolean{
         if (connectionError){
             connectionError = false
             return true

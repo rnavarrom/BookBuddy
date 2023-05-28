@@ -1,10 +1,8 @@
 package com.example.bookbuddy.utils
 
 import android.content.Context
-import android.database.Cursor
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.net.Uri
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.View
@@ -74,7 +72,7 @@ class Tools {
             toolbar.setNavigationIcon(R.drawable.ic_back_arrow)
             toolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.primary_green))
             toolbar.setTitleTextColor(ContextCompat.getColor(context, R.color.white))
-            toolbar.setNavigationOnClickListener(View.OnClickListener { dialogFragment.dismiss() })
+            toolbar.setNavigationOnClickListener { dialogFragment.dismiss() }
         }
 
         // Clears all cache of images except your profile pic
@@ -93,15 +91,15 @@ class Tools {
 
         // Updates the username and the profile pic on the navigation drawer menu
         fun setNavigationProfile(context: Context, image: File?, username: String?){
-            var hView: View = navView.getHeaderView(0)
+            val hView: View = navView.getHeaderView(0)
             if (username != null){
-                var profileName: TextView = hView.findViewById(R.id.profile_name)
+                val profileName: TextView = hView.findViewById(R.id.profile_name)
                 profileName.text = username
             }
 
             if (image != null){
                 if (currentUser!!.haspicture){
-                    var profileImg: ShapeableImageView = hView.findViewById(R.id.profile_imageView)
+                    val profileImg: ShapeableImageView = hView.findViewById(R.id.profile_imageView)
 
                     Glide.with(context)
                         .setDefaultRequestOptions(profileRequestOptions)
@@ -111,42 +109,15 @@ class Tools {
             }
         }
 
-        // Given arespones of the bytes of an image, generates a file and set it to the currentPicture
+        // Given a respone of the bytes of an image, generates a file and set it to the currentPicture
         fun responseToFile(context: Context, response: ResponseBody? ){
-            val body = response
-            val bytes = body!!.bytes()
+            val bytes = response!!.bytes()
             context.cacheDir.deleteRecursively()
             val file = File(context.cacheDir, currentUser!!.userId.toString() + "user.jpg")
             val outputStream = FileOutputStream(file)
             outputStream.write(bytes)
             outputStream.close()
             currentPicture = file
-        }
-
-
-
-        fun getDataColumn(
-            context: Context, uri: Uri?, selection: String?,
-            selectionArgs: Array<String>?
-        ): String? {
-            var cursor: Cursor? = null
-            val column = "_data"
-            val projection = arrayOf(
-                column
-            )
-            try {
-                cursor = context.contentResolver.query(
-                    uri!!, projection, selection, selectionArgs,
-                    null
-                )
-                if (cursor != null && cursor.moveToFirst()) {
-                    val index: Int = cursor.getColumnIndexOrThrow(column)
-                    return cursor.getString(index)
-                }
-            } finally {
-                if (cursor != null) cursor.close()
-            }
-            return null
         }
 
         // Shows information on the bottom part of the application

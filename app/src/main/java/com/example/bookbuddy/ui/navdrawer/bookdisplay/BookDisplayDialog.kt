@@ -195,8 +195,8 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         return binding.root
     }
 
-    fun loadBook(book: Book, isbn: String){
-        var coroutine = launch {
+    private fun loadBook(book: Book, isbn: String){
+        val coroutine = launch {
             getReaded(book.bookId)
             setBook(book)
             getCommentsNumber(book.bookId)

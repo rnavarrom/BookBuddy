@@ -62,7 +62,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
                         binding.createAcountLayout,
                         getString(R.string.SB_AccountCreated)
                     )
-                    var intent = Intent(this, LoginActivity::class.java)
+                    val intent = Intent(this, LoginActivity::class.java)
                     intent.putExtra("userName", currentUserCreate.name)
                     startActivity(intent)
                     finish()

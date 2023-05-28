@@ -149,14 +149,13 @@ class LibraryMapDialog : DialogFragment(), OnMapReadyCallback, CoroutineScope {
                     drawRoute(mMap, resp!!.coordinates)
                     val distance = resp!!.distance
                     val timeInSeconds = resp!!.duration
-                    val distanceText: String?
                     val timeText: String?
 
-                    if (distance < 1000) {
-                        distanceText = getString(R.string.MAP_Distance) + distance.toString() + " m"
+                    val distanceText: String = if (distance < 1000) {
+                        getString(R.string.MAP_Distance) + distance.toString() + " m"
                     } else {
                         val distanceInKm = distance / 1000.0
-                        distanceText = getString(R.string.MAP_Distance) + String.format("%.2f", distanceInKm) + " km"
+                        getString(R.string.MAP_Distance) + String.format("%.2f", distanceInKm) + " km"
                     }
 
                     val hours = (timeInSeconds / 3600).toInt()
