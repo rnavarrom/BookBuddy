@@ -102,7 +102,7 @@ class ContactAdapter(var list: java.util.ArrayList<UserItem>, val fragment: Cont
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         Tools.showSnackBar(context, view, Constants.ErrrorMessage)
     }
 }

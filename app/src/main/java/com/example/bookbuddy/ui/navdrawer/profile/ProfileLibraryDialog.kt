@@ -154,7 +154,7 @@ class ProfileLibraryDialog : DialogFragment(), CoroutineScope, ApiErrorListener 
             }
         }
     }
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
     override fun onDismiss(dialog: DialogInterface) {

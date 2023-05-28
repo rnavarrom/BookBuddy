@@ -160,7 +160,7 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
         }
     }
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         //if (this::context.isInitialized){
 
         //}

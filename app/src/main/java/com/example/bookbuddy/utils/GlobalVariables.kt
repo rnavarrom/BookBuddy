@@ -1,6 +1,7 @@
 package com.example.bookbuddy.utils
 
 import android.content.Context
+import android.view.Menu
 import androidx.navigation.NavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Registry
@@ -26,6 +27,7 @@ import javax.net.ssl.*
 
 lateinit var navView: NavigationView
 lateinit var navController : NavController
+lateinit var navTop: Menu
 var currentUser : User? = null
 lateinit var currentProfile: Profile
 var currentPicture: File? = null

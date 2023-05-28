@@ -2,10 +2,7 @@ package com.example.bookbuddy.ui.navdrawer.adminnav
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -42,6 +39,9 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         setHasOptionsMenu(true)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        menu!!.findItem(R.id.action_search).isVisible =false
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -181,7 +181,7 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted){
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }

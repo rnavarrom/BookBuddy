@@ -5,7 +5,7 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 
 interface ApiErrorListener {
-    fun onApiError()
+    fun onApiError(connectionFailed: Boolean = false)
 }
 suspend fun <T> safeApiCall(
     apiCall: suspend () -> Response<T>,
@@ -20,9 +20,9 @@ suspend fun <T> safeApiCall(
             return null
         }
     } catch (e: SocketTimeoutException) {
-        errorListener.onApiError()
+        errorListener.onApiError(true)
     } catch (e: ConnectException){
-        errorListener.onApiError()
+        errorListener.onApiError(true)
     } catch (e: Throwable) {
         e.printStackTrace()
         errorListener.onApiError()

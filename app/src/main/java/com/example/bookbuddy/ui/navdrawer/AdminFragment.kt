@@ -3,15 +3,15 @@ package com.example.bookbuddy.ui.navdrawer
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import androidx.core.view.removeItemAt
 import androidx.fragment.app.Fragment
 import com.example.bookbuddy.R
 import com.example.bookbuddy.databinding.FragmentAdminBinding
 import com.example.bookbuddy.ui.navdrawer.adminnav.*
+import com.example.bookbuddy.utils.navController
+import com.example.bookbuddy.utils.navTop
+import com.example.bookbuddy.utils.navView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -25,15 +25,41 @@ class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDia
     private var job: Job = Job()
 
     private var fragmentSaved = "books"
+    public var gMenu: Menu? = null
+    private var isFragmentReplaced = false
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.search_menu, menu)
+        gMenu = menu
+
+        println("REPLACING")
+        if (!isFragmentReplaced) {
+            println("CHANGING MENU")
+            menu.clear()
+            inflater.inflate(R.menu.search_menu, menu)
+            //menu.findItem(R.id.action_search).isVisible =false
+            gMenu = menu
+            replaceFragment(BooksFragment())
+            isFragmentReplaced = true
+        }
+    }
+
+    lateinit var searchItem: MenuItem
+    override fun onResume() {
+        super.onResume()
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding =  FragmentAdminBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+        //navView.invalidate()
 
-        replaceFragment(BooksFragment())
 
         binding.bottomNav.setOnItemSelectedListener {
             when (it.itemId) {
@@ -58,6 +84,7 @@ class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDia
                     true
                 }
                 R.id.users -> {
+                    gMenu!!.findItem(R.id.action_search).isVisible =false
                     fragmentSaved = "requests"
                     replaceFragment(RequestsFragment())
                     true
@@ -75,7 +102,7 @@ class AdminFragment() : Fragment(), CoroutineScope, Parcelable, InsertLibraryDia
         val bundle = Bundle()
         bundle.putParcelable("fragment", this)
         fragment.arguments = bundle
-        val fragmentManager = parentFragmentManager
+        val fragmentManager = childFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.container, fragment)
         fragmentTransaction.commit()

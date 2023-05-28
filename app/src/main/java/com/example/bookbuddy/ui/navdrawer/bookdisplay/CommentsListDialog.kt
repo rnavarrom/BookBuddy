@@ -158,7 +158,7 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
         binding.loadingComment.visibility = View.GONE
     }
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted){
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }

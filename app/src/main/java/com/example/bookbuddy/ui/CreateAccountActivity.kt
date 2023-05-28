@@ -253,7 +253,7 @@ class CreateAccountActivity : AppCompatActivity(), ApiErrorListener {
         binding.userConditions.setTextColor(getColor(R.color.black))
     }
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         Tools.showSnackBar(this, binding.createAcountLayout, Constants.ErrrorMessage)
     }
 }

@@ -182,7 +182,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         })
     }
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted){
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }

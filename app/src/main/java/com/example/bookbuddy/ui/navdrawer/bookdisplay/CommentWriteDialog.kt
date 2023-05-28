@@ -36,6 +36,7 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private var onWriteCommentClose: OnWriteCommentClose? = null
 
     private var isOnCreateViewExecuted = false
+    private var connectionError = false
     interface OnWriteCommentClose {
         fun onWriteCommentClose()
     }
@@ -71,10 +72,8 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             }
         }
 
-        launch {
-            loadComment()
-            loadingEnded()
-        }
+        loadComment()
+        loadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
     }
@@ -95,10 +94,12 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             corrutina.join()
         }
 
-        if (comment != null){
-            binding.etWriteComment.setText(comment!!.comentText)
-            binding.ratingWrite.rating = comment!!.rating.toFloat()
-            binding.wordCounter.text = comment!!.comentText.length.toString() + "/" + maxCharactersComment.toString()
+        if (!checkConnectionFailed()) {
+            if (comment != null) {
+                binding.etWriteComment.setText(comment!!.comentText)
+                binding.ratingWrite.rating = comment!!.rating.toFloat()
+                binding.wordCounter.text = comment!!.comentText.length.toString() + "/" + maxCharactersComment.toString()
+            }
         }
     }
 
@@ -149,9 +150,20 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    override fun onApiError() {
+    fun checkConnectionFailed(): Boolean{
+        if (connectionError){
+            connectionError = false
+            return true
+        }
+        return false
+    }
+
+    override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted) {
-            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+            if (connectionFailed) {
+                connectionError = true
+                showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+            }
         }
     }
 

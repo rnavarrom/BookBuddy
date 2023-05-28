@@ -161,7 +161,7 @@ class ScanFragment : Fragment(), ApiErrorListener {
             requireActivity().applicationContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
     companion object{

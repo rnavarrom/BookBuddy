@@ -131,7 +131,7 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         binding.loadingBooks.visibility = View.GONE
     }
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 

@@ -46,7 +46,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
     private val guideLineMin = 0.23F
     private val guideLineMax = 0.35F
 
-
+    private var connectionError = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -152,23 +152,25 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
             val userPassword = binding.MAEditPassword.text.toString()
             if (userName.isNotBlank() && userPassword.isNotBlank()) {
                 getUsers(userName, Sha.calculateSHA(userPassword))
-                if (currentUser != null) {
-                    if (binding.MACheckBox.isChecked) {
-                        lifecycleScope.launch {
-                            userPrefs.saveCredentials(userName, Sha.calculateSHA(userPassword))
+                if (!checkConnectionFailed()){
+                    if (currentUser != null) {
+                        if (binding.MACheckBox.isChecked) {
+                            lifecycleScope.launch {
+                                userPrefs.saveCredentials(userName, Sha.calculateSHA(userPassword))
+                            }
+                        } else {
+                            lifecycleScope.launch {
+                                userPrefs.saveCredentials("", "")
+                            }
                         }
-                    } else {
-                        lifecycleScope.launch {
-                            userPrefs.saveCredentials("", "")
-                        }
-                    }
-                    Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_LogIn))
+                        Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_LogIn))
 
-                    var intent = Intent(this, NavDrawerActivity::class.java)
-                    startActivity(intent)
-                    finish()
-                } else {
-                    Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_IncorrectUserPass))
+                        var intent = Intent(this, NavDrawerActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        Tools.showSnackBar(applicationContext, binding.activityMain, getString(R.string.SB_IncorrectUserPass))
+                    }
                 }
             }
         }
@@ -305,9 +307,6 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
             "ca" -> {
                 "catalan_flag"
             }
-            "es" -> {
-                "spanish_flag"
-            }
             else -> {
                 "american_flag"
             }
@@ -344,7 +343,18 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
         binding.mainContent.visibility = View.VISIBLE
     }
 
-    override fun onApiError() {
-        Tools.showSnackBar(this, binding.activityMain, Constants.ErrrorMessage)
+    fun checkConnectionFailed(): Boolean{
+        if (connectionError){
+            connectionError = false
+            return true
+        }
+        return false
+    }
+
+    override fun onApiError(connectionFailed: Boolean) {
+        if (connectionFailed){
+            connectionError = true
+            Tools.showSnackBar(this, binding.activityMain, Constants.ErrrorMessage)
+        }
     }
 }

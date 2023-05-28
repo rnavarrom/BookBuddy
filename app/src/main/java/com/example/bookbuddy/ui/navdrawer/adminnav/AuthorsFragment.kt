@@ -59,12 +59,6 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         isOnCreateViewExecuted = true
         return binding.root
     }
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.search_menu, menu)
-        gMenu = menu
-        searchItem = gMenu.findItem(R.id.action_search)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         return when (item.itemId) {
@@ -296,7 +290,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             corrutine.join()
         }
     }
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted){
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }

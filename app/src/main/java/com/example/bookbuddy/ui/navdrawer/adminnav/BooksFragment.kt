@@ -60,12 +60,24 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         setHasOptionsMenu(true)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_search -> {
+                showCustomDialog()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding =  FragmentAdminBooksBinding.inflate(layoutInflater, container, false)
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+
+
 
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
@@ -74,10 +86,16 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         isOnCreateViewExecuted = true
         return binding.root
     }
+
+    /*
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)
+
+        //requireActivity().menuInflater
+        //requireActivity().menuInflater.inflate(R.menu.search_menu, menu)
         gMenu = menu
         searchItem = gMenu.findItem(R.id.action_search)
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -89,7 +107,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
+    */
     private fun showCustomDialog() {
         //type 0 -> insert, 1 -> edit, 2 -> search
         val builder = AlertDialog.Builder(requireContext())
@@ -223,6 +241,9 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
+                        println(position)
+                        println(lastPosition)
+                        println("-------------------------")
                         position = totalItemCount
                         if (lastPosition != totalItemCount){
                             loadMoreItems()
@@ -471,18 +492,12 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             corrutina.join()
         }
     }
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted){
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
     }
 
-    override fun onDetach() {
-        println("HOLA")
-        setHasOptionsMenu(false)
-        gMenu?.removeItem(R.id.action_search)
-        super.onDetach()
-    }
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
