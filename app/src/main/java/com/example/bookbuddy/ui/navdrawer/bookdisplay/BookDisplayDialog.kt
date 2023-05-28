@@ -49,6 +49,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
     private var isOnCreateViewExecuted = false
     private var isPlaying = false
 
+    private var connectionError = false
 
     interface OnBookDisplayClose {
         fun onBookDisplayClose()
@@ -76,17 +77,14 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         val isbn: String?
         if (bundle != null){
             isbn = bundle.getString("isbn")!!
-            println("AAAAAAAAAaa")
-            println(isbn)
-            binding.iconTextToSpeach.setOnClickListener {
-                speak()
-            }
-
             if (bundle.containsKey("fragment")){
                 val fragment = bundle.getParcelable("fragment") as? HomeFragment?
                 onBookDisplayClose = fragment
             }
 
+            binding.iconTextToSpeach.setOnClickListener {
+                speak()
+            }
             //launch {
             book = getBook(isbn)
             if (book != null) {
@@ -232,18 +230,27 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
     }
 
     private fun getCommentsNumber(bookId: Int) {
-        var commentsNumber: Int? = 0
-        val corrutina = launch {
+        var commentsNumber: Int?
+        launch {
             commentsNumber = api.getCommentsCounter(bookId)
-            binding.numberComments.text = commentsNumber.toString()
+            if (commentsNumber != null){
+                binding.numberComments.text = commentsNumber.toString()
+            } else {
+                binding.numberComments.text = "0"
+            }
+
         }
     }
 
     private fun getLibraries(isbn: String?) {
-        var librariesNumber: Int? = 0
-        val corrutina = launch {
+        var librariesNumber: Int?
+        launch {
             librariesNumber = api.getBookLibrariesCount(isbn!!)
-            binding.numberLibraries.text = librariesNumber.toString()
+            if (librariesNumber != null){
+                binding.numberLibraries.text = librariesNumber.toString()
+            } else {
+                binding.numberLibraries.text = "0"
+            }
         }
     }
 
@@ -287,7 +294,6 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
             .into(binding.dBookCover)
 
         binding.dBookTitle.text = book!!.title
-        //binding.dBookAuthor.text = book!!.authors.size.toString()
         binding.dBookAuthor.text = book.authors[0].name
 
         binding.dBookAuthor.setOnClickListener {
@@ -366,6 +372,14 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
 
         }
     }
+    private fun getStoredLanguage(): String {
+        val sharedPreferences = context?.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
+        var code = sharedPreferences?.getString("language_code", "") ?: ""
+        if (code.isEmpty()){
+            code = context?.resources?.configuration?.locales?.get(0)?.language.toString()
+        }
+        return code
+    }
     override fun onInit(p0: Int) {
         var lang = getStoredLanguage()
         var country = getStoredLanguage()
@@ -383,10 +397,12 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         }
     }
 
-
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted){
-            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+            if (connectionFailed){
+                connectionError = true
+                showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+            }
         }
     }
     override fun onDestroy() {
@@ -407,14 +423,4 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
-
-    //TODO : this go here?
-    private fun getStoredLanguage(): String {
-        val sharedPreferences = context?.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-        var code = sharedPreferences?.getString("language_code", "") ?: ""
-        if (code.isEmpty()){
-            code = context?.resources?.configuration?.locales?.get(0)?.language.toString()
-        }
-        return code
-    }
 }

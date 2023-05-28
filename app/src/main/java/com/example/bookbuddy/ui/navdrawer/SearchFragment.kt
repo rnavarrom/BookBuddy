@@ -210,7 +210,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
         return searchResultList
     }
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 }

@@ -126,7 +126,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.loadingRecommended.visibility = View.GONE
     }
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted){
             Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }

@@ -675,7 +675,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
     }
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
     override fun onDestroy() {

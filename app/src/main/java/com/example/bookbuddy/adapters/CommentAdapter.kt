@@ -173,7 +173,7 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         Tools.showSnackBar(context, view, Constants.ErrrorMessage)
     }
 }

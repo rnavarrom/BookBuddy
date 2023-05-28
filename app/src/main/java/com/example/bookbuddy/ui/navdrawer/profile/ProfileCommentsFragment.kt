@@ -117,7 +117,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.loadingComment.visibility = View.GONE
     }
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
     }
 

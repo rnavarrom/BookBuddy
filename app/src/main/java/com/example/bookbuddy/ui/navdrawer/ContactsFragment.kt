@@ -130,7 +130,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
         binding.loadingContacts.visibility = View.GONE
     }
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted){
             Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }

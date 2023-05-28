@@ -59,14 +59,8 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         isOnCreateViewExecuted = true
         return binding.root
     }
-    //Create the options menu to allow search
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.search_menu, menu)
-        gMenu = menu
-        searchItem = gMenu.findItem(R.id.action_search)
-    }
-    //Select the custom dialog for the search menu item
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
         return when (item.itemId) {
             R.id.action_search -> {
                 showCustomDialog(2)
@@ -296,7 +290,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
     }
     //Handle api error
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted){
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }

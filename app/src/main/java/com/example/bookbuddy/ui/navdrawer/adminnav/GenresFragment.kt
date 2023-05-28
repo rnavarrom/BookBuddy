@@ -17,6 +17,7 @@ import com.example.bookbuddy.adapters.AdminGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentAdminGenresBinding
 import com.example.bookbuddy.models.Genre
+import com.example.bookbuddy.ui.navdrawer.AdminFragment
 import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import kotlinx.coroutines.*
@@ -57,11 +58,6 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         loadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
-    }
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.search_menu, menu)
-        gMenu = menu
-        searchItem = gMenu.findItem(R.id.action_search)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -285,7 +281,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    override fun onApiError() {
+    override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted){
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
         }
