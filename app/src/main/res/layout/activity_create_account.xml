@@ -18,6 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/CA_Text1"
         android:src="@drawable/logonobg"
+        android:contentDescription="Application logo"
         />
     <TextView
         android:layout_width="wrap_content"
@@ -78,7 +79,7 @@
                 android:drawablePadding="10dp"
                 android:drawableTint="@color/primary_green"
                 android:maxLength="22"
-                />
+                android:autofillHints="name" />
             <EditText
                 android:inputType="textEmailAddress"
                 android:hint="@string/LAY_HintEmail"
@@ -94,7 +95,7 @@
                 android:drawablePadding="10dp"
                 android:drawableTint="@color/primary_green"
                 android:maxLength="100"
-                />
+                android:autofillHints="emailAddress" />
 
             <EditText
                 android:inputType="textPassword"
@@ -111,7 +112,7 @@
                 android:drawablePadding="10dp"
                 android:drawableTint="@color/primary_green"
                 android:maxLength="50"
-                />
+                android:autofillHints="password" />
             <EditText
                 android:inputType="textPassword"
                 android:hint="@string/LAY_HintPassword2"
@@ -128,6 +129,7 @@
                 android:drawablePadding="10dp"
                 android:drawableTint="@color/primary_green"
                 android:maxLength="50"
+                android:autofillHints="password"
                 />
             <ImageView
                 android:layout_width="wrap_content"
