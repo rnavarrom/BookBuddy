@@ -2,10 +2,7 @@ package com.example.bookbuddy.ui.navdrawer
 
 import android.os.Bundle
 import android.os.Parcelable
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -52,6 +49,8 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
         isOnCreateViewExecuted = true
         return binding.root
     }
+
+
 
     private fun emptyContacts(){
         if (follows == null || follows!!.isEmpty()){

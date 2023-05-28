@@ -5,33 +5,27 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 
 interface ApiErrorListener {
-    fun onApiError() //errorMessage: String
+    fun onApiError()
 }
-
 suspend fun <T> safeApiCall(
     apiCall: suspend () -> Response<T>,
-    errorListener: ApiErrorListener,
-    errorMessage: String = "Ha ocurrido un error. Por favor, inténtalo de nuevo."
-    //errorListener: ApiErrorListener
+    errorListener: ApiErrorListener
 ): T? {
     try {
         val response = apiCall.invoke()
         if (response.isSuccessful) {
             return response.body()
         } else {
-            //val errorResponse = response.errorBody()?.string()
-            //errorListener.onApiError("Error fetching data: $errorResponse")
-            errorListener.onApiError() //errorMessage ?: errorMessage
+            errorListener.onApiError()
             return null
         }
     } catch (e: SocketTimeoutException) {
-        errorListener.onApiError() //"Cannot reach the server"
+        errorListener.onApiError()
     } catch (e: ConnectException){
-        errorListener.onApiError() //"Cannot reach the server"
+        errorListener.onApiError()
     } catch (e: Throwable) {
-        //errorListener.onApiError("Error fetching data: ${e.message}")
         e.printStackTrace()
-        errorListener.onApiError() //errorMessage
+        errorListener.onApiError()
     }
     return null
 }
