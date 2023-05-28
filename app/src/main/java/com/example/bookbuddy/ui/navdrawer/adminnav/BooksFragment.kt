@@ -52,6 +52,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var search: String? = null
     private val api = CrudApi(this@BooksFragment)
     private var isOnCreateViewExecuted = false
+    private var connectionError = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -286,6 +287,8 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 val tmpResult = api.deleteBook(book.isbn, false)
                 if (tmpResult != null) {
                     result = tmpResult
+                } else {
+                    showSnackBar(requireContext(), requireView(), getString(R.string.SB_BookWithReferences))
                 }
             }
             coroutine.join()
@@ -349,7 +352,10 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
+        if (connectionFailed) {
+            connectionError = true
+            showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
+        }
     }
 
 

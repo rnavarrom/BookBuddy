@@ -259,4 +259,5 @@
     <string name="MSG_AuthorCannotBeEmpty">Auto no pot ser buit</string>
     <string name="MSG_GenreCannotBeEmpty">Gènere no pot ser buit</string>
     <string name="DL_ReadPages">Pàgines llegides</string>
+    <string name="SB_BookWithReferences">Ell llibre tte referències</string>
 </resources>
