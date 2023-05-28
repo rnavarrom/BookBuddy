@@ -52,7 +52,7 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         getLibraries(true)
-        loadingEnded()
+        onLoadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
     }
@@ -124,7 +124,8 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
         navController.navigate(action)
     }
 
-    private fun loadingEnded(){
+    // Change visible layouts and add bindings
+    private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -172,6 +173,7 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
             binding.mainContent.isRefreshing = false
         }
 
+        // Load more items when scrolling the recycler view
         binding.rvLibraries.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

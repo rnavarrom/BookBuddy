@@ -2,14 +2,6 @@ package com.example.bookbuddy.Utils
 
 import com.bumptech.glide.request.RequestOptions
 import com.example.bookbuddy.R
-import okhttp3.OkHttpClient
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.net.ssl.HostnameVerifier
-import javax.net.ssl.SSLContext
-import javax.net.ssl.SSLSocketFactory
-import javax.net.ssl.TrustManager
-import javax.net.ssl.X509TrustManager
 
 class Constants {
     companion object{
@@ -22,12 +14,10 @@ class Constants {
 
         const val ErrrorMessage = "Can't reach the server. Try again!"
 
+        // Default options for using glide, if image can't load set a default one
         val bookRequestOptions = RequestOptions()
             .placeholder(R.drawable.book_placeholder)
             .error(R.drawable.book_placeholder)
-            //.centerInside()
-            //.centerCrop()
-            .fitCenter()
 
         val profileRequestOptions = RequestOptions()
             .placeholder(R.drawable.default_picture) // ID del recurso del placeholder

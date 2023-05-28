@@ -1,10 +1,10 @@
 package com.example.bookbuddy.api
 
+import com.example.bookbuddy.models.Extra.Author
+import com.example.bookbuddy.models.Extra.Genre
 import com.example.bookbuddy.models.Language
 import com.example.bookbuddy.models.LibraryExtended
 import com.example.bookbuddy.models.Profile
-import com.example.bookbuddy.models.Extra.Author
-import com.example.bookbuddy.models.Extra.Genre
 import retrofit2.Response
 import retrofit2.http.*
 

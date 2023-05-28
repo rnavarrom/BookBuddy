@@ -159,6 +159,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
             }
         }
 
+        // Load more items when scrolling the recycler view
         binding.SearchReciclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

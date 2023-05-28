@@ -47,7 +47,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         launch {
             getCommentsUser(userId, true)
-            loadingEnded()
+            onLoadingEnded()
         }
         return binding.root
     }
@@ -81,8 +81,8 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-
-    fun loadingEnded(){
+    // Change visible layouts and add bindings
+    private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -93,6 +93,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             binding.refresh.isRefreshing = false
         }
 
+        // Load more items when scrolling the recycler view
         binding.rvBookmarks.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

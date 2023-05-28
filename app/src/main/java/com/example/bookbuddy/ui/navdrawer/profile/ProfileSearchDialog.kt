@@ -17,11 +17,14 @@ import com.example.bookbuddy.adapters.SearchGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileSearchBinding
 import com.example.bookbuddy.models.Extra.Genre
-import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Tools
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Dialog to search preferred genre of the user
+ */
 class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
     lateinit var binding: DialogProfileSearchBinding
     private var job: Job = Job()
@@ -42,6 +45,7 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
     ): View {
         binding =  DialogProfileSearchBinding.inflate(layoutInflater, container, false)
 
+        // Load more items when scrolling the recycler view
         binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -65,8 +69,6 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
         // Inflate the layout for this fragment
         binding.searchThings.setOnKeyListener { view, keyCode, event ->
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                // Realizar búsqueda
-                //Toast.makeText(context, "", Toast.LENGTH_LONG).show()
                 val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
@@ -92,9 +94,6 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
 
     override fun onStart() {
         super.onStart()
-        /*
-        dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-         */
         val dialog = dialog
         if (dialog != null) {
             val displayMetrics = DisplayMetrics()
@@ -143,9 +142,6 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener{
     }
 
     private fun performSearch(searchValue: String) {
-        // Aquí se realiza la búsqueda con el texto ingresado en el AutoCompleteTextView
-        //Toast.makeText(requireContext(), "Realizando búsqueda: $searchValue", Toast.LENGTH_SHORT).show()
-
         genres = mutableListOf()
         runBlocking {
             val corrutina = launch {

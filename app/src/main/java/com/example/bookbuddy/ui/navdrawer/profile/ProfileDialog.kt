@@ -24,7 +24,9 @@ import kotlinx.coroutines.*
 import java.io.File
 import kotlin.coroutines.CoroutineContext
 
-
+/**
+ * Profile dialog of other users
+ */
 class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: DialogProfileBinding
     private var job: Job = Job()
@@ -38,14 +40,13 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager: ViewPager
 
-    var permission = false
-
     private var onProfileDialogClose: OnProfileDialogClose? = null
     private var isOnCreateViewExecuted = false
     interface OnProfileDialogClose {
         fun onProfileDialogClose()
     }
 
+    // Set fullscreen dialog style
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -82,11 +83,10 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             username = currentUser!!.name
         }
 
-        launch {
-            loadUser()
-            loadTabLayout()
-            loadingEnded()
-        }
+        loadUser()
+        loadTabLayout()
+        onLoadingEnded()
+
         isOnCreateViewExecuted = true
         return binding.root
     }
@@ -157,7 +157,8 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    fun loadingEnded() {
+    // Change visible layouts
+    private fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainContent.visibility = View.VISIBLE
     }

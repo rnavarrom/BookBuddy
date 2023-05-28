@@ -31,7 +31,6 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var lastPosition = -1
     private var bookRequests: MutableList<BookRequest>? = null
 
-    private var isbn: String? = null
     private val api = CrudApi(this@RequestsFragment)
     private var isOnCreateViewExecuted = false
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,27 +51,13 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.mainContent.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         getRequests(true)
-        loadingEnded()
+        onLoadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
     }
-    /*
-    private fun insertBookRequest(){
-        var result = false
-        if (!isbn.isNullOrEmpty()){
-            // TODO: This?
-            if (result) {
-                showSnackBar(requireContext(), requireView(), getString(R.string.BookRequestInserted))
-                //adapter.updateList(BookRequests as ArrayList<BookRequest>)
-            } else {
-                showSnackBar(requireContext(), requireView(), getString(R.string.BookRequestExists))
-            }
-        } else {
-            showSnackBar(requireContext(), requireView(), getString(R.string.SB_NameEmpty))
-        }
-    }
-    */
-    private fun loadingEnded(){
+
+    // // Change visible layouts and add bindings
+    private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -136,6 +121,7 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             binding.mainContent.isRefreshing = false
         }
 
+        // Load more items when scrolling the recycler view
         binding.rvRequests.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

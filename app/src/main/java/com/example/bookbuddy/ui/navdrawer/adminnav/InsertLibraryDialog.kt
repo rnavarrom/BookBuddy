@@ -25,6 +25,9 @@ import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * Dialog to insert o edit a library
+ */
 class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback, ApiErrorListener {
     lateinit var binding: DialogInsertLibraryBinding
     private var job: Job = Job()
@@ -41,6 +44,7 @@ class InsertLibraryDialog : DialogFragment(), CoroutineScope, OnMapReadyCallback
         fun onAdminDialogClose()
     }
 
+    // Set fullscreen dialog style
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(

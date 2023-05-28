@@ -1,17 +1,12 @@
 package com.example.bookbuddy.ui.navdrawer
 
 import android.os.Bundle
-import android.os.Parcel
 import android.os.Parcelable
 import android.view.*
-import androidx.core.view.removeItemAt
 import androidx.fragment.app.Fragment
 import com.example.bookbuddy.R
 import com.example.bookbuddy.databinding.FragmentAdminBinding
 import com.example.bookbuddy.ui.navdrawer.adminnav.*
-import com.example.bookbuddy.utils.navController
-import com.example.bookbuddy.utils.navTop
-import com.example.bookbuddy.utils.navView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

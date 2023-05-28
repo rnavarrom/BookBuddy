@@ -39,7 +39,6 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
         var percentage = vista.findViewById<TextView>(R.id.progress_text)!!
         var progressbar = vista.findViewById<ProgressBar>(R.id.progress_bar)!!
         val linearLayout = vista.findViewById<LinearLayout>(R.id.home_ll)!!
-        //val dummyText = vista.findViewById<TextView>(R.id.NoBooksTV)
     }
 
     lateinit var context: Context
@@ -51,15 +50,6 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        /*
-        println("------------" + llista.size)
-        if(llista.isEmpty()){
-            holder.dummyText.visibility = View.VISIBLE
-            println("Showing dummy")
-        }
-
-         */
-        //println(llista[position].pages.toString())
         holder.pagesReaded.text = list[position].pagesReaded.toString()
         holder.pagesTotal.text = list[position].pages.toString()
         val percent = makePercentage(list[position].pagesReaded, list[position].pages)
@@ -94,12 +84,10 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
     ) {
         val builder = AlertDialog.Builder(context)
         val inflater = layoutInf
-        //builder.setTitle("Book progress")
         val dialogLayout = inflater.inflate(R.layout.dialog_readed_pages, null)
         val editText = dialogLayout.findViewById<EditText>(R.id.dialog_readed_pages)
         val total = dialogLayout.findViewById<TextView>(R.id.dialog_total_pages)
         total.text = list[position].pages.toString()
-        // editText.setText(llista[position].pagesReaded)
         builder.setView(dialogLayout)
         builder.setNegativeButton(context.getString(R.string.BT_Cancel)) { _, _ -> }
         builder.setPositiveButton(context.getString(R.string.BT_Accept)) { _, _ ->
@@ -112,7 +100,6 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
                 holder.progressbar.progress = percent
                 holder.percentage.text = percent.toString()
                 putBook(list[position].readedId, list[position].pagesReaded)
-                //RemoveBookReading(llista[position].readedId)
                 getUser()
                 reloadFragment(fragment)
             }else if ( valueint < list[position].pages) {
@@ -162,9 +149,6 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        //if (this::context.isInitialized){
-
-        //}
         showSnackBar(context, view, Constants.ErrrorMessage)
     }
 }

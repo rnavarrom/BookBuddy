@@ -46,7 +46,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         binding.refresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
         getCommentsUser(userId, true)
-        loadingEnded()
+        onLoadingEnded()
 
         return binding.root
     }
@@ -79,8 +79,8 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-
-    private fun loadingEnded(){
+    // Change visible layouts and add bindings
+    private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -90,6 +90,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             binding.refresh.isRefreshing = false
         }
 
+        // Load more items when scrolling the recycler view
         binding.rvComments.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

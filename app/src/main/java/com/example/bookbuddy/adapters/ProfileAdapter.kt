@@ -8,6 +8,9 @@ import androidx.fragment.app.FragmentPagerAdapter
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileBookMarksFragment
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileCommentsFragment
 
+/**
+ * Class that manages which fragment to display in the tablayout under profile.
+ */
 @Suppress("DEPRECATION")
 internal class ProfileAdapter(
     var context: Context?,

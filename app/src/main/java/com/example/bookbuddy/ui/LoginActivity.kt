@@ -20,7 +20,6 @@ import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.api.logging
 import com.example.bookbuddy.databinding.ActivityLoginBinding
-import com.example.bookbuddy.models.User
 import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.generateRandomPassword
 import com.example.bookbuddy.utils.Tools.Companion.responseToFile
@@ -30,7 +29,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.*
 import javax.mail.*

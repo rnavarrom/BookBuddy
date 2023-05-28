@@ -19,7 +19,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-
+/**
+ * Adapter for displaying comments of a user in a RecyclerView.
+ * @param list The list of comments to display.
+ */
 class ProfileCommentAdapter(var list: java.util.ArrayList<Comment>, private val isProfileFragment: Boolean) :
     RecyclerView.Adapter<ProfileCommentAdapter.ViewHolder>(), CoroutineScope {
     private var job: Job = Job()

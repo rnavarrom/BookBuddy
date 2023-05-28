@@ -20,7 +20,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlin.coroutines.CoroutineContext
 
-
+/**
+ * Adapter for displaying marked books of a user in a RecyclerView.
+ * @param list The list of books to display.
+ */
 class ProfileBookMarkAdapter(var list: java.util.ArrayList<Readed>, private val isProfileFragment: Boolean) :
     RecyclerView.Adapter<ProfileBookMarkAdapter.ViewHolder>(), CoroutineScope {
     private var job: Job = Job()

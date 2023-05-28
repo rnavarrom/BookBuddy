@@ -55,7 +55,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         )
 
         getAuthors(true)
-        loadingEnded()
+        onLoadingEnded()
         isOnCreateViewExecuted = true
         return binding.root
     }
@@ -173,8 +173,9 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_NameEmpty))
         }
     }
-    //Stop the loading animation
-    fun loadingEnded() {
+
+    // Change visible layouts and add bindings
+    private fun onLoadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
 
@@ -221,7 +222,8 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             getAuthors(false)
             binding.mainContent.isRefreshing = false
         }
-        //Handle scroll listener calls
+
+        // Load more items when scrolling the recycler view
         binding.rvAuthors.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

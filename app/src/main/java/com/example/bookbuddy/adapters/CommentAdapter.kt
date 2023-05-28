@@ -23,7 +23,6 @@ import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.coroutines.CoroutineContext
@@ -133,10 +132,10 @@ class CommentAdapter(var list: java.util.ArrayList<Comment>, val activity: Activ
                     when (item.itemId) {
                         R.id.delete_comment -> {
                             runBlocking {
-                                val corroutine = launch {
+                                val coroutine = launch {
                                     api.deleteCommentToAPI(list[position].comentId!!)
                                 }
-                                corroutine.join()
+                                coroutine.join()
                                 list.removeAt(position)
                                 notifyDataSetChanged()
                             }

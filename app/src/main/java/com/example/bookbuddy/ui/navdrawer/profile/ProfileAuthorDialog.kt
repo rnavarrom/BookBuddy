@@ -18,12 +18,14 @@ import com.example.bookbuddy.adapters.SearchAuthorsAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileSearchAuthorBinding
 import com.example.bookbuddy.models.Extra.Author
-import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.ApiErrorListener
+import com.example.bookbuddy.utils.Tools
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-
+/**
+ * Dialog to select the preferred author of the user
+ */
 class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: DialogProfileSearchAuthorBinding
     private var job: Job = Job()
@@ -45,6 +47,7 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     ): View {
         binding =  DialogProfileSearchAuthorBinding.inflate(layoutInflater, container, false)
 
+        // Load more items when scrolling the recycler view
         binding.rvSearch.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)

@@ -28,7 +28,9 @@ import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
-
+/**
+ * Shows the list of libraries that has a book
+ */
 class LibrariesListDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: DialogBookdisplayLibrariesListBinding
     private var job: Job = Job()
@@ -45,6 +47,8 @@ class LibrariesListDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     private var lastPosition = -1
     var libraries: MutableList<LibraryExtended>? = null
     private var gpsCar: Boolean = true
+
+    // Set fullscreen dialog style
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(
@@ -98,7 +102,7 @@ class LibrariesListDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 binding.gpswalk.visibility = View.INVISIBLE
             }
             getLibrariesBook(isbn, true)
-            loadingEnded()
+            onLoadingEnded()
         }
     }
 
@@ -146,7 +150,8 @@ class LibrariesListDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
         }
     }
 
-    private fun loadingEnded(){
+    // Change visible layouts and add bindings
+    private fun onLoadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
         binding.gpssearch.setOnClickListener {
@@ -189,6 +194,7 @@ class LibrariesListDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
             binding.mainContent.isRefreshing = false
         }
 
+        // Load more items when scrolling the recycler view
         binding.rvLibraries.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
