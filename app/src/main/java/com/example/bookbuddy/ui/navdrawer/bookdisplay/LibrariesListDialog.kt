@@ -142,12 +142,7 @@ class LibrariesListDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                             libraries = tmpLibraries
                         }
                     }
-
-                } else {
-                    // TODO: this
-                    //libraries!!.addAll((setCardview(api.getCommentsFromBook(bookId,position) as ArrayList<Comment>) as MutableList<Comment>?)!!)
                 }
-
             }
             coroutine.join()
         }

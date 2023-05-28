@@ -93,10 +93,9 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
     private fun getCommentsBook(bookId: Int, addAdapter: Boolean) {
         var tmpComments: List<Comment>? = null
         runBlocking {
-
             val coroutine = launch {
                 if (position == 0) {
-                    tmpComments = setCardview(api.getCommentsFromBook(bookId, position) as ArrayList<Comment>)
+                    tmpComments = setCardview(api.getCommentsFromBook(bookId, position) as ArrayList<Comment>?)
                     if (tmpComments != null){
                         comments = tmpComments as ArrayList<Comment>
                     }
@@ -167,13 +166,16 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
         })
     }
 
-    private fun setCardview(coms: ArrayList<Comment>): ArrayList<Comment> {
-        coms.forEach { c ->
-            if (c.user!!.userId == currentUser!!.userId) {
-                c.typeCardview = 1
+    private fun setCardview(coms: ArrayList<Comment>?): ArrayList<Comment>? {
+        if (coms != null){
+            coms.forEach { c ->
+                if (c.user!!.userId == currentUser!!.userId) {
+                    c.typeCardview = 1
+                }
             }
+            return coms
         }
-        return coms
+        return null
     }
 
     private fun loadMoreItems() {

@@ -8,10 +8,6 @@ interface LibraryAPI {
     @GET("/api/library/count/{isbn}")
     suspend fun getLibraryCount(@Path("isbn") isbn: String): Response<Int>
 
-    /*
-    @GET("/api/library/{isbn}")
-    suspend fun getLibrariesBook(@Path("isbn") isbn: String): Response<List<Library>>
-    */
     @GET("/api/libraries/{isbn}")
     suspend fun getLibrariesBook(@Path("isbn") isbn: String): Response<List<LibraryExtended>>
 
@@ -29,11 +25,6 @@ interface LibraryAPI {
         @Path("position") position: Int
     ): Response<List<Library>>
 
-    @GET("/api/library/{library_id}/{position}")
-    suspend fun getLibraryBooks(
-        @Path("library_id") libraryId: Int,
-        @Path("position") position: Int
-    ): Response<List<Book>>
 
     @POST("/api/library/{name}/{lat}/{lon}/{zip}")
     suspend fun insertLibrary(

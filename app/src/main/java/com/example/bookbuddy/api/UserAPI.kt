@@ -5,9 +5,6 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface UserAPI {
-
-    //@GET("/users/")
-    //suspend fun getUsers(): Response<UserList>
     @GET("/api/user/name/{userName}")
     suspend fun getUserExists(@Path("userName") userName: String): Response<Boolean>
 
@@ -24,8 +21,6 @@ interface UserAPI {
     @GET("/api/user/{userId}")
     suspend fun getUserId(@Path("userId") userId: Int): Response<User>
 
-    //@GET("/api/books/search/{book}/{author}/{genre}")
-    //suspend fun getSimpleSearch(@Path("book") book: String, @Path("author") author: String, @Path("genre") genre: String): Response<ArrayList<SimpleBook>>
     @POST("/api/user/{name}/{password}/{email}")
     suspend fun insertUser(
         @Path("name") name: String,

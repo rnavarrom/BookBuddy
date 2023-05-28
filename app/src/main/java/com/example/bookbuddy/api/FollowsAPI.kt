@@ -17,9 +17,6 @@ interface FollowsAPI {
     @GET("/api/follows/count/{userid}")
     suspend fun getFollowersUser(@Path("userid") userId: Int): Response<Int>
 
-    //@GET("/api/follows/contacts/{userid}/{emails}")
-    //suspend fun getEmailsContact(@Path("userid") userId: Int, @Path("emails") emails: List<String>): Response<Int>
-
     @GET("/api/follows/getcontacts/{userid}/{position}")
     suspend fun getFollowersProfile(
         @Path("userid") userId: Int,

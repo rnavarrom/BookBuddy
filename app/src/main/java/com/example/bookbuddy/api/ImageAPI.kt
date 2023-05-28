@@ -17,7 +17,4 @@ interface ImageAPI {
         @Path("iscover") iscover: Boolean,
         @Part image: MultipartBody.Part
     ): Response<ResponseBody>
-
-    @POST("/api/images/")
-    suspend fun insertImage(@Body image: File): Response<File>
 }

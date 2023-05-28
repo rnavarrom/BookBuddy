@@ -12,7 +12,6 @@ interface ReadedAPI {
         @Path("user_id") user_id: Int,
         @Path("position") position: Int
     ): Response<List<Readed>>
-    //suspend fun getUserLogin(@Path("userName") user_id: String, @Path("password") password: String): Response<Boolean>
 
     @GET("/api/readed/{book_id}/{user_id}")
     suspend fun getReadedsFromBook(
@@ -52,12 +51,6 @@ interface ReadedAPI {
         @Path("position") position: Int
     ): Response<List<Pending>>
 
-    @POST("/api/readed/{}")
-    suspend fun insertReaded(@Body readed: Readed): Response<Readed>
-
-    //@PUT("/api/readed/{readed}")
-    //suspend fun updateProducte(@Body readed: Readed): Response<Readed>
-
     @DELETE("/api/readed/{id}")
     suspend fun deleteReaded(@Path("id") id: Int): Response<Readed>
 
@@ -67,8 +60,6 @@ interface ReadedAPI {
         @Path("pagesReaded") pagesReaded: Int
     ): Response<Boolean>
 
-    //@PUT("/api/readed/remove/{book_id}/{user_id}")
-    //suspend fun removeBookReading(@Path("readedId") readedId: Int): Response<Boolean>
     @DELETE("/api/readed/delete/{book_id}/{user_id}")
     suspend fun removeBookReading(
         @Path("book_id") book_id: Int,
@@ -93,6 +84,4 @@ interface ReadedAPI {
         @Path("user_id") user_id: Int
     ): Response<Boolean>
 
-    //@POST("/api/readed/postnew/{userId}/{bookId}")
-    //suspend fun postBookReading(@Path("userId") userId: Int, @Path("bookId") bookId: Int): Response<Boolean>
 }

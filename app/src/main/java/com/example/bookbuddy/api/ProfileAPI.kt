@@ -13,9 +13,6 @@ interface ProfileAPI {
     @GET("/api/profile/{userid}")
     suspend fun getProfileUser(@Path("userid") userId: Int): Response<Profile>
 
-    //@PUT("/api/comment/{commentid}/{commenttext}/{rating}/{userid}/{bookid}")
-    //suspend fun updateProfile(@Path("commentid") commentid: Int, @Path("commenttext") commenttext: String, @Path("rating") rating: Int, @Path("userid") userid: Int, @Path("bookid") bookid: Int ): Response<Comment>
-
     @GET("/api/profile/search/genres/{name}/{position}")
     suspend fun getSearchGenres(
         @Path("name") name: String,
@@ -40,12 +37,6 @@ interface ProfileAPI {
         @Path("position") position: Int
     ): Response<List<LibraryExtended>>
 
-    @POST("/api/profile/{genreid}/{authorid}/{userid}")
-    suspend fun insertProfile(
-        @Path("genreid") genreId: Int,
-        @Path("authorid") authorId: Int,
-        @Path("userid") userId: Int
-    ): Response<Profile>
 
     @PUT("/api/profile/genre/{id}/{genre}")
     suspend fun updateProfileGenre(
@@ -58,9 +49,4 @@ interface ProfileAPI {
         @Path("id") id: Int,
         @Path("author") author: Int
     ): Response<Boolean>
-
-    @DELETE("/api/profile/{id}")
-    suspend fun deleteProfile(@Path("id") id: Int): Response<Profile>
-
-
 }

@@ -25,8 +25,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
 
     private var job: Job = Job()
 
-    //private var okHttpClient: OkHttpClient = UnsafeOkHttpClient.unsafeOkHttpClient
-
     private var okHttpClient = OkHttpClient.Builder().apply {
         ignoreAllSSLErrors()
     }.addInterceptor(logging).build()
@@ -59,8 +57,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             apiCall = { getRetrofit().create(UserAPI::class.java).getUserId(userId) },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(BookAPI::class.java).getUserId(userId).body()
-        //return response!!
     }
 
     suspend fun getUserExists(userName: String): Boolean? {
@@ -84,8 +80,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(BookAPI::class.java).getSimpleSearch(position, searchvalues).body()
-        //return response!!
     }
 
     suspend fun addUserToAPI(user: UserItem): Boolean? {
@@ -128,8 +122,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             apiCall = { getRetrofit().create(UserAPI::class.java).updateUserName(id, name) },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(BookAPI::class.java).updateUserName(id, name)
-        //return call.isSuccessful
     }
 
 
@@ -138,14 +130,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             apiCall = { getRetrofit().create(BookAPI::class.java).getBookExist(isbn) },
             errorListener = errorListener!!
         )
-        /*
-        val response = getRetrofit().create(BookAPI::class.java).getBookExist(isbn)
-        if (response.isSuccessful){
-            return true
-        }
-        return false
-
-         */
     }
 
     suspend fun getBook(isbn: String, userId: Int): Book? {
@@ -153,14 +137,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             apiCall = { getRetrofit().create(BookAPI::class.java).getBookInfo(isbn, userId) },
             errorListener = errorListener!!
         )
-        /*
-        val response = getRetrofit().create(BookAPI::class.java).getBookInfo(isbn, userId)
-        if (response.isSuccessful){
-            return response.body()
-        }
-        return null
-
-         */
     }
 
     suspend fun getRecommendedBooks(userId: Int, position: Int): List<Book>? {
@@ -170,36 +146,16 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(BookAPI::class.java).getRecommendedBooks(userId, position)
-        //if (response.isSuccessful){
-        //    return response.body()
-        //}
-        //return null
     }
 
     // Books CRUD
 
-    suspend fun getAllBooks(position: Int): List<Book>? {
-        return safeApiCall(
-            apiCall = { getRetrofit().create(BookAPI::class.java).getBooks(position) },
-            errorListener = errorListener!!
-        )
-    }
 
     suspend fun getAllBooksSearch(title: String, search: Boolean, position: Int): List<Book>? {
         return safeApiCall(
             apiCall = {
                 getRetrofit().create(BookAPI::class.java)
                     .getBooksAdminSearch(title, search, position)
-            },
-            errorListener = errorListener!!
-        )
-    }
-
-    suspend fun getAllBooksByAuthor(authorId: Int, position: Int): List<Book>? {
-        return safeApiCall(
-            apiCall = {
-                getRetrofit().create(BookAPI::class.java).getBooksByAuthor(authorId, position)
             },
             errorListener = errorListener!!
         )
@@ -249,14 +205,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
         )
     }
 
-    suspend fun getGenreBooks(genreId: Int, position: Int): List<Book>? {
-        return safeApiCall(
-            apiCall = {
-                getRetrofit().create(GenreAPI::class.java).getGenreBooks(genreId, position)
-            },
-            errorListener = errorListener!!
-        )
-    }
 
     suspend fun insertGenre(genreName: String): Boolean? {
         return safeApiCall(
@@ -335,14 +283,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
         )
     }
 
-    suspend fun getLibraryBooks(libraryId: Int, position: Int): List<Book>? {
-        return safeApiCall(
-            apiCall = {
-                getRetrofit().create(LibraryAPI::class.java).getLibraryBooks(libraryId, position)
-            },
-            errorListener = errorListener!!
-        )
-    }
 
     suspend fun insertLibrary(
         libraryName: String,
@@ -501,8 +441,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(ReadedAPI::class.java).getReadedsFromUser(user_id, position).body()
-        //return response!!
     }
 
     suspend fun getReadBooksFromUser(user_id: Int, position: Int): List<Pending>? {
@@ -512,8 +450,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(ReadedAPI::class.java).getReadBooksFromUser(user_id, position).body()
-        //return response!!
     }
 
     suspend fun getPendingBooksFromUser(user_id: Int, position: Int): List<Pending>? {
@@ -524,8 +460,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(ReadedAPI::class.java).getPendingBooksFromUser(user_id, position).body()
-        //return response!!
     }
 
     suspend fun getReadingBooksFromUser(user_id: Int, position: Int): List<ActualReading>? {
@@ -536,8 +470,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(ReadedAPI::class.java).getReadingBooksFromUser(user_id, position).body()
-        //return response!!
     }
 
 
@@ -548,33 +480,8 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        /*
-        val response = getRetrofit().create(ReadedAPI::class.java).getReadedsFromBook(bookId, userId)
-        if (response.isSuccessful){
-            return response.body()
-        }
-        return null
-
-         */
     }
 
-    /*
-    suspend fun addReadedToAPI(readed: Readed): Boolean {
-        val call = getRetrofit().create(ReadedAPI::class.java).insertReaded(readed)
-        return call.isSuccessful
-    }
-
-    suspend fun deleteReadedToAPI(readed_id: Int): Boolean {
-        val call = getRetrofit().create(ReadedAPI::class.java).deleteReaded(readed_id)
-        return call.isSuccessful
-    }
-
-    suspend fun updatePagesReaded(readed_id: Int): Boolean {
-        val call = getRetrofit().create(ReadedAPI::class.java).deleteReaded(readed_id)
-        return call.isSuccessful
-    }
-
-     */
 
     // Comments
 
@@ -585,14 +492,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-/*
-        val response = getRetrofit().create(CommentAPI::class.java).getCommentsBook(book_id, position)
-        if (response.isSuccessful){
-            return response.body()
-        }
-        return null
-
- */
     }
 
     suspend fun getCommentsCounter(book_id: Int): Int? {
@@ -600,14 +499,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             apiCall = { getRetrofit().create(CommentAPI::class.java).getCommentsCounter(book_id) },
             errorListener = errorListener!!
         )
-        /*
-        val response = getRetrofit().create(CommentAPI::class.java).getCommentsCounter(book_id)
-        if (response.isSuccessful){
-            return response.body()
-        }
-        return null
-
-         */
     }
 
     suspend fun getUserComments(user_id: Int, position: Int): List<Comment>? {
@@ -617,11 +508,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(CommentAPI::class.java).getUserComments(user_id, position)
-        //if (response.isSuccessful){
-        //    return response.body()
-        //}
-        //return null
     }
 
 
@@ -632,14 +518,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        /*
-        val response = getRetrofit().create(CommentAPI::class.java).getUserComment(user_id, book_id)
-        if (response.isSuccessful){
-            return response.body()
-        }
-        return null
-
-         */
     }
 
 
@@ -656,8 +534,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(CommentAPI::class.java).insertComment(commenttext, rating, userid, bookid)
-        //return call.isSuccessful
     }
 
 
@@ -675,8 +551,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(CommentAPI::class.java).updateComment(commentid, commenttext, rating, userid, bookid)
-        //return call.isSuccessful
     }
 
     suspend fun deleteCommentToAPI(id: Int): Any? {
@@ -684,8 +558,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             apiCall = { getRetrofit().create(CommentAPI::class.java).deleteComment(id) },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(CommentAPI::class.java).deleteComment(id)
-        //return call.isSuccessful
     }
 
     // Book Requests
@@ -694,8 +566,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             apiCall = { getRetrofit().create(RequestAPI::class.java).insertRequest(isbn) },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(RequestAPI::class.java).insertRequest(isbn)
-        //return call.body()!!
     }
 
     suspend fun getRequests(position: Int): List<BookRequest>? {
@@ -731,11 +601,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(ProfileAPI::class.java).getSearchGenres(name, position)
-        //if (response.isSuccessful){
-        //    return response.body()
-        //}
-        //return null
     }
 
     suspend fun getSearchAuthors(
@@ -748,11 +613,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(ProfileAPI::class.java).getSearchAuthors(name, position)
-        //if (response.isSuccessful){
-        //    return response.body()
-        //}
-        //return null
     }
 
     suspend fun getSearchLanguages(name: String, position: Int): List<Language>? {
@@ -773,13 +633,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
         )
     }
 
-    suspend fun addProfileToAPI(genreId: Int, authorId: Int, userId: Int): Profile? {
-        val call =
-            getRetrofit().create(ProfileAPI::class.java).insertProfile(genreId, authorId, userId)
-        return call.body()
-    }
-
-
     suspend fun updateProfileGenreToAPI(id: Int, genre: Int): Boolean? {
         return safeApiCall(
             apiCall = {
@@ -787,8 +640,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(ProfileAPI::class.java).updateProfileGenre(id, genre)
-        //return call.body()
     }
 
     suspend fun updateProfileAuthorToAPI(id: Int, author: Int): Boolean? {
@@ -798,16 +649,7 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(ProfileAPI::class.java).updateProfileAuthor(id, author)
-        //return call.body()
     }
-/*
-    suspend fun deleteProfileToAPI(id: Int): Boolean{
-        val call = getRetrofit().create(ProfileAPI::class.java).deleteProfile(id)
-        return call.isSuccessful
-    }
-
- */
 
     // Images
 
@@ -816,8 +658,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             apiCall = { getRetrofit().create(ImageAPI::class.java).getUserImage(userId) },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(ImageAPI::class.java).getImage(userId)
-        //return call
     }
 
     suspend fun uploadImageToAPI(isCover: Boolean, image: MultipartBody.Part): ResponseBody? {
@@ -825,40 +665,14 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             apiCall = { getRetrofit().create(ImageAPI::class.java).uploadImage(isCover, image) },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(ImageAPI::class.java).uploadImage(image)
-        //return call
     }
 
-    /*
-    suspend fun getImageToAPI(image: String): String? {
-        val call = getRetrofit().create(ImageAPI::class.java).getImage(image)
-        return call.body()
-    }
-
-    suspend fun addImageToAPI(image: File): File? {
-        val call = getRetrofit().create(ImageAPI::class.java).insertImage(image)
-        return call.body()
-    }
-
-    suspend fun uploadImageToAPI(image: MultipartBody.Part): Response<ResponseBody> {
-        val call = getRetrofit().create(ImageAPI::class.java).uploadImage(image)
-        return call
-    }
-    */
     // Libraries
-    /*
-    suspend fun getBookLibraries(isbn: String): List<Library> {
-        val response = getRetrofit().create(LibraryAPI::class.java).getLibrariesBook(isbn).body()
-        return response!!
-    }
-    */
     suspend fun getBookLibraries(isbn: String): List<LibraryExtended>? {
         return safeApiCall(
             apiCall = { getRetrofit().create(LibraryAPI::class.java).getLibrariesBook(isbn) },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(LibraryAPI::class.java).getLibrariesBook(isbn).body()
-        //return response
     }
 
     suspend fun getBookLibrariesExtended(
@@ -873,8 +687,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(LibraryAPI::class.java).getLibrariesExtendedBook(isbn, latitude, longitude).body()
-        //return response
     }
 
     suspend fun getBookLibrariesCount(isbn: String): Int? {
@@ -882,8 +694,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             apiCall = { getRetrofit().create(LibraryAPI::class.java).getLibraryCount(isbn) },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(LibraryAPI::class.java).getLibraryCount(isbn).body()
-        //return response!!
     }
 
     // Follows
@@ -895,11 +705,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(FollowsAPI::class.java).getFollowing(userId, userFollowedId)
-        //if (response.isSuccessful){
-        //    return response.body()
-        //}
-        //return null
     }
 
     suspend fun getFollowerCount(userId: Int): Int? {
@@ -907,11 +712,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             apiCall = { getRetrofit().create(FollowsAPI::class.java).getFollowersUser(userId) },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(FollowsAPI::class.java).getFollowersUser(userId)
-        //if (response.isSuccessful){
-        //    return response.body()
-        //}
-        //return null
     }
 
     suspend fun getFollowersProfile(userId: Int, position: Int): List<UserItem>? {
@@ -921,11 +721,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(FollowsAPI::class.java).getFollowersProfile(userId, position)
-        //if (response.isSuccessful){
-        //    return response.body()
-        //}
-        //return null
     }
 
     suspend fun getEmailsContact(userId: Int, emails: List<String>): Int? {
@@ -935,11 +730,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val response = getRetrofit().create(FollowsAPI::class.java).getEmailsContact(userId, emails)
-        //if (response.isSuccessful){
-        //    return response.body()
-        //}
-        //return null
     }
 
     suspend fun addFollowToAPI(userId: Int, userFollowedId: Int): Boolean? {
@@ -949,8 +739,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(FollowsAPI::class.java).insertFollow(userId, userFollowedId)
-        //return call.isSuccessful
     }
 
     suspend fun deleteFollowAPI(userId: Int, userFollowedId: Int): Boolean? {
@@ -960,8 +748,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(FollowsAPI::class.java).deleteFollow(userId, userFollowedId)
-        //return call.isSuccessful
     }
 
     suspend fun updateReadedToAPI(readedId: Int, pagesReaded: Int): Boolean? {
@@ -971,8 +757,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(ReadedAPI::class.java).updatePagesReaded(readedId, pagesReaded)
-        //return call.isSuccessful
     }
 
     suspend fun removeBookReading(bookId: Int, userId: Int): Boolean? {
@@ -982,8 +766,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(ReadedAPI::class.java).removeBookReading(bookId, userId)
-        //return call.isSuccessful
     }
 
     suspend fun setBookPending(bookId: Int, userId: Int): Boolean? {
@@ -993,8 +775,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(ReadedAPI::class.java).setBookPending(bookId, userId)
-        //return call.isSuccessful
     }
 
     suspend fun setBookReading(bookId: Int, userId: Int): Boolean? {
@@ -1004,8 +784,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(ReadedAPI::class.java).setBookReading(bookId, userId)
-        //return call.isSuccessful
     }
 
     suspend fun setBookRead(bookId: Int, userId: Int): Boolean? {
@@ -1013,8 +791,6 @@ class CrudApi(private val errorListener: ApiErrorListener? = null) : CoroutineSc
             apiCall = { getRetrofit().create(ReadedAPI::class.java).setBookRead(bookId, userId) },
             errorListener = errorListener!!
         )
-        //val call = getRetrofit().create(ReadedAPI::class.java).setBookRead(bookId, userId)
-        //return call.isSuccessful
     }
 
     suspend fun filterPendingBook(user_id: Int, filter: String, position: Int): List<Pending>? {

@@ -28,9 +28,6 @@ interface CommentAPI {
         @Path("bookId") bookId: Int
     ): Response<Comment>
 
-    //@POST("/api/comment/{}")
-    //suspend fun insertComment(@Body comment: Comment2): Response<Comment2>
-
     @PUT("/api/comment/{commentid}/{commenttext}/{rating}/{userid}/{bookid}")
     suspend fun updateComment(
         @Path("commentid") commentid: Int,
