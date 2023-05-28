@@ -12,9 +12,11 @@ import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
+import com.example.bookbuddy.adapters.SearchAuthorsAdapter
 import com.example.bookbuddy.adapters.SearchGenresAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileSearchBinding
+import com.example.bookbuddy.models.Extra.Author
 import com.example.bookbuddy.models.Extra.Genre
 import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Constants
@@ -77,11 +79,10 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
                 val searchValue = binding.searchThings.text.toString()
 
-                performSearch(searchValue)
-
-                if (genres!!.isNotEmpty()) {
+                if (searchValue.isNotEmpty()) {
                     position = 0
                     lastPosition = -1
+                    performSearch(searchValue)
                     binding.rvSearch.layoutManager = LinearLayoutManager(context)
                     adapter = SearchGenresAdapter(
                         this,
@@ -89,6 +90,8 @@ class ProfileSearchDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                         genres as java.util.ArrayList<Genre>
                     )
                     binding.rvSearch.adapter = adapter
+                } else {
+                    Tools.showSnackBar(requireContext(), requireView(), getString(R.string.MSG_GenreCannotBeEmpty))
                 }
                 true
             } else {

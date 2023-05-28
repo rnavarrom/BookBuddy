@@ -145,7 +145,7 @@
         3. Modificacions dels Termes: Ens reservem el dret de modificar aquests Termes en qualsevol moment. Et recomanem que els revisis periòdicament. Si continues utilitzant la nostra aplicació després de qualsevol modificació, acceptes els Termes modificats.\n\n
         4. Resolució de conflictes Qualsevol conflicte que sorgeixi en relació amb aquests Termes es resoldrà mitjançant arbitratge de conformitat amb les regles d\'arbitratge comercial de [Nom de la institució d\'arbitratge]. L\'arbitratge es durà a terme en [Nom de la ciutat i país on es troba la institució d\'arbitratge].\n\n
         5. Llei aplicable Aquests Termes es regiran i interpretaran de conformitat amb les lleis d\'Espanya sense donar efecte a cap principi de conflicte de lleis.\n\n
-        Si tens alguna pregunta sobre aquests Termes, si us plau contacta\'ns a través de bookbudy@info.com</string>
+        Si tens alguna pregunta sobre aquests Termes, si us plau contacta\'ns a través de bookbuddyinfo2023@gmail.com</string>
     <string name="LAY_Author">Autor:</string>
     <string name="LAY_AuthorHint">Autor</string>
     <string name="LAY_Language">Idioma:</string>
@@ -255,4 +255,5 @@
     <string name="TTS_Title">Títol:</string>
     <string name="TTS_Description">Descripció:</string>
     <string name="MSG_PasswordError">Com a mínim una lletra minúscula, una majúscules, un nombre i 8 caràcters de longitud</string>
+    <string name="MSG_PasswordVisualize">Veure contrasenya</string>
 </resources>

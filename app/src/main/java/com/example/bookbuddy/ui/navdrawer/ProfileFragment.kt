@@ -38,6 +38,7 @@ import com.example.bookbuddy.ui.navdrawer.profile.ProfileAuthorDialog
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileSearchDialog
 import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Constants.Companion.profileRequestOptions
+import com.example.bookbuddy.utils.Tools.Companion.isPasswordValid
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*
@@ -216,25 +217,30 @@ class ProfileFragment : Fragment(), CoroutineScope,
                             getString(R.string.MSG_PasswordMatch)
                         )
                     } else {
-                        var result: Boolean? = null
-                        val passwordSha = Sha.calculateSHA(password1)
-                        runBlocking {
-                            launch {
-                                result = api.updateUserPasswordId(currentUser!!.userId, passwordSha)
+                        if (isPasswordValid(password1)){
+                            var result: Boolean? = null
+                            val passwordSha = Sha.calculateSHA(password1)
+                            runBlocking {
+                                val coroutine = launch {
+                                    result = api.updateUserPasswordId(currentUser!!.userId, passwordSha)
+                                }
+                                coroutine.join()
                             }
-                        }
-                        if (result != null && result as Boolean) {
-                            showSnackBar(
-                                requireContext(),
-                                requireView(),
-                                getString(R.string.MSG_PasswordChanged)
-                            )
+                            if (result != null && result as Boolean) {
+                                showSnackBar(
+                                    requireContext(),
+                                    requireView(),
+                                    getString(R.string.MSG_PasswordChanged)
+                                )
+                            } else {
+                                showSnackBar(
+                                    requireContext(),
+                                    requireView(),
+                                    getString(R.string.MSG_NewPassword)
+                                )
+                            }
                         } else {
-                            showSnackBar(
-                                requireContext(),
-                                requireView(),
-                                getString(R.string.MSG_NewPassword)
-                            )
+                            showSnackBar(requireContext(), requireView(), getString(R.string.MSG_PasswordError))
                         }
                     }
                 }

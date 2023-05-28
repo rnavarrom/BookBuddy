@@ -80,11 +80,12 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
 
                 val searchValue = binding.searchThings.text.toString()
 
-                performSearch(searchValue)
 
-                if (authors!!.isNotEmpty()) {
+
+                if (searchValue.isNotEmpty()) {
                     position = 0
                     lastPosition = -1
+                    performSearch(searchValue)
                     binding.rvSearch.layoutManager = LinearLayoutManager(context)
                     adapter = SearchAuthorsAdapter(
                         this,
@@ -92,7 +93,10 @@ class ProfileAuthorDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                         authors as java.util.ArrayList<Author>
                     )
                     binding.rvSearch.adapter = adapter
+                } else {
+                    Tools.showSnackBar(requireContext(), requireView(), getString(R.string.MSG_AuthorCannotBeEmpty))
                 }
+
                 true
             } else {
                 false

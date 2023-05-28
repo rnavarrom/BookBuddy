@@ -139,7 +139,7 @@
                 app:layout_constraintTop_toTopOf="@+id/CA_Edit_Password"
                 app:layout_constraintEnd_toEndOf="@+id/CA_Edit_Password"
                 android:layout_marginTop="10dp"
-                />
+                android:contentDescription="@string/MSG_PasswordVisualize" />
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -148,6 +148,7 @@
                 app:layout_constraintTop_toTopOf="@+id/CA_Edit_Password2"
                 app:layout_constraintEnd_toEndOf="@+id/CA_Edit_Password2"
                 android:layout_marginTop="10dp"
+                android:contentDescription="@string/MSG_PasswordVisualize"
                 />
             <TextView
                 android:layout_width="wrap_content"

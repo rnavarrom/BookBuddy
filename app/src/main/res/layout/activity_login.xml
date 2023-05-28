@@ -103,7 +103,7 @@
                     android:drawablePadding="10dp"
                     android:drawableTint="@color/primary_green"
                     android:maxLength="22"
-                    />
+                    android:autofillHints="name" />
                 <EditText
                     android:id="@+id/MA_Edit_Password"
                     android:inputType="textPassword"
@@ -120,6 +120,7 @@
                     android:drawablePadding="10dp"
                     android:drawableTint="@color/primary_green"
                     android:maxLength="22"
+                    android:autofillHints="password"
                     />
                 <ImageView
                     android:layout_width="wrap_content"
@@ -129,7 +130,7 @@
                     app:layout_constraintTop_toTopOf="@+id/MA_Edit_Password"
                     app:layout_constraintEnd_toEndOf="@+id/MA_Edit_Password"
                     android:layout_marginTop="10dp"
-                    />
+                    android:contentDescription="@string/MSG_PasswordVisualize" />
                 <CheckBox
                     android:id="@+id/MA_CheckBox"
                     android:layout_width="wrap_content"
