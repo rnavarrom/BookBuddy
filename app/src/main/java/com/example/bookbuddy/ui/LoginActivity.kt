@@ -34,7 +34,9 @@ import java.util.*
 import javax.mail.*
 import javax.mail.internet.InternetAddress
 import javax.mail.internet.MimeMessage
-
+/**
+ * Activity to log in the application
+ */
 class LoginActivity : AppCompatActivity(), ApiErrorListener {
     private val api = CrudApi(this@LoginActivity)
     private lateinit var binding: ActivityLoginBinding
@@ -87,20 +89,18 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
 
             }
             override fun onNothingSelected(parent: AdapterView<*>) {
-                // Acciones a realizar cuando no se selecciona ningún elemento
             }
         }
 
         if (!currentLanguageChanged){
             currentLanguageChanged = true
             setLocal(this@LoginActivity, currentLanguageCode)
-            //recreate()
             val intent = Intent(this, LoginActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
             finish()
         }
-
+        //Check if there is values for auto login
         userPrefs = UserPreferences(this)
         lifecycleScope.launch {
             savedUser = userPrefs.userCredentialsFlow.first().first
@@ -114,6 +114,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
         val userName = intent.getStringExtra("userName")
         binding.MAEditUser.setText(userName)
 
+        //Make a password forgot request
         binding.passwordForgor.setOnClickListener {
             val builder = MaterialAlertDialogBuilder(this)
             val editText = EditText(applicationContext)
@@ -223,8 +224,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
         }
         return response!!
     }
-
-
+    //Send email with new passwrd
     private fun sendEmail(email: String, shaPassword: String, password: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val result = api.updateUserPasswordMail(email, shaPassword)
@@ -257,7 +257,6 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
     }
 
     private fun getUsers(userName: String, password: String) {
-        //currentUser = User()
         runBlocking {            
             val corrutina = launch {                
                 val tempData = api.getUserLogin(userName, password)
@@ -332,7 +331,6 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
             val intent = Intent(this, NavDrawerActivity::class.java)
             startActivity(intent)
         }
-
     }
 
     private fun loadingEndedLogin() {

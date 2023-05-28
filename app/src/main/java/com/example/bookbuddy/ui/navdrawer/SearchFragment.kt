@@ -21,14 +21,15 @@ import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-
+/**
+ * Load the search fragment from navMenu
+ */
 class SearchFragment : Fragment(), ApiErrorListener{
     lateinit var binding: FragmentSearchBinding
     private lateinit var searchResultList: MutableList<SimpleBook>
     private lateinit var adapter: SearchResultAdapter
     private val api = CrudApi(this@SearchFragment)
     var searchValues = ArrayList<String>()
-
     private var position = 0
     private var lastPosition = -1
 
@@ -38,38 +39,6 @@ class SearchFragment : Fragment(), ApiErrorListener{
     ): View {
         binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
 
-        //val searchTextView = findViewById<AutoCompleteTextView>(R.id.search_text_view)
-/*
-        binding.authorSearch.setOnClickListener {
-            if (binding.authorSearch.tag == "selected"){
-                binding.authorSearch.setBackgroundColor(requireContext().getColor(R.color.primary_green))
-                binding.authorSearch.tag = null
-                binding.SearchView.hint = "Book Search"
-            } else {
-                binding.authorSearch.tag = "selected"
-                binding.genreSearch.tag = null
-                binding.authorSearch.setBackgroundColor(requireContext().getColor(R.color.primary_green_20))
-                binding.genreSearch.setBackgroundColor(requireContext().getColor(R.color.primary_green))
-                binding.SearchView.hint = "Author Book Search"
-            }
-
-        }
-
-        binding.genreSearch.setOnClickListener {
-            if (binding.genreSearch.tag == "selected"){
-                binding.genreSearch.setBackgroundColor(requireContext().getColor(R.color.primary_green))
-                binding.genreSearch.tag = null
-                binding.SearchView.hint = "Book Search"
-            } else {
-                binding.genreSearch.tag = "selected"
-                binding.authorSearch.tag = null
-                binding.genreSearch.setBackgroundColor(requireContext().getColor(R.color.primary_green_20))
-                binding.authorSearch.setBackgroundColor(requireContext().getColor(R.color.primary_green))
-                binding.SearchView.hint = "Genre Book Search"
-            }
-        }
-
- */
         binding.advancedSearchButton.setOnClickListener {
             if (binding.advanced.visibility == View.VISIBLE) {
                 binding.advanced.visibility = View.GONE
@@ -79,19 +48,6 @@ class SearchFragment : Fragment(), ApiErrorListener{
                 binding.advancedSearchButton.setImageResource(R.drawable.ic_search_constrain)
             }
         }
-/*
-        binding.SearchView.setOnFocusChangeListener { v, hasFocus ->
-            if (hasFocus) {
-                // Este código se ejecutará cuando el AutoCompleteTextView obtenga el foco.
-                binding.advanced.visibility = View.VISIBLE
-
-            } else {
-                // Este código se ejecutará cuando el AutoCompleteTextView pierda el foco.
-                binding.advanced.visibility = View.GONE
-            }
-        }
-
- */
 
         val searchList = ArrayList<EditText>()
         searchList.add(binding.SearchView)
@@ -110,6 +66,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
 
                     val performSearch: Boolean
 
+                    //Check is theres a value at last on one field
                     searchValues = ArrayList()
                     if (binding.SearchView.text.isNullOrBlank() && binding.etAuthor.text.isNullOrBlank() && binding.etGenre.text.isNullOrBlank()) {
                         binding.SearchView.setBackgroundResource(R.drawable.search_bg_error)

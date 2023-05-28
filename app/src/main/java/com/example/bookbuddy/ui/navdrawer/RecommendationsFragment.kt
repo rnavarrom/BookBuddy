@@ -20,7 +20,9 @@ import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-
+/**
+ * Load the recomendations fragment from navMenu
+ */
 class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentRecommendationsBinding
     private var job: Job = Job()

@@ -251,4 +251,8 @@
     <string name="MSG_ShareStars">" estrelles:"</string>
     <string name="MSG_ShareText">Doneu un cop d\'ull a la ressenya de BookBuddy!</string>
     <string name="SB_ScanFailed">Ha fallat l\'escaneig</string>
+    <string name="MSG_ErrorUploadImg">No s\'ha carregat la imatge, torneu-ho a provar.</string>
+    <string name="TTS_Title">Títol:</string>
+    <string name="TTS_Description">Descripció:</string>
+    <string name="MSG_PasswordError">Com a mínim una lletra minúscula, una majúscules, un nombre i 8 caràcters de longitud</string>
 </resources>
