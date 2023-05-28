@@ -15,11 +15,11 @@ suspend fun <T> safeApiCall(
 ): T? {
     try {
         val response = apiCall.invoke()
-        if (response.isSuccessful) {
-            return response.body()
+        return if (response.isSuccessful) {
+            response.body()
         } else {
             errorListener.onApiError()
-            return null
+            null
         }
     } catch (e: SocketTimeoutException) {
         errorListener.onApiError(true)

@@ -70,7 +70,6 @@ class LibrariesFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
     /**
      * Function to select what dialog needs to be loaded and aply the correct filter to the search
-     * @param type What type of dialog to be loaded.
      */
     private fun showCustomDialog() {
         //type 0 -> insert, 1 -> edit, 2 -> search

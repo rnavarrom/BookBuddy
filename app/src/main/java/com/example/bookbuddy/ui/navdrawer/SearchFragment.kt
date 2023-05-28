@@ -62,21 +62,20 @@ class SearchFragment : Fragment(), ApiErrorListener{
                         requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 
-                    val performSearch: Boolean
-
                     //Check is theres a value at last on one field
                     searchValues = ArrayList()
-                    if (binding.SearchView.text.isNullOrBlank() && binding.etAuthor.text.isNullOrBlank() && binding.etGenre.text.isNullOrBlank()) {
+                    val performSearch: Boolean = if (binding.SearchView.text.isNullOrBlank() && binding.etAuthor.text.isNullOrBlank() && binding.etGenre.text.isNullOrBlank()) {
                         binding.SearchView.setBackgroundResource(R.drawable.search_bg_error)
                         binding.etAuthor.setBackgroundResource(R.drawable.search_bg_error)
                         binding.etGenre.setBackgroundResource(R.drawable.search_bg_error)
-                        performSearch = false
-                    }else{
+                        false
+                    } else {
                         binding.SearchView.setBackgroundResource(R.drawable.search_bg)
                         binding.etAuthor.setBackgroundResource(R.drawable.search_bg)
                         binding.etGenre.setBackgroundResource(R.drawable.search_bg)
-                        performSearch = true
+                        true
                     }
+
                     if (!binding.SearchView.text.isNullOrBlank()) {
                         searchValues.add(binding.SearchView.text.toString())
                     } else {
@@ -101,7 +100,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
                         }
                     }else{
                         showSnackBar(requireContext(), requireView(), getString(R.string.SB_NothingFound))
-                        searchResultList = arrayListOf<SimpleBook>()
+                        searchResultList = arrayListOf()
                     }
                     binding.SearchReciclerView.layoutManager = GridLayoutManager(context, 3)
                     adapter =
@@ -137,7 +136,7 @@ class SearchFragment : Fragment(), ApiErrorListener{
         return binding.root
     }
 
-    private fun loadMoreSearch(position : Int, searchValues: ArrayList<String>) {
+    fun loadMoreSearch(position : Int, searchValues: ArrayList<String>) {
         runBlocking {
             val coroutine = launch {
                 val tempSearchList =

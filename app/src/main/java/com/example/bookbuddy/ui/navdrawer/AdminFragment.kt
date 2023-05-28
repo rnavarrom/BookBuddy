@@ -21,7 +21,7 @@ class AdminFragment : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialo
     lateinit var binding: FragmentAdminBinding
     private var job: Job = Job()
     private var fragmentSaved = "books"
-    var gMenu: Menu? = null
+    private var gMenu: Menu? = null
     private var isFragmentReplaced = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +40,6 @@ class AdminFragment : Fragment(), CoroutineScope, Parcelable, InsertLibraryDialo
         }
     }
 
-    lateinit var searchItem: MenuItem
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

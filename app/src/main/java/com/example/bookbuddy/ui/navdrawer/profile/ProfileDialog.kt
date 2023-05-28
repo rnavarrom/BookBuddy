@@ -104,11 +104,10 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
                 if(tempFollowing != null){
                     following = tempFollowing
                 }
-                // TODO: LOAD IMAGE if ()
             }
             coroutine.join()
         }
-        binding.tvFollowers.text = followers.toString() + " seguidores"
+        binding.tvFollowers.text = followers.toString() + getString(R.string.MSG_Followers)
         followButton()
     }
 

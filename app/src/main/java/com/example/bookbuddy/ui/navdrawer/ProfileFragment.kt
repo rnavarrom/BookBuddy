@@ -5,7 +5,6 @@ import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.content.ContentResolver
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -29,9 +28,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.bookbuddy.R
-import com.example.bookbuddy.utils.Constants
-import com.example.bookbuddy.utils.Constants.Companion.profileRequestOptions
-import com.example.bookbuddy.utils.Sha
 import com.example.bookbuddy.adapters.LanguageSpinnerAdapter
 import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
@@ -39,18 +35,19 @@ import com.example.bookbuddy.databinding.FragmentProfileBinding
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileAuthorDialog
 import com.example.bookbuddy.ui.navdrawer.profile.ProfileSearchDialog
 import com.example.bookbuddy.utils.*
+import com.example.bookbuddy.utils.Constants.Companion.profileRequestOptions
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 import kotlin.coroutines.CoroutineContext
+
 /**
  * Profile fragment from the navMenu
  */
@@ -101,16 +98,15 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         val languages = arrayOf("american_flag","catalan_flag")
         val adapter = LanguageSpinnerAdapter(requireContext(), languages)
         binding.languageSpinner.adapter = adapter
-        var position = languages.indexOf(curr)
+        val position = languages.indexOf(curr)
         binding.languageSpinner.setSelection(position)
-        var lastSelectedPosition = position
+        val lastSelectedPosition = position
 
         //Change and store the active language on the app
         binding.languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 if (position != lastSelectedPosition) {
-                    val selectedImageName = parent.getItemAtPosition(position).toString()
-                    when (selectedImageName){
+                    when (parent.getItemAtPosition(position).toString()){
                         "american_flag" -> {
                             setLocal(requireActivity(), "en")
                             saveLanguageCode(requireActivity().applicationContext,"en")
@@ -148,7 +144,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                 emailList.addAll(emails)
                 runBlocking {
                     val coroutine = launch {
-                        var addedContacts : Int? = api.getEmailsContact(currentUser!!.userId, emailList)
+                        val addedContacts : Int? = api.getEmailsContact(currentUser!!.userId, emailList)
                         var message = ""
                         if(addedContacts != null){
 
@@ -182,32 +178,48 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
             dialogBuilder.setTitle(getString(R.string.BT_ChangePassword))
                 .setCancelable(false)
                 .setView(layout)
-                .setPositiveButton(getString(R.string.BT_Accept), DialogInterface.OnClickListener { dialog, id ->
+                .setPositiveButton(getString(R.string.BT_Accept)) { _, _ ->
                     val password1 = etPassword1.text.toString()
                     val password2 = etPassword2.text.toString()
 
                     if (password1.isBlank() || password2.isBlank()) {
-                        showSnackBar(requireContext(), requireView(), getString(R.string.MSG_PasswordBlank))
-                    } else if (password1 != password2){
-                        showSnackBar(requireContext(), requireView(), getString(R.string.MSG_PasswordMatch))
+                        showSnackBar(
+                            requireContext(),
+                            requireView(),
+                            getString(R.string.MSG_PasswordBlank)
+                        )
+                    } else if (password1 != password2) {
+                        showSnackBar(
+                            requireContext(),
+                            requireView(),
+                            getString(R.string.MSG_PasswordMatch)
+                        )
                     } else {
                         var result: Boolean? = null
-                        var passwordSha = Sha.calculateSHA(password1)
+                        val passwordSha = Sha.calculateSHA(password1)
                         runBlocking {
                             launch {
                                 result = api.updateUserPasswordId(currentUser!!.userId, passwordSha)
                             }
                         }
-                        if (result != null && result as Boolean){
-                            showSnackBar(requireContext(), requireView(), getString(R.string.MSG_PasswordChanged))
+                        if (result != null && result as Boolean) {
+                            showSnackBar(
+                                requireContext(),
+                                requireView(),
+                                getString(R.string.MSG_PasswordChanged)
+                            )
                         } else {
-                            showSnackBar(requireContext(), requireView(), getString(R.string.MSG_NewPassword))
+                            showSnackBar(
+                                requireContext(),
+                                requireView(),
+                                getString(R.string.MSG_NewPassword)
+                            )
                         }
                     }
-                })
-                .setNegativeButton(getString(R.string.BT_Cancel), DialogInterface.OnClickListener { dialog, id ->
+                }
+                .setNegativeButton(getString(R.string.BT_Cancel)) { dialog, _ ->
                     dialog.dismiss()
-                })
+                }
 
             val alert = dialogBuilder.create()
             alert.show()
@@ -306,7 +318,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
      * Save the language code on sharedPreferences
      * @param languageCode the language code to be stored
      */
-    private fun saveLanguageCode(context: Context, languageCode: String) {
+    fun saveLanguageCode(context: Context, languageCode: String) {
         val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putString("language_code", languageCode)
@@ -328,7 +340,7 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
     private fun actionSettings(){
         menuItems.forEach {
             it.isVisible = !menuItemsVisibility[it.title.toString()]!!
-            var title = it.title.toString()
+            val title = it.title.toString()
             menuItemsVisibility[title] = it.isVisible
         }
 
@@ -351,13 +363,13 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
 
         binding.et1PrefferredGenre.visibility = View.INVISIBLE
         binding.et2PrefferredGenre.visibility = View.VISIBLE
-        if (!binding.et1PrefferredGenre.visibility.equals(getString(R.string.MSG_NotSelected))){
+        if (binding.et1PrefferredGenre.text != getString(R.string.MSG_NotSelected)){
             binding.et2PrefferredGenre.setText(binding.et1PrefferredGenre.text.toString())
         }
 
         binding.et1PrefferredAuthor.visibility = View.INVISIBLE
         binding.et2PrefferredAuthor.visibility = View.VISIBLE
-        if (!binding.et1PrefferredAuthor.visibility.equals(getString(R.string.MSG_NotSelected))){
+        if (binding.et1PrefferredAuthor.text != getString(R.string.MSG_NotSelected)){
             binding.et2PrefferredAuthor.setText(binding.et1PrefferredAuthor.text.toString())
         }
     }
@@ -507,11 +519,11 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
         }
         binding.tvFollowers.text = followers.toString() + getString(R.string.MSG_Followers)
 
-        if (currentProfile.genre != null && !currentProfile.genre!!.name.isNullOrBlank()){
+        if (currentProfile.genre != null && currentProfile.genre!!.name.isNotBlank()){
             binding.et1PrefferredGenre.text = currentProfile.genre!!.name
         }
 
-        if (currentProfile.author != null && !currentProfile.author!!.name.isNullOrBlank()){
+        if (currentProfile.author != null && currentProfile.author!!.name.isNotBlank()){
             binding.et1PrefferredAuthor.text = currentProfile.author!!.name
         }
 
