@@ -158,12 +158,12 @@
     <string name="LAY_LogOut">Log Out</string>
     <string name="LAY_Progress">Progress</string>
     <string name="LAY_EnterEmail">Enter email</string>
-    <string name="LAY_UserConditionsText">By using our application, you agree to comply with these terms of use. Please read the following terms carefully before creating an account and using our application. If you do not agree with these terms, please do not use our application.
-    Use of Information: We will not share your personal information with third parties without your prior consent. The information you provide is solely used for authentication and account management purposes. We will not use your personal information for advertising or data collection purposes.
-    Intellectual Property: Our application and all its content, including but not limited to text, graphics, logos, images, and software, are the property of BookBudy and are protected by intellectual property laws. You may not copy, modify, distribute, or reproduce our content without our prior written consent.
-    Modifications to the Terms: We reserve the right to modify these terms at any time. We recommend that you review them periodically. By continuing to use our application after any modifications, you agree to the modified terms.
-    Dispute Resolution: Any disputes arising in connection with these terms shall be resolved through arbitration in accordance with the commercial arbitration rules of [Name of Arbitration Institution]. The arbitration shall take place in [Name of City and Country where the Arbitration Institution is located].
-    Applicable Law: These terms shall be governed and interpreted in accordance with the laws of Spain, without giving effect to any principles of conflicts of laws.
+    <string name="LAY_UserConditionsText">By using our application, you agree to comply with these terms of use. Please read the following terms carefully before creating an account and using our application. If you do not agree with these terms, please do not use our application.\n\n
+    1. Use of Information: We will not share your personal information with third parties without your prior consent. The information you provide is solely used for authentication and account management purposes. We will not use your personal information for advertising or data collection purposes.\n\n
+    2. Intellectual Property: Our application and all its content, including but not limited to text, graphics, logos, images, and software, are the property of BookBudy and are protected by intellectual property laws. You may not copy, modify, distribute, or reproduce our content without our prior written consent.\n\n
+    3. Modifications to the Terms: We reserve the right to modify these terms at any time. We recommend that you review them periodically. By continuing to use our application after any modifications, you agree to the modified terms.\n\n
+    4. Dispute Resolution: Any disputes arising in connection with these terms shall be resolved through arbitration in accordance with the commercial arbitration rules of [Name of Arbitration Institution]. The arbitration shall take place in [Name of City and Country where the Arbitration Institution is located].\n\n
+    5. Applicable Law: These terms shall be governed and interpreted in accordance with the laws of Spain, without giving effect to any principles of conflicts of laws.\n\n
     If you have any questions about these terms, please contact us at bookbudy@info.com.</string>
     <string name="LAY_Author">Author:</string>
     <string name="LAY_AuthorHint">Author</string>

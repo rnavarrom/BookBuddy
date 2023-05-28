@@ -25,6 +25,7 @@ import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
+//Adapter for the home fragment, reading list
 class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: HomeFragment) : //, context: Context, layoutInf: LayoutInflater
     RecyclerView.Adapter<HomeReadingBooksAdapter.ViewHolder>(), ApiErrorListener {
     lateinit var layout: LayoutInflater

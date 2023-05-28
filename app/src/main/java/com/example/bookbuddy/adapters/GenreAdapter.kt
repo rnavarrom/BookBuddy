@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.bookbuddy.R
 import com.example.bookbuddy.models.Genre
 
+//adapter for the genres list
 class GenreAdapter(val list: java.util.ArrayList<Genre>) :
     RecyclerView.Adapter<GenreAdapter.ViewHolder>() {
 

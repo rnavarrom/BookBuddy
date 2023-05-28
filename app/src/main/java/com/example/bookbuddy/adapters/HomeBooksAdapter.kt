@@ -15,6 +15,7 @@ import com.example.bookbuddy.ui.navdrawer.HomeFragment
 import com.example.bookbuddy.ui.navdrawer.HomeFragmentDirections
 import com.example.bookbuddy.utils.navController
 
+//Adapter for the home fragment, pending and read lists
 class HomeBooksAdapter(private var list: ArrayList<Pending>, val fragment: HomeFragment) : RecyclerView.Adapter<HomeBooksAdapter.ViewHolder>() {
     class ViewHolder(val vista: View) : RecyclerView.ViewHolder(vista) {
         val imatge = vista.findViewById<ImageView>(R.id.book_cover)

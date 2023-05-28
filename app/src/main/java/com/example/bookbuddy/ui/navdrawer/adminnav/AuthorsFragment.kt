@@ -59,14 +59,14 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         isOnCreateViewExecuted = true
         return binding.root
     }
+    //Create the options menu to allow search
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)
         gMenu = menu
         searchItem = gMenu.findItem(R.id.action_search)
     }
-
+    //Select the custom dialog for the search menu item
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         return when (item.itemId) {
             R.id.action_search -> {
                 showCustomDialog(2)
@@ -75,13 +75,14 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
+    //Open the custom dialog with the correct
     private fun showCustomDialog(type: Int) {
         //type 0 -> insert, 1 -> edit, 2 -> search
         val builder = AlertDialog.Builder(requireContext())
         var positiveText = ""
         val editText = EditText(requireContext())
         editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
+        //Load the correct values for the dialog
         when (type) {
             0 -> {
                 positiveText = getString(R.string.BT_Insert)
@@ -101,10 +102,9 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
 
         builder.setView(editText)
-
+        //positive response
         builder.setPositiveButton(positiveText) { _, _ ->
-            // Handle "Buscar" button click here
-
+        //select the filter
             when (type) {
                 0 -> {
                     authorName = editText.text.toString().trim()
@@ -122,12 +122,11 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 }
             }
         }
-
+        //negative response
         builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialog, _ ->
-            // Handle "Cancelar" button click here
             dialog.cancel()
         }
-
+        //show the dialog
         val dialog = builder.create()
         dialog.show()
 
@@ -137,7 +136,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
         }, 200)
     }
-
+    //Call to insert an author
     private fun insertAuthor() {
         var result = false
         if (!authorName.isNullOrEmpty()){
@@ -147,10 +146,9 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 }
                 coroutine.join()
             }
-
+            //handle result
             if (result) {
                 showSnackBar(requireContext(), requireView(), getString(R.string.SB_AuthorInserted))
-                //adapter.updateList(authors as ArrayList<Author>)
             } else {
                 showSnackBar(requireContext(), requireView(), getString(R.string.SB_AuthorExists))
             }
@@ -158,7 +156,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_NameEmpty))
         }
     }
-
+    //Call to edit author
     private fun editAuthor() {
         val selection = adapter.getSelected()
         var result = false
@@ -169,7 +167,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 }
                 coroutine.join()
             }
-
+            //handle result
             if (result) {
                 showSnackBar(requireContext(), requireView(), getString(R.string.SB_AuthorEdited))
                 selection!!.name = authorName!!
@@ -181,7 +179,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_NameEmpty))
         }
     }
-
+    //Stop the loading animation
     fun loadingEnded() {
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE
@@ -229,7 +227,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             getAuthors(false)
             binding.mainContent.isRefreshing = false
         }
-
+        //Handle scroll listener calls
         binding.rvAuthors.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -250,11 +248,11 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
         })
     }
-
+    //Add more values to the list
     private fun loadMoreItems() {
         getAuthors(false)
     }
-
+    // Call to get authors and handle posible null returns
     private fun getAuthors(addAdapter: Boolean) {
         runBlocking {
             val corrutine = launch {
@@ -283,6 +281,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                         )
                     }
                 }
+                //if value load to the adapter
                 if (authors != null){
                     if (addAdapter) {
                         binding.rvAuthors.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -296,6 +295,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             corrutine.join()
         }
     }
+    //Handle api error
     override fun onApiError() {
         if (isOnCreateViewExecuted){
             showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
