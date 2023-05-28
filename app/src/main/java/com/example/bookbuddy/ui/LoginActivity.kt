@@ -353,6 +353,7 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
 
     override fun onApiError(connectionFailed: Boolean) {
         if (connectionFailed){
+            binding.loadingMain.visibility = View.GONE
             connectionError = true
             Tools.showSnackBar(this, binding.activityMain, Constants.ErrrorMessage)
         }
