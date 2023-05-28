@@ -27,15 +27,11 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     lateinit var binding: FragmentAdminGenresBinding
     private var job: Job = Job()
     lateinit var adapter: AdminGenresAdapter
-
     private var position = 0
     private var lastPosition = -1
     private var genres: MutableList<Genre>? = null
-
     private lateinit var gMenu: Menu
-
     private lateinit var searchItem: MenuItem
-
     private var search: String? = null
     private var genreName: String? = null
     private val api = CrudApi(this@GenresFragment)
@@ -61,7 +57,6 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
         return when (item.itemId) {
             R.id.action_search -> {
                 showCustomDialog(2)
@@ -70,13 +65,14 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
+    //Open the custom dialog with the correct
     private fun showCustomDialog(type: Int) {
         //type 0 -> insert, 1 -> edit, 2 -> search
         val builder = AlertDialog.Builder(requireContext())
         var positiveText = ""
         val editText = EditText(requireContext())
         editText.inputType = InputType.TYPE_TEXT_VARIATION_PERSON_NAME
+        //Load the correct values for the dialog
         when(type){
             0 -> {
                 positiveText = getString(R.string.BT_Insert)
@@ -96,10 +92,9 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
         }
 
         builder.setView(editText)
-
+        //Positive response
         builder.setPositiveButton(positiveText) { _, _ ->
             // Handle "Buscar" button click here
-
             when(type){
                 0 -> {
                     genreName = editText.text.toString().trim()
@@ -117,7 +112,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 }
             }
         }
-
+        //Negative response
         builder.setNegativeButton(getString(R.string.BT_Cancel)) { dialog, which ->
             // Handle "Cancelar" button click here
             dialog.cancel()
@@ -132,7 +127,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
         }, 200)
     }
-
+    //Call to insert new genre
     private fun insertGenre(){
         var result = false
         if (!genreName.isNullOrEmpty()){
@@ -142,10 +137,8 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 }
                 coroutine.join()
             }
-
             if (result) {
                 showSnackBar(requireContext(), requireView(), getString(R.string.GenreInserted))
-                //adapter.updateList(genres as ArrayList<Genre>)
             } else {
                 showSnackBar(requireContext(), requireView(), getString(R.string.GenreExists))
             }
@@ -153,7 +146,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_NameEmpty))
         }
     }
-
+    //Call to edit genre
     private fun editGenre(){
         val selection = adapter.getSelected()
         var result = false
@@ -176,7 +169,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_NameEmpty))
         }
     }
-
+    //Handle end loading
     fun loadingEnded(){
         binding.loadingView.visibility = View.GONE
         binding.mainParent.visibility = View.VISIBLE

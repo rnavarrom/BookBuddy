@@ -83,27 +83,6 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         return binding.root
     }
 
-    /*
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.search_menu, menu)
-
-        //requireActivity().menuInflater
-        //requireActivity().menuInflater.inflate(R.menu.search_menu, menu)
-        gMenu = menu
-        searchItem = gMenu.findItem(R.id.action_search)
-
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_search -> {
-                showCustomDialog()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-    */
     private fun showCustomDialog() {
         //type 0 -> insert, 1 -> edit, 2 -> search
         val builder = AlertDialog.Builder(requireContext())
@@ -288,7 +267,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
         }
     }
-
+    //Request delete book to the api
     private fun deleteBook(book: Book){
         var result = false
         runBlocking {
@@ -300,7 +279,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
             coroutine.join()
         }
-
+        //Handle result and update adapter
         if (result) {
             showSnackBar(requireContext(), requireView(), getString(R.string.SB_BookDelete))
             books!!.remove(book)

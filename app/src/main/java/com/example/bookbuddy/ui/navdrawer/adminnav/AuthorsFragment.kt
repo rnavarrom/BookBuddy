@@ -229,7 +229,7 @@ class AuthorsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 val totalItemCount = layoutManager.itemCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
-
+                //Get the value from the last item
                 if (lastVisibleItem == totalItemCount - 1 && dy >= 0) {
                     recyclerView.post {
                         position = totalItemCount
