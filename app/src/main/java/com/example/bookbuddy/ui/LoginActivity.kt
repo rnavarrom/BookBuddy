@@ -107,7 +107,6 @@ class LoginActivity : AppCompatActivity(), ApiErrorListener {
         lifecycleScope.launch {
             savedUser = userPrefs.userCredentialsFlow.first().first
             savedPassword = userPrefs.userCredentialsFlow.first().second
-
             if (savedUser.isNotBlank() && savedPassword.isNotBlank()) {
                 loadingEndedHome()
             } else {
