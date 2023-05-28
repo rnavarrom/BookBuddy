@@ -19,6 +19,7 @@ import com.example.bookbuddy.models.Genre
 import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
+import com.example.bookbuddy.utils.navView
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -304,9 +305,7 @@ class GenresFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted) {
-            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-        }
+        showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
     }
 
     override fun onDestroy() {

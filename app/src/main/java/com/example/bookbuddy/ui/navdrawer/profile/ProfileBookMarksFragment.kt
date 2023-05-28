@@ -34,7 +34,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var position = 0
     private var lastPosition = -1
     private var readeds: MutableList<Readed>? = null
-
+    private var isOnCreateViewExecuted = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,10 +52,10 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         )
 
         //Initial call to get values
-        launch {
-            getBooksUser(userId, true)
-            onLoadingEnded()
-        }
+        getBooksUser(userId, true)
+        onLoadingEnded()
+
+        isOnCreateViewExecuted = true
         return binding.root
     }
 
@@ -136,7 +136,9 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        if (isOnCreateViewExecuted){
+            Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
     }
 
     override fun onDestroy() {

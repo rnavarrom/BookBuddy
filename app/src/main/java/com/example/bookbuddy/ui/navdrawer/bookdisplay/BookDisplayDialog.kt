@@ -21,13 +21,10 @@ import com.example.bookbuddy.models.Book
 import com.example.bookbuddy.models.Genre
 import com.example.bookbuddy.models.Readed
 import com.example.bookbuddy.ui.navdrawer.HomeFragment
-import com.example.bookbuddy.utils.ApiErrorListener
-import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Constants.Companion.bookRequestOptions
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.currentUser
-import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 import java.util.*
@@ -413,7 +410,7 @@ class BookDisplayDialog : DialogFragment(), CoroutineScope, TextToSpeech.OnInitL
         if (isOnCreateViewExecuted) {
             if (connectionFailed) {
                 connectionError = true
-                showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+                showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
             }
         }
     }

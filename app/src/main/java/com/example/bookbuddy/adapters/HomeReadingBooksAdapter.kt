@@ -101,6 +101,7 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
         val filterArray = arrayOfNulls<InputFilter>(1)
         filterArray[0] = InputFilter.LengthFilter(total.text.length)
         editText.filters = filterArray
+        editText.hint = list[position].pagesReaded.toString()
         builder.setView(dialogLayout)
         builder.setNegativeButton(context.getString(R.string.BT_Cancel)) { _, _ -> }
         builder.setPositiveButton(context.getString(R.string.BT_Accept)) { _, _ ->

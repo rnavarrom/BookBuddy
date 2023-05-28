@@ -15,13 +15,10 @@ import com.example.bookbuddy.adapters.CommentAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogBookdisplayCommentsBinding
 import com.example.bookbuddy.models.UserComments.Comment
-import com.example.bookbuddy.utils.ApiErrorListener
-import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.clearCache
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.currentUser
-import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
@@ -88,18 +85,21 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
 
         getCommentsBook(bookId, true)
         onLoadingEnded()
-        isOnCreateViewExecuted = true
+
         return binding.root
     }
 
     // Get comments from the API and put them in the RecyclerView
     private fun getCommentsBook(bookId: Int, addAdapter: Boolean) {
+        var tmpComments: List<Comment>? = null
         runBlocking {
 
             val coroutine = launch {
                 if (position == 0) {
-                    comments =
-                        setCardview(api.getCommentsFromBook(bookId, position) as ArrayList<Comment>)
+                    tmpComments = setCardview(api.getCommentsFromBook(bookId, position) as ArrayList<Comment>)
+                    if (tmpComments != null){
+                        comments = tmpComments as ArrayList<Comment>
+                    }
                 } else {
                     comments!!.addAll(
                         (setCardview(
@@ -113,12 +113,14 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
             }
             coroutine.join()
         }
-        if (addAdapter) {
-            binding.rvComments.layoutManager = LinearLayoutManager(context)
-            adapter = CommentAdapter(comments as ArrayList<Comment>, requireActivity(), title)
-            binding.rvComments.adapter = adapter
-        } else {
-            adapter.updateList(comments as ArrayList<Comment>)
+        if (tmpComments != null){
+            if (addAdapter) {
+                binding.rvComments.layoutManager = LinearLayoutManager(context)
+                adapter = CommentAdapter(comments as ArrayList<Comment>, requireActivity(), title)
+                binding.rvComments.adapter = adapter
+            } else {
+                adapter.updateList(comments as ArrayList<Comment>)
+            }
         }
     }
 
@@ -181,9 +183,7 @@ class CommentsListDialog : DialogFragment(), CoroutineScope, CommentWriteDialog.
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted) {
-            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-        }
+        showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
     }
 
     override fun onWriteCommentClose() {

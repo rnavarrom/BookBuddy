@@ -76,6 +76,7 @@ class ProfileFragment : Fragment(), CoroutineScope,
     private var menuItemsVisibility = mutableMapOf("settings" to true, "accept" to false, "cancel" to false)
     private lateinit var menuItems: ArrayList<MenuItem>
     private var connectionError = false
+    private var isOnCreateViewExecuted = false
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.profile_menu, menu)
         gMenu = menu
@@ -256,7 +257,7 @@ class ProfileFragment : Fragment(), CoroutineScope,
             val alert = dialogBuilder.create()
             alert.show()
         }
-
+        isOnCreateViewExecuted = true
         return binding.root
     }
 
@@ -766,7 +767,7 @@ class ProfileFragment : Fragment(), CoroutineScope,
     override fun onApiError(connectionFailed: Boolean) {
         if (connectionFailed) {
             connectionError = true
-            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+            showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
         }
     }
 

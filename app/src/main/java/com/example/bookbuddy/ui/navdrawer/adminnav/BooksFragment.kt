@@ -30,6 +30,7 @@ import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.navController
+import com.example.bookbuddy.utils.navView
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.WriterException
@@ -348,9 +349,7 @@ class BooksFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted) {
-            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-        }
+        showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
     }
 
 

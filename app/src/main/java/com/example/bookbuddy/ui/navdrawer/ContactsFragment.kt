@@ -152,9 +152,7 @@ class ContactsFragment : Fragment(), CoroutineScope, ProfileDialog.OnProfileDial
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted) {
-            Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-        }
+        Tools.showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
     }
 
     override fun onProfileDialogClose() {

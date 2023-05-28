@@ -36,7 +36,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var position = 0
     private var lastPosition = -1
     private var comments: MutableList<Comment>? = null
-
+    private var isOnCreateViewExecuted = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,6 +56,7 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
         getCommentsUser(userId, true)
         onLoadingEnded()
 
+        isOnCreateViewExecuted = true
         return binding.root
     }
 
@@ -135,7 +136,9 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        if (isOnCreateViewExecuted){
+            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        }
     }
 
     override fun onDestroy() {

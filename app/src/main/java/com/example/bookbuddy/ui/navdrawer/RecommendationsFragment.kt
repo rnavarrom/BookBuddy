@@ -14,10 +14,7 @@ import com.example.bookbuddy.adapters.RecommendedBooksAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.FragmentRecommendationsBinding
 import com.example.bookbuddy.models.Book
-import com.example.bookbuddy.utils.ApiErrorListener
-import com.example.bookbuddy.utils.Constants
-import com.example.bookbuddy.utils.Tools
-import com.example.bookbuddy.utils.currentUser
+import com.example.bookbuddy.utils.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -33,7 +30,6 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     private var lastPosition = -1
     var books: MutableList<Book>? = null
 
-    private var isOnCreateViewExecuted = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,7 +46,6 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
 
         getUserRecommended(true)
         onLoadingEnded()
-        isOnCreateViewExecuted = true
         return binding.root
     }
 
@@ -137,9 +132,7 @@ class RecommendationsFragment : Fragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted) {
-            Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-        }
+        Tools.showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
     }
 
     override fun onDestroy() {

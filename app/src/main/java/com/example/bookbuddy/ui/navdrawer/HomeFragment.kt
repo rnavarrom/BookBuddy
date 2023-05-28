@@ -21,11 +21,8 @@ import com.example.bookbuddy.databinding.FragmentHomeBinding
 import com.example.bookbuddy.models.ActualReading
 import com.example.bookbuddy.models.Pending
 import com.example.bookbuddy.ui.navdrawer.bookdisplay.BookDisplayDialog
-import com.example.bookbuddy.utils.ApiErrorListener
-import com.example.bookbuddy.utils.Constants
+import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.currentUser
-import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 import kotlin.coroutines.CoroutineContext
@@ -174,12 +171,13 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener,
                 }
             }
         })
-        isOnCreateViewExecuted = true
+
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
+        isOnCreateViewExecuted = true
         pendingList = arrayListOf()
         loadMorePending(startingPosition)
         readedList = arrayListOf()
@@ -397,8 +395,14 @@ class HomeFragment : Fragment(), CoroutineScope, ApiErrorListener,
 
     override fun onApiError(connectionFailed: Boolean) {
         if (isOnCreateViewExecuted) {
-            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+            showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
         }
+    }
+
+    override fun onDetach() {
+        isOnCreateViewExecuted = false
+        super.onDetach()
+
     }
 
     override fun onBookDisplayClose() {

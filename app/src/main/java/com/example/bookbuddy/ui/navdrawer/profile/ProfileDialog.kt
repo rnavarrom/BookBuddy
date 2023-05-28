@@ -13,12 +13,9 @@ import com.example.bookbuddy.adapters.ProfileAdapter
 import com.example.bookbuddy.api.CrudApi
 import com.example.bookbuddy.databinding.DialogProfileBinding
 import com.example.bookbuddy.ui.navdrawer.ContactsFragment
-import com.example.bookbuddy.utils.ApiErrorListener
-import com.example.bookbuddy.utils.Constants
-import com.example.bookbuddy.utils.Tools
+import com.example.bookbuddy.utils.*
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
-import com.example.bookbuddy.utils.currentUser
 import com.google.android.material.tabs.TabLayout
 import kotlinx.coroutines.*
 import java.io.File
@@ -188,9 +185,7 @@ class ProfileDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted) {
-            showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-        }
+        showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
     }
 
     override fun onDestroy() {

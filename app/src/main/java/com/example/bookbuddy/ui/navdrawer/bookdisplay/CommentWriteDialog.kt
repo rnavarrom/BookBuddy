@@ -22,6 +22,7 @@ import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.currentUser
+import com.example.bookbuddy.utils.navView
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -175,11 +176,9 @@ class CommentWriteDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        if (isOnCreateViewExecuted) {
-            if (connectionFailed) {
-                connectionError = true
-                showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
-            }
+        if (connectionFailed) {
+            connectionError = true
+            showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
         }
     }
 

@@ -18,6 +18,7 @@ import com.example.bookbuddy.utils.ApiErrorListener
 import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
+import com.example.bookbuddy.utils.navView
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -143,7 +144,7 @@ class AuthorBookDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        Tools.showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        Tools.showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
     }
 
     override fun onDestroy() {

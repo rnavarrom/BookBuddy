@@ -23,6 +23,7 @@ import com.example.bookbuddy.utils.Constants
 import com.example.bookbuddy.utils.Tools.Companion.setToolBar
 import com.example.bookbuddy.utils.Tools.Companion.showSnackBar
 import com.example.bookbuddy.utils.navController
+import com.example.bookbuddy.utils.navView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.*
@@ -309,7 +310,7 @@ class LibrariesListDialog : DialogFragment(), CoroutineScope, ApiErrorListener {
     }
 
     override fun onApiError(connectionFailed: Boolean) {
-        showSnackBar(requireContext(), requireView(), Constants.ErrrorMessage)
+        showSnackBar(requireContext(), navView, Constants.ErrrorMessage)
     }
 
     override fun onDestroy() {

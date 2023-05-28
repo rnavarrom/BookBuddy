@@ -165,13 +165,15 @@ class RequestsFragment : Fragment(), CoroutineScope, ApiErrorListener {
                 } else {
                     bookRequests!!.addAll((api.getRequests(position) as MutableList<BookRequest>?)!!)
                 }
-                if (addAdapter) {
-                    binding.rvRequests.layoutManager =
-                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-                    adapter = AdminRequestsAdapter(bookRequests as ArrayList<BookRequest>)
-                    binding.rvRequests.adapter = adapter
-                } else {
-                    adapter.updateList(bookRequests as ArrayList<BookRequest>)
+                if (bookRequests != null){
+                    if (addAdapter) {
+                        binding.rvRequests.layoutManager =
+                            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+                        adapter = AdminRequestsAdapter(bookRequests as ArrayList<BookRequest>)
+                        binding.rvRequests.adapter = adapter
+                    } else {
+                        adapter.updateList(bookRequests as ArrayList<BookRequest>)
+                    }
                 }
             }
             coroutine.join()
