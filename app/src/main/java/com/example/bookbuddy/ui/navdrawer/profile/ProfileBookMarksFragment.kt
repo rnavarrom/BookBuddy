@@ -74,15 +74,16 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
             coroutine.join()
         }
-        if(readeds == null){
+        if(readeds != null){
 
-        }else if (addAdapter){
+        if (addAdapter){
             val gridLayout = GridLayoutManager(context, 3)
             binding.rvBookmarks.layoutManager = gridLayout
             adapter = ProfileBookMarkAdapter(readeds as ArrayList<Readed>, isProfileFragment)
             binding.rvBookmarks.adapter = adapter
         } else {
             adapter.updateList(readeds as ArrayList<Readed>)
+        }
         }
     }
     /**

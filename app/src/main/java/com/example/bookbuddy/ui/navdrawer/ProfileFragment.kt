@@ -150,12 +150,13 @@ class ProfileFragment : Fragment(), CoroutineScope, ProfileSearchDialog.OnGenreS
                     val coroutine = launch {
                         var addedContacts : Int? = api.getEmailsContact(currentUser!!.userId, emailList)
                         var message = ""
-                        if(addedContacts == null){
+                        if(addedContacts != null){
 
-                        }else if (addedContacts > 0){
+                        if (addedContacts > 0){
                             message = getString(R.string.MSG_Added) + addedContacts + getString(R.string.MSG_NewContacts)
                         } else {
                             message = getString(R.string.MSG_NoContactsFound)
+                        }
                         }
                         showSnackBar(requireContext(), requireView(),message)
                     }

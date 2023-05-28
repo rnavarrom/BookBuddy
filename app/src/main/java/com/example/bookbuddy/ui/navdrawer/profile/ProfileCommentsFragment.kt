@@ -74,14 +74,15 @@ class ProfileCommentsFragment : Fragment(), CoroutineScope, ApiErrorListener {
             }
             coroutine.join()
         }
-        if(comments == null){
+        if(comments != null){
 
-        }else if (addAdapter){
+        if (addAdapter){
             binding.rvComments.layoutManager = LinearLayoutManager(context)
             adapter = ProfileCommentAdapter(comments as ArrayList<Comment>, isProfileFragment)
             binding.rvComments.adapter = adapter
         } else {
             adapter.updateList(comments as ArrayList<Comment>)
+        }
         }
     }
     /**
