@@ -20,16 +20,16 @@ import com.example.bookbuddy.utils.Tools
 import com.example.bookbuddy.utils.currentUser
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-
+/**
+ * Fragment to display the books list on profile.
+ */
 class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
-
     lateinit var binding: FragmentProfileBookmarksBinding
     private var job: Job = Job()
     private var userId: Int = currentUser!!.userId
     private var isProfileFragment: Boolean = false
     lateinit var adapter: ProfileBookMarkAdapter
     private val api = CrudApi(this@ProfileBookMarksFragment)
-
     private var position = 0
     private var lastPosition = -1
     private var readeds: MutableList<Readed>? = null
@@ -45,6 +45,7 @@ class ProfileBookMarksFragment : Fragment(), CoroutineScope, ApiErrorListener {
         isProfileFragment = requireArguments().getBoolean("isfragment")
         binding.refresh.setColorSchemeColors(ContextCompat.getColor(requireContext(), R.color.primary_green))
 
+        //Initial call to get values
         launch {
             getCommentsUser(userId, true)
             loadingEnded()

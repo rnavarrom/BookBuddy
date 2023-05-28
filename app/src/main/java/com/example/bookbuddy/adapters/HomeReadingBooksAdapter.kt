@@ -24,9 +24,11 @@ import com.example.bookbuddy.utils.currentUser
 import com.example.bookbuddy.utils.navController
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-
-//Adapter for the home fragment, reading list
-class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: HomeFragment) : //, context: Context, layoutInf: LayoutInflater
+/**
+ * Adapter for displaying ActualReading books in a recycler view
+ * @param list The list of search results to display.
+ */
+class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: HomeFragment) :
     RecyclerView.Adapter<HomeReadingBooksAdapter.ViewHolder>(), ApiErrorListener {
     lateinit var layout: LayoutInflater
     lateinit var view : View
@@ -39,7 +41,6 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
         var percentage = vista.findViewById<TextView>(R.id.progress_text)!!
         var progressbar = vista.findViewById<ProgressBar>(R.id.progress_bar)!!
         val linearLayout = vista.findViewById<LinearLayout>(R.id.home_ll)!!
-        //val dummyText = vista.findViewById<TextView>(R.id.NoBooksTV)
     }
 
     lateinit var context: Context
@@ -51,15 +52,6 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        /*
-        println("------------" + llista.size)
-        if(llista.isEmpty()){
-            holder.dummyText.visibility = View.VISIBLE
-            println("Showing dummy")
-        }
-
-         */
-        //println(llista[position].pages.toString())
         holder.pagesReaded.text = list[position].pagesReaded.toString()
         holder.pagesTotal.text = list[position].pages.toString()
         val percent = makePercentage(list[position].pagesReaded, list[position].pages)
@@ -89,17 +81,19 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
 
     override fun getItemCount(): Int = list.size
 
+    /**
+     * Function to change the read pages of a reading book
+     * @param position The position of the item in the list.
+     */
     private fun changeReaded(context: Context, layoutInf: LayoutInflater, position: Int,
         holder: ViewHolder
     ) {
         val builder = AlertDialog.Builder(context)
         val inflater = layoutInf
-        //builder.setTitle("Book progress")
         val dialogLayout = inflater.inflate(R.layout.dialog_readed_pages, null)
         val editText = dialogLayout.findViewById<EditText>(R.id.dialog_readed_pages)
         val total = dialogLayout.findViewById<TextView>(R.id.dialog_total_pages)
         total.text = list[position].pages.toString()
-        // editText.setText(llista[position].pagesReaded)
         builder.setView(dialogLayout)
         builder.setNegativeButton(context.getString(R.string.BT_Cancel)) { _, _ -> }
         builder.setPositiveButton(context.getString(R.string.BT_Accept)) { _, _ ->
@@ -112,7 +106,6 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
                 holder.progressbar.progress = percent
                 holder.percentage.text = percent.toString()
                 putBook(list[position].readedId, list[position].pagesReaded)
-                //RemoveBookReading(llista[position].readedId)
                 getUser()
                 reloadFragment(fragment)
             }else if ( valueint < list[position].pages) {
@@ -143,8 +136,6 @@ class HomeReadingBooksAdapter(var list: ArrayList<ActualReading>, val fragment: 
         Toast.makeText(context, context.getString(R.string.MSG_Result) + result, Toast.LENGTH_LONG).show()
     }
     private fun reloadFragment(fragment: Fragment){
-        //Toast.makeText(context, context.getString(R.string.MSG_ReladingFragment), Toast.LENGTH_LONG).show()
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             fragment.parentFragmentManager.beginTransaction().detach(fragment).commitNow()
             fragment.parentFragmentManager.beginTransaction().attach(fragment).commitNow()

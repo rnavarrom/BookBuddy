@@ -274,5 +274,7 @@
     <string name="MSG_ShareText">Take a look at the review on BookBuddy!</string>
     <string name="SB_ScanFailed">Scan failed</string>
     <string name="MSG_ErrorUploadImg">Image not uploaded, please try again.</string>
+    <string name="TTS_Title">\"Title: \"</string>
+    <string name="TTS_Description">\"Description:  \"</string>
 
 </resources>

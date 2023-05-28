@@ -25,7 +25,10 @@ import java.io.File
 import java.io.FileOutputStream
 import kotlin.coroutines.CoroutineContext
 
-//Adapter for the contacts fragment
+/**
+ * Adapter for displaying users in a recycler view
+ * @param list The list of search results to display.
+ */
 class ContactAdapter(var list: java.util.ArrayList<UserItem>, val fragment: ContactsFragment) :
     RecyclerView.Adapter<ContactAdapter.ViewHolder>(), CoroutineScope, ApiErrorListener {
     private var job: Job = Job()
